@@ -239,7 +239,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 - **Audit entry written:** No separate entry. The change itself is audited in EP-05-S6 or EP-05-S7, and the session end in EP-04-S13.
 - **Data changes:** Updates `sessions.ended at` and `sessions.end reason`. If events are sent through an outbox, inserts one outbox row (the outbox design belongs to EP-07).
 - **UI reference:** No screen. The signed-out state is not yet designed.
-- **Non-functional checks:** Security: access ends at once. Performance: open screens return to sign-in within about 1 second once EP-07 is live (PRODUCTION-SCOPE §1). Personal data: the payload carries ids only. Open decision D1: how events are emitted (own channel or managed platform realtime).
+- **Non-functional checks:** Security: access ends at once. Performance: open screens return to sign-in within about 1 second once EP-07 is live (PRODUCTION-SCOPE §1). Personal data: the payload carries ids only. D1 is decided (Option C): the event goes through the Node API's live channel (EP-07).
 - **Depends on:** EP-04-S13, EP-03-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

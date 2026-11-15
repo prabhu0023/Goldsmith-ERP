@@ -123,7 +123,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 - **Audit entry written:** No by the suite. Audit writes by the operations under test go to the throwaway database and are asserted for each state change.
 - **Data changes:** None in the product database. Creates and drops a throwaway test database per run. Adds the Create Test database, Delete Test database and Create Test session operations to test configuration only.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: the test sign-in path exists only in test environments and is checked to be absent in production (epic section 13). Personal data: fixtures hold made-up customers only; no production data is copied. Performance: the API suite stays within the agreed per-push time. Open decision D1: on a managed platform, how server-side policies run locally for these tests.
+- **Non-functional checks:** Security: the test sign-in path exists only in test environments and is checked to be absent in production (epic section 13). Personal data: fixtures hold made-up customers only; no production data is copied. Performance: the API suite stays within the agreed per-push time. D1 is decided (Option C): the server-side rules live in the Node API, so the suite runs them by calling the API against the throwaway PostgreSQL database; no platform emulator is needed.
 - **Depends on:** EP-40-S1, EP-02-S1, EP-02-S13, EP-03-S1, EP-03-S2, EP-03-S4, EP-03-S5, EP-03-S6, EP-04-S5, EP-01-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -328,7 +328,6 @@ Copied from the epic's section 17. Not answered here.
 - G11: which list of assertions is authoritative now that `scripts/verify-domain.ts` is gone (PRODUCTION-SCOPE says 88, review.md says 72)? (EP-40-S3, S4)
 - G10: is the integer unit 0.0001 g, or a finer unit so the ceiling half-steps are whole numbers? (EP-40-S2, S3)
 - G24: does "EP-03 onwards" include EP-41 to EP-43? (EP-40-S13)
-- D1: on a managed platform, how are server-side policies tested locally? (EP-40-S5)
 - Which end-to-end flows are required before launch, and which can follow? (EP-40-S12)
 - Q5d: what is the expected outcome for the last-digit middle case, so it can be tested? (EP-40-S3)
 - What test tooling is used for the web app and the karigar PWA? (EP-40-S1, S10, S12)

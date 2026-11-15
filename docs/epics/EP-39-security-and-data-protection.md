@@ -96,7 +96,7 @@ mechanisms.
 - BR-39-8. Only customers who opted in are counted and messaged. [mockup 27]
 - BR-39-9. A shared showcase shows photos and weights, never a price. [mockup 28]
 - BR-39-10. Only the owner can add staff or change a role. [mockup 25]
-- BR-39-11. Host in India for personal-data law (recommended, not decided). [PRODUCTION-SCOPE §4 D10]
+- BR-39-11. Host in India for personal-data law (decided). [PRODUCTION-SCOPE §4 D10]
 
 ## 9. Data
 
@@ -110,7 +110,7 @@ mechanisms.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -169,7 +169,7 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 
 ## 17. Open decisions and questions
 
-- D10: must all personal data, backups and logs stay in India?
+- D10 is decided (India region) for the system's own hosting. Must every outside tool that holds personal data, backups or logs also keep them in India?
 - G22: how does a deletion request apply to audit entries that name a customer?
 - G9: should a public catalogue link exist, how long does it last, and what may it show?
 - G12: which settings are owner-only, and is the pricing switch audited?

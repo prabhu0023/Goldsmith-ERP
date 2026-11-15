@@ -25,7 +25,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. No product state changes. The migration history table records number, name, checksum and applied time per environment.
 - **Data changes:** Creates the migration history table. Adds the migrations folder and the migrate and status commands to the `api` package.
 - **UI reference:** No screen
-- **Non-functional checks:** Availability: a migration that needs to rewrite a large table is written to run without taking the shop offline, or is flagged for a planned window. Security: production migrations use the production credential held only by the deploy pipeline. Time: applied times are stored in UTC. Open decision D2: the tool choice follows the database type (relational or document); write the stories against a relational schema and revisit if D2 picks a document database. Open decision D7: the branch key choice must be made before migration 1. Open decision D10: the database region is set in configuration, not in migrations.
+- **Non-functional checks:** Availability: a migration that needs to rewrite a large table is written to run without taking the shop offline, or is flagged for a planned window. Security: production migrations use the production credential held only by the deploy pipeline. Time: applied times are stored in UTC. D2 is decided (PostgreSQL): the migration tool targets the managed PostgreSQL database. Staging and production migrations run from the deploy pipeline inside the cloud provider's private network; the database has no public endpoint. Open decision D7: the branch key choice must be made before migration 1. D10 is decided (India region): the region is set in configuration, not in migrations, and follows the D1a cloud provider.
 - **Depends on:** EP-01-S2, EP-01-S6, EP-01-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -338,7 +338,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. A rejected write changes no state.
 - **Data changes:** None in the product database schema beyond the version columns added in EP-02-S5 to EP-02-S9. Adds the versioned update helper and its conflict error type in the `api` data-access layer.
 - **UI reference:** No screen
-- **Non-functional checks:** Concurrency: a stale write returns a clear conflict, never a silent overwrite (epic section 13); the concurrent test runs in CI. Open decision D1: on a managed platform the same check is written as a policy or function; the acceptance tests stay the same.
+- **Non-functional checks:** Concurrency: a stale write returns a clear conflict, never a silent overwrite (epic section 13); the concurrent test runs in CI. D1 is decided (Option C): the check lives in the Node API's data-access layer and runs inside the API's transaction.
 - **Depends on:** EP-02-S5, EP-02-S6, EP-02-S7, EP-02-S8, EP-02-S9
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -348,9 +348,8 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 
 Copied from the epic's section 17. Not answered here.
 
-- D2: relational (PostgreSQL class) or document database? (EP-02-S1 to S14)
 - D7: single shop or multiple branches? This decides whether every table gets a branch key now. (EP-02-S1, S3, S4, S9, S12)
-- D10: which region does the database live in? (EP-02-S1)
+- D1a: which cloud provider hosts the managed PostgreSQL database? D2 (PostgreSQL) and D10 (India region) are decided; the exact India region follows the provider. (EP-02-S1)
 - G10: should stored weights be integers of 0.0001 g as PRODUCTION-SCOPE §5 says, or a finer unit (the prototype uses 0.00001 g) so the half-step ceiling is exact? (EP-02-S2, S4, S6)
 - Is net gold stored on each record, or always derived from gross and stone weights? (EP-02-S5, S6)
 - Are human-readable ids such as `BATCH-2026-044`, `LD-2026-…` and `KG-04` kept as the primary key, or kept as a display reference next to an internal key? (EP-02-S3 to S13)

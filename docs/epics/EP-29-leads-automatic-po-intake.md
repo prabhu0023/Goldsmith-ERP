@@ -107,7 +107,7 @@ this so that orders are never lost in a phone and the shop answers faster.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -132,7 +132,7 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 ## 13. Non-functional requirements
 
 - Security: provider keys (for example the existing `GEMINI_API_KEY` slot) in environment configuration; inbound webhooks verified by signature; only staff and owner read leads.
-- Personal data: message text, images and phone numbers are personal data; the parser provider and its region follow D10; logs hold ids, not content.
+- Personal data: message text, images and phone numbers are personal data; the parser provider and its region follow D10 (India region, decided); logs hold ids, not content.
 - Performance: a lead appears in the inbox within about 1 second of receipt, before parsing finishes; parsing completes within a decided time and updates the lead live.
 - Availability: if the parser is down, leads are still created as unreadable and parsing is retried.
 - Audit: confirm, field corrections and "Not an order" are appended with before and after values.
@@ -155,7 +155,7 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 ## 16. Risks
 
 - Risk: the parser invents a weight or date and staff click through. Mitigation: flag low-confidence fields, never pre-confirm, show the original beside the field.
-- Risk: personal data leaves India with the parser provider. Mitigation: decide D10 and the provider with EP-39 before build.
+- Risk: personal data leaves India with the parser provider. Mitigation: choose the provider with EP-39 before build, against D10 (India region, decided).
 - Risk: WhatsApp template and session rules block some replies. Mitigation: decide D8 and verify current Meta terms.
 - Risk: duplicates flood the inbox from forwarded messages. Mitigation: duplicate detection by provider id and thread.
 - Risk: parse cost grows with image volume. Mitigation: measure per-lead cost and cap retries.
@@ -163,7 +163,7 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 ## 17. Open decisions and questions
 
 - D8: which WhatsApp provider receives inbound messages?
-- D10: where is the parser hosted and does personal data leave India?
+- Where is the parser hosted, and does personal data leave India? D10 (India region) is decided for the system's own hosting; the parser provider must be checked against it.
 - Which parser provider and model, and is the existing `@google/genai` dependency the choice?
 - What confidence thresholds make a field "check this" and a lead unreadable?
 - How long are attachments and raw messages kept?

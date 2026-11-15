@@ -48,7 +48,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. No product state changes.
 - **Data changes:** None in the product database. Repository layout changes: new `web/`, `api/` and `shared/` package folders, a root workspace configuration and per-package `package.json` and `tsconfig.json`.
 - **UI reference:** No screen
-- **Non-functional checks:** Precision: `tsc --noEmit` stays green in every package after the split, on `typescript` ^7.0.2. Open decision D1: the shape of `api` (own Node server or managed-platform functions and policies) is not settled. Until D1 is decided, `api` is created as an empty package that builds; its contents follow D1.
+- **Non-functional checks:** Precision: `tsc --noEmit` stays green in every package after the split, on `typescript` ^7.0.2. D1 is decided (Option C): `api` is the team's own Node + TypeScript server package. It is created here as a minimal package that builds; its server code arrives in EP-03.
 - **Depends on:** EP-01-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -95,7 +95,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. No product state changes.
 - **Data changes:** None in the product database. Adds the `shared` dependency to `api/package.json`.
 - **UI reference:** No screen
-- **Non-functional checks:** Precision: integer weight helpers from `shared` compile in the `api` build without type casts. Open decision D1: if the managed platform is chosen, "api" means the platform functions and policies, and they must still import from `shared`. Write the check against whatever D1 produces.
+- **Non-functional checks:** Precision: integer weight helpers from `shared` compile in the `api` build without type casts. D1 is decided (Option C): `api` is the Node + TypeScript API, and the check runs against its build.
 - **Depends on:** EP-01-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -118,7 +118,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. No product state changes.
 - **Data changes:** None in the product database. The local or development database itself is set up in EP-02.
 - **UI reference:** No screen. Smoke check uses the existing `today` route.
-- **Non-functional checks:** Security: the dev command reads secrets only from the local environment file, which `.gitignore` excludes. Open decision D1: under the managed platform option, the dev command starts `web` and the platform's local emulator instead of a Node server.
+- **Non-functional checks:** Security: the dev command reads secrets only from the local environment file, which `.gitignore` excludes. D1 is decided (Option C): the dev command starts `web` and the Node `api` server; no platform emulator is involved.
 - **Depends on:** EP-01-S3, EP-01-S4
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -143,7 +143,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. No product state changes. Access to production configuration is logged by the hosting or secrets service, not the product audit log.
 - **Data changes:** None in the product database. Creates three environment configurations and the new example environment file. `.env.example` is replaced, and `README.md` run instructions are updated to match.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: no secret in the repository or in logs; config loading never prints values. Availability: staging and production are separate, so a broken staging configuration cannot affect the shop. Open decision D10: the environments must be placeable in the chosen hosting region (India recommended); write the region as a configuration value, not a code assumption. Open question: whether AI Studio hosting is kept for any environment.
+- **Non-functional checks:** Security: no secret in the repository or in logs; config loading never prints values. Availability: staging and production are separate, so a broken staging configuration cannot affect the shop. D10 is decided: every environment runs in an India region. The exact region follows the D1a cloud provider, so write it as a configuration value, not a code assumption. Open question: whether AI Studio hosting is kept for any environment.
 - **Depends on:** EP-01-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -166,7 +166,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. Run id, commit, branch and step results are kept by the CI service, not the product database.
 - **Data changes:** None in the product database. Adds the CI pipeline definition file to the repository.
 - **UI reference:** No screen
-- **Non-functional checks:** Performance: the lint and typecheck steps finish within the time the team agrees for a typical change, so developers wait for green instead of bypassing it. Security: CI secrets are masked in logs. Open question: which CI service is used depends on D1 and D10.
+- **Non-functional checks:** Performance: the lint and typecheck steps finish within the time the team agrees for a typical change, so developers wait for green instead of bypassing it. Security: CI secrets are masked in logs. Open question: which CI service is used depends on D1a (cloud provider).
 - **Depends on:** EP-01-S1, EP-01-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -283,7 +283,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. Deploy records (commit, time, result) are kept by the CI service and hosting provider.
 - **Data changes:** None in the product database. Creates the staging deploy target for `web` and `api`. Staging data and migrations arrive in EP-02.
 - **UI reference:** No screen
-- **Non-functional checks:** Availability: a failed staging deploy cannot affect production. Security: the deploy credential for staging cannot deploy to production. Open decisions D1 and D10: deploy targets and region depend on them; write the steps against the chosen hosting. Open question: whether a preview deploy per branch is needed in addition to staging.
+- **Non-functional checks:** Availability: a failed staging deploy cannot affect production. Security: the deploy credential for staging cannot deploy to production. Open decision D1a: the deploy targets depend on the cloud provider, in an India region (D10, decided); write the steps against the chosen provider. Open question: whether a preview deploy per branch is needed in addition to staging.
 - **Depends on:** EP-01-S6, EP-01-S9, EP-01-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -307,7 +307,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. Promotion records (who, when, commit, result) are kept by the CI service and hosting provider, not the product audit log.
 - **Data changes:** None in the product database. Creates the production deploy target for `web` and `api`.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: least privilege for deploy rights; production secrets readable only by production services. Availability: promotion keeps the previous build available to return to. Open decisions D1 and D10: the production target and region depend on them.
+- **Non-functional checks:** Security: least privilege for deploy rights; production secrets readable only by production services. Availability: promotion keeps the previous build available to return to. Open decision D1a: the production target depends on the cloud provider, in an India region (D10, decided).
 - **Depends on:** EP-01-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -317,9 +317,9 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 
 Copied from the epic's section 17. Not answered here.
 
-- D1: managed platform or own Node API? This decides whether the `api` package is a server project or a set of platform functions and policies. (EP-01-S2, S4, S5, S12, S13)
-- D10: which hosting region do the environments live in, and does staging have to be in the same region as production? (EP-01-S6, S12, S13)
+- D1a: which cloud provider hosts the environments? D1 is decided (Option C), so `api` is a Node + TypeScript server project. (EP-01-S12, S13)
+- D10 is decided (India region). Does staging have to be in the same India region as production? (EP-01-S6, S12, S13)
 - Is AI Studio hosting kept for any environment, or replaced everywhere? (EP-01-S6)
 - Where does the product repository live, given the project is untracked under the parent folder `/Users/prabhu.govindaraj/Documents/personalproject`? (EP-01-S1)
-- Which CI service and which deploy targets are used? This depends on D1 and D10. (EP-01-S7 to S13)
+- Which CI service and which deploy targets are used? This depends on D1a. (EP-01-S7 to S13)
 - Does a preview deploy per branch help the team, or is staging enough? (EP-01-S12)

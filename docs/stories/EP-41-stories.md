@@ -218,7 +218,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **Audit entry written:** Yes, on staging only: the same entries as each import story, with environment `staging` on the run record. Nothing is written to production audit.
 - **Data changes:** None in the production database. Staging receives the imported rows and is reset between rehearsals.
 - **UI reference:** Not yet designed (owner import page on the staging build).
-- **Non-functional checks:** Personal data: real customer lists on staging are personal data; staging access is limited to the owner and the operator, files are deleted after each run, and the data is removed after launch. Security: staging keeps the same owner-only checks. Open decision D1: how staging reset works on the chosen backend.
+- **Non-functional checks:** Personal data: real customer lists on staging are personal data; staging access is limited to the owner and the operator, files are deleted after each run, and the data is removed after launch. Security: staging keeps the same owner-only checks. D1 is decided (Option C): staging is reset by restoring its managed PostgreSQL database and its S3-compatible file store to the pre-import point (EP-38-S6). Open decision D1a: the exact restore steps follow the cloud provider.
 - **Depends on:** EP-41-S1, EP-41-S2, EP-41-S3, EP-41-S4, EP-41-S5, EP-41-S6, EP-41-S7, EP-41-S8, EP-01-S6, EP-01-S12, EP-38-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

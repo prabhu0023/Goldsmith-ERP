@@ -2,7 +2,7 @@
 
 Epic document: [EP-38 Backup and recovery](../epics/EP-38-backup-and-recovery.md)
 
-Role note: this is a layer E operations epic with no shop-facing screen. Stories use "System" for the backup service, the continuous log and the scheduler acting on their own, and "Developer" for the operator, the person who runs backups, restores and drills with the hosting tools. The Owner approves a production restore and is told what window of work was lost; who exactly approves is an open question, so criteria say "the agreed approver". Seed users named in criteria are Sanjay Seth (Owner), Rajesh Verma (Staff) and Lakshmi Devi (Karigar). Which backup and point-in-time features come built in depends on D1, and the backup region depends on D10.
+Role note: this is a layer E operations epic with no shop-facing screen. Stories use "System" for the backup service, the continuous log and the scheduler acting on their own, and "Developer" for the operator, the person who runs backups, restores and drills with the hosting tools. The Owner approves a production restore and is told what window of work was lost; who exactly approves is an open question, so criteria say "the agreed approver". Seed users named in criteria are Sanjay Seth (Owner), Rajesh Verma (Staff) and Lakshmi Devi (Karigar). The database is managed PostgreSQL (D1, Option C), so its backup and point-in-time features come from the D1a cloud provider; backups stay in an India region (D10, decided).
 
 ---
 
@@ -24,7 +24,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. A backup changes no business state; the backup record holds kind, started at, finished at, size, status and location.
 - **Data changes:** Adds a Backup record (id, kind `daily full` / `continuous log` / `file storage`, started at, finished at, size, status, location), kept in the hosting tool or in an operations table outside the business schema. No change to business tables.
 - **UI reference:** No screen. The operator uses the hosting tools (epic section 12).
-- **Non-functional checks:** Availability: a backup runs every day for production and staging (BR-38-1). Precision: weights copied unchanged as integers in units of 0.0001 g (BR-38-6). Performance: the backup does not lock tables the counter writes to. Open decision D1: on a managed platform the daily backup may be built in; this story then means turning it on and confirming its schedule.
+- **Non-functional checks:** Availability: a backup runs every day for production and staging (BR-38-1). Precision: weights copied unchanged as integers in units of 0.0001 g (BR-38-6). Performance: the backup does not lock tables the counter writes to. D1 is decided (Option C): the managed PostgreSQL service has a daily backup built in, so this story means turning it on and confirming its schedule. Open decision D1a: the exact backup options follow the cloud provider.
 - **Depends on:** EP-02-S1, EP-02-S3, EP-02-S4, EP-02-S5, EP-02-S6, EP-02-S7, EP-02-S8, EP-02-S9, EP-02-S10, EP-02-S11, EP-02-S12, EP-01-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -47,7 +47,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Shipping the log changes no business state.
 - **Data changes:** None in the product database. Turns on change-log shipping on the database host and adds Backup records of kind `continuous log`.
 - **UI reference:** No screen
-- **Non-functional checks:** Availability: recovery point under 1 hour (BR-38-1). Time: restore points are stored and chosen in UTC and shown in Asia/Kolkata. Open decision D1: which point-in-time features a managed platform includes and at what retention.
+- **Non-functional checks:** Availability: recovery point under 1 hour (BR-38-1). Time: restore points are stored and chosen in UTC and shown in Asia/Kolkata. Open decision D1a: which point-in-time features the chosen provider's managed PostgreSQL includes and at what retention.
 - **Depends on:** EP-38-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -71,7 +71,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Copying files changes no business state.
 - **Data changes:** None in the product database. Turns on versioning or scheduled copy for the object storage bucket and adds Backup records of kind `file storage`.
 - **UI reference:** No screen
-- **Non-functional checks:** Availability: database and files can be restored to the same point, so no row points at a missing photo (epic section 16). Security: backup copies are not reachable by signed links meant for live files. Personal data: inbound PO attachments may hold customer details and follow the same region rule. Open decision D10: backup storage region.
+- **Non-functional checks:** Availability: database and files can be restored to the same point, so no row points at a missing photo (epic section 16). Security: backup copies are not reachable by signed links meant for live files. Personal data: inbound PO attachments may hold customer details and follow the same region rule. D10 is decided: backup storage is in an India region.
 - **Depends on:** EP-09-S1, EP-09-S4, EP-09-S5, EP-09-S6, EP-09-S7, EP-09-S8, EP-09-S10, EP-09-S11, EP-38-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -82,11 +82,11 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Story ID:** EP-38-S4
 - **Title:** System can encrypt backups and keep them apart from live data
 - **As a:** System
-- **I want:** every database backup, continuous log and file storage copy to be encrypted at rest and stored in a separate location from the live data, in the region decided under D10
+- **I want:** every database backup, continuous log and file storage copy to be encrypted at rest and stored in a separate location from the live data, in an India region (D10, decided)
 - **So that:** losing or breaking into the live host does not also lose or expose the backups, and customer personal data stays in the agreed region (FR-38-4, FR-38-5, BR-38-4, BR-38-5)
 - **Acceptance criteria (Given / When / Then):**
   1. Given a daily full backup, when its storage settings are read, then encryption at rest is on and the location differs from the live database's location.
-  2. Given the backup location, when it is compared with the region decided under D10, then they match.
+  2. Given the backup location, when it is compared with the India region decided under D10, then they match.
   3. Given a user with a shop account only (Sanjay Seth, Rajesh Verma or Lakshmi Devi), when they try to read or download a backup, then access is refused, because only the operator role can read backups.
   4. Given the live database credentials, when they are used against backup storage, then they cannot delete or overwrite a backup.
   5. Given the backup encryption keys and credentials, when the repository is scanned by EP-01-S10, then none are found in code; they live in environment configuration.
@@ -95,7 +95,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Storage settings are infrastructure configuration, not business state.
 - **Data changes:** None in the product database. Sets encryption, location and access rules on backup storage.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: backups encrypted; only the operator can read or restore (epic section 13). Personal data: backups hold customer names, phones, birthdays and anniversaries and follow the same region and retention rules (BR-38-5). Open decision D10: in which region backups are stored.
+- **Non-functional checks:** Security: backups encrypted; only the operator can read or restore (epic section 13). Personal data: backups hold customer names, phones, birthdays and anniversaries and follow the same region and retention rules (BR-38-5). D10 is decided: backups are stored in an India region; the exact region follows the D1a provider.
 - **Depends on:** EP-38-S1, EP-38-S2, EP-38-S3, EP-01-S6, EP-01-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -143,7 +143,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** Yes, for a production restore: actor (operator who ran it), approver, time, entity `database`, action `restore`, restore point, reason. The entry is written after the restore so the restore does not remove it.
 - **Data changes:** The whole business database and file storage are replaced with their state at the restore point. No schema change. Adds a restore record (requested by, approved by, run by, restore point, started at, finished at).
 - **UI reference:** No screen. The operator uses the hosting tools. Every route reads restored data afterwards.
-- **Non-functional checks:** Precision: weight totals compared before and after (epic section 13). Audit: a production restore is recorded with approver, operator and restore point. Security: only the operator can restore. Availability: the recovery time target is measured in each run. Open decision D1: restore steps differ on a managed platform. Open question: who approves a production restore.
+- **Non-functional checks:** Precision: weight totals compared before and after (epic section 13). Audit: a production restore is recorded with approver, operator and restore point. Security: only the operator can restore. Availability: the recovery time target is measured in each run. Open decision D1a: the restore steps follow the chosen provider's managed PostgreSQL and object storage tools. Open question: who approves a production restore.
 - **Depends on:** EP-38-S2, EP-38-S3, EP-38-S4, EP-07-S2, EP-07-S7, EP-08-S10, EP-06-S2, EP-02-S13
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -239,7 +239,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Deleting expired backups is not a business change; the Backup record status shows it.
 - **Data changes:** None in business tables. Backup records move to status `deleted`. Sets retention on backup storage.
 - **UI reference:** No screen
-- **Non-functional checks:** Personal data: backups are kept only for the agreed period (BR-38-5); how a DPDP deletion request affects backups still inside the period is decided with EP-39 (G22). Open question: how long backups are kept. Open decision D1: retention options on a managed platform.
+- **Non-functional checks:** Personal data: backups are kept only for the agreed period (BR-38-5); how a DPDP deletion request affects backups still inside the period is decided with EP-39 (G22). Open question: how long backups are kept. Open decision D1a: retention options of the chosen provider's managed PostgreSQL.
 - **Depends on:** EP-38-S1, EP-38-S2, EP-38-S3, EP-38-S4, EP-01-S6, EP-09-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -249,8 +249,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 
 Copied from the epic's section 17. Not answered here.
 
-- D10: in which region are backups stored? (EP-38-S3, S4)
-- D1: on a managed platform, which backup and point-in-time features are included, and at what retention? (EP-38-S1, S2, S6, S10)
+- D1a: which backup and point-in-time features does the chosen provider's managed PostgreSQL include, at what retention, and in which India region are backups stored (D10 is decided)? (EP-38-S1, S2, S3, S4, S6, S10)
 - What is the recovery time target (how long may the shop be down)? (EP-38-S6, S8)
 - How long are backups kept? (EP-38-S2, S10)
 - How often is the restore drill run after launch? (EP-38-S8)

@@ -22,7 +22,7 @@ branches, sets integer weight units, and provides migrations and a development s
 
 ## 4. In scope
 
-- A relational schema (per D2) for every entity in `src/types/jewellery.ts`: Scale, Piece, PieceEdit, ParcelWeighing, ManifestRow, Parcel, Lead, LeadItem, LeadField, OrderCopy, KarigarJob, Karigar, StaffMember, Customer, HistoryRow, Problem, ScrapRequest, AuditEntry, StockOutRecord, PoolEntry, MetalPool, Broadcast, WishRecord, Settings.
+- A PostgreSQL schema (D2, decided) on the managed PostgreSQL database for every entity in `src/types/jewellery.ts`: Scale, Piece, PieceEdit, ParcelWeighing, ManifestRow, Parcel, Lead, LeadItem, LeadField, OrderCopy, KarigarJob, Karigar, StaffMember, Customer, HistoryRow, Problem, ScrapRequest, AuditEntry, StockOutRecord, PoolEntry, MetalPool, Broadcast, WishRecord, Settings.
 - New entities: users, sessions, branches.
 - Child tables for arrays now embedded in records: `Parcel.qcDone`, `Parcel.weighings`, `Parcel.manifest`, `Lead.items`, `Lead.fields`, `Broadcast.recipientIds`, `StockOutRecord.pieceIds`, `Karigar.gapsMg`, `Piece.photos`, `OrderCopy.refImages`.
 - Integer weight columns in units of 0.0001 g, with conversion helpers in the shared package.
@@ -103,7 +103,7 @@ branches, sets integer weight units, and provides migrations and a development s
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform. This epic
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API. This epic
 exposes no product operations of its own; the operations below are administrative.
 
 | Verb | Resource | Purpose | Who may call |
@@ -156,9 +156,8 @@ directly on the integer weight units.
 
 ## 17. Open decisions and questions
 
-- D2: relational (PostgreSQL class) or document database?
 - D7: single shop or multiple branches? This decides whether every table gets a branch key now.
-- D10: which region does the database live in?
+- D1a: which cloud provider hosts the managed PostgreSQL database? D2 (PostgreSQL) and D10 (India region) are decided; the exact India region follows the provider.
 - G10: should stored weights be integers of 0.0001 g as PRODUCTION-SCOPE §5 says, or a finer unit (the prototype uses 0.00001 g) so the half-step ceiling is exact?
 - Is net gold stored on each record, or always derived from gross and stone weights?
 - Are human-readable ids such as `BATCH-2026-044`, `LD-2026-…` and `KG-04` kept as the primary key, or kept as a display reference next to an internal key?

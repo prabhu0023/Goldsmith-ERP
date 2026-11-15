@@ -61,7 +61,7 @@ The prototype is the **UI contract**. Most screens survive; what changes underne
 ## 3. Target architecture
 
 ```
- Staff & Owner web app ─┐                     ┌─► Database (relational)
+ Staff & Owner web app ─┐                     ┌─► Database (managed PostgreSQL)
  Karigar phone (PWA) ───┼─► API  ◄──────────► │
  Scale / label printer ─┘    │                ├─► Object storage (photos)
                              │                └─► Audit log (append-only)
@@ -73,24 +73,32 @@ The prototype is the **UI contract**. Most screens survive; what changes underne
                                   └─ LLM parser (PO text/image → lead fields)
 ```
 
+The API is the team's own Node + TypeScript API (D1, Option C). The live channel, the job scheduler
+and the integrations run inside it. The database is managed PostgreSQL in an India region, and the
+object storage is S3-compatible, both from the same cloud provider as the API (D1a). The API reaches
+them over the provider's private network. Browsers and the karigar phone talk only to the API on the
+shop's own domain.
+
 ---
 
 ## 4. Decisions to make before EP-01
 
 These shape the bottom layer. The recommended option is listed first; each is reversible only at cost.
+D1, D2 and D10 are decided. D1a and D3 to D9 are open.
 
 | # | Decision | Options | Recommendation and reason |
 | --- | --- | --- | --- |
-| D1 | Backend approach | (a) Managed platform with database, auth, realtime and storage built in (b) Own Node + TypeScript API with a separate database | (a) for a small team: four infrastructure epics become configuration. Choose (b) if you need full control or self-hosting. `express` is already in `package.json` if you choose (b). |
-| D2 | Database | Relational (PostgreSQL class) / document | Relational. The domain is ledgers, foreign keys and transactions. |
-| D3 | Live transport | WebSocket / Server-Sent Events / database change feed | WebSocket or the managed platform's realtime feed. Needs two-way for presence. |
+| D1 | Backend approach | **Decided: Option C**, own Node + TypeScript API | All server logic (rules, sign-in and OTP, sessions, live channel, jobs, notifications, WhatsApp) runs in the team's own Node API; `express` is already in `package.json`. Managed PostgreSQL in an India region on the same cloud provider, reached over its private network. Managed backend platforms are not used. See [decisions/D1-backend-approach.md](decisions/D1-backend-approach.md). |
+| D1a | Cloud provider | AWS / Google Cloud / Azure / other major cloud | **Open.** One provider hosts the Node API, the managed PostgreSQL database and the S3-compatible object storage, in an India region. |
+| D2 | Database | Relational (PostgreSQL class) / document | **Decided: PostgreSQL** (managed, per D1). The domain is ledgers, foreign keys and transactions. |
+| D3 | Live transport | WebSocket / Server-Sent Events | WebSocket. Needs two-way for presence. Built in the Node API (D1). Still open. |
 | D4 | Sign-in method | Phone + WhatsApp OTP / phone + password / email + password | Phone + WhatsApp OTP. Staff and karigars already live on WhatsApp, and you already use OTP for edits. Keep a password fallback for the owner. |
 | D5 | Karigar app | Installable web app (PWA) / native app | PWA. One codebase, no app store, works on any phone. |
 | D6 | Offline for karigars | None / read-only offline / queue updates offline | Queue status updates offline. Workshops often have weak signal. |
 | D7 | Branches | Single shop / multiple branches | Decide now. The mockups say "All branches". Adding branches later means migrating every table. |
 | D8 | WhatsApp provider | Meta Cloud API directly / a Business Solution Provider | Either. Outbound messages outside a conversation need pre-approved templates, so wishes, broadcasts and OTP need template approval lead time. Verify current Meta terms. |
 | D9 | Scale integration | Typed by hand / read directly from the balance | Read directly where the balance supports it (EP-36). It removes typing errors at the exact-match gate. |
-| D10 | Hosting region | India / elsewhere | India, for latency and personal-data law. |
+| D10 | Hosting region | India / elsewhere | **Decided: India region**, for latency and personal-data law. The exact region follows the D1a provider. |
 
 ---
 

@@ -25,7 +25,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. A type module changes no product state.
 - **Data changes:** None in the product database. Adds the contract module to `shared` and the Read Contract version endpoint to `api`.
 - **UI reference:** No screen
-- **Non-functional checks:** Precision: weight fields in the contract are integers of 0.0001 g or exact decimal strings. Security: the contract has no actor or time input fields. Open decision: the contract format (shared TypeScript types only, or a schema that also validates at runtime) is open in section 17; this story declares operations so that either choice can produce both the type and the validator used in EP-03-S2. Open decision: API versioning and how an old browser tab learns the contract changed is open; this story only exposes the version string. Open decision D1: on a managed platform each operation becomes a function or policy, but it is still declared once in this module.
+- **Non-functional checks:** Precision: weight fields in the contract are integers of 0.0001 g or exact decimal strings. Security: the contract has no actor or time input fields. Open decision: the contract format (shared TypeScript types only, or a schema that also validates at runtime) is open in section 17; this story declares operations so that either choice can produce both the type and the validator used in EP-03-S2. Open decision: API versioning and how an old browser tab learns the contract changed is open; this story only exposes the version string. D1 is decided (Option C): each operation is an endpoint on the Node API, declared once in this module.
 - **Depends on:** EP-01-S3, EP-01-S4, EP-01-S7
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -73,7 +73,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. This step only supplies the actor and time that EP-06 audit entries record.
 - **Data changes:** None in the product database. Reads `sessions` and `users` (EP-02-S3). Adds a session resolver interface and a clock module to `api`; tests use a fixed test clock and a test session.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: actor and time never come from the client (epic section 13). Time: all times are UTC from the server clock. Open decision D4: the sign-in method and how a session is presented (cookie or token) is decided in EP-04; this story reads the session through an interface so the acceptance criteria hold for either. Open decision D1: on a managed platform the platform's auth context supplies the user.
+- **Non-functional checks:** Security: actor and time never come from the client (epic section 13). Time: all times are UTC from the server clock. Open decision D4: the sign-in method and how a session is presented (cookie or token) is decided in EP-04; this story reads the session through an interface so the acceptance criteria hold for either. D1 is decided (Option C): the session resolver reads the Node API's own sessions (EP-04), never a platform auth context.
 - **Depends on:** EP-03-S1, EP-02-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -88,7 +88,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **So that:** the person at the counter sees a plain reason such as "Only the owner can accept a loss." instead of a technical error (FR-03-4, BR-03-5)
 - **Acceptance criteria (Given / When / Then):**
   1. Given a service function that throws `DomainError("A converted lead cannot be marked lost.")`, when the server handles the request, then the response has code `rule_refused`, message "A converted lead cannot be marked lost." and no field.
-  2. Given the same refusal, when the response is inspected, then it has no stack trace, file path or database text, and the HTTP status (or platform equivalent) is the same for every `rule_refused` error.
+  2. Given the same refusal, when the response is inspected, then it has no stack trace, file path or database text, and the HTTP status is the same for every `rule_refused` error.
   3. Given a second request to stock out a piece that the first request already sold, when the server handles it, then it returns `rule_refused` with a sentence saying the piece is already taken (BR-03-6).
   4. Given a refusal, when the database is checked, then no change from that request remains (relies on EP-03-S6).
   5. Given an unexpected error that is not a `DomainError`, when the server handles it, then the response has code `internal` and a generic sentence, and the details go only to the server log.
@@ -145,7 +145,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. This story writes no audit itself; EP-06 writes audit entries inside the same transaction so an action and its audit entry commit together.
 - **Data changes:** None in the product database. Adds the transaction wrapper and the after-commit hook to `api`.
 - **UI reference:** No screen
-- **Non-functional checks:** Concurrency: one transaction per operation; version conflicts return a clear sentence (epic section 13). Availability: a rolled-back transaction leaves the database consistent. Open decision D1: on a managed platform the transaction may be a database function or RPC; the acceptance criteria stay the same. Open decision D2: transactions assume a relational database.
+- **Non-functional checks:** Concurrency: one transaction per operation; version conflicts return a clear sentence (epic section 13). Availability: a rolled-back transaction leaves the database consistent. D1 is decided (Option C): the Node API opens and commits the transaction on the managed PostgreSQL database (D2, decided), reached over the cloud provider's private network.
 - **Depends on:** EP-03-S4, EP-02-S1, EP-02-S14
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -298,7 +298,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 
 Copied from the epic's section 17. Not answered here.
 
-- D1: own Node API using the `express` already in `package.json`, or a managed platform with built-in database, auth, realtime and storage? (EP-03-S1, S3, S6)
+- D1a: which cloud provider hosts the Node API and its database? D1 is decided: own Node + TypeScript API using the `express` already in `package.json`. (EP-03-S6)
 - Which contract format is used between `web` and `api`: shared TypeScript types only, or a schema that also validates at runtime? (EP-03-S1, S2)
 - How is the API versioned, and how does an old browser tab learn that the contract changed? (EP-03-S1)
 - How long are idempotency keys kept? (EP-03-S8)

@@ -115,12 +115,12 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
   3. Given an issue and a negative adjustment that together exceed the balance arrive at the same moment, when both are processed, then only one commits and the other is refused.
   4. Given 20 concurrent issues of 10.0000 g against a balance of 150.0000 g in a test, when they all finish, then exactly 15 succeed, 5 are refused, and the ledger sum equals the balance of 0.0000 g.
   5. Given a version-check conflict is lost by a request, when the server handles it, then it retries the read and check once inside the request, or returns the conflict error in the EP-03-S5 format; it never posts on a stale balance.
-- **Rules enforced on the server:** Every call of the EP-18-S1 posting function takes the lock (`SELECT … FOR UPDATE` or the platform equivalent) or performs a conditional update on `metal_pools.version` before computing the new balance. The lock is held only for the caller's transaction. Lock order is fixed (pool row before job or piece rows) so job creation and scrap cannot deadlock each other.
+- **Rules enforced on the server:** Every call of the EP-18-S1 posting function takes the PostgreSQL row lock (`SELECT … FOR UPDATE`) or performs a conditional update on `metal_pools.version` before computing the new balance. The lock is held only for the caller's transaction. Lock order is fixed (pool row before job or piece rows) so job creation and scrap cannot deadlock each other.
 - **Live events emitted / consumed:** None of its own. The committed posting emits "Metal pool changed" through EP-18-S12.
 - **Audit entry written:** No. The postings it protects write their own records.
 - **Data changes:** None in the product database. Changes the EP-18-S1 posting function to lock or version-check; adds a concurrency test to the `api` test suite.
 - **UI reference:** No screen
-- **Non-functional checks:** Concurrency: the second of two overdrawing issues fails with the sentence above (epic section 13). Performance: the lock is held for one transaction only; a proposed target, to confirm, is no issue waits more than 1 second for the lock with 10 staff working. Open decision D1: row lock on an own database or a version check through a managed platform's policy; both must pass criteria 1 to 4.
+- **Non-functional checks:** Concurrency: the second of two overdrawing issues fails with the sentence above (epic section 13). Performance: the lock is held for one transaction only; a proposed target, to confirm, is no issue waits more than 1 second for the lock with 10 staff working. D1 is decided (Option C): the Node API owns this transaction and takes the row lock or version check on the managed PostgreSQL database; either way it must pass criteria 1 to 4.
 - **Depends on:** EP-18-S1, EP-18-S4, EP-02-S14, EP-03-S5, EP-03-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

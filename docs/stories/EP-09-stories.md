@@ -24,7 +24,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 - **Audit entry written:** No. Storing a file changes no business record; attaching it does (EP-09-S7, S8).
 - **Data changes:** Adds the StoredFile table (id, storage key, original name, content type, size in bytes, width, height, thumbnail key, display key, uploaded by, uploaded at, retention class, branch key if D7) by migration (EP-02-S1). Creates the private bucket per environment.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: private bucket, random storage keys, credentials in environment only. Personal data: the bucket is placed in the D10 region. Availability: the bucket is covered by the backup plan in EP-38. Open decision D1: the bucket is the managed platform's storage or a separate object store; the criteria hold for either. Open decision D10: which region holds the bucket. Open decision D7: whether StoredFile carries a branch key.
+- **Non-functional checks:** Security: private bucket, random storage keys, credentials in environment only. Personal data: the bucket is placed in an India region (D10, decided). Availability: the bucket is covered by the backup plan in EP-38. D1 is decided (Option C): the bucket is in the cloud provider's S3-compatible object storage, on the same provider as the database, and only the Node API reaches it, over the provider's private network. Open decision D1a: which provider's storage holds the bucket. Open decision D7: whether StoredFile carries a branch key.
 - **Depends on:** EP-01-S6, EP-02-S1, EP-03-S3, EP-03-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -120,7 +120,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 - **Audit entry written:** No. Reading a file changes nothing; link requests are logged for security review without the link itself.
 - **Data changes:** None in the product database. Adds the Read File link operation to the shared contract (EP-03-S1).
 - **UI reference:** No screen of its own. Used wherever a photo shows, for example the piece drawer on route `stock` and `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`.
-- **Non-functional checks:** Security: signed, expiring links only; never public URLs (epic section 13). Performance: links for a page of thumbnails are issued in one request. Open question: the link lifetime is not stated in the sources; tests use 15 minutes until decided. Open decision D1: on a managed platform the link is the platform's signed URL; on an own API it is signed by the API.
+- **Non-functional checks:** Security: signed, expiring links only; never public URLs (epic section 13). Performance: links for a page of thumbnails are issued in one request. Open question: the link lifetime is not stated in the sources; tests use 15 minutes until decided. D1 is decided (Option C): the link points at the Node API on the shop's own domain and is signed by the API, which checks it and streams the file from storage; the browser never talks to storage directly.
 - **Depends on:** EP-09-S1, EP-09-S4, EP-09-S6, EP-01-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -322,8 +322,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 
 Copied from the epic's section 17. Not answered here.
 
-- D1: is file storage the managed platform's storage or a separate object store? (EP-09-S1, S5)
-- D10: which region holds the files? (EP-09-S1)
+- D1a: which cloud provider's S3-compatible storage holds the files? It is the same provider as the database and the API, in an India region (D10, decided). (EP-09-S1)
 - How long are piece photos, reference images and PO attachments kept? (EP-09-S12)
 - What is the maximum file size, and which types are allowed (images only, or PDF and other PO formats)? (EP-09-S3, S4, S11)
 - G9: may a public catalogue link show piece photos to people who are not signed in? (EP-09-S5, S6)

@@ -24,7 +24,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 - **Audit entry written:** No. Connecting to the provider changes no business record.
 - **Data changes:** Adds the SenderIdentity table (id, display name, phone number, provider account reference) by migration (EP-02-S1), filled from configuration. Adds the provider environment variables to each environment's configuration.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: credentials only in environment configuration; health output carries no secret. Availability: health check shows the provider as down so EP-37 can alert. Open decision D8: Meta Cloud API directly or a Business Solution Provider; the interface is written so either fits. Open decision D10: whether the provider stores message data in the chosen region. Open question G20: how many sender numbers there are.
+- **Non-functional checks:** Security: credentials only in environment configuration; health output carries no secret. Availability: health check shows the provider as down so EP-37 can alert. Open decision D8: Meta Cloud API directly or a Business Solution Provider; the interface is written so either fits. D10 is decided (India region); whether the WhatsApp provider also stores message data in India is open. Open question G20: how many sender numbers there are.
 - **Depends on:** EP-01-S6, EP-01-S10, EP-02-S1, EP-03-S10, EP-04-S4
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -299,7 +299,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 Copied from the epic's section 17. Not answered here.
 
 - D8: Meta Cloud API directly, or a Business Solution Provider? What is the current template approval lead time? (EP-12-S1, S2, S3, S4, S6)
-- D10: does the provider store message data in the chosen region? (EP-12-S1)
+- D10 is decided (India region): does the WhatsApp provider also store message data in India? (EP-12-S1)
 - G20: how many sender numbers are there, and can "Priya (Manager)" be a sender when only three roles exist? (EP-12-S1, S3)
 - UX-SPEC §7 Q5: may the owner approve an edit-code request by replying on WhatsApp? (EP-12-S7)
 - Which opt-out keywords are recognised, in which languages? (EP-12-S10)

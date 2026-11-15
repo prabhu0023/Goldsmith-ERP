@@ -26,7 +26,7 @@ Restores must keep the append-only audit log whole.
 - Automated daily backups of the database.
 - Point-in-time restore with a recovery point under 1 hour.
 - Backup of object storage (piece photos, reference images, PO attachments, bench photos).
-- Backups stored in a separate location from the live data, in the region decided under D10.
+- Backups stored in a separate location from the live data, in an India region (D10, decided).
 - Encryption of backups at rest.
 - A retention period for backups.
 - A documented restore drill, run in staging on a schedule, with the time taken recorded.
@@ -56,7 +56,7 @@ Restores must keep the append-only audit log whole.
 - FR-38-1. The database is backed up automatically at least once a day.
 - FR-38-2. The database can be restored to any point in time within the retention window, with a recovery point under 1 hour.
 - FR-38-3. Object storage is backed up so that every file referenced by a database row at the restore point can be restored.
-- FR-38-4. Backups are stored apart from the live database and in the region decided under D10.
+- FR-38-4. Backups are stored apart from the live database and in an India region (D10).
 - FR-38-5. Backups are encrypted at rest and readable only by the operator role.
 - FR-38-6. A failed or missing daily backup raises an alert through EP-37.
 - FR-38-7. A written restore drill names each step, who does it and how long it takes.
@@ -71,7 +71,7 @@ Restores must keep the append-only audit log whole.
 - BR-38-1. Daily backups, point-in-time restore and a tested restore drill; recovery point under 1 hour. [PRODUCTION-SCOPE §5 Availability and recovery]
 - BR-38-2. The audit log is append-only with no update or delete path, including for the owner. [PRODUCTION-SCOPE §5 Audit]
 - BR-38-3. Every lead, parcel, tag, edit and stock-out survives a reload, a crash and a redeploy. [PRODUCTION-SCOPE §1 "Persistent"]
-- BR-38-4. Host in India for latency and personal-data law (recommended, not decided). [PRODUCTION-SCOPE §4 D10]
+- BR-38-4. Host in India for latency and personal-data law (decided). [PRODUCTION-SCOPE §4 D10]
 - BR-38-5. Customer names, phones, birthdays and anniversaries in backups are personal data. [PRODUCTION-SCOPE §5 Personal data]
 - BR-38-6. Weights restored are the same integers in units of 0.0001 g that were stored. [PRODUCTION-SCOPE §5 Precision]
 
@@ -83,7 +83,7 @@ Restores must keep the append-only audit log whole.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -130,12 +130,11 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 - Risk: the database and file backups come from different times, leaving rows that point at missing photos. Mitigation: restore files to the same point and check references after each drill.
 - Risk: WhatsApp messages and OTPs sent after the restore point cannot be unsent. Mitigation: the restore procedure lists them from provider logs and tells staff what to recheck.
 - Risk: a deletion request removes a customer, then a restore brings them back. Mitigation: decide with EP-39 how deletions are reapplied after a restore (G22).
-- Risk: backups stored outside India conflict with D10. Mitigation: choose the backup region with D10.
+- Risk: backups stored outside India conflict with D10. Mitigation: keep backups in an India region of the D1a provider.
 
 ## 17. Open decisions and questions
 
-- D10: in which region are backups stored?
-- D1: on a managed platform, which backup and point-in-time features are included, and at what retention?
+- D1a: which backup and point-in-time features does the chosen provider's managed PostgreSQL include, at what retention, and in which India region are backups stored (D10 is decided)?
 - What is the recovery time target (how long may the shop be down)?
 - How long are backups kept?
 - How often is the restore drill run after launch?

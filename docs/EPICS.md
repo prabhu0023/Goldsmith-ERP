@@ -236,7 +236,7 @@ in-memory data.
 
 Today everything is in-memory and resets on reload. The move to a real product.
 
-- Decide the backend (the repo already lists `express`, `@google/genai`, `dotenv` — a Node API is plausible).
+- Backend decided: an own Node + TypeScript API (the repo already lists `express`, `@google/genai`, `dotenv`) with managed PostgreSQL in an India region. See `docs/decisions/D1-backend-approach.md` and PRODUCTION-SCOPE §4 (D1). The cloud provider (D1a) is still open.
 - Replace the in-memory store's persistence with an API + database; keep the pure transitions.
 - The PO auto-parse (email/WhatsApp → lead) becomes real here — currently simulated.
 - WhatsApp sending (wishes, broadcast, OTP tokens) becomes real here — currently simulated.

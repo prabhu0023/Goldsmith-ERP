@@ -23,7 +23,7 @@ operations on top.
 
 ## 4. In scope
 
-- The API framework or platform function layer, chosen per D1.
+- The team's own Node + TypeScript API (D1, Option C), starting from the `express` already in `package.json`. It reaches the managed PostgreSQL database over the cloud provider's private network; browsers never connect to the database.
 - Request validation at the trust boundary for every operation, using the shared contract types.
 - One error format that carries a person-readable sentence (today's `DomainError` message) plus a machine code.
 - A success format that returns the id of whatever was created (today's `Made` tuple and `ActionResult.id`).
@@ -97,7 +97,7 @@ operations on top.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -142,13 +142,13 @@ No screen of its own. Every route in `src/nav.ts` depends on it. Every screen th
 
 - Risk: the client-supplied `by` and `at` pattern from `StoreProvider` is copied into the server. Mitigation: the contract for operations has no actor or time fields at all.
 - Risk: error sentences diverge between server and screens. Mitigation: keep the sentences in the shared service functions and show them unchanged.
-- Risk: D1 is decided late and this layer is built twice. Mitigation: settle D1 before EP-01.
+- Risk: D1a (cloud provider) is decided late and the API's hosting and database connection change. Mitigation: keep provider details in environment configuration so the API code does not depend on the provider.
 - Risk: each feature epic builds its own API client. Mitigation: EP-08 builds one shared API client on this contract before any feature epic starts.
 - Risk: per-store `seq` id generation moves to the server unchanged and collides. Mitigation: ids come from the database (EP-02).
 
 ## 17. Open decisions and questions
 
-- D1: own Node API using the `express` already in `package.json`, or a managed platform with built-in database, auth, realtime and storage?
+- D1a: which cloud provider hosts the Node API and its database? D1 is decided: own Node + TypeScript API using the `express` already in `package.json`.
 - Which contract format is used between `web` and `api`: shared TypeScript types only, or a schema that also validates at runtime?
 - How is the API versioned, and how does an old browser tab learn that the contract changed?
 - How long are idempotency keys kept?

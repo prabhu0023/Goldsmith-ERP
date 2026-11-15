@@ -102,7 +102,7 @@ registration, outbound sending, the inbound webhook, and delivery and read recei
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -159,7 +159,7 @@ Mockups: `05-edit-propose-apply.svg`, `16-lead-inbox.svg`, `17-lead-create.svg`,
 ## 17. Open decisions and questions
 
 - D8: Meta Cloud API directly, or a Business Solution Provider? What is the current template approval lead time?
-- D10: does the provider store message data in the chosen region?
+- D10 is decided (India region): does the WhatsApp provider also store message data in India?
 - G20: how many sender numbers are there, and can "Priya (Manager)" be a sender when only three roles exist?
 - UX-SPEC §7 Q5: may the owner approve an edit-code request by replying on WhatsApp?
 - Which opt-out keywords are recognised, in which languages?

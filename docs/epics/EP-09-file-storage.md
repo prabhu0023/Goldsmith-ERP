@@ -26,7 +26,7 @@ serving and access control.
 
 - Upload of image files (and PO document files such as PDF) through the API.
 - Resizing to thumbnail and display sizes.
-- Storage in object storage with a database record per file.
+- Storage in the cloud provider's S3-compatible object storage (D1, Option C), in an India region (D10), with a database record per file. Only the Node API holds storage credentials; browsers and the karigar phone upload and download through the API.
 - Serving files through signed, time-limited access, never public URLs by default.
 - Access control per file, derived from what it is attached to (piece, order copy, job, lead) and the caller's role.
 - Attaching files to a piece (`Piece.photos`), an order copy (`OrderCopy.refImages`), a karigar job (`KarigarJob.refImage`, bench photo), and a lead (PO attachment).
@@ -90,7 +90,7 @@ serving and access control.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -115,7 +115,7 @@ photo), `catalogue` (shared pieces). Mockups: `21-tag-one-item.svg`, `07-qc-chec
 
 ## 13. Non-functional requirements
 
-- Security: files served only by signed, expiring links; access checked against the owning entity and role on every link request; no public bucket by default.
+- Security: files served only by signed, expiring links issued and served by the Node API on the shop's own domain, never direct storage URLs; access checked against the owning entity and role on every link request; no public bucket by default.
 - Personal data: PO images and files are personal data; they are kept only as long as the retention rule says and are covered by deletion requests (EP-39).
 - Performance: thumbnails let list screens load under 2 seconds on a shop connection; full images load on demand.
 - Availability and recovery: object storage is included in the backup plan (EP-38).
@@ -141,12 +141,11 @@ photo), `catalogue` (shared pieces). Mockups: `21-tag-one-item.svg`, `07-qc-chec
 - Risk: karigars see customer details inside a reference image taken from a PO. Mitigation: reference images are chosen explicitly when building the order copy (EP-19), never copied automatically from PO attachments.
 - Risk: phone photos are large and slow on shop connections. Mitigation: resize on upload and serve thumbnails in lists.
 - Risk: storage grows without limit. Mitigation: decide retention per file class before launch.
-- Risk: storage region breaks the personal-data rule. Mitigation: place storage in the D10 region.
+- Risk: storage region breaks the personal-data rule. Mitigation: the bucket is in an India region (D10, decided) of the same provider as the database.
 
 ## 17. Open decisions and questions
 
-- D1: is file storage the managed platform's storage or a separate object store?
-- D10: which region holds the files?
+- D1a: which cloud provider's S3-compatible storage holds the files? It is the same provider as the database and the API, in an India region (D10, decided).
 - How long are piece photos, reference images and PO attachments kept?
 - What is the maximum file size, and which types are allowed (images only, or PDF and other PO formats)?
 - G9: may a public catalogue link show piece photos to people who are not signed in?

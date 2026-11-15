@@ -39,13 +39,13 @@ what this epic provides, so it comes first.
 - Logs, error tracking, uptime checks and alerting (EP-37).
 - Backups and restore drills (EP-38).
 - Secrets rotation and penetration testing (EP-39).
-- Choice of hosting region. D10 is recorded here only as a constraint on where environments live; the region decision itself is open.
+- Choice of cloud provider (D1a, open). D10 is decided (India region) and is recorded here as a constraint on where environments live.
 - The production front-end foundation (design system package, API client, signed-in shell). Owned by EP-08 Front-end production foundation (was gap G1).
 
 ## 6. Current state in the prototype
 
 - `package.json`: name `react-example`; scripts `dev` (`vite --port=3000 --host=0.0.0.0`), `build` (`vite build`), `preview`, `clean` (`rm -rf dist server.js`, but no `server.js` exists), `lint` (`tsc --noEmit`). There is no `test` script and no test runner.
-- `package.json` dependencies already list `express` ^4.21.2, `dotenv` ^17.2.3, `@google/genai` ^2.4.0, and dev dependencies `tsx` ^4.21.0, `@types/express`. None of them is used by any file in `src/`. They hint at an own Node server (D1 option b) that was never written.
+- `package.json` dependencies already list `express` ^4.21.2, `dotenv` ^17.2.3, `@google/genai` ^2.4.0, and dev dependencies `tsx` ^4.21.0, `@types/express`. None of them is used by any file in `src/`. They fit the own Node API decided under D1 (Option C), which was never written.
 - TypeScript is `typescript` ^7.0.2; `tsconfig.json` and `vite.config.ts` configure one browser package.
 - `.env.example` holds `GEMINI_API_KEY` and `APP_URL`, both described as injected by AI Studio at runtime. `README.md` gives AI Studio run instructions. `metadata.json` is AI Studio metadata.
 - `.gitignore` exists. The git root is the parent folder `/Users/prabhu.govindaraj/Documents/personalproject`, and this project is untracked inside it. The product repository must be created or re-rooted before CI can run on pushes.
@@ -75,7 +75,7 @@ what this epic provides, so it comes first.
 - BR-01-4. `src/domain/**` moves to a shared package used by the server as the authority and by the client for instant feedback. [PRODUCTION-SCOPE §8]
 - BR-01-5. `src/store/transitions.ts` becomes the server-side service layer, one function per endpoint, so the `api` package is where it lands. [PRODUCTION-SCOPE §8]
 - BR-01-6. Environments are dev, staging and production. [PRODUCTION-SCOPE §6 EP-01 scope]
-- BR-01-7. Hosting region is an open decision with India recommended for latency and personal-data law; environments must be placeable in the chosen region. [PRODUCTION-SCOPE §4 D10]
+- BR-01-7. Hosting is in an India region, for latency and personal-data law (D10, decided); every environment runs in an India region of the D1a cloud provider. [PRODUCTION-SCOPE §4 D10]
 
 ## 9. Data
 
@@ -86,7 +86,7 @@ what this epic provides, so it comes first.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform. This epic
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API. This epic
 exposes no product operations; the table lists the pipeline operations only.
 
 | Verb | Resource | Purpose | Who may call |
@@ -133,16 +133,16 @@ to `k-jobs`) is built and deployed through this pipeline. No mockup in `docs/ux/
 - Risk: the project is untracked inside a parent git root, so history and CI hooks attach to the wrong repository. Mitigation: create a dedicated repository for the product as the first story and move the code into it.
 - Risk: AI Studio injects `GEMINI_API_KEY` and `APP_URL` at runtime, and keeping that hosting couples the app to it. Mitigation: read all configuration from plain environment variables so hosting can change later.
 - Risk: domain rules get copied into `web` and `api` and drift apart. Mitigation: CI fails when `web` or `api` contains a file that duplicates a `shared` module; review rule that domain changes go in `shared` only.
-- Risk: the D1 choice changes the shape of the `api` package after the repo is set up. Mitigation: settle D1 before EP-01 starts, as PRODUCTION-SCOPE §4 asks.
+- Risk: the D1a cloud provider is chosen after the repo is set up and changes the deploy targets. Mitigation: settle D1a before the deploy stories start, and keep provider details in environment configuration.
 - Risk: unused dependencies (`express`, `tsx`, `dotenv`) stay in `web` and bloat it. Mitigation: move each to the package that uses it, or drop it, when the packages are split.
 
 ## 17. Open decisions and questions
 
-- D1: managed platform or own Node API? This decides whether the `api` package is a server project or a set of platform functions and policies.
-- D10: which hosting region do the environments live in, and does staging have to be in the same region as production?
+- D1a: which cloud provider hosts the environments? D1 is decided (Option C), so `api` is a Node + TypeScript server project.
+- D10 is decided (India region). Does staging have to be in the same India region as production?
 - Is AI Studio hosting kept for any environment, or replaced everywhere?
 - Where does the product repository live, given the project is untracked under the parent folder `/Users/prabhu.govindaraj/Documents/personalproject`?
-- Which CI service and which deploy targets are used? This depends on D1 and D10.
+- Which CI service and which deploy targets are used? This depends on D1a.
 - Does a preview deploy per branch help the team, or is staging enough?
 
 ## 18. Candidate stories

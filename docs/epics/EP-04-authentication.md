@@ -23,6 +23,7 @@ OTP send and verify, sessions, sign-out, lockout after failed attempts and the o
 
 ## 4. In scope
 
+- Sign-in, OTP and sessions are built in the team's own Node + TypeScript API (D1, Option C); no managed auth service is used.
 - Sign-in by the method D4 decides; the recommendation is phone plus WhatsApp OTP, with a password fallback for the owner.
 - OTP generation: 6 digits, single use, 10-minute expiry, rate limited.
 - OTP verification with results ok, wrong, expired.
@@ -98,7 +99,7 @@ OTP send and verify, sessions, sign-out, lockout after failed attempts and the o
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -157,7 +158,6 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 
 - D4: phone plus WhatsApp OTP, phone plus password, or email plus password? Is a password fallback kept for the owner?
 - D8: which WhatsApp provider sends the OTP, and how long does template approval take?
-- D1: is sign-in built on the managed platform's auth or in an own API?
 - How many failed attempts trigger lockout, and for how long?
 - How long does a session last, and is it different for the shop device, the owner and karigar phones?
 - Can two karigars share one phone, and how does sign-in tell them apart?

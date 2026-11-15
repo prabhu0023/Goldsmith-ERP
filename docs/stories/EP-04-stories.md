@@ -48,7 +48,7 @@ Role note: stories that describe sign-in from a person's view use Owner, Staff o
 - **Audit entry written:** No. This module creates and checks challenges; the sign-in outcomes are audited in EP-04-S14.
 - **Data changes:** Migration creates `otp_challenges` (id, userId, phone, code hash, issued at, expires at, used at, attempt count) as in epic section 9, with an index on phone and issued at.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: secure random source, hashed at rest, constant-time compare, plain code never written to logs (BR-04-1). Time: issued at and expires at computed on the server clock in UTC. Open decision D1: on a managed platform's auth this module may be replaced by the platform OTP; the acceptance criteria above still apply to whatever is used.
+- **Non-functional checks:** Security: secure random source, hashed at rest, constant-time compare, plain code never written to logs (BR-04-1). Time: issued at and expires at computed on the server clock in UTC. D1 is decided (Option C): this module is built in the Node API; no platform OTP service is used.
 - **Depends on:** EP-02-S1, EP-02-S3, EP-03-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -119,7 +119,7 @@ Role note: stories that describe sign-in from a person's view use Owner, Staff o
 - **Audit entry written:** Yes (written through EP-04-S14): actor, time, entity session, action `signed_in`, role, device label. No code.
 - **Data changes:** Updates `otp_challenges.used at`; inserts into `sessions`. Migration adds columns `role at issue`, `end reason` and `device label` to `sessions` (EP-02-S3 created id, userId, created, expires, ended).
 - **UI reference:** Not yet designed (OTP entry screen). Reuses the six boxes and paste support of `src/components/ui/OtpPanel.tsx`.
-- **Non-functional checks:** Security: session tokens are random and unguessable and stored hashed; the code is never logged. Concurrency: two devices submitting the same correct code at once create one session only. Time: created at and expires at in UTC from the server clock. Open decision D4 and D1: how the session is presented (cookie or bearer token) and whether the managed platform's auth issues it; the criteria hold for either.
+- **Non-functional checks:** Security: session tokens are random and unguessable and stored hashed; the code is never logged. Concurrency: two devices submitting the same correct code at once create one session only. Time: created at and expires at in UTC from the server clock. Open decision D4: how the session is presented (cookie or bearer token); the criteria hold for either. D1 is decided (Option C): the Node API issues and checks the session itself.
 - **Depends on:** EP-04-S2, EP-04-S3, EP-03-S3, EP-03-S6, EP-02-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -213,9 +213,9 @@ Role note: stories that describe sign-in from a person's view use Owner, Staff o
 - **Rules enforced on the server:** Limits apply before any lookup or delivery. Counters are kept per normalised phone and per device. Limit values come from environment variables; EP-39 sets the final values across the API.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Refused requests are counted, not audited; repeated abuse is reported through EP-37 and EP-39.
-- **Data changes:** None in the product database if counters are held in memory or a cache; otherwise a short-lived counter table. The choice follows D1.
+- **Data changes:** None in the product database if counters are held in a cache shared by the Node API instances; otherwise a short-lived counter table in PostgreSQL. The Node API owns the counters either way (D1, Option C).
 - **UI reference:** Not yet designed (sign-in screen).
-- **Non-functional checks:** Security: per phone and per device limits stop message flooding. Personal data: counters key on a hash of the phone, not the plain number. Availability: limits survive one server restart if more than one api instance runs. Open decision D1: managed platforms may provide their own OTP rate limit.
+- **Non-functional checks:** Security: per phone and per device limits stop message flooding. Personal data: counters key on a hash of the phone, not the plain number. Availability: limits survive one server restart if more than one api instance runs. D1 is decided (Option C): the Node API enforces this limit; no platform limit is relied on.
 - **Depends on:** EP-04-S3, EP-03-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -345,7 +345,6 @@ Copied from the epic's section 17. Not answered here.
 
 - D4: phone plus WhatsApp OTP, phone plus password, or email plus password? Is a password fallback kept for the owner? (EP-04-S3, S5, S10)
 - D8: which WhatsApp provider sends the OTP, and how long does template approval take? (EP-04-S4)
-- D1: is sign-in built on the managed platform's auth or in an own API? (EP-04-S2, S5, S9)
 - How many failed attempts trigger lockout, and for how long? (EP-04-S8, S10)
 - How long does a session last, and is it different for the shop device, the owner and karigar phones? (EP-04-S12)
 - Can two karigars share one phone, and how does sign-in tell them apart? (EP-04-S3)

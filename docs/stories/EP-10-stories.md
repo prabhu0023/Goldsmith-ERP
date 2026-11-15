@@ -24,7 +24,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 - **Audit entry written:** No. Registering or running a job changes no business record; changes made by a handler are audited in EP-10-S12.
 - **Data changes:** Adds the JobDefinition table (name, schedule as cron-like or delay, handler, max attempts) and a pending-job store (job name, due at UTC, payload, idempotency key) by migration (EP-02-S1).
 - **UI reference:** No screen
-- **Non-functional checks:** Time: due times stored in UTC. Performance: a due job starts within one minute of its due time (epic section 13). Security: internal operations unreachable from browser sessions. Open decision D1: the scheduler is a managed platform feature or an own worker process; the criteria hold for either.
+- **Non-functional checks:** Time: due times stored in UTC. Performance: a due job starts within one minute of its due time (epic section 13). Security: internal operations unreachable from browser sessions. D1 is decided (Option C): the scheduler is a worker process of the Node API, and its pending jobs live in the managed PostgreSQL database.
 - **Depends on:** EP-01-S6, EP-02-S1, EP-03-S1, EP-03-S3, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -323,7 +323,6 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 Copied from the epic's section 17. Not answered here.
 
 - A2: does the 8-hour SLA count shop hours or clock hours? If shop hours, where does the shop-hours calendar live (EP-13)? (EP-10-S5, S11)
-- D1: is the scheduler a managed platform feature or an own worker process? (EP-10-S1, S3, S11)
 - Who may see job run history and retry a failed job: the owner, or only operations? (EP-10-S13)
 - How often is a karigar reminded while a job stays overdue: once, or every day? (EP-10-S7)
 - G17: are broadcasts scheduled by this scheduler, and who owns that trigger? (EP-10-S1)

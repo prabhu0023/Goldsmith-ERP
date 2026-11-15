@@ -103,7 +103,7 @@ fails. It runs continuously alongside every epic from EP-03 onwards.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -168,7 +168,6 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 - G11: which list of assertions is authoritative now that `scripts/verify-domain.ts` is gone (PRODUCTION-SCOPE says 88, review.md says 72)?
 - G10: is the integer unit 0.0001 g, or a finer unit so the ceiling half-steps are whole numbers?
 - G24: does "EP-03 onwards" include EP-41 to EP-43?
-- D1: on a managed platform, how are server-side policies tested locally?
 - Which end-to-end flows are required before launch, and which can follow?
 - Q5d: what is the expected outcome for the last-digit middle case, so it can be tested?
 - What test tooling is used for the web app and the karigar PWA?

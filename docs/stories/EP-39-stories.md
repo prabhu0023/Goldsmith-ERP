@@ -218,7 +218,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 - **Audit entry written:** Yes: actor System, time, entity (deletion request id), action `deletion_run_done`, scope of erasure, no personal values. The customer erase writes its own `customer_erased` entry (EP-17-S14).
 - **Data changes:** Updates `customers` through EP-17-S13; clears customer name and phone on linked leads; deletes linked file records and objects (EP-09); updates `deletion_requests` (status `done`, completed at, scope of erasure).
 - **UI reference:** No screen. The result shows on the deletion request panel on `customers` (not yet designed).
-- **Non-functional checks:** Personal data: deletion covers EP-09 file storage (epic section 13). Precision: piece history weights stay integer units of 0.0001 g, shown as 78.4000 g. Audit: no deleted value copied into new entries. Availability: the written procedure says how deletions are reapplied after a restore (EP-38). Open decision G22: how deletion applies to audit entries that name a customer. Open decision D10: whether personal data must stay in India.
+- **Non-functional checks:** Personal data: deletion covers EP-09 file storage (epic section 13). Precision: piece history weights stay integer units of 0.0001 g, shown as 78.4000 g. Audit: no deleted value copied into new entries. Availability: the written procedure says how deletions are reapplied after a restore (EP-38). Open decision G22: how deletion applies to audit entries that name a customer. D10 is decided (India region) for the system's own hosting; whether outside tools must also keep personal data in India is still open.
 - **Depends on:** EP-39-S8, EP-17-S9, EP-17-S13, EP-17-S14, EP-09-S1, EP-09-S11, EP-09-S12, EP-28-S1, EP-29-S4, EP-29-S7, EP-10-S4, EP-38-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -314,7 +314,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 - **Audit entry written:** No in the product audit log. The SecretRotation record holds secret name, rotated at and rotated by.
 - **Data changes:** Adds a SecretRotation record (secret name, rotated at, rotated by) kept in an operations table outside the business schema. Adds the rotation procedure document.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: secrets never in the repo (BR-39-4). Availability: rotation causes no downtime. Open decision D1: on a managed platform some keys are rotated in the platform console; the procedure names those steps.
+- **Non-functional checks:** Security: secrets never in the repo (BR-39-4). Availability: rotation causes no downtime. Open decision D1a: the database and storage credentials come from the cloud provider, so some are rotated in that provider's console or key service; the procedure names those steps once the provider is chosen.
 - **Depends on:** EP-01-S6, EP-01-S10, EP-12-S1, EP-04-S5, EP-37-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -372,7 +372,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 
 Copied from the epic's section 17. Not answered here.
 
-- D10: must all personal data, backups and logs stay in India? (EP-39-S9)
+- D10 is decided (India region) for the system's own hosting. Must every outside tool that holds personal data, backups or logs also keep them in India? (EP-39-S9)
 - G22: how does a deletion request apply to audit entries that name a customer? (EP-39-S9)
 - G9: should a public catalogue link exist, how long does it last, and what may it show? (EP-39-S14)
 - G12: which settings are owner-only, and is the pricing switch audited? (EP-39-S11)

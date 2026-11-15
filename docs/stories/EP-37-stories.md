@@ -2,7 +2,7 @@
 
 Epic document: [EP-37 Observability](../epics/EP-37-observability.md)
 
-Role note: this is a layer E operations epic with no shop-facing screen. Stories use "System" for the logger, error tracker, uptime checker, metrics and alerting acting on their own, and "Developer" for the operator, the person who runs the system and receives and acknowledges alerts. Who else receives alerts (for example the owner) is an open question, so no story assumes the Owner role reads logs or dashboards. Seed users named in criteria are Sanjay Seth (Owner), Rajesh Verma (Staff) and Lakshmi Devi (Karigar). Operator tools (logs, dashboards, alerts) live in the chosen monitoring tool; which parts come built in depends on D1.
+Role note: this is a layer E operations epic with no shop-facing screen. Stories use "System" for the logger, error tracker, uptime checker, metrics and alerting acting on their own, and "Developer" for the operator, the person who runs the system and receives and acknowledges alerts. Who else receives alerts (for example the owner) is an open question, so no story assumes the Owner role reads logs or dashboards. Seed users named in criteria are Sanjay Seth (Owner), Rajesh Verma (Staff) and Lakshmi Devi (Karigar). Operator tools (logs, dashboards, alerts) live in the chosen monitoring tool; which parts come built in depends on the D1a cloud provider.
 
 ---
 
@@ -24,7 +24,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Application logs are not the audit log (EP-06); no business state changes.
 - **Data changes:** None in the product database. Adds a shared logger in `api` with the log line fields from epic section 9, and passes the request id into job, notification, WhatsApp and live-channel code.
 - **UI reference:** No screen
-- **Non-functional checks:** Performance: logging adds less than 5 ms to a request (proposed target, to confirm). Time: every line carries a UTC time (BR-37-7). Precision: log lines carry no business weights; if one ever must, it is an integer in units of 0.0001 g. Open decision D1: on a managed platform some request logs come built in, and the request id must still be carried into them.
+- **Non-functional checks:** Performance: logging adds less than 5 ms to a request (proposed target, to confirm). Time: every line carries a UTC time (BR-37-7). Precision: log lines carry no business weights; if one ever must, it is an integer in units of 0.0001 g. D1 is decided (Option C): the Node API writes these logs itself and carries the request id in every line. Open decision D1a: which provider log service receives them.
 - **Depends on:** EP-03-S3, EP-03-S4, EP-10-S2, EP-11-S13, EP-12-S3, EP-07-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -72,7 +72,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Error reports are operational data, not business changes.
 - **Data changes:** None in the product database. Adds Create client error report to the shared contract (EP-03-S1) and an error-reporting hook in `web`, the portal and `api`. Error reports are stored in the error tracking tool.
 - **UI reference:** No screen. Every route reports, including `today`, `decisions`, `parcel-match`, `stock-out` and `k-jobs`.
-- **Non-functional checks:** Personal data: reports carry user role only, no name, phone or customer data. Security: error tracking is visible only to operators. Open decision D10: whether the error tracking tool must store data in India.
+- **Non-functional checks:** Personal data: reports carry user role only, no name, phone or customer data. Security: error tracking is visible only to operators. D10 is decided (India region) for the system's own hosting; whether the error tracking tool must also store data in India is open.
 - **Depends on:** EP-37-S1, EP-37-S2, EP-03-S1, EP-03-S4, EP-08-S4, EP-20-S3, EP-01-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -217,7 +217,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Reading dashboards changes nothing.
 - **Data changes:** None in the product database. Adds dashboard definitions for staging and production in the monitoring tool.
 - **UI reference:** No screen. Dashboards live in the chosen tool (epic section 12).
-- **Non-functional checks:** Security: dashboards visible only to operators. Time: shown in Asia/Kolkata (BR-37-7). Personal data: no names or phones on any panel. Open decision D1: which metrics a managed platform provides built in. Open decision D10: monitoring tool region.
+- **Non-functional checks:** Security: dashboards visible only to operators. Time: shown in Asia/Kolkata (BR-37-7). Personal data: no names or phones on any panel. Open decision D1a: which metrics the chosen cloud provider offers built in for the Node API and the managed PostgreSQL database. D10 is decided (India region); whether the monitoring tool must also be in India is open.
 - **Depends on:** EP-37-S1, EP-37-S3, EP-37-S5, EP-37-S6, EP-37-S7, EP-37-S8, EP-01-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -264,7 +264,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. Deleting operational logs is not a business change.
 - **Data changes:** None in the product database. Sets the retention period on the logging, error tracking and metrics stores.
 - **UI reference:** No screen
-- **Non-functional checks:** Personal data: shorter retention limits exposure even though logs hold no personal data by design. Open question: how long logs are kept; criteria use "the agreed retention period". Open decision D10: log storage region.
+- **Non-functional checks:** Personal data: shorter retention limits exposure even though logs hold no personal data by design. Open question: how long logs are kept; criteria use "the agreed retention period". D10 is decided (India region) for the system's own hosting; whether an outside log tool must also store logs in India is open.
 - **Depends on:** EP-37-S1, EP-37-S3, EP-37-S4, EP-37-S7, EP-01-S6, EP-06-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -274,8 +274,8 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 
 Copied from the epic's section 17. Not answered here.
 
-- D1: on a managed platform, which logs and metrics come built in, and what still needs a separate tool? (EP-37-S1, S9)
-- D10: does the monitoring tool need to store data in India? (EP-37-S3, S9, S11)
+- D1a: which logs and metrics does the chosen cloud provider offer built in, and what still needs a separate tool? (EP-37-S1, S9)
+- D10 is decided (India region): does the monitoring tool also need to store data in India? (EP-37-S3, S9, S11)
 - Who receives alerts (developer, owner, both), by which channel, and at which hours? (EP-37-S5, S6, S10)
 - How long are logs kept? (EP-37-S11)
 - How many failed uptime checks raise an alert? (EP-37-S4)

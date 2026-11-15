@@ -24,7 +24,7 @@ retries, and idempotency so that each event is acted on exactly once.
 
 ## 4. In scope
 
-- A scheduler that runs registered jobs at a time, after a delay, or on a repeat.
+- A scheduler, built as a worker process of the team's own Node + TypeScript API (D1, Option C), that runs registered jobs at a time, after a delay, or on a repeat.
 - Idempotency keys so a trigger acts once even if the job runs twice (for example one breach alert per lead).
 - Retries with backoff and a final failed state.
 - A run history per job: started, finished, result, attempts.
@@ -96,7 +96,7 @@ retries, and idempotency so that each event is acted on exactly once.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -153,7 +153,6 @@ No screen of its own. Screens that depend on it: `leads` and `decisions` (late l
 ## 17. Open decisions and questions
 
 - A2: does the 8-hour SLA count shop hours or clock hours? If shop hours, where does the shop-hours calendar live (EP-13)?
-- D1: is the scheduler a managed platform feature or an own worker process?
 - Who may see job run history and retry a failed job: the owner, or only operations?
 - How often is a karigar reminded while a job stays overdue: once, or every day?
 - G17: are broadcasts scheduled by this scheduler, and who owns that trigger?

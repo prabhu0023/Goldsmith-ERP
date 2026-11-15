@@ -11,6 +11,7 @@ Decisions these stories follow:
 - English only in v1. Translation is EP-44 (Later).
 - No money in v1. Only EP-42 Pricing has price logic.
 - Weights are stored as integers in units of 0.0001 g and shown to 4 decimals.
+- Backend is decided (D1, Option C): the team's own Node + TypeScript API runs every rule, sign-in, sessions, the live channel and background jobs. The database is managed PostgreSQL (D2) in an India region (D10), with S3-compatible file storage, both on the same cloud provider as the API and reached only by the API over its private network. Browsers and the karigar phone talk only to the API. The cloud provider is still open (D1a). See `docs/decisions/D1-backend-approach.md`.
 
 Layers: A Platform foundation, B Master data, C Core gold pipeline, D Experience, E Hardware, scale and operations, F Later.
 

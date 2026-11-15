@@ -24,7 +24,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 - **Audit entry written:** No. The client changes no business record; each operation it calls writes its own entry on the server.
 - **Data changes:** None in the product database. Adds the API client module in `web`, built from the shared contract package (EP-03-S1).
 - **UI reference:** No screen
-- **Non-functional checks:** Security: the session token is never stored where scripts from other origins can read it (epic section 13). Concurrency: every action carries an idempotency key. Precision: weights pass through as integers in units of 0.0001 g; the client never converts them to floating point. Open decision D1: on a managed platform the client wraps the platform SDK behind the same typed calls; on an own Node API it is built on the EP-03 contract. The criteria hold for either.
+- **Non-functional checks:** Security: the session token is never stored where scripts from other origins can read it (epic section 13). Concurrency: every action carries an idempotency key. Precision: weights pass through as integers in units of 0.0001 g; the client never converts them to floating point. D1 is decided (Option C): the client is built on the EP-03 contract and calls only the Node API on the shop's own domain; it never connects to the database or storage directly.
 - **Depends on:** EP-03-S1, EP-03-S2, EP-03-S4, EP-03-S5, EP-03-S8, EP-04-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -192,7 +192,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 - **Audit entry written:** No. Receiving events changes nothing.
 - **Data changes:** None in the product database. Adds the event-to-query map in `web` and the live client state: connection status and last sequence number received.
 - **UI reference:** No screen
-- **Non-functional checks:** Performance: refetches are coalesced per query so the owner's screens do not storm the API. Security: the client subscribes only to entity channels for screens it has open, and the server checks each (EP-07-S4). Open decision D3: WebSocket, Server-Sent Events or a change feed decides how the hook connects; the map does not change.
+- **Non-functional checks:** Performance: refetches are coalesced per query so the owner's screens do not storm the API. Security: the client subscribes only to entity channels for screens it has open, and the server checks each (EP-07-S4). Open decision D3: WebSocket or Server-Sent Events from the Node API decides how the hook connects; the map does not change.
 - **Depends on:** EP-08-S2, EP-07-S2, EP-07-S3, EP-07-S4, EP-07-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -464,8 +464,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 
 Copied from the epic's section 17. Not answered here.
 
-- D1: managed platform or own Node API? It decides whether the client uses the platform's SDK or a client built on the EP-03 contract. (EP-08-S1)
-- D3: WebSocket, Server-Sent Events or a database change feed? It decides how the live hooks connect and how "reconnecting" is detected. (EP-08-S8, S10)
+- D3: WebSocket or Server-Sent Events from the Node API? It decides how the live hooks connect and how "reconnecting" is detected. (EP-08-S8, S10)
 - D6: does any of the karigar offline behaviour reach the web app, or is offline on the web read-only as proposed here? (EP-08-S11)
 - D7: does the shell carry a current branch, and can the owner switch it? (EP-08-S12, S14, S16)
 - How long may cached data be shown while reconnecting before the screen hides it? (EP-08-S10)

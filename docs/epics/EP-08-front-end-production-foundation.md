@@ -117,7 +117,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform. This epic
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API. This epic
 adds no server operation; it consumes these.
 
 | Verb | Resource | Purpose | Who may call |
@@ -186,12 +186,11 @@ to the reads it affects, and refetches them.
 - Risk: an event maps to too few reads and a screen stays stale. Mitigation: keep the event-to-query map in one place next to the catalogue, and test each event in EP-40.
 - Risk: refetch storms when many events arrive at once on the owner's screens. Mitigation: coalesce refetches per query within a short window.
 - Risk: the prototype's synchronous actions hide timing bugs that appear with a network (double submits, stale forms). Mitigation: disable a submit while it is in flight and reuse its idempotency key on retry.
-- Risk: the choice of D1 and D3 changes the client libraries late. Mitigation: keep screens behind this epic's hooks so only the data layer changes.
+- Risk: the choice of D3 changes the live client late. Mitigation: keep screens behind this epic's hooks so only the data layer changes.
 
 ## 17. Open decisions and questions
 
-- D1: managed platform or own Node API? It decides whether the client uses the platform's SDK or a client built on the EP-03 contract.
-- D3: WebSocket, Server-Sent Events or a database change feed? It decides how the live hooks connect and how "reconnecting" is detected.
+- D3: WebSocket or Server-Sent Events from the Node API? It decides how the live hooks connect and how "reconnecting" is detected.
 - D6: does any of the karigar offline behaviour reach the web app, or is offline on the web read-only as proposed here?
 - D7: does the shell carry a current branch, and can the owner switch it?
 - How long may cached data be shown while reconnecting before the screen hides it?

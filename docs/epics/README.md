@@ -220,12 +220,13 @@ for it. G1 to G9 come from `docs/MOCKUP-COVERAGE.md` §2; G10 to G26 were found 
 
 ## Open decisions
 
-Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. None is answered in these documents.
+Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. D1, D2 and D10 are decided; the rest are open.
 
 | # | Decision | Listed in |
 | --- | --- | --- |
-| D1 | Backend approach: managed platform or own Node API | EP-01, EP-03, EP-04, EP-07, EP-08, EP-09, EP-10, EP-37, EP-38, EP-40 |
-| D2 | Database: relational or document | EP-02 |
+| D1 | Backend approach. **Decided: Option C**, own Node + TypeScript API with managed PostgreSQL in an India region on the same cloud provider ([decision record](../decisions/D1-backend-approach.md)) | EP-01, EP-03, EP-04, EP-07, EP-08, EP-09, EP-10, EP-37, EP-38, EP-40 |
+| D1a | Cloud provider for the API, database and S3-compatible storage. **Open** | EP-01, EP-02, EP-03, EP-09, EP-37, EP-38 |
+| D2 | Database. **Decided: PostgreSQL** (managed, per D1) | EP-02 |
 | D3 | Live transport | EP-07, EP-08 |
 | D4 | Sign-in method | EP-04, EP-05, EP-16, EP-20 |
 | D5 | Karigar app: PWA or native | EP-20 |
@@ -233,7 +234,7 @@ Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. 
 | D7 | Branches: single shop or multiple | EP-02, EP-05, EP-07, EP-08, EP-13, EP-17, EP-18, EP-19, EP-21, EP-22, EP-24, EP-26, EP-28, EP-31, EP-32, EP-33, EP-35, EP-41 |
 | D8 | WhatsApp provider and template approval | EP-04, EP-11, EP-12, EP-24, EP-25, EP-29, EP-30, EP-33, EP-34 |
 | D9 | Scale integration: typed or read from the balance | EP-14, EP-21, EP-36 |
-| D10 | Hosting region | EP-01, EP-02, EP-09, EP-12, EP-29, EP-37, EP-38, EP-39 |
+| D10 | Hosting region. **Decided: India region**; the exact region follows D1a | EP-01, EP-02, EP-09, EP-12, EP-29, EP-37, EP-38, EP-39 |
 
 Other open items and where they are listed:
 

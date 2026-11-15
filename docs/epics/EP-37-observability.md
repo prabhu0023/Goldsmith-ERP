@@ -90,7 +90,7 @@ tokens or customer personal data.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -138,12 +138,12 @@ Neutral to D1: each operation can be an endpoint on an own API or a function/pol
 - Risk: an OTP or token reaches logs through a generic request logger. Mitigation: redact by field name at the logger and test it in EP-40.
 - Risk: too many alerts and the operator ignores them. Mitigation: alert only on exhausted retries and breached targets, and group repeats.
 - Risk: nobody is named to receive alerts. Mitigation: agree the alert route before launch (EP-41 checklist).
-- Risk: the monitoring tool stores data outside India. Mitigation: check its region against D10 and keep personal data out of it.
+- Risk: the monitoring tool stores data outside India. Mitigation: check its region against D10 (India region, decided) and keep personal data out of it.
 
 ## 17. Open decisions and questions
 
-- D1: on a managed platform, which logs and metrics come built in, and what still needs a separate tool?
-- D10: does the monitoring tool need to store data in India?
+- D1a: which logs and metrics does the chosen cloud provider offer built in, and what still needs a separate tool?
+- D10 is decided (India region): does the monitoring tool also need to store data in India?
 - Who receives alerts (developer, owner, both), by which channel, and at which hours?
 - How long are logs kept?
 - How many failed uptime checks raise an alert?

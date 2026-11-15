@@ -24,7 +24,7 @@ catch-up, and presence on shared parcels.
 
 ## 4. In scope
 
-- An authenticated push connection from every open web and karigar client (transport per D3).
+- An authenticated push connection from every open web and karigar client to a push service in the team's own Node + TypeScript API (D1, Option C; transport per D3).
 - Subscriptions by user, by role, and by entity (for example one parcel), with the permission check from EP-05 applied to every subscription.
 - The event catalogue of PRODUCTION-SCOPE section 1 (10 events) with an envelope: event name, entity type, entity id, version, time, sequence number.
 - Publishing an event only after the operation's transaction commits.
@@ -75,7 +75,7 @@ catch-up, and presence on shared parcels.
 - BR-07-4. A karigar sees only the jobs issued to him and never prices, customers, leads or stock. [mockup 11]
 - BR-07-5. Deactivating a user ends access at once. [PRODUCTION-SCOPE §5 Security; §1 live events]
 - BR-07-6. The server is authoritative; the browser only displays. [PRODUCTION-SCOPE §1 Authoritative]
-- BR-07-7. Live transport is WebSocket or a managed realtime feed, and needs two-way for presence. [PRODUCTION-SCOPE §4 D3]
+- BR-07-7. Live transport is WebSocket or Server-Sent Events, served by the Node API (D1, Option C), and needs two-way for presence. [PRODUCTION-SCOPE §4 D3]
 - BR-07-8. Multiple staff can tag one parcel live. [PRODUCTION-SCOPE §6 EP-21 scope]
 
 ## 9. Data
@@ -88,7 +88,7 @@ catch-up, and presence on shared parcels.
 
 ## 10. API surface
 
-Neutral to D1: each operation can be an endpoint on an own API or a function/policy on a managed platform.
+Per D1 (decided: Option C), each operation is an endpoint on the team's own Node + TypeScript API.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
@@ -157,8 +157,7 @@ on one parcel), `02-staff-home.svg` and `08-owner-home.svg` (live cards).
 
 ## 17. Open decisions and questions
 
-- D3: WebSocket, Server-Sent Events, or a database change feed? Presence needs two-way.
-- D1: is the live channel the managed platform's realtime feed or an own server?
+- D3: WebSocket or Server-Sent Events? Presence needs two-way. Either way it is built in the Node API (D1, Option C), not taken from a platform.
 - D6: how does the live channel behave for a karigar phone that is offline for hours?
 - D7: are channels scoped per branch?
 - What does presence mean exactly: "has the parcel open", or "is tagging an item now"?

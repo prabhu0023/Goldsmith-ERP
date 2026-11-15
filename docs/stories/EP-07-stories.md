@@ -24,7 +24,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. The audit entry belongs to the operation that caused the event (EP-06-S2); publishing changes no business record.
 - **Data changes:** Migration adds an `event_outbox` table: id, event name, entity type, entity id, entity version, audience, created at (UTC), sent at. The publisher reads unsent rows in id order.
 - **UI reference:** No screen
-- **Non-functional checks:** Concurrency: events leave only after commit, so a client never sees a rolled-back change (epic section 13). Availability: unsent rows survive a publisher crash or redeploy. Time: created at is server UTC. Open decision D1: on a managed platform the outbox may be replaced by the platform's change feed on committed rows, which gives the same after-commit guarantee. Open decision D3: the transport the publisher writes to is not chosen; the criteria hold for WebSocket, Server-Sent Events or a change feed.
+- **Non-functional checks:** Concurrency: events leave only after commit, so a client never sees a rolled-back change (epic section 13). Availability: unsent rows survive a publisher crash or redeploy. Time: created at is server UTC. D1 is decided (Option C): the outbox and the publisher run in the Node API, which is the live push service. Open decision D3: the transport the publisher writes to is not chosen; the criteria hold for WebSocket or Server-Sent Events.
 - **Depends on:** EP-02-S1, EP-03-S6, EP-03-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -70,9 +70,9 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Rules enforced on the server:** The connection is checked against the session store on open, the same check as an API request. The user id and role come from the session, never from the client. A connection whose session ends is closed by the server.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Opening a connection changes no business record; sign-in itself is audited by EP-04-S14.
-- **Data changes:** None in the product database. The server holds a connection record in memory or in the platform: connection id, user id, role, opened at.
+- **Data changes:** None in the product database. The Node API holds a connection record in memory: connection id, user id, role, opened at.
 - **UI reference:** No screen. The connection starts from the app shell for every route; the shell's states are built in EP-08.
-- **Non-functional checks:** Security: an unauthenticated connection is refused (FR-07-1). Performance: the connection is open within 2 seconds of the shell loading on a shop connection. Open decision D3: WebSocket, Server-Sent Events or a database change feed; presence (EP-07-S8) needs two-way, which rules out plain Server-Sent Events unless presence uses API calls. Open decision D1: own server or the managed platform's realtime feed. Open decision D4: the session comes from whichever sign-in method is chosen; the connection only checks that the session is valid.
+- **Non-functional checks:** Security: an unauthenticated connection is refused (FR-07-1). Performance: the connection is open within 2 seconds of the shell loading on a shop connection. Open decision D3: WebSocket or Server-Sent Events; presence (EP-07-S8) needs two-way, which rules out plain Server-Sent Events unless presence uses API calls. D1 is decided (Option C): the connection is served by the Node API on the shop's own domain. Open decision D4: the session comes from whichever sign-in method is chosen; the connection only checks that the Node API session is valid.
 - **Depends on:** EP-04-S5, EP-04-S11, EP-04-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -165,7 +165,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Rules enforced on the server:** Resume checks the session like a new connection (EP-07-S3). Replayed events go through the same permission filter as live ones (EP-07-S5), using the user's current role. The replay buffer keeps events for a fixed window; older gaps get "refetch everything".
 - **Live events emitted / consumed:** None of its own. Replays any catalogue event the client missed.
 - **Audit entry written:** No. Reconnecting changes no business record.
-- **Data changes:** Replay buffer: recent events with sequence number, kept for the retention window, either as sent rows in `event_outbox` kept for that window or in the platform's history. A cleanup removes rows older than the window.
+- **Data changes:** Replay buffer: recent events with sequence number, kept as sent rows in `event_outbox` for the retention window. A cleanup removes rows older than the window.
 - **UI reference:** No screen of its own. The "Reconnecting" state shown in the shell is built in EP-08.
 - **Non-functional checks:** Availability: reconnect is automatic and catches up without a full reload when the gap is short (epic section 13). Concurrency: replayed events arrive in sequence order. Security: replay is filtered by the current permissions. Open question: the replay buffer length is not decided; the criteria use "the retention window" and a test value of 5 minutes until it is. Open decision D6: a karigar phone offline for hours will always exceed the buffer and refetch.
 - **Depends on:** EP-07-S2, EP-07-S3, EP-07-S5
@@ -296,8 +296,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 
 Copied from the epic's section 17. Not answered here.
 
-- D3: WebSocket, Server-Sent Events, or a database change feed? Presence needs two-way. (EP-07-S1, S3, S8)
-- D1: is the live channel the managed platform's realtime feed or an own server? (EP-07-S1, S3)
+- D3: WebSocket or Server-Sent Events? Presence needs two-way. Either way it is built in the Node API (D1, Option C), not taken from a platform. (EP-07-S1, S3, S8)
 - D6: how does the live channel behave for a karigar phone that is offline for hours? (EP-07-S6, S7)
 - D7: are channels scoped per branch? (EP-07-S2, S4, S8, S9, S11)
 - What does presence mean exactly: "has the parcel open", or "is tagging an item now"? (EP-07-S8)
