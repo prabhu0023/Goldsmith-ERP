@@ -163,7 +163,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - G14: can one hand-over carry several jobs?
 - Can an order copy be edited after send, and can a job be cancelled after accepted?
 - G4: which job figures feed the karigar scorecard?
-- D7: are jobs per branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); jobs belong to the shop.
 
 ## 18. Candidate stories
 

@@ -7,7 +7,7 @@ epic, ready for the story template in the appendix of PRODUCTION-SCOPE.
 
 Sources used for every document:
 
-- `docs/PRODUCTION-SCOPE.md`: titles, scope lines, dependencies, live events (§1), decisions D1 to D10 (§4), non-functional requirements (§5), milestones (§7).
+- `docs/PRODUCTION-SCOPE.md`: titles, scope lines, dependencies, live events (§1), decisions D1 to D10 and D4a (§4), non-functional requirements (§5), milestones (§7).
 - `docs/ux/SCOPE-ANALYSIS.md`: open questions, assumptions A1 to A5 and appendices A to I.
 - `docs/ux/UX-REDESIGN-SPEC.md` and the mockups in `docs/ux/mockups/`.
 - `docs/MOCKUP-COVERAGE.md`: the screen to epic map, gaps G1 to G9 and the screens never designed.
@@ -41,7 +41,7 @@ as gap G10. Money appears only in EP-42; other epics mention the nullable value 
 | EP-10 | [Background jobs](EP-10-background-jobs.md) | A | M1 Platform | EP-03 | Not built |
 | EP-11 | [Notifications engine](EP-11-notifications-engine.md) | A | M1 Platform | EP-07, EP-10, EP-08 | Not built |
 | EP-12 | [WhatsApp integration](EP-12-whatsapp-integration.md) | A | M1 Platform | EP-11 | Not built |
-| EP-13 | [Branches and shop settings](EP-13-branches-and-shop-settings.md) | B | M2 Masters | EP-05, EP-08 | Partial |
+| EP-13 | [Shop settings](EP-13-shop-settings.md) | B | M2 Masters | EP-05, EP-08 | Partial |
 | EP-14 | [Scale registry](EP-14-scale-registry.md) | B | M2 Masters | EP-02, EP-13, EP-08 | Partial |
 | EP-15 | [Reference data](EP-15-reference-data.md) | B | M2 Masters | EP-02, EP-08 | Partial |
 | EP-16 | [Karigar master](EP-16-karigar-master.md) | B | M2 Masters | EP-05, EP-08 | Partial |
@@ -73,9 +73,11 @@ as gap G10. Money appears only in EP-42; other epics mention the nullable value 
 | EP-42 | [Pricing](EP-42-pricing.md) | F | None (later) | EP-22, EP-26, EP-08 | Partial |
 | EP-43 | [Staff gamification](EP-43-staff-gamification.md) | F | None (later) | EP-26, EP-08 | Partial |
 | EP-44 | [Localisation](EP-44-localisation.md) | F | None (later) | EP-08, EP-20, EP-12 | Not built |
+| EP-45 | [Shop setup wizard](EP-45-shop-setup-wizard.md) | B | M2 Masters | EP-04, EP-05, EP-08, EP-09, EP-11, EP-13, EP-14 | Not built |
 
 Layers: A Platform foundation, B Master data, C Core gold pipeline, D Experience, E Hardware, scale and operations,
-F Later. Totals by status: Built 3, Partial 25, Not built 13, N/A 3 (44 epics).
+F Later. Totals by status: Built 3, Partial 25, Not built 14, N/A 3 (45 epics). EP-45 is numbered 45 to avoid
+renumbering; it belongs to Layer B and milestone M2 and depends only on lower-numbered epics.
 
 ## Coverage matrix
 
@@ -118,8 +120,9 @@ states, and live updates. The table lists the feature epics that own each route'
 | `catalogue` | CatalogueShare | EP-34, EP-39 (public link review, G9) |
 | `k-jobs` | KarigarPhone | EP-20, EP-44 (language toggle, later) |
 
-Epics that need a screen with no route id today: EP-04 (sign-in), EP-11 (notification centre, G21), EP-35 (report
-hub), EP-39 (access review), EP-41 (imports, parallel run, go-live checklist), EP-43 (staff performance view).
+Epics that need a screen with no route id today: EP-04 (sign-in, set password, forgot password), EP-11 (notification
+centre, G21), EP-35 (report hub), EP-39 (access review), EP-41 (imports, parallel run, go-live checklist), EP-43 (staff
+performance view), EP-45 (first-run setup wizard).
 Layer A, B and E epics without a screen say so in their section 12.
 
 ### Mockup files in `docs/ux/mockups/` to epics
@@ -140,8 +143,8 @@ All 28 mockup files are covered. Elements that land in other epics follow `docs/
 | `10-navigation-map.mmd` | EP-05 (three role homes) | EP-04 (sign in), EP-08 (signed-in shell), EP-35 (reports), EP-43 (staff performance), all pipeline epics |
 | `11-roles-and-permissions.svg` | EP-05 | EP-24, EP-35, EP-40, EP-42 |
 | `12-state-lifecycles.svg` | EP-22 | EP-28, EP-19, EP-21, EP-23, EP-25, EP-27 |
-| `13-notifications-escalation.svg` | EP-32 | EP-11, EP-24, EP-28, EP-10, EP-19, EP-13, EP-35 (Reports rail item) |
-| `14-match-rule-any-parcel.svg` | EP-23 | EP-14, EP-21, EP-36, EP-40, EP-41 |
+| `13-notifications-escalation.svg` | EP-32 | EP-11, EP-24, EP-28, EP-10, EP-19, EP-13, EP-35 (Reports rail item), EP-45 (lead timer step) |
+| `14-match-rule-any-parcel.svg` | EP-23 | EP-14, EP-21, EP-36, EP-40, EP-41, EP-45 (scale step) |
 | `15-value-ready.svg` | EP-42 | EP-13 |
 | `16-lead-inbox.svg` | EP-28 | EP-29 |
 | `17-lead-create.svg` | EP-29 | EP-28, EP-17 (G7) |
@@ -152,7 +155,7 @@ All 28 mockup files are covered. Elements that land in other epics follow `docs/
 | `22-owner-clear-mismatch.svg` | EP-23 | EP-16 (G4), EP-40 |
 | `23-onboard-customer.svg` | EP-17 | EP-33, EP-39, EP-41, EP-42 |
 | `24-onboard-karigar.svg` | EP-16 | EP-18, EP-41, EP-44 (language choice, later; v1 English only) |
-| `25-onboard-staff.svg` | EP-05 | EP-04, EP-13, EP-39, EP-41, EP-43 |
+| `25-onboard-staff.svg` | EP-05 | EP-04, EP-13, EP-39, EP-41, EP-43, EP-45 (invite step) |
 | `26-wishes.svg` | EP-33 | EP-17, EP-39 |
 | `27-broadcast.svg` | EP-34 | EP-10, EP-12, EP-29, EP-39 |
 | `28-catalogue-share.svg` | EP-34 | EP-29, EP-39 (G9), EP-42 |
@@ -220,19 +223,20 @@ for it. G1 to G9 come from `docs/MOCKUP-COVERAGE.md` §2; G10 to G26 were found 
 
 ## Open decisions
 
-Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. D1, D2 and D10 are decided; the rest are open.
+Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. D1, D2, D4, D7 and D10 are decided; the rest are open.
 
 | # | Decision | Listed in |
 | --- | --- | --- |
-| D1 | Backend approach. **Decided: Option C**, own Node + TypeScript API with managed PostgreSQL in an India region on the same cloud provider ([decision record](../decisions/D1-backend-approach.md)) | EP-01, EP-03, EP-04, EP-07, EP-08, EP-09, EP-10, EP-37, EP-38, EP-40 |
+| D1 | Backend approach. **Decided: Option C**, own Node + TypeScript API with managed PostgreSQL in an India region on the same cloud provider ([decision record](../decisions/D1-backend-approach.md)) | Decided; see decision record |
 | D1a | Cloud provider for the API, database and S3-compatible storage. **Open** | EP-01, EP-02, EP-03, EP-09, EP-37, EP-38 |
 | D2 | Database. **Decided: PostgreSQL** (managed, per D1) | EP-02 |
 | D3 | Live transport | EP-07, EP-08 |
-| D4 | Sign-in method | EP-04, EP-05, EP-16, EP-20 |
+| D4 | Sign-in method. **Decided: phone number + password**; activation and reset links by email; no OTP sign-in in v1 ([decision record](../decisions/D4-sign-in.md)) | Decided; see decision record (noted in EP-04, EP-05, EP-16, EP-20, EP-25) |
+| D4a | Email provider for activation and reset emails. **Open** | EP-04, EP-11, EP-45 |
 | D5 | Karigar app: PWA or native | EP-20 |
 | D6 | Offline for karigars | EP-07, EP-08, EP-20 |
-| D7 | Branches: single shop or multiple | EP-02, EP-05, EP-07, EP-08, EP-13, EP-17, EP-18, EP-19, EP-21, EP-22, EP-24, EP-26, EP-28, EP-31, EP-32, EP-33, EP-35, EP-41 |
-| D8 | WhatsApp provider and template approval | EP-04, EP-11, EP-12, EP-24, EP-25, EP-29, EP-30, EP-33, EP-34 |
+| D7 | Branches. **Decided: one shop, no branches**; a shop ID on every business table; multi-shop deferred ([decision record](../decisions/tenancy-and-branches.md)) | Decided; see decision record (noted in EP-02, EP-05, EP-07, EP-08, EP-13, EP-17, EP-18, EP-19, EP-21, EP-22, EP-24, EP-26, EP-28, EP-31, EP-32, EP-33, EP-35, EP-41) |
+| D8 | WhatsApp provider and template approval | EP-11, EP-12, EP-24, EP-25, EP-29, EP-30, EP-33, EP-34 |
 | D9 | Scale integration: typed or read from the balance | EP-14, EP-21, EP-36 |
 | D10 | Hosting region. **Decided: India region**; the exact region follows D1a | EP-01, EP-02, EP-09, EP-12, EP-29, EP-37, EP-38, EP-39 |
 

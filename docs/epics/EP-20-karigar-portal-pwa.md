@@ -38,7 +38,7 @@ parcel that starts intake. It is an installable web app (D5), with large touch t
 ## 5. Out of scope
 
 - Creating jobs and order copies (EP-19).
-- Sign-in, OTP and sessions (EP-04) and the user account (EP-05).
+- Sign-in with phone and password, activation and reset links, and sessions (EP-04) and the user account (EP-05).
 - Karigar master data (EP-16).
 - Photo storage and resizing (EP-09).
 - Live transport (EP-07) and notification delivery (EP-11).
@@ -155,7 +155,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 ## 16. Risks
 
 - Risk: weak signal loses updates. Mitigation: queue with client ids and replay safely (D6).
-- Risk: karigars share a phone, so own-jobs filtering fails. Mitigation: resolve D4 before build.
+- Risk: karigars share a phone, so own-jobs filtering fails. Mitigation: D4 decided that phone numbers are unique, so each karigar account has its own phone.
 - Risk: voice notes bring storage and language-recognition cost. Mitigation: treat G16 as a separate story after the core flow.
 - Risk: a queued "hand over" arrives after the owner stopped the job. Mitigation: the server re-checks state on replay.
 
@@ -163,7 +163,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 - D5: installable web app or native app?
 - D6: no offline, read-only offline, or queued updates?
-- D4: can a karigar sign in on a shared phone?
+- D4 is decided: phone and password, phone numbers unique, so a karigar cannot sign in on a shared phone number ([decision record](../decisions/D4-sign-in.md)).
 - D6 side question: what happens to a queued update that is no longer valid when it syncs?
 - G14: can one hand-over carry several jobs (mockup 12)?
 - G16: are bench voice notes ("Type or speak") in scope, and in which languages?

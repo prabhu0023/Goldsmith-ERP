@@ -21,7 +21,7 @@ production data.
 - Owner: opens the report hub, picks a section and a period, reads the figures, and exports if export is decided.
 - Staff: not involved by default. Mockup 11 lists "Read every section's report" only under the owner; whether staff see any report is an open question.
 - Karigar: not involved. Mockup 11 says a karigar never sees "any other karigar's work or scorecard".
-- System: computes each figure from the stored ledgers, pieces, parcels, leads, jobs and outreach records, in integer weight units, for the chosen period and branch.
+- System: computes each figure from the stored ledgers, pieces, parcels, leads, jobs and outreach records, in integer weight units, for the chosen period, scoped to the one shop.
 
 ## 4. In scope
 
@@ -31,7 +31,7 @@ production data.
 - Leads report: leads by source (counter, email, WhatsApp), by state, SLA met versus late, items routed to stock versus make, lost leads.
 - Intake report: parcels received, verdicts (exact, last digit, mismatch), owner clearances (send back, re-check, accept loss) and grams of accepted loss with reasons, stop-the-line problems raised and cleared.
 - Outreach report: wishes sent, broadcasts sent, audience sizes, replies, and leads created from replies.
-- A period picker (date range) and, if D7 says multi-branch, a branch picker with "All branches".
+- A period picker (date range). No branch picker: one shop, no branches (D7).
 - Export of a section report, if decided.
 - Owner-only access enforced on the server.
 
@@ -60,7 +60,7 @@ production data.
 - Seed history that a report could read: `StockOutRecord` rows in `src/data/seed.ts`, `Karigar.gapsMg`, `Parcel.verdict`, `Parcel.lossG`, `Broadcast`, `WishRecord`.
 - Mockup entry points only: owner rail "Reports" in `13-notifications-escalation.svg`, "Money and stock" rail item in `08-owner-home.svg`, "Read every section's report" in `11-roles-and-permissions.svg`, node `REPORTS["Reports, section by section"]` in `10-navigation-map.mmd`.
 - Reusable: the selector logic (sum of pure gold, ageing in days, overdue days, SLA state from `src/domain/leads.ts`), `fmtG` and `fmtMg` formatting in `src/domain/weights.ts`, the `ui` component library for cards and tables.
-- Must be rebuilt server-side: every figure as a query over stored history for a period (the selectors only read the current in-memory state), owner-only access, branch scoping, export.
+- Must be rebuilt server-side: every figure as a query over stored history for a period (the selectors only read the current in-memory state), owner-only access, shop scoping, export.
 
 ## 7. Functional requirements
 
@@ -76,7 +76,7 @@ production data.
 - FR-35-10. Every figure is in grams or counts; no report shows a value, price or currency.
 - FR-35-11. Weight totals are computed from integer units and shown to four decimals of a gram; loss gaps may also be shown in milligrams.
 - FR-35-12. The server refuses a report request from anyone other than the owner, unless a decision grants staff a report.
-- FR-35-13. If D7 says multi-branch, the owner can choose one branch or all branches, and every figure respects that choice.
+- FR-35-13. Deferred: no branches in v1 (D7). Was: the owner can choose one branch or all branches. Every figure covers the one shop.
 - FR-35-14. The owner can export a section report, if export is decided, in the format decided.
 
 ## 8. Business rules
@@ -100,7 +100,7 @@ production data.
 - Read from pieces (EP-22, EP-26, EP-27): status, gross and stone weight (integer, units of 0.0001 g), tagged time, sold time, scrapped time.
 - Read from leads (EP-28 to EP-30): source, state, arrived time, SLA outcome, item routes.
 - Read from outreach (EP-33, EP-34): wish records, broadcasts, recipients, replies.
-- Optional ReportExport record if export is audited: requested by, section, period, branch, time.
+- Optional ReportExport record if export is audited: requested by, section, period, time.
 - Value sockets on pieces, customers and stock-outs are not read by any report; they stay nullable and unused until EP-42.
 
 ## 10. API surface
@@ -125,7 +125,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 - Route ids: none exist. The report hub needs a new route id; the owner reaches it from the owner rail next to `decisions`.
 - Mockups: entry points only. `13-notifications-escalation.svg` (owner rail item "Reports"), `08-owner-home.svg` (rail item "Money and stock"; figures "Gold on the floor", "Gold with karigars", "Metal loss", "Pieces that went out in October", karigar "Rating"), `11-roles-and-permissions.svg` ("Read every section's report"), `10-navigation-map.mmd` (node "Reports, section by section").
-- Not yet designed (MOCKUP-COVERAGE §3: "Everything (never designed)"): report hub, section-report layout, period picker, branch picker, export. This epic needs UX design first.
+- Not yet designed (MOCKUP-COVERAGE §3: "Everything (never designed)"): report hub, section-report layout, period picker, export. This epic needs UX design first.
 
 ## 13. Non-functional requirements
 
@@ -161,7 +161,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 ## 17. Open decisions and questions
 
-- D7: are reports per branch, for all branches, or both?
+- D7 is decided: one shop, no branches; reports cover the shop ([decision record](../decisions/tenancy-and-branches.md)).
 - Which figures does each section show, beyond those listed in SCOPE-ANALYSIS App. F and mockup 08?
 - What periods are offered (day, week, month, custom), and what is the default?
 - Is export needed, and in which format?
@@ -184,5 +184,5 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 9. EP-35-S9: Owner can read the leads report
 10. EP-35-S10: Owner can read the intake report
 11. EP-35-S11: Owner can read the outreach report
-12. EP-35-S12: Owner can choose one branch or all branches (if D7 says multi-branch)
+12. EP-35-S12: Owner can choose one branch or all branches (Deferred: no branches in v1, D7)
 13. EP-35-S13: Owner can export a section report (if export is decided)

@@ -27,7 +27,7 @@ and moves the existing Security log screen onto the real data.
 - Entry fields: actor, actor role, time, entity type, entity id, action, before, after, reason, token reference.
 - A write on every state-changing operation, inside the same transaction, so a change without an entry cannot commit.
 - Extending the action list beyond today's 10 kinds to every transition, including those not audited today.
-- Recording a token reference, never the token value, for edits and OTP-related actions.
+- Recording a token reference, never the token value, for edits (the owner edit code); passwords and activation or reset links are never recorded.
 - Weights in entries recorded as integers in units of 0.0001 g and shown at four decimals.
 - The owner-only Security log screen on real data, with filters and pagination.
 - Optional tamper evidence (for example a hash chain), listed as an option to decide.

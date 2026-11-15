@@ -3,8 +3,9 @@
 ## 1. Summary
 
 The app holds customer names, phones, birthdays and anniversaries, and controls who may release gold, apply an
-edit or scrap a piece. This epic hardens it before launch. It adds rate limits on sign-in, OTP and edit-token
-requests and on the API as a whole; records customer consent for WhatsApp messages with time and source; gives
+edit or scrap a piece. This epic hardens it before launch. It adds rate limits on sign-in, reset-link and
+edit-token requests and on the API as a whole; reviews password storage, the 5-try lockout and the single-use
+email links of D4; checks that no operation reads or writes outside the caller's shop (D7); records customer consent for WhatsApp messages with time and source; gives
 customers a working opt-out and a deletion request flow under India's Digital Personal Data Protection Act, 2023;
 runs a periodic access review of who holds which role; rotates secrets; reviews the public catalogue link; and
 ends with an external penetration test. Legal obligations must be checked with a professional; this epic builds the
@@ -25,7 +26,9 @@ mechanisms.
 
 ## 4. In scope
 
-- Rate limiting on OTP requests, OTP verification, edit-token requests and token entry, and a general per-user and per-address limit on the API (filling the hook from EP-03).
+- Rate limiting on sign-in attempts, reset-link requests, edit-token requests and token entry, and a general per-user and per-address limit on the API (filling the hook from EP-03). There is no sign-in OTP to limit (D4).
+- Password and link review (D4): passwords stored only as salted hashes with a modern algorithm, minimum 8 characters; 5 wrong passwords lock the account for 15 minutes; activation (24 hours) and reset (1 hour) links single use, hashed at rest, never logged; the forgot-password screen reveals nothing about which numbers exist.
+- Shop isolation check (D7): every operation scopes reads and writes to the shop of the signed-in user, and no operation accepts a shop ID from the client.
 - A consent ledger: each grant or withdrawal of WhatsApp consent with customer, channel, time, source (counter, form, reply) and who recorded it.
 - Opt-out: a customer can withdraw consent by a reply such as "STOP" or at the counter; the opt-out applies to wishes and broadcasts at once.
 - A deletion request flow: request recorded, owner approves or records why it is refused, personal fields erased or anonymised across customer records, leads, PO attachments and files, completion recorded.
@@ -39,7 +42,7 @@ mechanisms.
 
 ## 5. Out of scope
 
-- Sign-in, OTP sending and session handling (EP-04).
+- Sign-in, password checks, activation and reset links, lockout and session handling (EP-04); this epic reviews and tests them.
 - The permission matrix and deactivation itself (EP-05).
 - The consent checkbox on the customer form and erase action on the customer record (EP-17).
 - The append-only audit store (EP-06).
@@ -66,8 +69,8 @@ mechanisms.
 
 ## 7. Functional requirements
 
-- FR-39-1. The server limits OTP requests per phone and per address within a time window and refuses further requests with a clear message.
-- FR-39-2. The server limits wrong OTP and edit-token entries per code and invalidates the code after the limit.
+- FR-39-1. The server limits sign-in attempts and reset-link requests per phone and per address within a time window and refuses further requests with a clear message.
+- FR-39-2. The server limits wrong edit-token entries per code and invalidates the code after the limit; wrong passwords lock the account after 5 tries for 15 minutes (EP-04-S8).
 - FR-39-3. The server applies a general request limit per user and per address on every operation.
 - FR-39-4. Every grant or withdrawal of WhatsApp consent writes a consent ledger entry with customer, time, source and who recorded it.
 - FR-39-5. A customer's current consent is the latest ledger entry; wishes and broadcasts read it at send time.
@@ -87,7 +90,7 @@ mechanisms.
 ## 8. Business rules
 
 - BR-39-1. Every permission is checked on the server; hiding a button is not a control. [PRODUCTION-SCOPE §5 Security]
-- BR-39-2. OTP and edit tokens are 6 digits, single use, 10-minute expiry, rate-limited, never logged in plain text. [PRODUCTION-SCOPE §5 Security]
+- BR-39-2. Owner edit codes (edit tokens) are 6 digits, single use, 10-minute expiry, rate-limited, never logged in plain text. Passwords are salted hashes with a modern algorithm; activation and reset links are single use with 24-hour and 1-hour expiry; neither is ever logged. [PRODUCTION-SCOPE §5 Security; D4]
 - BR-39-3. Sessions expire; deactivating a user ends their sessions at once. [PRODUCTION-SCOPE §5 Security]
 - BR-39-4. Secrets live in environment configuration, never in the repo. [PRODUCTION-SCOPE §5 Security]
 - BR-39-5. Record consent for WhatsApp messaging, honour opt-out, and support deletion requests; verify obligations with a professional. [PRODUCTION-SCOPE §5 Personal data]
@@ -138,7 +141,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 ## 13. Non-functional requirements
 
-- Security: rate limits apply before any OTP is sent; limits are per phone, per user and per address; the public link token cannot be guessed from piece ids.
+- Security: rate limits apply before any password is checked, link issued or edit code sent; limits are per phone, per user and per address; every query is scoped to the caller's shop (D7); the public link token cannot be guessed from piece ids.
 - Personal data: consent is checked at send time, not at draft time; a deletion completes within the period the professional advice sets; deletion covers files in EP-09 storage.
 - Audit: consent changes, deletion decisions and access reviews are appended to the audit log without copying the deleted personal values into new entries.
 - Concurrency: an opt-out that arrives during a broadcast send stops the remaining sends to that customer.
@@ -151,12 +154,13 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 ## 15. Epic acceptance criteria
 
-1. Given a phone number that has requested OTPs up to the limit, when another OTP is requested, then the server refuses it and no message is sent.
+1. Given a phone number that has requested reset links up to the limit, when another is requested, then the server refuses it and no email is sent; given 5 wrong passwords for one account, then it is locked for 15 minutes.
 2. Given Meera Iyer is opted in, when she replies "STOP" to a broadcast, then a withdrawal entry is recorded and the next morning's wishes skip her.
 3. Given an approved deletion request for a customer, when the deletion runs, then name, phone, address, birthday and anniversary are gone from customer, lead and file storage, and her piece history by tag and grams remains.
 4. Given a staff member, when they try to change an owner-only setting through the API, then the server refuses it (G12).
 5. Given an edit applied with a token, when the audit log is read, then it shows a token reference and not the six digits.
 6. Done when the penetration test report is received and each finding is fixed or accepted in writing.
+7. Given two shops' data in a test database, when every operation is called by a user of the first shop, then no record of the second shop is read or written, and a shop ID sent by the client is ignored (D7).
 
 ## 16. Risks
 
@@ -173,7 +177,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - G22: how does a deletion request apply to audit entries that name a customer?
 - G9: should a public catalogue link exist, how long does it last, and what may it show?
 - G12: which settings are owner-only, and is the pricing switch audited?
-- What rate limits apply to OTP requests, wrong entries and the general API?
+- What rate limits apply to sign-in attempts, reset-link requests, wrong edit-token entries and the general API?
 - How often is the access review run?
 - Who carries out the penetration test, and when?
 - Is a ticked-by-default consent box acceptable, or must staff ask each time?
@@ -184,7 +188,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 ## 18. Candidate stories
 
 1. EP-39-S1: System can store a consent ledger per customer
-2. EP-39-S2: System can rate-limit OTP and edit-token requests and entries
+2. EP-39-S2: System can rate-limit sign-in, reset-link and edit-token requests and entries
 3. EP-39-S3: System can apply a general request limit per user and address
 4. EP-39-S4: Staff can record a customer's consent or opt-out at the counter
 5. EP-39-S5: System can withdraw consent from a WhatsApp opt-out reply

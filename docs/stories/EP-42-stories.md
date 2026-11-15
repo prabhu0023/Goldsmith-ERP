@@ -292,7 +292,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 - **Audit entry written:** No. Reads change nothing.
 - **Data changes:** None in the product database. Adds Read Floor value to the shared contract, or a value field on Read Gold locations (EP-32-S9). Adds a `ValueSlot` socket for the band, which has none today.
 - **UI reference:** `docs/ux/mockups/08-owner-home.svg`, route `decisions`; `docs/ux/mockups/15-value-ready.svg` ("Worth at today's rate ₹1.34 Cr", "value band · hidden").
-- **Non-functional checks:** Precision: integer sums of 0.0001 g units and integer money, rounded once. Performance: band refreshes within about 1 second of a sale. Open question: per-purity rates change the floor value to a sum per purity. Open decision D7: whole shop or per branch.
+- **Non-functional checks:** Precision: integer sums of 0.0001 g units and integer money, rounded once. Performance: band refreshes within about 1 second of a sale. Open question: per-purity rates change the floor value to a sum per purity. D7 is decided: whole shop.
 - **Depends on:** EP-42-S6, EP-42-S8, EP-22-S10, EP-32-S2, EP-32-S9, EP-32-S12, EP-32-S13
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

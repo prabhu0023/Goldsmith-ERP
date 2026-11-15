@@ -5,8 +5,10 @@
 This epic turns the prototype's typed in-memory model into a real database. Today every lead, parcel, tag, edit and
 stock-out lives in browser memory and is lost on reload. The business needs these records to survive reloads, crashes
 and redeploys, and it needs gold weights stored exactly, because the parcel match gate compares weights to four
-decimals. This epic creates the schema for every entity in `src/types/jewellery.ts`, adds users, sessions and
-branches, sets integer weight units, and provides migrations and a development seed.
+decimals. This epic creates the schema for every entity in `src/types/jewellery.ts`, adds the shop, users and
+sessions, sets integer weight units, and provides migrations and a development seed. D7 is decided: one shop, no
+branches. Every business table still carries a shop ID from the first migration, so multi-shop later does not need a
+migration of every table.
 
 ## 2. Layer, milestone, status
 
@@ -23,7 +25,7 @@ branches, sets integer weight units, and provides migrations and a development s
 ## 4. In scope
 
 - A PostgreSQL schema (D2, decided) on the managed PostgreSQL database for every entity in `src/types/jewellery.ts`: Scale, Piece, PieceEdit, ParcelWeighing, ManifestRow, Parcel, Lead, LeadItem, LeadField, OrderCopy, KarigarJob, Karigar, StaffMember, Customer, HistoryRow, Problem, ScrapRequest, AuditEntry, StockOutRecord, PoolEntry, MetalPool, Broadcast, WishRecord, Settings.
-- New entities: users, sessions, branches.
+- New entities: shops, users, sessions. No branches table (D7).
 - Child tables for arrays now embedded in records: `Parcel.qcDone`, `Parcel.weighings`, `Parcel.manifest`, `Lead.items`, `Lead.fields`, `Broadcast.recipientIds`, `StockOutRecord.pieceIds`, `Karigar.gapsMg`, `Piece.photos`, `OrderCopy.refImages`.
 - Integer weight columns in units of 0.0001 g, with conversion helpers in the shared package.
 - Nullable money sockets from day one (`Piece.valueINR`, `Customer.budgetINR`, `Customer.spentINR`, `StockOutRecord.amountINR`), unused until EP-42.
@@ -31,7 +33,10 @@ branches, sets integer weight units, and provides migrations and a development s
 - A migrations tool and the first migration set.
 - A dev and staging seed built from `src/data/seed.ts` and `src/data/seedRows.ts`.
 - Id generation that keeps human-readable references (decision recorded as open, see section 17).
-- A branch key on every table if D7 says multi-branch.
+- A shop ID column (not null, foreign key to `shops`) on every business table from the first migration (D7 forward-compatibility rule).
+- Uniqueness scoped to the shop: tag number, HUID and phone are unique per shop ID, not across the database.
+- A `locations` table (id, shop ID, name) with one default row "Main shop" created with the shop, and a location ID (not null, foreign key to `locations`) on every record that holds or measures gold: pieces, parcels, parcel weighings (trays), pool entries and scales. The server sets it; the client never sends it (D7).
+- The user's email column (required, D4) and the password and link tables used by EP-04.
 
 ## 5. Out of scope
 
@@ -73,7 +78,9 @@ branches, sets integer weight units, and provides migrations and a development s
 - FR-02-10. A migration can be applied forward on staging and production without data loss, and the migration history is recorded.
 - FR-02-11. A seed command loads the `src/data/seed.ts` content into an empty development or staging database.
 - FR-02-12. The users table links each user to one role (`owner`, `staff`, `karigar`) and, for karigars, to one Karigar record.
-- FR-02-13. If D7 is multi-branch, every business table has a branch key and every query path can filter by it.
+- FR-02-13. Every business table has a shop ID column, not null, with a foreign key to `shops`; the data-access layer sets it from the signed-in user's session, never from the client (D7).
+- FR-02-14. Unique constraints on tag number, HUID and phone include the shop ID.
+- FR-02-15. Pieces, parcels, parcel weighings (trays), pool entries and scales each carry a not-null location ID; in v1 it is always the shop's default location "Main shop", set by the server.
 
 ## 8. Business rules
 
@@ -83,14 +90,19 @@ branches, sets integer weight units, and provides migrations and a development s
 - BR-02-4. Two staff selling the same piece must not both succeed; use transactions with row locks or version checks. [PRODUCTION-SCOPE §5 Concurrency]
 - BR-02-5. Store UTC; display Asia/Kolkata. [PRODUCTION-SCOPE §5 Time]
 - BR-02-6. Derived values such as net weight and the match verdict are recomputed by the server, not trusted from the client. [PRODUCTION-SCOPE §1 Authoritative]
-- BR-02-7. Branches must be decided before the schema, because adding them later means migrating every table. [PRODUCTION-SCOPE §4 D7]
+- BR-02-7. One shop, no branches in v1; every business table carries a shop ID from the first migration so multi-shop later does not mean migrating every table. [PRODUCTION-SCOPE §4 D7; decisions/tenancy-and-branches.md]
 - BR-02-8. There are three roles only: owner, staff, karigar. [SCOPE-ANALYSIS App. A; src/types/jewellery.ts RoleId]
-- BR-02-9. The schema covers every entity in `src/types/jewellery.ts` plus users, sessions and branches. [PRODUCTION-SCOPE §6 EP-02 scope]
+- BR-02-9. The schema covers every entity in `src/types/jewellery.ts` plus shops, users and sessions. [PRODUCTION-SCOPE §6 EP-02 scope]
+- BR-02-10. Tag number, HUID and phone are unique within a shop. [D7]
+- BR-02-11. Every record that holds or measures gold carries a location ID; v1 has one location, "Main shop"; transfers and per-location pools are deferred. [D7; decisions/tenancy-and-branches.md]
 
 ## 9. Data
 
-- Scale: id, name, `readabilityG` and `capacityG` (integer, units of 0.0001 g), branch key.
-- Piece: id, tag number, name, category, purity, `grossG` and `stoneG` (integer, units of 0.0001 g), stone count, HUID, status (six values), prevStatus, parcelId, stockOutId, `valueINR` (nullable value socket, unused until EP-42), version.
+- Every business table below also has a shop ID (not null, foreign key to Shop). It is not repeated on each line.
+- Location: id, shop ID, name (one row in v1, "Main shop", created with the shop).
+- Location ID (not null, set by the server) is carried by: Piece, Parcel, ParcelWeighing (tray), PoolEntry, Scale.
+- Scale: id, location ID, name, `readabilityG` and `capacityG` (integer, units of 0.0001 g).
+- Piece: id, tag number (unique per shop), name, category, purity, `grossG` and `stoneG` (integer, units of 0.0001 g), stone count, HUID (unique per shop when present), status (six values), prevStatus, parcelId, stockOutId, `valueINR` (nullable value socket, unused until EP-42), version.
 - PieceEdit: id, pieceId, field, before, after, reason, status (`proposed`, `token_sent`, `applied`, `refused`, `void`), token reference, tokenIssuedAt, proposedBy, version. Weight before/after values are integer, units of 0.0001 g.
 - Parcel: id (for example `BATCH-2026-044`), jobId, stage, status, resolution, verdict, `gapNetG` and `lossG` (integer, units of 0.0001 g), lossReason, version. Children: ParcelWeighing (scaleId, `grossG`, `stoneG`, integer, units of 0.0001 g), ManifestRow, QC ticks.
 - Lead, LeadItem (`approxWeightG`, integer, units of 0.0001 g; route kind and target id), LeadField (name, value, confidence).
@@ -99,7 +111,7 @@ branches, sets integer weight units, and provides migrations and a development s
 - Problem, ScrapRequest, StockOutRecord (`amountINR`: nullable value socket, unused until EP-42; child rows for pieceIds), AuditEntry.
 - MetalPool (`balanceG`, integer, units of 0.0001 g, version) and PoolEntry (`deltaG`, integer, units of 0.0001 g).
 - Broadcast (child rows for recipients), WishRecord, Settings.
-- New: User (id, name, phone, role, karigarId nullable, status active/deactivated, branch key), Session (id, userId, created, expires, ended), Branch (id, name).
+- New: Shop (id, name, address, GSTIN, logo key, setup completed at; one row in v1, created by the setup wizard EP-45), User (id, shop ID, name, phone unique per shop, email required, role, karigarId nullable, status `pending_activation`/`active`/`deactivated`), Session (id, shop ID, userId, created, expires, ended). No Branch entity (D7).
 
 ## 10. API surface
 
@@ -128,7 +140,8 @@ directly on the integer weight units.
 - Precision: every weight column is an integer in units of 0.0001 g; tests cover the round trip of 4-decimal grams; the ceiling unit conflict (G10) is settled before EP-23.
 - Concurrency: version columns on Piece, Parcel, Lead, LeadItem, KarigarJob, PieceEdit and MetalPool; a stale write returns a clear conflict, never a silent overwrite.
 - Personal data: Customer name, phone, birthday, anniversary and consent fields are personal data under the DPDP Act 2023; columns are identifiable for later deletion and export (EP-39).
-- Security: users and sessions tables hold no plain-text OTP or token values; token columns hold references or hashes.
+- Security: users and sessions tables hold no plain-text passwords, links or token values; those columns hold hashes or references.
+- Tenancy: every business table has a not-null shop ID; a test lists every table and fails if one lacks it (D7).
 - Availability and recovery: the schema works with the backup method EP-38 picks (point-in-time restore, recovery point under 1 hour).
 - Time: every timestamp column stores UTC.
 
@@ -149,14 +162,14 @@ directly on the integer weight units.
 ## 16. Risks
 
 - Risk: the ceiling needs half-steps of 0.00005 g, which 0.0001 g integers cannot hold, so the match gate disagrees with mockup 14. Mitigation: settle G10 before EP-23, for example a finer stored unit or a doubled half-step unit, and record the choice here.
-- Risk: branches are added after launch and every table needs a migration. Mitigation: decide D7 before the first migration.
+- Risk: a later table is added without a shop ID, or a unique constraint without it, so multi-shop later needs a migration. Mitigation: the schema test fails any business table without a not-null shop ID (D7).
 - Risk: embedded arrays become child tables and seed conversion loses order (for example `Parcel.weighings`). Mitigation: store an explicit position column on ordered child rows.
 - Risk: human ids built from a per-store counter (`seq`) collide when many servers write at once. Mitigation: generate ids in the database with a sequence per prefix.
 - Risk: float grams in the seed convert with rounding error. Mitigation: convert from the decimal strings, not from floats, and test every seeded weight.
 
 ## 17. Open decisions and questions
 
-- D7: single shop or multiple branches? This decides whether every table gets a branch key now.
+- D7 is decided: one shop, no branches; every business table gets a shop ID now ([decision record](../decisions/tenancy-and-branches.md)).
 - D1a: which cloud provider hosts the managed PostgreSQL database? D2 (PostgreSQL) and D10 (India region) are decided; the exact India region follows the provider.
 - G10: should stored weights be integers of 0.0001 g as PRODUCTION-SCOPE §5 says, or a finer unit (the prototype uses 0.00001 g) so the half-step ceiling is exact?
 - Is net gold stored on each record, or always derived from gross and stone weights?
@@ -168,7 +181,7 @@ directly on the integer weight units.
 
 1. EP-02-S1: Developer can apply and track schema migrations in every environment
 2. EP-02-S2: Developer can convert grams to integer units of 0.0001 g and back in the shared package
-3. EP-02-S3: System can store users, sessions and branches
+3. EP-02-S3: System can store the shop, users and sessions
 4. EP-02-S4: System can store master records: scales, karigars, staff and customers
 5. EP-02-S5: System can store pieces and piece edits with version checks
 6. EP-02-S6: System can store parcels with weighings, manifest rows and QC ticks as child rows

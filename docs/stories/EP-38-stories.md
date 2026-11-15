@@ -202,20 +202,20 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Story ID:** EP-38-S9
 - **Title:** Operator can list sends made after a restore point for follow-up
 - **As a:** Developer
-- **I want:** to list the WhatsApp messages and OTPs sent between the restore point and the restore, from provider logs and receipts, and the work lost in that window
+- **I want:** to list the WhatsApp messages (including owner edit codes) and account emails sent between the restore point and the restore, from provider logs and receipts, and the work lost in that window
 - **So that:** staff can be told what to re-enter, karigars what to resend, and customers who got a wish or broadcast are not sent it twice (FR-38-11)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given a restore to 10:00 done at 10:40, when the operator runs the list, then it shows every outbound message sent between 10:00 and 10:40 with message id, kind (OTP, edit token, wish, broadcast, alert), template name, send time and status from the provider.
+  1. Given a restore to 10:00 done at 10:40, when the operator runs the list, then it shows every outbound message sent between 10:00 and 10:40 with message id, kind (edit token, wish, broadcast, alert, activation email, reset email), template name, send time and status from the provider.
   2. Given an edit token sent in that window, when the list shows it, then it shows the token reference only, never the token value.
   3. Given wish sends in that window, when the next 9 am wishes run starts, then customers already wished in the window are not wished again that day.
   4. Given the list, when it is handed to Sanjay Seth, then it names the window of lost work and the kinds of work to re-enter (for example tags, weighings and stock-outs), without customer phone numbers.
   5. Given karigar status updates that Lakshmi Devi sent after the restore point, when the procedure is followed, then she is told to resend them.
-- **Rules enforced on the server:** The list reads the WhatsApp provider's logs and the EP-12 receipt records; it does not send anything. OTP and token values are never shown (EP-12-S11).
+- **Rules enforced on the server:** The list reads the WhatsApp provider's logs and the EP-12 receipt records; it does not send anything. Edit code values and links are never shown (EP-12-S11).
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. The list only reads; the production restore entry from EP-38-S6 already records the window.
 - **Data changes:** None in the product database. Adds a script or procedure step that reads provider logs for a time window.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: no OTP or token values in the list. Personal data: phone numbers are left out of the list given to the shop; the operator sees message ids. Time: window shown in Asia/Kolkata.
+- **Non-functional checks:** Security: no edit code values or links in the list. Personal data: phone numbers are left out of the list given to the shop; the operator sees message ids. Time: window shown in Asia/Kolkata.
 - **Depends on:** EP-38-S6, EP-12-S3, EP-12-S9, EP-12-S11, EP-11-S13, EP-10-S9, EP-04-S4
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

@@ -36,14 +36,14 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **Story ID:** EP-41-S2
 - **Title:** Owner can import karigars from a list
 - **As a:** Owner
-- **I want:** to upload the shop's karigar list with name, phone, workshop location, specialties, language and wastage allowance, and have each row created through the same rules as Add a karigar
+- **I want:** to upload the shop's karigar list with name, phone, email, workshop location, specialties, language and wastage allowance, and have each row created through the same rules as Add a karigar
 - **So that:** every karigar I issue gold to exists in the app before the first real job, with the allowance their work is judged against (FR-41-1, BR-41-1, BR-41-7, BR-41-10)
 - **Acceptance criteria (Given / When / Then):**
   1. Given a list with Lakshmi Devi (Temple, Tamil, 0.7%), Mahesh Soni (Hindi, 0.8%) and a third row at 1.5%, when Sanjay Seth imports it, then two karigars are created with the next `KG-NN` codes and `wastage_bp` 70 and 80, and the report names row 3 with "The wastage allowance is between 0.6% and 1.2%." (epic acceptance criterion 1).
   2. Given a row with an empty name, when it is imported, then it is refused with "Add the karigar name."; given a row with no specialty, then it is refused with "Pick at least one thing they are best at."
   3. Given a row whose specialty is not an active entry in the specialties list, when it is imported, then it is refused with the reference-list sentence and the other rows load (EP-15-S4).
   4. Given a row with language "Tamil", when it loads, then the language is stored on the karigar and changes nothing on screen, because the app is English only in v1.
-  5. Given a row whose phone is already used by another karigar, when it is imported, then it is refused with the same duplicate sentence the add screen shows, and no second karigar is created.
+  5. Given a row whose phone is already used by another karigar, or a row with no email (every karigar has one, D4), when it is imported, then it is refused with the same sentence the add screen shows, and no second karigar is created.
 - **Rules enforced on the server:** Each row goes through the Create Karigar service from EP-16-S3, so the owner-only check, the 0.6% to 1.2% allowance check in whole basis points, the name and specialty checks and code assignment all apply unchanged. Specialties must be active list entries (EP-15-S4). The importer adds no rule of its own beyond mapping columns.
 - **Live events emitted / consumed:** None.
 - **Audit entry written:** Yes: per karigar created, from EP-16-S13: actor (Sanjay), time, entity (karigar), action (`karigar_created`), after (code, name, specialties, allowance), reason (import run id).
@@ -181,21 +181,21 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **Story ID:** EP-41-S8
 - **Title:** Owner can create accounts for every staff member and karigar
 - **As a:** Owner
-- **I want:** the first-owner bootstrap run once on production, then an account for every staff member and karigar, each karigar user linked to their karigar record, either one by one on `staff-new` or from a users list
+- **I want:** the first-run setup wizard (EP-45) run once on production to create the shop and my owner account, then an account for every staff member and karigar, each with an email for the activation link, each karigar user linked to their karigar record, either one by one on `staff-new` or from a users list
 - **So that:** every person signs in with their own phone before go-live and lands on their role's home (FR-41-8, BR-41-6)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given an empty production system, when the setup operator runs Create First owner for Sanjay Seth, then one active owner exists, and a second run is refused with "The first owner has already been created." (EP-04-S1).
-  2. Given a users list with Rajesh Verma (Staff), Deepak Rao (Staff) and Lakshmi Devi (Karigar), when Sanjay imports it, then three active users are created with those roles, and Lakshmi's user is linked to KG-01.
-  3. Given a row with a role other than Owner, Staff or Karigar, or a phone already used by an active user, when it is imported, then it is refused with the reason and the other rows load.
+  1. Given an empty production system, when Sanjay Seth completes the setup wizard (EP-45), which calls Create First owner (EP-04-S1), then one owner exists and sets his password from the activation email, and a second Create First owner is refused with "The first owner has already been created."
+  2. Given a users list with name, phone, email and role for Rajesh Verma (Staff), Deepak Rao (Staff) and Lakshmi Devi (Karigar), when Sanjay imports it, then three users are created with those roles and status `pending_activation`, each gets an activation email, and Lakshmi's user is linked to KG-01.
+  3. Given a row with a role other than Staff or Karigar, an empty email, or a phone already used by an active user, when it is imported, then it is refused with the reason and the other rows load.
   4. Given a karigar row whose karigar code does not exist, when it is imported, then it is refused with "No karigar KG-09 to link this account to." (proposed wording).
-  5. Given every account is created, when each person requests a code and signs in during training, then Staff land on `today` and Karigars on `k-jobs`, and the checklist item "everyone has signed in once" lists anyone who has not.
-- **Rules enforced on the server:** Bootstrap runs once (EP-04-S1). Users are created through the Add user service from EP-05-S4, owner only, with role one of the three and a unique active phone. Karigar links go through EP-05-S13 and EP-16-S6. A users list never creates a second owner unless the owner confirms it.
+  5. Given every account is created, when each person sets a password from the activation email and signs in with phone and password during training, then Staff land on `today` and Karigars on `k-jobs`, and the checklist item "everyone has signed in once" lists anyone who has not.
+- **Rules enforced on the server:** The first owner is created once, only through the setup wizard (EP-04-S1, EP-45). Users are created through the Add user service from EP-05-S4, owner only, with role Staff or Karigar, a required email and a phone unique within the shop. Karigar links go through EP-05-S13 and EP-16-S6. A users list never creates a second owner (one shop, one owner; EP-05-S9).
 - **Live events emitted / consumed:** None.
 - **Audit entry written:** Yes: per user, from EP-05-S14: actor, time, entity (user), action (`user_created`, `karigar_linked`), after (name, role, masked phone), reason (import run id).
 - **Data changes:** Inserts users and karigar links through existing services; one `import_runs` row of kind `users`. No migration.
 - **UI reference:** `docs/ux/mockups/25-onboard-staff.svg`, route `staff-new`; directory on route `staff-directory`.
-- **Non-functional checks:** Security: no shared or demo accounts; every person has their own phone (no role switcher). Personal data: phones masked in audit and logs (EP-37-S2). Open decision D4: the sign-in method; criteria say "requests a code" neutrally. Open decision D7: whether accounts are created for one shop or several branches at once.
-- **Depends on:** EP-41-S1, EP-04-S1, EP-04-S3, EP-04-S5, EP-04-S6, EP-05-S4, EP-05-S13, EP-05-S14, EP-16-S6, EP-41-S2
+- **Non-functional checks:** Security: no shared or demo accounts; every person has their own phone (no role switcher). Personal data: phones masked in audit and logs (EP-37-S2). D4 is decided: each person sets a password from the activation email and signs in with phone and password; no password is emailed. D7 is decided: accounts are created for the one shop. The setup wizard is EP-45 (built in M2, before launch); it is not listed in Depends on because it has a higher number.
+- **Depends on:** EP-41-S1, EP-04-S1, EP-04-S3, EP-04-S5, EP-04-S6, EP-04-S10, EP-05-S4, EP-05-S9, EP-05-S13, EP-05-S14, EP-16-S6, EP-41-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---
@@ -256,7 +256,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **I want:** to be signed in on my own phone during training, install the portal, and practise accepting a job, marking it ready, handing it over and reading "Gold with me"
 - **So that:** I can use the portal on day one without a staff member doing it for me (FR-41-8, FR-41-12)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given Lakshmi Devi's account is linked to KG-01, when she requests a code on her own phone during training and enters it, then she lands on `k-jobs` and sees her own jobs only.
+  1. Given Lakshmi Devi's account is linked to KG-01, when she opens the activation email on her own phone during training, sets her password and signs in with her phone and password, then she lands on `k-jobs` and sees her own jobs only.
   2. Given she practises on staging, when she accepts a job, marks it ready and hands it over, then each step succeeds and the trainer ticks the task.
   3. Given her opening holdings are recorded in production, when she opens "Gold with me" after go-live, then it equals the figure she confirms against the register, and her confirmation is ticked on the checklist.
   4. Given the portal is in English only, when she is trained, then the trainer explains the screens in her spoken language, which is recorded on the checklist (Tamil for Lakshmi).
@@ -266,7 +266,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **Audit entry written:** No. Training is recorded as checklist ticks; sign-in is audited by EP-04-S14.
 - **Data changes:** None in the product database. Adds karigar training material under the project docs.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`.
-- **Non-functional checks:** Security: each karigar signs in on their own phone; no shared account. Open decision D4: the sign-in method. Open question: in which spoken language each karigar is trained; the app stays English only in v1 (EP-44).
+- **Non-functional checks:** Security: each karigar signs in on their own phone; no shared account. D4 is decided: phone and password, set from the activation email. Open question: in which spoken language each karigar is trained; the app stays English only in v1 (EP-44).
 - **Depends on:** EP-41-S7, EP-41-S8, EP-20-S1, EP-20-S2, EP-20-S3, EP-20-S4, EP-20-S5, EP-20-S6, EP-20-S9, EP-20-S12a
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -314,7 +314,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **Audit entry written:** Yes: per tick and for the sign-off: actor, time, entity (checklist item or go-live), action (`checklist_item_ticked`, `go_live_signed`), before, after.
 - **Data changes:** New table `go_live_checklist_items` (item, responsible person, done at, ticked by, signed by) and a go-live marker in settings, with a migration and seeded items. Adds List and Update Go-live checklist item to the shared contract.
 - **UI reference:** Not yet designed (go-live checklist page, epic section 12).
-- **Non-functional checks:** Availability: the backup item is ticked only after a full backup is taken after imports (EP-38). Security: owner signs; operator access comes from a Developer account with the owner's agreement. Open question G24: whether EP-35 Reports is a checklist item. Open decision D7: one checklist per branch or one for the shop.
+- **Non-functional checks:** Availability: the backup item is ticked only after a full backup is taken after imports (EP-38). Security: owner signs; operator access comes from a Developer account with the owner's agreement. Open question G24: whether EP-35 Reports is a checklist item. D7 is decided: one checklist for the one shop.
 - **Depends on:** EP-41-S9, EP-41-S10, EP-41-S11, EP-41-S12, EP-38-S1, EP-38-S8, EP-37-S4, EP-37-S6, EP-40-S13, EP-39-S15, EP-13-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -356,5 +356,5 @@ Copied from the epic's section 17. Not answered here.
 - Which customer records have proof of WhatsApp consent? (EP-41-S3)
 - G13: is past purchase history imported for customers, and from where? (EP-41-S3)
 - G24: is EP-35 Reports required before launch, or after as M8 says? (EP-41-S12, S13)
-- D7: is launch for one shop or several branches at once? (EP-41-S8, S13)
+- D7 is decided: launch is for one shop, no branches (EP-41-S8, S13).
 - In which spoken language is each karigar trained? The app itself is English only in v1 (G2 resolved; other languages in EP-44). (EP-41-S2, S11)

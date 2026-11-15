@@ -158,7 +158,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - G20: who is "Priya (Manager)" when only three roles exist, and is a sender identity tied to a user?
 - D8: which provider sends wishes, and which templates are approved?
 - G12: who may switch auto-send on or off?
-- Is 9 am fixed, or a setting, and is it per branch (D7)?
+- Is 9 am fixed, or a setting? (D7 is decided: one shop, so it is never per branch.)
 - Should a wish be sent on the day for a leap-day birthday (29 February) in other years?
 - Is there one template per occasion, or several to choose from?
 - Should wishes sent show on the customer's history (EP-17)?

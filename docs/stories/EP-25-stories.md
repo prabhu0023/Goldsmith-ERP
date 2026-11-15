@@ -2,7 +2,7 @@
 
 Epic document: [EP-25 Edit proposals](../epics/EP-25-edit-proposals.md)
 
-Role note: stories where the server stores, checks, sends, voids or audits on its own use "System". Staff propose and never touch the field (BR-25-1); only the owner agrees, applies or refuses (FR-25-16). The edit token is separate from the sign-in OTP of EP-04. v1 has no holds, so a piece with an open proposal stays sellable (BR-25-5, still assumption A4) and the proposal voids itself if the piece is sold or scrapped. No price or value appears. Weights are integers in units of 0.0001 g and shown to 4 decimals; mockup 05 shows pure gold to 3 decimals ("41.590 g"), which these stories show as 41.5900 g. The seed people are Sanjay Seth (Owner), Rajesh Verma and Deepak Rao (Staff). The seed proposals are ED-102, Rajesh's change of `grossG` on TAG-8841 (Antique Kundan Choker) from 48.6500 g to 48.6100 g with net gold 41.5900 g, and ED-101, Deepak's change of `stoneCount` on TAG-9012 from 4 to 5.
+Role note: stories where the server stores, checks, sends, voids or audits on its own use "System". Staff propose and never touch the field (BR-25-1); only the owner agrees, applies or refuses (FR-25-16). The edit token (the owner edit code) is the only one-time code in v1; sign-in uses phone and password with no code (D4). The flow is confirmed by the owner: staff propose without changing the piece, the proposal waits for the owner, only the owner applies it, and the code goes as a WhatsApp message to the owner's registered mobile number. v1 has no holds, so a piece with an open proposal stays sellable (BR-25-5, still assumption A4) and the proposal voids itself if the piece is sold or scrapped. No price or value appears. Weights are integers in units of 0.0001 g and shown to 4 decimals; mockup 05 shows pure gold to 3 decimals ("41.590 g"), which these stories show as 41.5900 g. The seed people are Sanjay Seth (Owner), Rajesh Verma and Deepak Rao (Staff). The seed proposals are ED-102, Rajesh's change of `grossG` on TAG-8841 (Antique Kundan Choker) from 48.6500 g to 48.6100 g with net gold 41.5900 g, and ED-101, Deepak's change of `stoneCount` on TAG-9012 from 4 to 5.
 
 ---
 
@@ -107,7 +107,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 - **Story ID:** EP-25-S5
 - **Title:** Owner can agree and receive a token on WhatsApp
 - **As a:** Owner
-- **I want:** to press "Yes, send me a token" on `edit-apply` (or "Send the code" on the Decisions card) so the server issues a 6-digit token and sends it to my registered WhatsApp number as "JGD: confirm edit to TAG-8841. Token 480 913"
+- **I want:** to press "Yes, send me a token" on `edit-apply` (or "Send the code" on the Decisions card) so the server issues a 6-digit token and sends it as a WhatsApp message to my registered mobile number as "JGD: confirm edit to TAG-8841. Token 480 913"
 - **So that:** the change needs both my signed-in session and the phone I hold (FR-25-6, BR-25-2, BR-25-4)
 - **Acceptance criteria (Given / When / Then):**
   1. Given ED-102 is `proposed`, when Sanjay Seth presses "Yes, send me a token", then a token record is created (EP-25-S6), a template message goes through EP-12 to Sanjay's registered phone, ED-102 becomes `token_sent`, and the panel shows "2 · Enter the token sent to your WhatsApp · To Sanjay's phone · now" (epic acceptance criterion 2).

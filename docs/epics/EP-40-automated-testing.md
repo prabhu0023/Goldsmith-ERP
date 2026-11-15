@@ -34,7 +34,9 @@ fails. It runs continuously alongside every epic from EP-03 onwards.
 - Live-event tests: each catalogue event is published after its commit and reaches only the allowed audience.
 - End-to-end tests of the main flows on staging.
 - Rendering tests: with pricing off, no screen shows a currency symbol.
-- Security tests: OTP and token never appear in logs or audit entries.
+- Security tests: passwords, activation and reset links and owner edit codes (tokens) never appear in logs or audit entries.
+- Sign-in tests (D4): lockout after 5 wrong passwords for 15 minutes and owner unlock; activation link single use and expired after 24 hours; reset link single use and expired after 1 hour; the forgot-password response is the same for known and unknown numbers.
+- Shop-scoping tests (D7): with a second shop's records in the test database, no operation reads or writes outside the caller's shop, and a shop ID sent by the client is ignored; every business table has a not-null shop ID.
 - A CI gate (EP-01) that fails on any test failure.
 
 ## 5. Out of scope
@@ -78,9 +80,9 @@ fails. It runs continuously alongside every epic from EP-03 onwards.
 - FR-40-8. A concurrency test sends two lead-line routings for the same line at once; exactly one succeeds and the other gets "That line has already been routed."
 - FR-40-9. A concurrency test saves the same tag on a shared parcel from two sessions; no duplicate piece is created.
 - FR-40-10. A live-event test checks that each catalogue event is published after its commit and that a karigar receives only events for their own jobs.
-- FR-40-11. End-to-end tests cover: sign in by OTP; issue gold and create a job; karigar accepts and hands over; parcel arrives, is tagged by two staff and matches exactly; a mismatched parcel is cleared by the owner; stop the line and clear; edit with token; stock-out; scrap to pool; lead to conversion.
+- FR-40-11. End-to-end tests cover: activate an account from the emailed link and sign in with phone and password; issue gold and create a job; karigar accepts and hands over; parcel arrives, is tagged by two staff and matches exactly; a mismatched parcel is cleared by the owner; stop the line and clear; edit with token; stock-out; scrap to pool; lead to conversion.
 - FR-40-12. A rendering test checks that no screen shows a currency symbol while pricing is off.
-- FR-40-13. A test checks that OTP and edit-token values never appear in logs or audit entries.
+- FR-40-13. A test checks that passwords, activation and reset links and edit-token values never appear in logs or audit entries.
 - FR-40-14. CI runs unit and API tests on every push and end-to-end tests before every staging deploy, and blocks the merge or deploy on failure.
 
 ## 8. Business rules
@@ -91,7 +93,7 @@ fails. It runs continuously alongside every epic from EP-03 onwards.
 - BR-40-4. The match gate compares integers in units of 0.0001 g. [PRODUCTION-SCOPE §5 Precision]
 - BR-40-5. Ceiling = sum of ½ × the scale's smallest step for every weighing taken. [SCOPE-ANALYSIS App. E; mockup 14]
 - BR-40-6. A parcel must match exactly; anyone can stop the line, only the owner can start it again. [docs/ux/mockups/README.md]
-- BR-40-7. OTP and edit tokens: 6 digits, single use, 10-minute expiry, never logged in plain text. [PRODUCTION-SCOPE §5 Security]
+- BR-40-7. Owner edit codes (edit tokens): 6 digits, single use, 10-minute expiry, never logged in plain text. Passwords: salted hashes, minimum 8 characters, 5 wrong tries lock for 15 minutes. Activation links 24 hours and reset links 1 hour, single use. Every query scoped to the caller's shop. [PRODUCTION-SCOPE §5 Security; D4; D7]
 - BR-40-8. With pricing off, nothing shows a currency figure; every rupee goes through `ValueSlot`. [SCOPE-ANALYSIS App. G; src/components/ui/ValueSlot.tsx]
 - BR-40-9. Every permission is checked on the server. [PRODUCTION-SCOPE §5 Security]
 
@@ -109,7 +111,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 | --- | --- | --- | --- |
 | Create | Test database | Create and seed a fresh database for a test run | CI only, never production |
 | Delete | Test database | Drop it after the run | CI only |
-| Create | Test session | Sign in a fixture user without a real OTP, in test environments only | CI only, disabled in production |
+| Create | Test session | Sign in a fixture user without a real password, in test environments only | CI only, disabled in production |
 
 ## 11. Live events
 
@@ -184,6 +186,6 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 8. EP-40-S8: Developer can run a concurrency test for two staff tagging one parcel
 9. EP-40-S9: Developer can run live-event delivery and audience tests
 10. EP-40-S10: Developer can run a test that no currency shows while pricing is off
-11. EP-40-S11: Developer can run a test that OTPs and tokens never reach logs or audit
+11. EP-40-S11: Developer can run a test that passwords, links and edit tokens never reach logs or audit
 12. EP-40-S12: Developer can run end-to-end tests of the main flows on staging
 13. EP-40-S13: System can block a merge or deploy when any test fails

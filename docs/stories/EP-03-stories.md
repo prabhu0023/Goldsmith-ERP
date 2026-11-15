@@ -73,7 +73,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. This step only supplies the actor and time that EP-06 audit entries record.
 - **Data changes:** None in the product database. Reads `sessions` and `users` (EP-02-S3). Adds a session resolver interface and a clock module to `api`; tests use a fixed test clock and a test session.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: actor and time never come from the client (epic section 13). Time: all times are UTC from the server clock. Open decision D4: the sign-in method and how a session is presented (cookie or token) is decided in EP-04; this story reads the session through an interface so the acceptance criteria hold for either. D1 is decided (Option C): the session resolver reads the Node API's own sessions (EP-04), never a platform auth context.
+- **Non-functional checks:** Security: actor and time never come from the client (epic section 13). Time: all times are UTC from the server clock. D4 is decided (phone and password); how a session is presented (cookie or token) is decided in EP-04, and this story reads the session through an interface so the acceptance criteria hold for either. D1 is decided (Option C): the session resolver reads the Node API's own sessions (EP-04), never a platform auth context.
 - **Depends on:** EP-03-S1, EP-02-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

@@ -92,7 +92,7 @@ record must keep empty sockets for budget and spend that light up only when pric
 
 ## 9. Data
 
-- Customer: id, name, phone (normalised), city, address (nullable), group, birthday (date, nullable), anniversary (date, nullable), notes, branch key (if D7), status (`active`, `erased`), created at, created by, version.
+- Customer: id, name, phone (normalised), city, address (nullable), group, birthday (date, nullable), anniversary (date, nullable), notes, shop ID (set by the server, D7), status (`active`, `erased`), created at, created by, version.
 - ConsentEvent: id, customer id, kind (`opt_in`, `opt_out`), source (`counter`, `whatsapp_reply`, `form`, `import`), recorded by, at.
 - HistoryRow: customer id, piece tag, piece name, pure gold (integer, units of 0.0001 g), date; source is open (G13).
 - Value sockets: budget and spend, nullable value socket, unused until EP-42.
@@ -128,7 +128,8 @@ None. Customer records change at the counter and do not race in a way that costs
 - Personal data: name, phone, address, birthday and anniversary are personal data under the DPDP Act, 2023; consent is stored with time and source; deletion is supported; obligations are verified with a professional (EP-39).
 - Security: karigar users cannot call any customer operation; customer lists are never sent to the karigar portal.
 - Audit: changes are audited without copying erased personal values into the append-only log (G22).
-- Concurrency: two staff adding the same phone at once produce one customer; the phone has a unique index among active customers if the duplicate rule says so.
+- Concurrency: two staff adding the same phone at once produce one customer; the phone has a unique index on (shop ID, phone) among active customers if the duplicate rule says so.
+- Tenancy: every customer read and write is scoped to the caller's shop; the shop ID is never taken from the request (D7).
 - Precision: history grams are integers, units of 0.0001 g.
 - Performance: phone match returns in under 200 ms (proposed target, to confirm; PRODUCTION-SCOPE §5 sets none) so lead creation stays instant; the directory loads under 2 seconds for 10,000 customers.
 
@@ -161,7 +162,7 @@ None. Customer records change at the counter and do not race in a way that costs
 - G13: where does piece history come from, given stock-out records no customer today?
 - G7: when a lead's phone matches a customer but the name differs, which wins, and who confirms the match?
 - Can two customers share a phone (family members)?
-- D7: are customers shop-wide or per branch?
+- D7 is decided: one shop, no branches; customers belong to the shop ([decision record](../decisions/tenancy-and-branches.md)).
 - G22: how is a deletion request carried out when the audit log already holds the customer's name?
 - How long is a deleted customer's anonymised history kept?
 

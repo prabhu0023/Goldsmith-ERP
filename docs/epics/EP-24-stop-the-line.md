@@ -95,7 +95,7 @@ about it, and the owner must hear about it within seconds.
 
 ## 9. Data
 
-- Problem: id, target kind (`parcel`, `job`, `piece`), target id, text, raised by (user id), raiser role, raised at (UTC), status (`open`, `cleared`), cleared by (user id, nullable), cleared at (nullable), branch id if D7 adds branches.
+- Problem: id, target kind (`parcel`, `job`, `piece`), target id, text, raised by (user id), raiser role, raised at (UTC), status (`open`, `cleared`), cleared by (user id, nullable), cleared at (nullable), shop ID (D7).
 - Piece: status `stopped`, previous status (nullable). Weights are untouched by this epic; where shown they are integers in units of 0.0001 g.
 - KarigarJob: stopped flag (boolean, derived or stored; it must equal "has an open job problem").
 - Parcel: status `stopped`, stopped at.
@@ -169,7 +169,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Must the owner give a reason when clearing?
 - G26: should "Problem raised on a job or piece" and "Problem cleared" be added to the live event catalogue?
 - G22: how does a deletion request treat customer names inside problem text kept in the append-only audit?
-- D7: if branches exist, is a problem visible to every branch's owner view or only its own?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); the owner sees every problem in the shop.
 
 ## 18. Candidate stories
 

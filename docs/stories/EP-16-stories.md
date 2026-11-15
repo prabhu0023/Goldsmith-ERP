@@ -14,7 +14,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **I want:** the `karigars` table from EP-02-S4 extended with workshop location, status (`active` or `deactivated`), deactivated at, wastage allowance as an integer in basis points, language with default `English`, open since and version, a `karigar_specialties` child table so one karigar can hold several specialties, and a counter that hands out the next `KG-NN` code
 - **So that:** each karigar is one stored record the order copy, the parcel forms, the portal and the scorecard can all point at, with an allowance that is exact and survives a reload (FR-16-2, FR-16-14, BR-16-1)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given the migrations have run, when `karigars` is inspected, then it has `id` (`KG-NN`), `name`, `phone`, `workshop_location`, `language` accepting only `Tamil`, `Hindi` or `English` with default `English`, `wastage_bp` as an integer, `status` accepting only `active` or `deactivated`, nullable `deactivated_at`, `open_since` and an integer `version` starting at 1.
+  1. Given the migrations have run, when `karigars` is inspected, then it has `id` (`KG-NN`), shop ID, `name`, `phone`, `email` (not null), `workshop_location`, `language` accepting only `Tamil`, `Hindi` or `English` with default `English`, `wastage_bp` as an integer, `status` accepting only `active` or `deactivated`, nullable `deactivated_at`, `open_since` and an integer `version` starting at 1.
   2. Given an insert with `wastage_bp` 59 or 121, or a value such as 0.7 that is not an integer, when it is written straight to the database, then the database check rejects it, and 60 to 120 (0.60% to 1.20%) are accepted (BR-16-1).
   3. Given the migrations have run, when `karigar_specialties` is inspected, then it holds `karigar_id` and `specialty_id` referencing the EP-15 `specialties` list, with one row per pair, and the single `karigars.specialty_id` column added by EP-15-S1 has been moved into it.
   4. Given the seeded karigars KG-01 Lakshmi Devi (0.7%), KG-02 Mahesh Soni (0.8%) and KG-04 Vijay Kumar (0.8%), when the migration has run, then they hold `wastage_bp` 70, 80 and 80, status `active`, and their prototype language values (Tamil, Hindi, Hindi) unchanged.
@@ -23,9 +23,9 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **Rules enforced on the server:** Database checks: `wastage_bp` between 60 and 120, status enum, language enum, name not empty. The code counter is incremented and read in one atomic statement inside a transaction (EP-03-S6); codes are never reused, even after deactivation. Codes are two digits up to KG-99 and grow to three digits after that. The account link is kept once, as `users.karigarId` with a unique index (EP-02-S3, EP-05-S13), and is not duplicated on `karigars`. No weight or money column is added to `karigars`.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. This story creates storage; changes are audited through EP-16-S13.
-- **Data changes:** Migration on `karigars` (EP-02-S4) adds `workshop_location`, `status` (default `active`), `deactivated_at`, `wastage_bp` (converted from the prototype percentage), sets the `language` default to `English`, and adds `version` if missing. Migration creates `karigar_specialties` (karigar id, specialty id) and `karigar_code_counter` (next number), initialised above the highest code in use. Each table has the branch key if D7 is multi-branch.
+- **Data changes:** Migration on `karigars` (EP-02-S4) adds `workshop_location`, `status` (default `active`), `deactivated_at`, `wastage_bp` (converted from the prototype percentage), sets the `language` default to `English`, and adds `version` if missing. Migration creates `karigar_specialties` (karigar id, specialty id) and `karigar_code_counter` (next number), initialised above the highest code in use. Adds `email` (required, D4). Each table has the shop ID (EP-02-S3); `id` and `phone` are unique per shop (D7).
 - **UI reference:** No screen
-- **Non-functional checks:** Precision: the allowance is an integer in basis points (0.70% = 70), never a float (epic section 13). Personal data: `phone` and `workshop_location` are personal data and are returned only to the owner and to the karigar themself. Open question: whether the workshop location is free text or an address with a map pin; this story stores free text. Open decision D7: branch key only if multi-branch.
+- **Non-functional checks:** Precision: the allowance is an integer in basis points (0.70% = 70), never a float (epic section 13). Personal data: `phone` and `workshop_location` are personal data and are returned only to the owner and to the karigar themself. Open question: whether the workshop location is free text or an address with a map pin; this story stores free text. D7 is decided: one shop; records carry the shop ID set by the server, never from the request.
 - **Depends on:** EP-02-S1, EP-02-S3, EP-02-S4, EP-02-S14, EP-03-S1, EP-03-S6, EP-15-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -61,10 +61,10 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **Story ID:** EP-16-S3
 - **Title:** Owner can add a karigar with the 0.6% to 1.2% allowance check
 - **As a:** Owner
-- **I want:** to add a karigar on `karigar-new` with name, phone, workshop location, one or more specialties and a wastage allowance, through a Create Karigar operation that assigns the next `KG-NN` code and returns it
+- **I want:** to add a karigar on `karigar-new` with name, phone, email, workshop location, one or more specialties and a wastage allowance, through a Create Karigar operation that assigns the next `KG-NN` code and returns it
 - **So that:** each artisan I issue gold to is recorded once, with the allowance their jobs will be judged against (FR-16-1, FR-16-2, FR-16-3, FR-16-4, BR-16-1, BR-16-3)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given Sanjay Seth on `karigar-new` with KG-01, KG-02 and KG-04 stored, when he adds "Ravi Achari" with a phone, Temple and Kundan, and 0.9%, then the record KG-05 is stored with `wastage_bp` 90, status `active` and language `English`, the code is returned, and an audit entry records it (epic acceptance criterion 1).
+  1. Given Sanjay Seth on `karigar-new` with KG-01, KG-02 and KG-04 stored, when he adds "Ravi Achari" with a phone, the email "ravi.achari@example.com", Temple and Kundan, and 0.9%, then the record KG-05 is stored with `wastage_bp` 90, status `active` and language `English`, the code is returned, and an audit entry records it (epic acceptance criterion 1).
   2. Given the name is empty or only spaces, when Sanjay chooses "Add this karigar", then the server refuses with "Add the karigar name." and nothing is stored.
   3. Given no specialty chip is picked, when Sanjay saves, then the server refuses with "Pick at least one thing they are best at." and nothing is stored.
   4. Given Sanjay sets the allowance to 1.5% or 0.5%, when he saves, then the server refuses with "The wastage allowance is between 0.6% and 1.2%." and nothing is stored (epic acceptance criterion 3); given 0.705%, then it is refused as a validation error because it is not a whole basis point.
@@ -75,7 +75,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_added`), after (name, phone, workshop location, specialties, wastage allowance, status). Written through EP-16-S13.
 - **Data changes:** Inserts into `karigars` and `karigar_specialties`; moves `karigar_code_counter`. Adds Create Karigar to the shared contract.
 - **UI reference:** `docs/ux/mockups/24-onboard-karigar.svg`, route `karigar-new` ("Add a karigar", "Name", "Code", "Phone · their job portal logs in with this", "Workshop location", "What they are best at", "ALLOWED LOSS", slider 0.6% to 1.2%, "On a 160 g job, that means", "Add this karigar", "Cancel"). The "Language for their phone" chips (தமிழ் / हिन्दी / English) are not shown in v1; EP-44 adds them.
-- **Non-functional checks:** Precision: the worked example is computed from integers of 0.0001 g and basis points through the EP-02-S2 helpers, never with float percentages. Personal data: the phone entered here is shown back only to the owner. Security: the slider's client limits are a convenience; the server repeats the range check. Open decision D4: whether a karigar without their own phone, or two karigars on one workshop phone, can be added; criteria above assume one phone per karigar.
+- **Non-functional checks:** Precision: the worked example is computed from integers of 0.0001 g and basis points through the EP-02-S2 helpers, never with float percentages. Personal data: the phone entered here is shown back only to the owner. Security: the slider's client limits are a convenience; the server repeats the range check. D4 is decided: one phone per karigar (phone numbers are unique) and an email is required; an empty email is refused as a validation error.
 - **Depends on:** EP-16-S1, EP-16-S2, EP-02-S2, EP-03-S4, EP-03-S7, EP-03-S8, EP-08-S5, EP-08-S7, EP-15-S4, EP-15-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -100,7 +100,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_edited`), before and after for each changed field. A phone change on the linked user is also audited by EP-05-S14. Written through EP-16-S13.
 - **Data changes:** Updates `karigars` (name, phone, workshop location, version) and rewrites the karigar's `karigar_specialties` rows; may update `users.phone` and `users.version`. Adds Update Karigar details to the shared contract.
 - **UI reference:** Not yet designed. The edit form is undrawn (epic section 12); it reuses the `karigar-new` fields from `docs/ux/mockups/24-onboard-karigar.svg` with the code read-only.
-- **Non-functional checks:** Concurrency: version check on every save. Personal data: before and after phone values in the audit log are visible only to the owner (EP-06-S12). Open question: workshop location as free text or address with a map pin. Open decision D4: if two karigars may share a workshop phone, criterion 3 changes.
+- **Non-functional checks:** Concurrency: version check on every save. Personal data: before and after phone values in the audit log are visible only to the owner (EP-06-S12). Open question: workshop location as free text or address with a map pin. D4 is decided: phone numbers are unique, so two karigars cannot share a workshop phone. An email change on a linked karigar also updates `users.email` under the EP-05-S5 rules.
 - **Depends on:** EP-16-S1, EP-16-S2, EP-16-S3, EP-02-S14, EP-03-S5, EP-03-S6, EP-05-S5, EP-08-S5, EP-08-S7
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -135,20 +135,20 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **Story ID:** EP-16-S6
 - **Title:** Owner can link a karigar to a karigar user account
 - **As a:** Owner
-- **I want:** from a karigar's record, to link it to a user with role `karigar` (or create that user from the karigar's name and phone), and to see on the record whether it is linked
+- **I want:** from a karigar's record, to link it to a user with role `karigar` (or create that user from the karigar's name, phone and email, which sends the activation email), and to see on the record whether it is linked
 - **So that:** the karigar can sign in to the portal with the phone recorded here and see only their own jobs (FR-16-10, BR-16-3)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given KG-05 Ravi Achari has no account, when Sanjay Seth chooses to give him portal access, then a user with role `karigar`, Ravi's name and phone is created and linked to KG-05 in one transaction, and the record shows it as linked.
+  1. Given KG-05 Ravi Achari has no account, when Sanjay Seth chooses to give him portal access, then a user with role `karigar`, Ravi's name, phone and email is created with status `pending_activation` and linked to KG-05 in one transaction, an activation email goes to Ravi (EP-04-S10), and the record shows it as linked.
   2. Given an existing karigar user with Vijay Kumar's phone and no link, when Sanjay links it to KG-04, then `users.karigarId` is KG-04, and the link uses the EP-05-S13 rules.
   3. Given KG-04 is already linked to an active user, when Sanjay links a second user to it, then the server refuses with "This karigar already has an account." (one account per karigar).
   4. Given KG-05 is deactivated, when Sanjay tries to link or create an account for him, then the server refuses with a sentence saying the karigar is deactivated.
   5. Given Rajesh Verma (Staff), when he calls Update Karigar account link, then the server refuses with "Only the owner can add a karigar or change their wastage allowance." (EP-16-S2).
-- **Rules enforced on the server:** Owner only. The user side is owned by EP-05: role must be `karigar`, phone unique among users, one active user per karigar record (EP-05-S4, EP-05-S13). Creating the user and setting the link happen in one transaction with both audit entries (EP-03-S6). The user's phone must equal the karigar's phone, so the login stays the phone recorded here.
+- **Rules enforced on the server:** Owner only. The user side is owned by EP-05: role must be `karigar`, phone unique among the shop's users, email required, one active user per karigar record (EP-05-S4, EP-05-S13). Creating the user and setting the link happen in one transaction with both audit entries (EP-03-S6). The user's phone and email must equal the karigar's, so the login stays the phone recorded here. No password is set or emailed; the activation link comes from EP-04-S10.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_linked`), before and after user id. The user creation and `karigarId` change are audited by EP-05-S14. Written through EP-16-S13.
 - **Data changes:** Updates `users.karigarId` and `users.version`; may insert into `users`. Adds Update Karigar account link to the shared contract. No column added to `karigars`.
 - **UI reference:** Not yet designed. No mockup draws the link step; `docs/ux/mockups/24-onboard-karigar.svg` labels the phone "their job portal logs in with this".
-- **Non-functional checks:** Security: a wrong link would show one karigar another's jobs, so the link is owner-only and audited. Open decision D4: sign-in method, and whether two karigars may share one workshop phone; if they may, criterion 3 and the phone-match rule change. Open question (from EP-05-S13): whether linking happens in one step with adding the karigar.
+- **Non-functional checks:** Security: a wrong link would show one karigar another's jobs, so the link is owner-only and audited. D4 is decided: phone and password sign-in, phone numbers unique, so two karigars cannot share one workshop phone. Open question (from EP-05-S13): whether linking happens in one step with adding the karigar.
 - **Depends on:** EP-16-S1, EP-16-S2, EP-16-S3, EP-05-S4, EP-05-S13, EP-05-S14, EP-03-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -328,7 +328,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 
 Copied from the epic's section 17. Not answered here.
 
-- D4: does the sign-in method allow a karigar without their own phone, and can two karigars share a workshop phone? (EP-16-S3, S4, S6)
+- D4 is decided: phone and password; phone numbers are unique and every karigar has an email address (EP-16-S3, S4, S6).
 - G4: how is the rating computed, over what period are loss % and days late measured, and do staff see any of it? (EP-16-S8, S9, S10, S11, S12)
 - G23: is reconciliation B (gold issued vs net returned vs allowance) settled per job or per period, and where is the flag raised? (EP-16-S10)
 - Does a changed wastage allowance apply only to jobs issued after the change, or also to jobs already open? (EP-16-S5)

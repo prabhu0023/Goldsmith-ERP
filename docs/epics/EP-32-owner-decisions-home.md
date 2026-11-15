@@ -39,7 +39,7 @@ a tap.
 - Ageing alert: "196.4 g of gold has not moved in 90 days" with "Push on WhatsApp" and "Melt and remake" actions (G5; threshold setting in EP-13).
 - Rail badge with the total number of cards, updated live.
 - Every card action deep-links to the screen where the owner acts.
-- Branch selector "All branches" once D7 is decided.
+- No branch selector: one shop, no branches (D7). The "All branches" label on mockup 08 shows the shop name.
 
 ## 5. Out of scope
 
@@ -65,7 +65,7 @@ a tap.
   - `RulesPanel` writing `leadSlaHours`, `lateLeadAudience`, `notifyChannels` and `requireEditToken` through `setSetting`, which has no owner check (G12);
   - gold on the floor (`pureGoldOnFloor`), gold with karigars, metal pool balance, pieces out today;
   - karigars worst first: `metalLossPct > wastagePct` are "over"; `rating` and `lateDays` are seed numbers with no formula (G4).
-- No ageing alert (mockup 08 "GOLD SITTING TOO LONG", G5). No "Metal lost this month" figure. No branch selector.
+- No ageing alert (mockup 08 "GOLD SITTING TOO LONG", G5). No "Metal lost this month" figure. No branch selector, and none is needed (D7).
 - Reusable: the queue rules, block structure, wording, cards and rules panel.
 - Must be rebuilt server-side: one exception-queue query for the owner, the badge count, the "went through" aggregates, the ageing query, the owner check on the rules panel, and live subscription.
 
@@ -184,7 +184,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 - G5: what ageing threshold marks gold as sitting too long (mockup 08 shows 90 days), and is it per style or global?
 - G4: how is a karigar's rating computed, and what period do loss and lateness cover?
-- D7: what does "All branches" show, and can the owner filter by branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); "All branches" shows the shop name and there is no branch filter.
 - A2: is the lead SLA in shop hours or clock hours?
 - A3: who hears about a late lead first, and how long before the owner?
 - G18: does the rules panel keep a switch for the edit token?

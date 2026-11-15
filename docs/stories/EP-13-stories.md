@@ -1,6 +1,6 @@
-# EP-13: Branches and shop settings · stories
+# EP-13: Shop settings · stories
 
-Epic document: [EP-13 Branches and shop settings](../epics/EP-13-branches-and-shop-settings.md)
+Epic document: [EP-13 Shop settings](../epics/EP-13-shop-settings.md)
 
 Role note: stories where the server stores, checks, audits or pushes settings on its own use "System". Stories where a person changes a setting use "Owner". Staff only read settings in these stories; whether staff may change any key is open question G12.
 
@@ -11,20 +11,21 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 - **Story ID:** EP-13-S1
 - **Title:** System can store shop settings with seed defaults
 - **As a:** System
-- **I want:** one typed settings record per shop, created on first start with the seed defaults (`pricingEnabled` false, `leadSlaHours` 8, `requireEditToken` true, `notifyChannels` WhatsApp on, app on, email off, `lateLeadAudience` `staff_then_owner`, `autoSendWishes` false, `wishSendTime` 09:00, `ageingThresholdDays` empty), and a Read Settings operation that owner and staff screens and background jobs can call
+- **I want:** one typed settings record for the shop, keyed by its shop ID, created with the seed defaults when the shop is created (`pricingEnabled` false, `leadSlaHours` 8, `requireEditToken` true, `notifyChannels` WhatsApp on, app on, email off, `lateLeadAudience` `staff_then_owner`, `autoSendWishes` false, `wishSendTime` 09:00, `ageingThresholdDays` empty), and a Read Settings operation that owner and staff screens and background jobs can call
 - **So that:** the lead timer, notification rules, wishes run and edit-token flow all read the same stored values instead of an in-memory object that resets on reload (FR-13-1, FR-13-2, BR-13-5)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given an empty database after migrations, when the api starts for the first time, then exactly one settings row exists with `leadSlaHours` 8, `lateLeadAudience` `staff_then_owner`, `notifyChannels` {whatsapp: true, app: true, email: false}, `requireEditToken` true, `autoSendWishes` false, `wishSendTime` 09:00, `ageingThresholdDays` null, `pricingEnabled` false and version 1.
-  2. Given the settings row already exists, when the api restarts, then no second row is created and no stored value is reset to its default.
+  1. Given an empty database after migrations, when the shop record is created (by the setup wizard, EP-45, through EP-02-S3), then exactly one settings row exists for that shop ID with `leadSlaHours` 8, `lateLeadAudience` `staff_then_owner`, `notifyChannels` {whatsapp: true, app: true, email: false}, `requireEditToken` true, `autoSendWishes` false, `wishSendTime` 09:00, `ageingThresholdDays` null, `pricingEnabled` false and version 1.
+  2. Given the settings row already exists, when the api restarts, then no second row is created for the shop and no stored value is reset to its default.
   3. Given Sanjay Seth (Owner) or Rajesh Verma (Staff) is signed in, when either calls Read Settings, then the response holds every key above plus updated at and updated by.
   4. Given Vijay Kumar (Karigar) is signed in, when he calls Read Settings, then the server refuses with `forbidden` and returns no values.
   5. Given the settings row cannot be read, when a background job or screen asks for settings, then it gets the seed defaults and the failure is logged, never a record with every switch off (epic section 13, Availability).
-- **Rules enforced on the server:** Read Settings is allowed for `owner`, `staff` and the System actor and refused for `karigar` (EP-05-S2). Each key has a fixed type: `leadSlaHours` a number of at least 1, `lateLeadAudience` one of `staff_then_owner` or `owner_only`, `notifyChannels` three booleans, `wishSendTime` a local time of day, `ageingThresholdDays` a whole number or null, the rest booleans. Defaults live in one place in the shared package.
+  6. Given the shop was created with its default location, when Read Settings is called, then the response also names the one location "Main shop" and its id; no operation to add, rename or remove a location exists (D7).
+- **Rules enforced on the server:** Read Settings is allowed for `owner`, `staff` and the System actor and refused for `karigar` (EP-05-S2). Each key has a fixed type: `leadSlaHours` a number of at least 1, `lateLeadAudience` one of `staff_then_owner` or `owner_only`, `notifyChannels` three booleans, `wishSendTime` a local time of day, `ageingThresholdDays` a whole number or null, the rest booleans. Defaults live in one place in the shared package. The row is read for the caller's shop ID from the session, never from the request (D7).
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Creating the default row is not a change by any person; later changes are audited in EP-13-S3.
-- **Data changes:** Uses the `settings` table from EP-02-S12. Migration adds `wishSendTime`, `ageingThresholdDays` (nullable), updated at, updated by and version columns if EP-02-S12 did not create them. Adds Read Settings to the shared contract (EP-03-S1).
+- **Data changes:** Uses the `settings` table from EP-02-S12. Migration adds `wishSendTime`, `ageingThresholdDays` (nullable), updated at, updated by and version columns if EP-02-S12 did not create them. Adds Read Settings to the shared contract (EP-03-S1). Reads the default location "Main shop" from `locations` (EP-02-S3); adds no location table of its own.
 - **UI reference:** No screen
-- **Non-functional checks:** Availability: a missing row falls back to the seed defaults, not to "everything off". Performance: Read Settings answers in under 50 ms (proposed target, to confirm) and may be cached until "Setting changed" arrives (EP-13-S14). Time: updated at stored in UTC. Open decision D7: one settings row per shop or one per branch; the row is keyed by shop or branch key so either fits.
+- **Non-functional checks:** Availability: a missing row falls back to the seed defaults, not to "everything off". Performance: Read Settings answers in under 50 ms (proposed target, to confirm) and may be cached until "Setting changed" arrives (EP-13-S14). Time: updated at stored in UTC. D7 is decided (one shop, no branches): one settings row per shop, keyed by shop ID.
 - **Depends on:** EP-02-S12, EP-02-S3, EP-03-S1, EP-03-S2, EP-05-S1, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -268,25 +269,23 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 
 ---
 
-## EP-13-S12: Owner can create, rename and close branches (if D7 multi-branch)
+## EP-13-S12: Owner can create, rename and close branches (Deferred: no branches in v1, D7)
 
 - **Story ID:** EP-13-S12
-- **Title:** Owner can create, rename and close branches (if D7 multi-branch)
+- **Title:** Owner can create, rename and close branches (Deferred: no branches in v1, D7)
 - **As a:** Owner
-- **I want:** Create Branch, Update Branch (rename, close) and List Branches operations over branch records with id, name, short name and status `open` or `closed`
-- **So that:** owner screens can show "All branches", staff screens can show their own showroom, and users, scales, parcels and leads can be attached to a branch (FR-13-15, FR-13-16, BR-13-8)
+- **I want:** Deferred: no branches in v1 (D7). Nothing is built for this story in v1. Was: Create Branch, Update Branch and List Branches operations over branch records
+- **So that:** the ID stays reserved and the decision is visible: the shop runs as one shop with no branches, and every record is tied to the shop by its shop ID instead of a branch key (D7, [decision record](../decisions/tenancy-and-branches.md))
 - **Acceptance criteria (Given / When / Then):**
-  1. Given D7 is multi-branch, when Sanjay Seth adds a branch named "Anna Nagar", then it is stored with status `open` and appears in the "Which counter / branch" picker on `staff-new` and in the "All branches" filter (epic acceptance criterion 5).
-  2. Given an open branch "Main showroom" exists, when Sanjay creates or renames another branch to "Main showroom", then the server refuses with a sentence saying an open branch already has that name.
-  3. Given Sanjay closes "Anna Nagar", when anyone then adds a user, scale or parcel to it, then the server refuses, and its past pieces, parcels and leads still show the branch name.
-  4. Given Rajesh Verma (Staff), when he calls List Branches, then he gets the open branches; when he calls Create Branch or Update Branch, then the server refuses with `forbidden`.
-  5. Given D7 is single shop, when the product runs, then exactly one branch row exists (from EP-02-S3), no create or close control is shown, and the operations are not exposed.
-- **Rules enforced on the server:** Create and Update Branch Owner only; List Branches Owner and Staff (EP-05-S2). Names unique among open branches. Status moves `open` to `closed` only; a closed branch accepts no new users, scales or parcels and is never deleted. Each change is audited in the same transaction.
-- **Live events emitted / consumed:** None in the catalogue. Branch changes are rare; screens pick them up on next read.
-- **Audit entry written:** Yes: actor, time, entity (branch), action (branch created, renamed, closed), before, after.
-- **Data changes:** Migration adds short name, status and created at to `branches` (EP-02-S3). Branch keys on users, scales, pieces, parcels and leads are added by EP-02 migrations if D7 is multi-branch. Adds the three operations to the shared contract.
-- **UI reference:** `docs/ux/mockups/25-onboard-staff.svg`, route `staff-new` ("Which counter / branch", "Main showroom"); "All branches" header on mockups 08, 13 and 25. Branch management itself is not yet designed.
-- **Non-functional checks:** Concurrency: two creates with the same name at once, one succeeds (unique constraint among open branches). Open decision D7: one shop or several, settings shop-wide or per branch, stock branch-scoped; the story is built only if D7 says multi-branch.
+  1. Given v1, when the shared contract and the API routes are inspected, then no Create Branch, Update Branch or List Branches operation exists, and no `branches` table exists in the schema (EP-02-S3).
+  2. Given the owner opens `staff-new`, when the form loads, then it shows no branch picker; the "Which counter / branch" field on mockup 25 is not used for a branch.
+  3. Given an owner or staff screen whose mockup prints "All branches" or "Main showroom", when it renders, then it shows the shop name from the shop record (EP-02-S3) instead.
+- **Rules enforced on the server:** None in v1. Every record carries the shop ID set by the server from the session (EP-02-S3); there is no branch key to check.
+- **Live events emitted / consumed:** None
+- **Audit entry written:** No. Nothing changes.
+- **Data changes:** None. No `branches` table and no branch key on any table (D7).
+- **UI reference:** `docs/ux/mockups/25-onboard-staff.svg`, route `staff-new` ("Which counter / branch", not used for branches in v1); "All branches" header on mockups 08, 13 and 25, shown as the shop name.
+- **Non-functional checks:** Decision D7 is one shop, no branches. If branches or multi-shop are taken up later (PRODUCTION-SCOPE §6 Later notes), this story is rewritten then.
 - **Depends on:** EP-02-S3, EP-02-S4, EP-03-S1, EP-03-S7, EP-05-S2, EP-06-S2, EP-06-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -297,7 +296,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 - **Story ID:** EP-13-S13
 - **Title:** Owner can see all settings on one settings page
 - **As a:** Owner
-- **I want:** one shop settings page that loads every setting from the server and lets me change the lead timer, late-lead audience, channels, auto-send wishes and send time, ageing threshold, pricing switch, edit-token rule and, where built, shop hours and branches, with loading, error and refusal states
+- **I want:** one shop settings page that loads every setting from the server and lets me change the lead timer, late-lead audience, channels, auto-send wishes and send time, ageing threshold, pricing switch, edit-token rule and, where built, shop hours, with loading, error and refusal states
 - **So that:** the owner has one place for the shop rules instead of controls spread over `decisions`, `wishes` and the AppShell dev switch (FR-13-2, BR-13-7)
 - **Acceptance criteria (Given / When / Then):**
   1. Given Sanjay Seth opens the settings page, when the data arrives, then he sees the current value of every key from Read Settings and a link to the change history (EP-13-S3).
@@ -345,7 +344,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 
 Copied from the epic's section 17. Not answered here.
 
-- D7: is this one shop or several branches? Are settings shop-wide or per branch? Is stock branch-scoped? (EP-13-S1, S12)
+- D7 is decided: one shop, no branches; settings are one row per shop (EP-13-S1); EP-13-S12 is deferred.
 - A2: does the 8-hour lead timer count shop hours or clock hours? If shop hours, what are the hours and holidays? (EP-13-S4, S11)
 - A3: are staff warned about a late lead before the owner, and is that a setting or a fixed rule? (EP-13-S5)
 - G12: which settings may staff change (for example auto-send wishes), and which are owner-only? (EP-13-S2, S7, S13)

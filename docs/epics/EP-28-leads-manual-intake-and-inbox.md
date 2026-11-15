@@ -100,7 +100,7 @@ a sale.
 
 ## 9. Data
 
-- Lead: id, title, source (`whatsapp`, `email`, `counter`), state, confidence, arrived at (UTC), customer id (nullable, G7), customer name, phone, message (empty for manual), needed by (nullable), taken by (user id, nullable), note, lost reason, late at (nullable), branch id if D7.
+- Lead: id, title, source (`whatsapp`, `email`, `counter`), state, confidence, arrived at (UTC), customer id (nullable, G7), customer name, phone, message (empty for manual), needed by (nullable), taken by (user id, nullable), note, lost reason, late at (nullable), shop ID (D7).
 - LeadItem: id, lead id, name, style, quantity, approximate weight (nullable integer, units of 0.0001 g), route (set by EP-30).
 - LeadAttachment: lead id, file id from EP-09 (optional photo).
 - SLA fields: limit hours at creation, breached at, notified audience.
@@ -171,7 +171,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - G25: when does an unworked lead become "Lost or expired", and is that automatic?
 - Can a lead be assigned to, or claimed by, one staff member, and can another take it over (`takenBy`)?
 - Does the clock stop at "being worked", or only when the customer gets a reply?
-- D7: is the inbox per branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); there is one inbox for the shop.
 
 ## 18. Candidate stories
 

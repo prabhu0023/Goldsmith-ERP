@@ -11,21 +11,21 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 - **Story ID:** EP-12-S1
 - **Title:** System can connect to the WhatsApp provider with credentials from environment configuration
 - **As a:** System
-- **I want:** one internal WhatsApp provider interface with a real provider client that reads its account id, access token, webhook secret, verify token and sender numbers from environment variables only, chosen in place of the EP-04-S4 stub by the delivery mode variable
+- **I want:** one internal WhatsApp provider interface with a real provider client that reads its account id, access token, webhook secret, verify token and sender numbers from environment variables only, chosen by the delivery mode variable in place of a development stub that shows messages in the simulated WhatsApp bubble
 - **So that:** messages can go out and come in through a real provider without secrets in the code, and the provider can be swapped later behind the same interface (FR-12-1, BR-12-6)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given staging with the delivery mode set to `whatsapp` and all provider variables set, when the api starts, then the provider client is used for every send and the EP-04-S4 stub is not loaded, with no change to sign-in code.
+  1. Given staging with the delivery mode set to `whatsapp` and all provider variables set, when the api starts, then the provider client is used for every send and the development stub is not loaded. Sign-in sends no WhatsApp message (D4).
   2. Given production with the provider access token variable missing, when the api starts, then it refuses to start and the log names the missing variable but no value of any variable.
   3. Given a commit that contains a provider access token in a file, when CI runs, then the secret scan fails the run (EP-01-S10).
   4. Given the provider is reachable, when the health check is called, then it reports the WhatsApp provider as up, and when the provider cannot be reached it reports it as down, in both cases without any credential in the response.
   5. Given the sender numbers listed in configuration, when the api starts, then each one exists as a SenderIdentity row with display name, phone number and provider account reference, and a send naming an unknown sender identity is refused.
-- **Rules enforced on the server:** Provider credentials are read only from environment variables (EP-01-S6) and never written to the database, logs or responses. All provider calls go through one internal interface so the provider chosen under D8 can be replaced. The stub stays refused in production (EP-04-S4).
+- **Rules enforced on the server:** Provider credentials are read only from environment variables (EP-01-S6) and never written to the database, logs or responses. All provider calls go through one internal interface so the provider chosen under D8 can be replaced. The development stub is refused in production.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Connecting to the provider changes no business record.
 - **Data changes:** Adds the SenderIdentity table (id, display name, phone number, provider account reference) by migration (EP-02-S1), filled from configuration. Adds the provider environment variables to each environment's configuration.
 - **UI reference:** No screen
 - **Non-functional checks:** Security: credentials only in environment configuration; health output carries no secret. Availability: health check shows the provider as down so EP-37 can alert. Open decision D8: Meta Cloud API directly or a Business Solution Provider; the interface is written so either fits. D10 is decided (India region); whether the WhatsApp provider also stores message data in India is open. Open question G20: how many sender numbers there are.
-- **Depends on:** EP-01-S6, EP-01-S10, EP-02-S1, EP-03-S10, EP-04-S4
+- **Depends on:** EP-01-S6, EP-01-S10, EP-02-S1, EP-03-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---
@@ -36,14 +36,14 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 - **Title:** Owner can register a message template and see its approval status
 - **As a:** Owner
 - **I want:** to register a WhatsApp template with a name, purpose, English body with numbered variables, and then see whether the provider has it as pending, approved or rejected
-- **So that:** the OTP, edit token, alert, wish, broadcast and catalogue messages can be approved early, because messages outside a conversation need approved templates (FR-12-2, BR-12-2)
+- **So that:** the owner edit code (edit token), alert, wish, broadcast and catalogue messages can be approved early, because messages outside a conversation need approved templates (FR-12-2, BR-12-2)
 - **Acceptance criteria (Given / When / Then):**
   1. Given Sanjay Seth (Owner), when he calls Create Template with name `edit_token`, purpose edit token, language English and body "JGD: confirm edit to {{1}}. Token {{2}}", then it is submitted to the provider, a WhatsAppTemplate row is stored with the provider template id and approval status pending.
   2. Given the provider later reports `edit_token` as approved, when the status update is received, then the row's approval status is approved and updated at is set from the server clock.
   3. Given the provider rejects `wish_birthday`, when the status update is received, then the row's status is rejected and the provider's reason is kept on the row.
   4. Given Sanjay calls List Templates, when it returns, then he sees each template's name, purpose, language, approval status and updated at; Rajesh Verma (Staff) calling it gets `forbidden`.
   5. Given a Create Template request with a language other than English, or a body holding a price or rupee amount, when the server checks it, then it is refused with a sentence saying v1 templates are English only and carry no price.
-- **Rules enforced on the server:** Create Template and List Templates are Owner only until the open question on operations access is decided (EP-05-S2). Purpose is one of otp, edit token, alert, wish, broadcast, catalogue. Status is one of pending, approved, rejected and changes only from provider status updates. Language is English in v1; other languages belong to EP-44. No template carries a money field (EP-42 owns prices).
+- **Rules enforced on the server:** Create Template and List Templates are Owner only until the open question on operations access is decided (EP-05-S2). Purpose is one of edit token, alert, wish, broadcast, catalogue; the edit token is registered as an authentication template. There is no sign-in template (D4). Status is one of pending, approved, rejected and changes only from provider status updates. Language is English in v1; other languages belong to EP-44. No template carries a money field (EP-42 owns prices).
 - **Live events emitted / consumed:** None
 - **Audit entry written:** Yes: actor (Owner on create, System on provider status change), time, entity (WhatsAppTemplate), action (template registered, approval status changed), before and after status.
 - **Data changes:** Adds the WhatsAppTemplate table (id, name unique, purpose, language, body with variables, provider template id, approval status, rejection reason, updated at) by migration. Adds Create Template and List Templates to the shared contract (EP-03-S1).
@@ -60,21 +60,21 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 - **Title:** System can send an approved template message with variables
 - **As a:** System
 - **I want:** an internal Send Template message operation that takes a template name, a recipient (user or customer, with phone), a sender identity and variables, sends it through the provider and stores an OutboundMessage with the provider message id
-- **So that:** sign-in codes, the owner's edit token, alerts, wishes, broadcasts and catalogue links reach the right phone, and each send can be followed (FR-12-3, FR-12-4, BR-12-7)
+- **So that:** the owner's edit code, alerts, wishes, broadcasts and catalogue links reach the right phone, and each send can be followed (FR-12-3, FR-12-4, BR-12-7)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given the approved OTP template, when Rajesh Verma requests a sign-in code (EP-04-S3), then one message is sent to his phone, an OutboundMessage is stored with recipient type user, the provider message id and status sent, and its stored variables hold no plain code (epic acceptance criterion 1).
-  2. Given the approved `edit_token` template, when Rajesh proposes an edit to TAG-8841, then Sanjay Seth's WhatsApp receives "JGD: confirm edit to TAG-8841. Token" followed by the 6-digit token, as on mockup 05.
+  1. Given the approved `edit_token` template, when Sanjay Seth (Owner) applies Rajesh Verma's proposed edit to TAG-8841 (EP-25), then one message is sent to Sanjay's registered mobile number, an OutboundMessage is stored with recipient type user, the provider message id and status sent, and its stored variables hold no plain code (epic acceptance criterion 1).
+  2. Given that send, when Sanjay reads it, then his WhatsApp shows "JGD: confirm edit to TAG-8841. Token" followed by the 6-digit token, as on mockup 05.
   3. Given the `wish_birthday` template is still pending, when a send is requested, then it is refused with the sentence "The WhatsApp template wish_birthday is not approved yet, so this message was not sent." and no provider call is made (epic acceptance criterion 2).
   4. Given a send request with fewer variables than the template body needs, when the server checks it, then it is refused and no message is stored as sent.
   5. Given the same send is requested twice with the same idempotency key (for example the EP-11 notification id), when both run, then the provider is called once and one OutboundMessage exists.
   6. Given a browser session of any role, when it calls Send Template message, then the server refuses it, because the operation is internal.
-- **Rules enforced on the server:** Only approved templates may be sent. Send is callable only by EP-04, EP-11, EP-25, EP-33 and EP-34 server code, never a user session (EP-05-S2). Sends are deduplicated by idempotency key (EP-03-S8). Customer recipients pass the consent check first (EP-12-S5). Grams in variables are formatted to 4 decimals from integer units of 0.0001 g (EP-02-S2). Secret variables are stored only as references (EP-12-S11).
+- **Rules enforced on the server:** Only approved templates may be sent. Send is callable only by EP-11, EP-25, EP-33 and EP-34 server code (not by sign-in, D4), never a user session (EP-05-S2). Sends are deduplicated by idempotency key (EP-03-S8). Customer recipients pass the consent check first (EP-12-S5). Grams in variables are formatted to 4 decimals from integer units of 0.0001 g (EP-02-S2). Secret variables are stored only as references (EP-12-S11).
 - **Live events emitted / consumed:** None. Sends are requested by internal calls, not live events (epic section 11).
 - **Audit entry written:** No. The OutboundMessage row is the send record; the business action that asked for the send is audited by its own epic.
 - **Data changes:** Adds the OutboundMessage table (id, recipient phone, recipient type, recipient id, sender identity id, template id or session flag, variables with secret ones as references, provider message id unique, status queued/sent/delivered/read/failed, failure reason, created at, sent at, delivered at, read at in UTC, source notification id or broadcast id or wish id, idempotency key unique) by migration.
 - **UI reference:** No screen. Message wording follows `docs/ux/mockups/05-edit-propose-apply.svg`, route `edit-apply` ("Enter the token sent to your WhatsApp").
-- **Non-functional checks:** Performance: an OTP or edit token is handed to the provider at once, so delivery does not use up the 10-minute expiry (epic section 13). Precision: grams in variables shown to 4 decimals from integers. Concurrency: one provider call per idempotency key. Security: internal operation only. Open decision D8: provider API shape and template rules.
-- **Depends on:** EP-12-S1, EP-12-S2, EP-02-S2, EP-03-S6, EP-03-S8, EP-04-S3, EP-04-S4, EP-05-S2, EP-11-S13
+- **Non-functional checks:** Performance: the owner edit code is handed to the provider at once, so delivery does not use up the 10-minute expiry (epic section 13). Precision: grams in variables shown to 4 decimals from integers. Concurrency: one provider call per idempotency key. Security: internal operation only. Open decision D8: provider API shape and template rules.
+- **Depends on:** EP-12-S1, EP-12-S2, EP-02-S2, EP-03-S6, EP-03-S8, EP-05-S2, EP-11-S13
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---
@@ -113,7 +113,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
   1. Given Priya Malhotra has `optedIn` true and a birthday today, when her wish is sent, then the message goes to her phone.
   2. Given a customer shown on `wishes` as "not opted in to WhatsApp · will not auto-send", when a wish is requested for them, then no provider call is made and the send returns the reason consent off (epic acceptance criterion 3).
   3. Given a broadcast to the 86 opted-in VIP Bridal customers, and one of them opts out after the broadcast is queued, when that customer's send runs, then it is refused and the other 85 are sent.
-  4. Given a sign-in OTP to Vijay Kumar (Karigar), when it is sent, then no customer consent check applies, because the recipient type is user.
+  4. Given a job reminder to Vijay Kumar (Karigar), when it is sent, then no customer consent check applies, because the recipient type is user.
 - **Rules enforced on the server:** The consent check runs inside the send, on the server, for every customer recipient, using the current `optedIn` value (EP-02-S4). A refused send makes no provider call. The check cannot be skipped by a caller.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. A refused send changes no record; the consent value itself is audited where it changes (EP-12-S10, EP-17).
@@ -247,25 +247,25 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 
 ---
 
-## EP-12-S11: System can keep OTP and token values out of logs and stored messages
+## EP-12-S11: System can keep owner edit codes and other secret values out of logs and stored messages
 
 - **Story ID:** EP-12-S11
-- **Title:** System can keep OTP and token values out of logs and stored messages
+- **Title:** System can keep owner edit codes and other secret values out of logs and stored messages
 - **As a:** System
-- **I want:** template variables marked secret (the OTP and the edit token) to be stored on OutboundMessage only as a reference to the OTP or token record, and redacted from request logs, provider client logs and error reports
-- **So that:** a code or token cannot leak from our database, logs or audit log and be used to sign in or apply an edit (FR-12-14, BR-12-5)
+- **I want:** template variables marked secret (the owner edit code, also called the edit token) to be stored on OutboundMessage only as a reference to the token record, and redacted from request logs, provider client logs and error reports
+- **So that:** a code cannot leak from our database, logs or audit log and be used to apply an edit (FR-12-14, BR-12-5)
 - **Acceptance criteria (Given / When / Then):**
   1. Given the edit token "480 913" is sent to Sanjay Seth for TAG-8841, when the OutboundMessage is read back, then its variables hold TAG-8841 and a token reference, and not "480913" or "480 913".
-  2. Given an OTP is sent to Rajesh Verma, when the api log, the provider client log and the audit log are searched after the send, then the 6 digits do not appear in any of them.
+  2. Given an edit code is sent to Sanjay Seth, when the api log, the provider client log and the audit log are searched after the send, then the 6 digits do not appear in any of them.
   3. Given the provider returns an error that echoes the request body, when the error is logged, then the secret variable is replaced by a redaction mark.
   4. Given the audit entry for the edit-token send written by EP-25, when it is read, then it holds the token reference only (EP-06-S4).
-- **Rules enforced on the server:** Each template's variables are marked secret or not at registration; OTP and edit token variables are always secret. The plain value exists only in memory between generation and the provider call (EP-04-S2). Logging goes through one redaction step for all provider calls.
+- **Rules enforced on the server:** Each template's variables are marked secret or not at registration; Edit token variables are always secret. The plain value exists only in memory between generation (EP-25) and the provider call. Logging goes through one redaction step for all provider calls.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No from this story. It makes sure entries written elsewhere hold a token reference only.
 - **Data changes:** Adds a secret flag per variable on WhatsAppTemplate. OutboundMessage variables store references for secret variables.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: OTP and token values never logged or stored in plain text; a test scans logs after a send for the code (epic section 16 risk). Audit: token reference only.
-- **Depends on:** EP-12-S2, EP-12-S3, EP-04-S2, EP-06-S4
+- **Non-functional checks:** Security: owner edit code values never logged or stored in plain text; a test scans logs after a send for the code (epic section 16 risk). Audit: token reference only.
+- **Depends on:** EP-12-S2, EP-12-S3, EP-06-S4
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---

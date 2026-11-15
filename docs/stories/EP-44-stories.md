@@ -227,7 +227,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 - **Story ID:** EP-44-S10
 - **Title:** Owner can register a WhatsApp template in another language
 - **As a:** Owner
-- **I want:** to add a translation of an existing WhatsApp template (OTP, job alert, wish, broadcast or catalogue share) in an enabled language, have it registered with the provider through EP-12, and see its approval status per language
+- **I want:** to add a translation of an existing WhatsApp template (owner edit code, job alert, wish, broadcast or catalogue share) in an enabled language, have it registered with the provider through EP-12, and see its approval status per language
 - **So that:** each language has its own approved template, as the provider requires for messages sent outside a conversation (FR-44-9, BR-44-5)
 - **Acceptance criteria (Given / When / Then):**
   1. Given the English job-alert template is approved, when Sanjay Seth adds a Tamil body with the same variables and submits it, then a template translation row is stored with language `ta`, the body, status "pending" and the provider template id returned by EP-12-S2.
@@ -257,14 +257,14 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
   1. Given KG-01 Lakshmi Devi's language is Tamil and the Tamil job-alert template is approved, when a job is sent to her, then the WhatsApp message uses the Tamil template with her job's variables (epic acceptance criterion 4).
   2. Given KG-02 Mahesh Soni's language is Hindi and the Hindi job-alert template is still "pending", when a job is sent to him, then the English template is used and the send record notes the fallback.
   3. Given a weight variable such as 18.2000 g, when the Tamil message is built, then the weight is formatted from integers to 4 decimals through EP-44-S5.
-  4. Given an OTP is sent to a Hindi-language user, when the Hindi OTP template is approved, then the Hindi template is used and the code is not written to any log or stored message (EP-12-S11).
+  4. Given an edit code is sent to an owner whose language is Hindi, when the Hindi edit-token template is approved, then the Hindi template is used and the code is not written to any log or stored message (EP-12-S11).
   5. Given a wish or broadcast to a customer, when customer language preference is not decided, then the English template is used and the consent check still runs (EP-12-S5).
 - **Rules enforced on the server:** The template is chosen on the server at send time from the recipient's preference and the approval status (EP-44-S10). Only "approved" translations are used. Consent checks (EP-12-S5, EP-39-S6) and dedupe (EP-11-S1) run as before; the language choice never bypasses them. Customer-entered text is not translated.
 - **Live events emitted / consumed:** None from the catalogue. The sends are triggered by the existing notification and wish flows (EP-11-S13, EP-33-S9, EP-34-S7).
 - **Audit entry written:** No. Sends are recorded with delivery status by EP-12-S9 and EP-11-S13; this story adds the language used and the fallback flag to that record, not an audit entry.
 - **Data changes:** Adds `language` and `fell_back_to_english` to the outbound message record (migration on the EP-12 send table). No new table.
 - **UI reference:** No screen.
-- **Non-functional checks:** Security: OTP and token values stay out of logs and stored messages in every language (EP-12-S11). Precision: weight variables formatted from integers to 4 decimals. Availability: a missing or pending translation never blocks a send. Open question: which WhatsApp messages need translated templates, and does a customer get a language preference.
+- **Non-functional checks:** Security: edit code values stay out of logs and stored messages in every language (EP-12-S11). Precision: weight variables formatted from integers to 4 decimals. Availability: a missing or pending translation never blocks a send. Open question: which WhatsApp messages need translated templates, and does a customer get a language preference.
 - **Depends on:** EP-12-S3, EP-12-S5, EP-12-S9, EP-12-S11, EP-11-S8, EP-11-S13, EP-04-S4, EP-33-S9, EP-34-S7, EP-39-S6, EP-44-S5, EP-44-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

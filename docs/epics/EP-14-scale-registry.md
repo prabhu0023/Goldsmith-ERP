@@ -29,7 +29,7 @@ remembers each staff member's last scale, and gives the server one ceiling funct
 - Owner edits a scale's name, readability and capacity.
 - A rule for what an edit does to open parcels that already have weighings on that scale (the rule itself is an open question).
 - Owner retires a scale; a retired scale cannot be picked for new weighings and stays readable on old ones.
-- Assigning a scale to a counter (and to a branch, if D7 says multi-branch).
+- Assigning a scale to a counter. There are no branches (D7).
 - Remembering the last scale used per staff session, so the picker defaults to it.
 - The ceiling function `ceiling = Σ ½ × readability` over every weighing, run on the server and shared with the client for instant feedback.
 - A capacity warning when a typed weight is above the chosen scale's capacity.
@@ -42,7 +42,8 @@ remembers each staff member's last scale, and gives the server one ceiling funct
 - Recording parcel and piece weighings, trays and the scale picker on those forms (EP-21).
 - Reading the weight directly from the balance and calibration integration (EP-36, per D9).
 - The integer weight unit chosen for the database (EP-02; conflict G10 is listed below).
-- Counter and branch records themselves (EP-13).
+- Counter records themselves (EP-13). Branches are not in v1 (D7).
+- Registering the shop's first scales during first-run setup (EP-45 calls this epic's Create Scale).
 - Loading the real scales of the shop at launch (EP-41).
 
 ## 6. Current state in the prototype
@@ -67,7 +68,7 @@ remembers each staff member's last scale, and gives the server one ceiling funct
 - FR-14-4. A staff or karigar user who calls the add or edit operation is refused with "Only the owner can change the scales."
 - FR-14-5. The owner can edit a scale's name, readability and capacity, and the server applies the decided rule for open parcels that already used it.
 - FR-14-6. The owner can retire a scale; the picker no longer offers it and past weighings still show its name and readability.
-- FR-14-7. The owner can assign a scale to a counter (and branch, if D7), and the picker lists the counter's scales first.
+- FR-14-7. The owner can assign a scale to a counter, and the picker lists the counter's scales first.
 - FR-14-8. The picker defaults to the scale the staff member used last in the session.
 - FR-14-9. The server computes the ceiling for a set of weighings as Σ ½ × readability of the scale recorded on each weighing.
 - FR-14-10. For 13 weighings on the 0.0001 g bench balance, the server ceiling is 0.00065 g, displayed as the decided rounding (G10).
@@ -89,7 +90,7 @@ remembers each staff member's last scale, and gives the server one ceiling funct
 
 ## 9. Data
 
-- Scale: id, name, readability (integer, units of 0.0001 g; see G10), capacity (integer, units of 0.0001 g), status (`active`, `retired`), counter key (nullable), branch key (if D7), created at, retired at, version.
+- Scale: id, name, readability (integer, units of 0.0001 g; see G10), capacity (integer, units of 0.0001 g), status (`active`, `retired`), counter key (nullable), shop ID, location ID (not null, "Main shop" in v1, set by the server; D7), created at, retired at, version.
 - ScaleAssignment (if one scale may serve several counters): scale id, counter key, from, to.
 - Session preference: user id, last scale id (the prototype's `lastScaleId`, moved per user).
 - Ceiling result (computed, not stored): rows per scale with count and subtotal, total ceiling, plain line. The total needs half-steps of readability (0.00005 g on a 0.0001 g scale), which is not a whole number of 0.0001 g units; the stored unit is open (G10).
@@ -106,7 +107,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 | Create | Scale | Register a scale | Owner |
 | Update | Scale | Edit name, readability or capacity | Owner |
 | Update | Scale status | Retire or reactivate a scale | Owner |
-| Update | Scale assignment | Assign a scale to a counter or branch | Owner |
+| Update | Scale assignment | Assign a scale to a counter | Owner |
 | Update | My last scale | Remember the scale picked in this session | Staff, Owner |
 | Compute | Ceiling | Ceiling for a set of weighings (internal to match, also readable for the screen) | System, Staff, Owner |
 
@@ -131,7 +132,7 @@ None. Scale changes are rare owner actions. A changed readability affects ceilin
 ## 14. Dependencies
 
 - Upstream (from PRODUCTION-SCOPE): EP-02, EP-13, EP-08
-- Downstream: EP-21, EP-40, EP-41.
+- Downstream: EP-21, EP-40, EP-41, EP-45.
 
 ## 15. Epic acceptance criteria
 

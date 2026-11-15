@@ -87,7 +87,7 @@ every step, so a broken cable never stops the shop.
 
 ## 9. Data
 
-- Device: id, kind (balance, label printer, sheet printer, scanner), model, counter or branch, linked scale id for a balance, active flag.
+- Device: id, kind (balance, label printer, sheet printer, scanner), model, counter (no branch, D7), linked scale id for a balance, active flag.
 - Weighing (EP-21): gross and stone (integer, units of 0.0001 g), scale id, source (read or typed), device id (nullable).
 - Piece weights (EP-21): gross and stone (integer, units of 0.0001 g), scale id, source (read or typed), device id (nullable).
 - Label print: piece id, printed by, printed at, device id, reprint count.

@@ -19,10 +19,11 @@ Role note: stories where the server checks, locks, pushes or records on its own 
   3. Given a quality check row for TAG-9110 on BATCH-2026-043, when it is stored, then it holds `scaleAgrees`, `hallmark` and `deductions` as booleans with the user id and time, and a second row for the same parcel and piece is rejected by the EP-02-S6 unique key.
   4. Given a piece whose tray weighing id points to a weighing on another parcel, when it is written, then the database rejects it, because a tray link must name a weighing of the piece's own parcel.
   5. Given the migration runs on a staging copy loaded with the prototype seed (EP-02-S13), when it finishes, then existing pieces have a null tray link, existing QC ticks are carried over as checks with all three parts true, and the migration can be rolled back.
+  6. Given a parcel arrives and is weighed in three trays, when the parcel, its weighings and its tagged pieces are stored, then each row carries `location_id` set by the server to the shop's default location "Main shop"; a location sent by the client is ignored (D7).
 - **Rules enforced on the server:** Weights are integers in units of 0.0001 g with gross greater than 0 and stones from 0 up to gross (check constraints). Net is never stored from client input. The tray link is nullable and must reference a weighing of the same parcel. One quality check row per parcel and piece. `version` columns on `parcels` and `pieces` back the EP-02-S14 stale-write check.
 - **Live events emitted / consumed:** None. This story only stores data.
 - **Audit entry written:** No. Schema changes are tracked by the migration history (EP-02-S1); data changes are audited by EP-21-S14.
-- **Data changes:** Migration adds to `parcel_qc_ticks` (or renames it `parcel_qc_checks`) the columns `scaleAgrees`, `hallmark`, `deductions`, `checkedBy`, `checkedAt`; adds to `pieces` the columns `scaleId`, `trayWeighingId` (nullable), `taggedBy`, `taggedAt`, `retagRequestedBy`, `retagRequestedAt`, `retagReason` (nullable); adds `poRef` (nullable) to `parcels` if EP-02-S6 did not. Presence is not stored here; it lives in the live channel (EP-07-S8).
+- **Data changes:** Migration adds to `parcel_qc_ticks` (or renames it `parcel_qc_checks`) the columns `scaleAgrees`, `hallmark`, `deductions`, `checkedBy`, `checkedAt`; adds to `pieces` the columns `scaleId`, `trayWeighingId` (nullable), `taggedBy`, `taggedAt`, `retagRequestedBy`, `retagRequestedAt`, `retagReason` (nullable); adds `poRef` (nullable) to `parcels` if EP-02-S6 did not. Presence is not stored here; it lives in the live channel (EP-07-S8). Uses the `location_id` columns on `parcels`, `parcel_weighings` and `pieces` from EP-02-S5 and EP-02-S6.
 - **UI reference:** No screen.
 - **Non-functional checks:** Precision: every weight is an integer in units of 0.0001 g, shown to 4 decimals; gap G10 (the half-step in the ceiling) must be settled in EP-02 before this migration. Time: `arrivedAt`, `taggedAt` and `checkedAt` stored in UTC. Open question G15: the tray link shape (one tray per piece) is the proposed answer; a different answer changes this migration.
 - **Depends on:** EP-02-S1, EP-02-S2, EP-02-S5, EP-02-S6, EP-02-S13, EP-02-S14, EP-14-S1
@@ -48,7 +49,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 - **Audit entry written:** Yes: actor, time, entity (parcel id), action (`parcel_arrival_recorded`), after (each weighing's label, scale id, gross and stones in integer units, each manifest row's kind and count).
 - **Data changes:** Inserts rows into `parcel_weighings` and `parcel_manifest_rows`; updates `parcels.stage`, `poRef` and `version`. Ports `recordParcelArrival` from `src/store/transitions.ts` as a server service function and moves `ParcelArrival.tsx` onto the EP-08 data layer.
 - **UI reference:** `docs/ux/mockups/20-parcel-arrival.svg`, route `parcel-arrival` ("Weigh the parcel and list what is in it", "WEIGH THE WHOLE PARCEL · ALL THREE FIGURES", "Which scale is this on?", "SAY WHAT IS INSIDE · MIXED IS FINE", "Add another kind of item", "That is 12 items to tag in the next step", "Open the parcel for tagging").
-- **Non-functional checks:** Precision: weights typed to 4 decimals and converted with the EP-02-S2 helper; the pure gold line uses the same helper on client and server. Concurrency: two staff weighing the same parcel get one success and one "This parcel has already been weighed." Audit: arrival audited, which the prototype does not do. Time: arrival time in UTC, shown in Asia/Kolkata. Open decision D9: weights are typed by hand here; reading them from the balance is EP-36. Open decision D7: whether the parcel carries a branch.
+- **Non-functional checks:** Precision: weights typed to 4 decimals and converted with the EP-02-S2 helper; the pure gold line uses the same helper on client and server. Concurrency: two staff weighing the same parcel get one success and one "This parcel has already been weighed." Audit: arrival audited, which the prototype does not do. Time: arrival time in UTC, shown in Asia/Kolkata. Open decision D9: weights are typed by hand here; reading them from the balance is EP-36. D7 is decided: the parcel carries the shop ID, not a branch.
 - **Depends on:** EP-21-S1, EP-20-S6, EP-03-S3, EP-03-S6, EP-05-S2, EP-14-S9, EP-14-S11, EP-15-S4, EP-15-S5, EP-06-S2, EP-08-S5, EP-08-S9, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -240,7 +241,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 - **Audit entry written:** No. Reading the list changes nothing.
 - **Data changes:** None in the product database. Moves `ParcelsList.tsx` onto the EP-08 data layer.
 - **UI reference:** Not yet designed (MOCKUP-COVERAGE §3, parcels-in list); the prototype route is `parcels`. The rail entry "Parcels in" is on `docs/ux/mockups/20-parcel-arrival.svg`; the parcel rail colours are on `docs/ux/mockups/12-state-lifecycles.svg`.
-- **Non-functional checks:** Performance: the list loads under 2 seconds. Security: karigars cannot read parcels. Time: arrival age computed from UTC and shown in Asia/Kolkata. Open question: how long a draft piece may wait before it is flagged. Open decision D7: whether the list filters by branch.
+- **Non-functional checks:** Performance: the list loads under 2 seconds. Security: karigars cannot read parcels. Time: arrival age computed from UTC and shown in Asia/Kolkata. Open question: how long a draft piece may wait before it is flagged. D7 is decided: one shop, so the list has no branch filter.
 - **Depends on:** EP-21-S2, EP-20-S6, EP-03-S9, EP-05-S2, EP-08-S3, EP-08-S4, EP-08-S9, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -352,5 +353,5 @@ Copied from the epic's section 17. Not answered here.
 - G15: how is a tray linked to its pieces for a per-tray stop? (EP-21-S1, S3, S13)
 - How are carats converted to grams for stones (SCOPE-ANALYSIS App. D)? (EP-21-S6)
 - What does presence show when two staff open the same item? (EP-21-S12)
-- D7: does a parcel belong to a branch? (EP-21-S2, S10)
+- D7 is decided: one shop, no branches; a parcel belongs to the shop (EP-21-S2, S10).
 - How long may a draft piece wait before it is flagged? (EP-21-S10)

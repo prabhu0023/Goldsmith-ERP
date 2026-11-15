@@ -11,6 +11,10 @@ Decisions these stories follow:
 - English only in v1. Translation is EP-44 (Later).
 - No money in v1. Only EP-42 Pricing has price logic.
 - Weights are stored as integers in units of 0.0001 g and shown to 4 decimals.
+- Sign-in is decided (D4): phone number and password; the owner adds a user with name, phone, email and role, and a single-use activation link (24 hours) lets the user set a password; forgot password sends a single-use reset link (1 hour) to the account's email; 5 wrong passwords lock the account for 15 minutes. No OTP sign-in in v1. Every user has an email address. See `docs/decisions/D4-sign-in.md`.
+- The owner edit code stays: when the owner applies a staff edit, a one-time code goes as a WhatsApp message to his registered mobile number (EP-25).
+- One shop, no branches (D7). One owner per shop. Every business table carries a shop ID, and uniqueness (tag number, HUID, phone) is per shop. Multi-shop is deferred. See `docs/decisions/tenancy-and-branches.md`.
+- The first shop and owner are created by the first-run setup wizard (EP-45). Stories made out of scope by these decisions keep their IDs and say "Deferred".
 - Backend is decided (D1, Option C): the team's own Node + TypeScript API runs every rule, sign-in, sessions, the live channel and background jobs. The database is managed PostgreSQL (D2) in an India region (D10), with S3-compatible file storage, both on the same cloud provider as the API and reached only by the API over its private network. Browsers and the karigar phone talk only to the API. The cloud provider is still open (D1a). See `docs/decisions/D1-backend-approach.md`.
 
 Layers: A Platform foundation, B Master data, C Core gold pipeline, D Experience, E Hardware, scale and operations, F Later.
@@ -29,7 +33,7 @@ Layers: A Platform foundation, B Master data, C Core gold pipeline, D Experience
 | EP-10 | Background jobs | A | M1 Platform | 13 | [EP-10-stories.md](./EP-10-stories.md) |
 | EP-11 | Notifications engine | A | M1 Platform | 14 | [EP-11-stories.md](./EP-11-stories.md) |
 | EP-12 | WhatsApp integration | A | M1 Platform | 12 | [EP-12-stories.md](./EP-12-stories.md) |
-| EP-13 | Branches and shop settings | B | M2 Masters | 14 | [EP-13-stories.md](./EP-13-stories.md) |
+| EP-13 | Shop settings | B | M2 Masters | 14 | [EP-13-stories.md](./EP-13-stories.md) |
 | EP-14 | Scale registry | B | M2 Masters | 12 | [EP-14-stories.md](./EP-14-stories.md) |
 | EP-15 | Reference data | B | M2 Masters | 12 | [EP-15-stories.md](./EP-15-stories.md) |
 | EP-16 | Karigar master | B | M2 Masters | 13 | [EP-16-stories.md](./EP-16-stories.md) |
@@ -61,5 +65,6 @@ Layers: A Platform foundation, B Master data, C Core gold pipeline, D Experience
 | EP-42 | Pricing | F | None (later) | 15 | [EP-42-stories.md](./EP-42-stories.md) |
 | EP-43 | Staff gamification | F | None (later) | 12 | [EP-43-stories.md](./EP-43-stories.md) |
 | EP-44 | Localisation | F | None (later) | 12 | [EP-44-stories.md](./EP-44-stories.md) |
+| EP-45 | Shop setup wizard | B | M2 Masters | 9 | [EP-45-stories.md](./EP-45-stories.md) |
 
-Total stories: 577
+Total stories: 586

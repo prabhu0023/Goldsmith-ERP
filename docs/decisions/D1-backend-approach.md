@@ -6,7 +6,7 @@ Status: **Decided: Option C (own Node API, managed PostgreSQL in an India region
 
 The owner chose **Option C: own Node + TypeScript API**.
 
-- All server logic runs in the team's own Node + TypeScript API: request handling, every business rule (match gate, permissions, edit token, double-sell prevention, metal-pool transactions), sign-in and OTP, sessions, the live push channel, background jobs, notifications and WhatsApp calls. `express` is already in `package.json`; any further framework choice is not made here.
+- All server logic runs in the team's own Node + TypeScript API: request handling, every business rule (match gate, permissions, edit token, double-sell prevention, metal-pool transactions), sign-in, sessions, the live push channel, background jobs, notifications and WhatsApp calls. `express` is already in `package.json`; any further framework choice is not made here.
 - The database is managed PostgreSQL from a major cloud provider, in an India region. This also settles D2 (PostgreSQL) and D10 (India region).
 - The API runs on the same cloud provider as the database and reaches it over the provider's private network. File storage (EP-09) uses the same provider's S3-compatible object storage.
 - Browsers and the karigar phone app talk only to the Node API on the shop's own domain. They never connect to the database or to storage directly.
@@ -18,7 +18,7 @@ Still open:
 
 - **D1a: which cloud provider** (for example AWS, Google Cloud or Azure). The database, the API hosting and the object storage all come from this one provider.
 - D3 (WebSocket or Server-Sent Events) stays open. Under Option C it is built in the Node API, not taken from a platform.
-- D4 to D9 are unchanged.
+- D4 (sign-in) and D7 (branches) were decided later: see [D4-sign-in.md](D4-sign-in.md) and [tenancy-and-branches.md](tenancy-and-branches.md). D5, D6, D8 and D9 are still open.
 
 The comparison below is kept as the record of why.
 
@@ -27,7 +27,7 @@ The comparison below is kept as the record of why.
 From `docs/PRODUCTION-SCOPE.md` and the epics:
 
 1. Relational database with transactions. The metal pool, stock-out and match gate need all-or-nothing writes (D2).
-2. Sign-in by phone with a WhatsApp OTP, plus a password fallback for the owner (D4, EP-04).
+2. Sign-in by phone number and password, with single-use activation and reset links sent by email; no OTP sign-in in v1 (D4, decided; EP-04). This item first read "sign-in by phone with a WhatsApp OTP", the recommendation before D4 was decided.
 3. Live push to every open screen within about a second (EP-07).
 4. Business rules enforced on the server, not the browser: the match gate, permissions, the edit token, double-sell prevention.
 5. File storage for piece photos and PO attachments (EP-09).
@@ -36,7 +36,9 @@ From `docs/PRODUCTION-SCOPE.md` and the epics:
 
 The prototype already has the rules as TypeScript: `src/domain/` and `src/store/transitions.ts`. Whichever option runs TypeScript on the server can reuse them.
 
-## Option A: Supabase (managed platform)
+## Option A: Supabase (managed platform), historical
+
+Historical: this option was compared before the decision and was not chosen. The wording below is kept as it was written then. Its sign-in row assumes WhatsApp OTP sign-in, which D4 later replaced with phone number and password.
 
 One service provides a PostgreSQL database, sign-in, live updates, file storage and server functions.
 
@@ -71,7 +73,7 @@ A Node + TypeScript API (Express is already in `package.json`) with a managed Po
 **For:**
 - Full control. No dependency on one vendor's domain being reachable.
 - `src/domain/` and `src/store/transitions.ts` move almost directly into the API.
-- Any WhatsApp provider for both OTP and outreach.
+- Any WhatsApp provider for both OTP and outreach. (Written before D4. Sign-in no longer uses WhatsApp; the provider now carries the owner edit code and outreach.)
 - Standard architecture that most developers know.
 
 **Against:**
@@ -99,6 +101,8 @@ Option C applies. The epics and the stories flagged with D1 have been made speci
 Either way, the 577 stories were written neutrally, so they keep their IDs. Only the stories flagged with D1 need their acceptance criteria made specific.
 
 ## Questions for the owner
+
+Answered by the decision above (Option C, 15 November 2026). The questions are kept as the record of what was asked.
 
 1. How many developers will build this, and do they already know Node APIs or Supabase?
 2. Is a short outage of a hosted service acceptable, or must the shop keep working regardless?

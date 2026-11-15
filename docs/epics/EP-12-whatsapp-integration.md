@@ -3,10 +3,13 @@
 ## 1. Summary
 
 This epic connects the system to a real WhatsApp Business provider. Staff, karigars and customers already live on
-WhatsApp. The shop needs it to send sign-in OTPs, the owner's edit token, alerts, birthday wishes and broadcasts, and
+WhatsApp. The shop needs it to send the owner's edit code (edit token), alerts, birthday wishes and broadcasts, and
 to receive purchase orders and broadcast replies that become leads. Today every message is simulated: the token
 appears in a fake bubble and a "reply" is made by a button. This epic covers the provider connection, template
-registration, outbound sending, the inbound webhook, and delivery and read receipts.
+registration, outbound sending, the inbound webhook, and delivery and read receipts. Sign-in does not use WhatsApp:
+D4 decided phone number and password, with no OTP sign-in in v1. The owner edit code is a WhatsApp
+authentication-template use: when the owner applies a staff edit, a one-time code goes to his registered mobile
+number (EP-25).
 
 ## 2. Layer, milestone, status
 
@@ -17,15 +20,15 @@ registration, outbound sending, the inbound webhook, and delivery and read recei
 ## 3. Roles involved
 
 - Owner: receives the edit token and alerts on WhatsApp; may be a sender identity for wishes.
-- Staff: receive sign-in OTPs and staff alerts; may be a sender identity for wishes.
-- Karigar: receives sign-in OTPs and job reminders on their own phone.
+- Staff: receive staff alerts; may be a sender identity for wishes. No sign-in message (D4).
+- Karigar: receives job reminders on their own phone. No sign-in message (D4).
 - System: holds provider credentials, registers templates, sends messages, verifies and processes inbound webhooks, stores receipts, handles opt-out keywords.
 - Customers (not users): receive wishes, broadcasts and catalogue links if they opted in; send POs and replies.
 
 ## 4. In scope
 
 - Connection to the provider chosen under D8, with credentials in environment configuration.
-- Registration and tracking of message templates (OTP, edit token, alerts, wishes, broadcasts, catalogue share) and their approval status.
+- Registration and tracking of message templates (owner edit code as an authentication template, alerts, wishes, broadcasts, catalogue share) and their approval status.
 - Outbound template messages for messages outside a conversation window.
 - Outbound session messages inside an open conversation window.
 - An inbound webhook with signature verification, handing messages and media to the right epic (POs to EP-29, broadcast replies to EP-29, media files to EP-09).
@@ -38,7 +41,8 @@ registration, outbound sending, the inbound webhook, and delivery and read recei
 ## 5. Out of scope
 
 - Deciding who gets which notification and on which channel (EP-11).
-- The OTP sign-in flow (EP-04) and the edit-token flow (EP-25).
+- The edit-token flow (EP-25); this epic only delivers the code.
+- Sign-in (EP-04): phone and password, no WhatsApp message. OTP sign-in is deferred (D4).
 - The wishes queue and the two sender identities on the wishes screen (EP-33).
 - Broadcast audience, preview, scheduling and tracking screens (EP-34, gap G17).
 - Parsing inbound POs into lead fields and creating leads (EP-29).
@@ -75,24 +79,25 @@ registration, outbound sending, the inbound webhook, and delivery and read recei
 - FR-12-11. Delivery, read and failure receipts update the status of the matching outbound message.
 - FR-12-12. An inbound opt-out keyword sets that customer's consent to off and stops further customer messages.
 - FR-12-13. A failed send is reported to EP-11 for retry and to EP-37 for alerting.
-- FR-12-14. OTP and token values are never written to logs, the message store or the audit log in plain text.
+- FR-12-14. Owner edit code (token) values are never written to logs, the message store or the audit log in plain text.
 
 ## 8. Business rules
 
 - BR-12-1. Scope is provider connection, template registration, outbound send, inbound webhook, and delivery and read receipts. [PRODUCTION-SCOPE §6 EP-12 scope]
-- BR-12-2. Outbound messages outside a conversation need pre-approved templates, so wishes, broadcasts and OTP need approval lead time. [PRODUCTION-SCOPE §4 D8]
+- BR-12-2. Outbound messages outside a conversation need pre-approved templates, so wishes, broadcasts and the owner edit code need approval lead time. [PRODUCTION-SCOPE §4 D8]
 - BR-12-3. Record consent for WhatsApp messaging and honour opt-out. [PRODUCTION-SCOPE §5 Personal data]
 - BR-12-4. Only opted-in customers receive wishes and broadcasts. [src/store/transitions.ts sendWishes, sendBroadcast]
-- BR-12-5. OTP and edit tokens are never logged in plain text. [PRODUCTION-SCOPE §5 Security]
+- BR-12-5. Owner edit codes (edit tokens) are never logged in plain text. [PRODUCTION-SCOPE §5 Security]
 - BR-12-6. Secrets live in environment configuration. [PRODUCTION-SCOPE §5 Security]
 - BR-12-7. The edit token goes to the owner's WhatsApp. [mockup 05; PRODUCTION-SCOPE §6 EP-25 scope]
 - BR-12-8. Broadcast replies become leads. [mockup 27; PRODUCTION-SCOPE §6 EP-34 scope]
 - BR-12-9. Unreadable POs still create a lead. [SCOPE-ANALYSIS App. H]
 - BR-12-10. Delivered, opened and who replied are tracked for broadcasts. [mockup 27]
+- BR-12-11. WhatsApp is not used for sign-in in v1. [PRODUCTION-SCOPE §4 D4; decisions/D4-sign-in.md]
 
 ## 9. Data
 
-- WhatsAppTemplate: id, name, purpose (otp, edit token, alert, wish, broadcast, catalogue), language (English in v1; EP-44 adds others), body with variables, provider template id, approval status, updated at.
+- WhatsAppTemplate: id, name, purpose (edit token, alert, wish, broadcast, catalogue), language (English in v1; EP-44 adds others), body with variables, provider template id, approval status, updated at.
 - OutboundMessage: id, recipient phone, recipient type (user or customer), recipient id, sender identity, template id or session flag, variables (token variables stored as a reference only), provider message id, status (queued, sent, delivered, read, failed), failure reason, timestamps (UTC), source notification id (EP-11) or broadcast or wish id.
 - InboundMessage: id, provider message id (unique), sender phone, text, media file ids (EP-09), received at, conversation window ends at, handed to (lead id), dedupe key.
 - SenderIdentity: id, display name, phone number, provider account reference.
@@ -121,17 +126,17 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 ## 12. Screens and UX references
 
 No screen of its own. Screens that depend on it: `edit-apply` (token to the owner's WhatsApp), `wishes`, `broadcast`,
-`catalogue`, `leads` and `lead-review` (WhatsApp POs and replies), and the sign-in screen (EP-04, no route id yet).
+`catalogue`, `leads` and `lead-review` (WhatsApp POs and replies). The sign-in screen does not use WhatsApp (D4).
 Mockups: `05-edit-propose-apply.svg`, `16-lead-inbox.svg`, `17-lead-create.svg`, `26-wishes.svg`, `27-broadcast.svg`,
 `28-catalogue-share.svg`.
 
 ## 13. Non-functional requirements
 
-- Security: provider credentials only in environment configuration; webhook signature verified on every call; OTP and token values never logged or stored in plain text.
+- Security: provider credentials only in environment configuration; webhook signature verified on every call; owner edit code values never logged or stored in plain text.
 - Personal data: customer phones and message text are personal data under the DPDP Act 2023; send only to `optedIn` customers; honour opt-out at once; keep message bodies only as long as the retention rule says.
 - Concurrency: inbound messages deduplicated by provider message id, so a redelivered webhook creates one lead.
 - Availability and recovery: a provider outage queues outbound messages for retry (EP-11) and alerts operations (EP-37).
-- Performance: an OTP or edit token reaches the phone fast enough that the 10-minute expiry is not consumed by delivery.
+- Performance: the owner edit code reaches the owner's phone fast enough that the 10-minute expiry is not consumed by delivery.
 - Audit: consent changes from opt-out keywords are audited with a System actor (EP-06).
 
 ## 14. Dependencies
@@ -141,7 +146,7 @@ Mockups: `05-edit-propose-apply.svg`, `16-lead-inbox.svg`, `17-lead-create.svg`,
 
 ## 15. Epic acceptance criteria
 
-1. Given an approved OTP template, when a user requests a sign-in code, then a WhatsApp message reaches their phone and the stored message holds no plain code.
+1. Given an approved `edit_token` template, when the owner applies a staff edit, then a WhatsApp message with the code reaches the owner's registered mobile number and the stored message holds no plain code.
 2. Given a template still pending approval, when a send is requested, then it is refused with a sentence naming the template.
 3. Given a customer with consent off, when a wish or broadcast is sent to them, then nothing is sent.
 4. Given a webhook call with a bad signature, when it arrives, then it is rejected and nothing is stored.
@@ -150,7 +155,7 @@ Mockups: `05-edit-propose-apply.svg`, `16-lead-inbox.svg`, `17-lead-create.svg`,
 
 ## 16. Risks
 
-- Risk: template approval takes weeks and blocks sign-in and wishes. Mitigation: submit templates early in M1 and keep in-app channels working first.
+- Risk: template approval takes weeks and blocks the owner edit code and wishes. Mitigation: submit templates early in M1 and keep in-app channels working first. Sign-in does not depend on WhatsApp (D4).
 - Risk: provider terms change (D8 says verify current Meta terms). Mitigation: keep the provider behind one internal interface so it can be swapped.
 - Risk: forged webhook calls create fake leads. Mitigation: verify signatures and reject unsigned calls.
 - Risk: the shop number gets blocked for spam after a large broadcast. Mitigation: send only to opted-in customers, honour opt-out, and pace broadcast sends.
@@ -178,5 +183,5 @@ Mockups: `05-edit-propose-apply.svg`, `16-lead-inbox.svg`, `17-lead-create.svg`,
 8. EP-12-S8: System can store inbound media through file storage
 9. EP-12-S9: System can record delivery, read and failure receipts
 10. EP-12-S10: System can switch off a customer's consent on an opt-out keyword
-11. EP-12-S11: System can keep OTP and token values out of logs and stored messages
+11. EP-12-S11: System can keep owner edit codes and other secret values out of logs and stored messages
 12. EP-12-S12: System can report failed sends for retry and alerting

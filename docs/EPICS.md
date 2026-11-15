@@ -1,7 +1,7 @@
 # JGD Enterprise Suite — epic breakdown
 
 > **Prototype scope only.** For the live, multi-user production application, use
-> [`PRODUCTION-SCOPE.md`](PRODUCTION-SCOPE.md), which has 44 epics numbered bottom-up.
+> [`PRODUCTION-SCOPE.md`](PRODUCTION-SCOPE.md), which has 45 epics numbered bottom-up.
 
 A plan to work through the application one piece at a time. Each epic is a self-contained
 slice you can pick up, verify, and close before moving to the next. Epics are ordered by

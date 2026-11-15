@@ -11,20 +11,20 @@ Role note: stories where the server computes figures or checks access on its own
 - **Story ID:** EP-35-S1
 - **Title:** Owner can review and approve the UX design of the report hub and section layout
 - **As a:** Owner
-- **I want:** a design for the report hub, one reusable section-report layout, the period picker, the branch picker (if D7 says multi-branch) and export (if decided), drawn as mockups in `docs/ux/mockups/` and shown to me for approval before any report is built
+- **I want:** a design for the report hub, one reusable section-report layout, the period picker and export (if decided), with no branch picker (one shop, D7), drawn as mockups in `docs/ux/mockups/` and shown to me for approval before any report is built
 - **So that:** reports answer the questions I actually ask, in grams and counts, and nobody builds screens I did not want (FR-35-1, BR-35-6, BR-35-7)
 - **Acceptance criteria (Given / When / Then):**
   1. Given no report is designed (MOCKUP-COVERAGE §3 "Everything (never designed)"), when the design pass ends, then mockups exist for the hub with the five sections stock, karigars, leads, intake and outreach, and for one section layout reused by all five.
   2. Given the design is shown to Sanjay Seth, when he reads each section, then every figure on it is in grams (4 decimals), milligrams, a percentage or a count, and none shows a value, price or "₹" (BR-35-3, BR-35-5).
   3. Given the design, when it is reviewed, then it names the route id for the hub, where the owner reaches it from the owner rail next to `decisions` (the "Reports" item in mockup 13), the default period and the periods offered.
-  4. Given the open questions in section 17 (D7, periods, export, staff access, G4, G5), when the design is approved, then each one is either answered by the owner and written into the design notes or marked as still open with the stories it holds back.
+  4. Given the open questions in section 17 (periods, export, staff access, G4, G5), when the design is approved, then each one is either answered by the owner and written into the design notes or marked as still open with the stories it holds back.
   5. Given Sanjay Seth approves the design, when the approval is recorded, then EP-35-S4 to EP-35-S13 may start, and no report story starts before it.
 - **Rules enforced on the server:** None in the product. This is a design and approval step; the gate is that no report operation is merged before the approval is recorded in the design notes.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. A design approval is not a product action; it is recorded in the design notes with the owner's name and date.
-- **Data changes:** None in the product database. Adds new mockups under `docs/ux/mockups/` and design notes for the hub, section layout, period picker, branch picker and export.
+- **Data changes:** None in the product database. Adds new mockups under `docs/ux/mockups/` and design notes for the hub, section layout, period picker and export.
 - **UI reference:** Not yet designed. Entry points to keep consistent: `docs/ux/mockups/13-notifications-escalation.svg` (owner rail "Reports"), `docs/ux/mockups/08-owner-home.svg`, route `decisions` ("Money and stock", "Gold on the floor", "Gold with karigars", "Metal lost this month", "Pieces that went out in October"), `docs/ux/mockups/11-roles-and-permissions.svg` ("Read every section's report"), `docs/ux/mockups/10-navigation-map.mmd` (node "Reports, section by section").
-- **Non-functional checks:** Precision: the design shows weights to 4 decimals and loss gaps optionally in mg. Security: the design shows reports in the owner rail only. Open decision D7: whether a branch picker with "All branches" is drawn. Open decision G24: whether this work is planned before the EP-41 launch or after it as M8.
+- **Non-functional checks:** Precision: the design shows weights to 4 decimals and loss gaps optionally in mg. Security: the design shows reports in the owner rail only. D7 is decided: no branch picker is drawn. Open decision G24: whether this work is planned before the EP-41 launch or after it as M8.
 - **Depends on:** EP-32-S2, EP-08-S13
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -35,20 +35,20 @@ Role note: stories where the server computes figures or checks access on its own
 - **Story ID:** EP-35-S2
 - **Title:** System can compute period totals from integer weight units
 - **As a:** System
-- **I want:** one set of shared report functions on the server that take a period (start and end dates in Asia/Kolkata) and a branch scope, convert them to UTC bounds, and return sums of integer weights in units of 0.0001 g, counts, and percentages computed from integers, using the same functions the Decisions home and the pool page already use for the same figures
+- **I want:** one set of shared report functions on the server that take a period (start and end dates in Asia/Kolkata), scope every query to the caller's shop, convert the period to UTC bounds, and return sums of integer weights in units of 0.0001 g, counts, and percentages computed from integers, using the same functions the Decisions home and the pool page already use for the same figures
 - **So that:** every report total is exact, matches the source rows, and never disagrees with `decisions` or `metal-pool` (FR-35-10, FR-35-11, BR-35-5, BR-35-8, BR-35-9)
 - **Acceptance criteria (Given / When / Then):**
   1. Given 42 `in_stock` pieces whose pure gold sums to 18,470,000 units, when the floor total is computed, then it returns 18,470,000 and 42, and the display function shows "1,847.0000 g" (epic acceptance criterion 2).
   2. Given settled jobs for KG-02 with gold issued 4,473,000 and 1,600,000 units and loss 63,000 and 23,000 units, when loss for the period is computed, then it returns 86,000 units (8.6000 g, 8,600 mg) and 142 basis points, shown as "1.42%", the same figure as EP-16-S10.
   3. Given the period "1 October 2026 to 31 October 2026" in Asia/Kolkata, when it is converted, then the query bounds are 30 September 2026 18:30 UTC to 31 October 2026 18:30 UTC, and a piece sold at 1 November 2026 00:10 IST is not counted.
   4. Given a period whose end is before its start, or longer than the agreed maximum, when a report function is called, then it is refused as a validation error (EP-03-S5).
-  5. Given the same day and branch, when "Gold on the floor" is read from `decisions` (EP-32-S9) and from the stock report, then both return the same integer.
-- **Rules enforced on the server:** All sums run in the database or the server on integer columns; no float arithmetic before display. Percentages are integer basis points, rounded half up. Period bounds are computed with the EP-10-S10 day-boundary function (midnight Asia/Kolkata). Branch scope is applied in every query when D7 is multi-branch. Value sockets on pieces, customers and stock-outs are never read.
+  5. Given the same day, when "Gold on the floor" is read from `decisions` (EP-32-S9) and from the stock report, then both return the same integer.
+- **Rules enforced on the server:** All sums run in the database or the server on integer columns; no float arithmetic before display. Percentages are integer basis points, rounded half up. Period bounds are computed with the EP-10-S10 day-boundary function (midnight Asia/Kolkata). Every query is scoped to the caller's shop; the client cannot change the scope (D7). Value sockets on pieces, customers and stock-outs are never read.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Computing figures changes nothing.
 - **Data changes:** None in the product database. Adds indexes on the time columns the reports filter on (`pool_entries` time, `pieces` `inStockAt`, `soldAt` and scrapped time, `parcels` arrival time, `leads` `arrivedAt`, broadcast and wish sent at) if query plans need them. Adds the report period type and the shared report functions to the shared package, reusing the gram conversion from EP-02-S2 and the logic behind `pureGoldOnFloor`, `daysInStock`, `goldWithKarigar` and `jobOverdueDays` in `src/store/selectors.ts`.
 - **UI reference:** No screen.
-- **Non-functional checks:** Precision: integer sums in units of 0.0001 g, converted only for display, percentages from integer units (epic section 13). Time: periods chosen in Asia/Kolkata and queried in UTC; a day boundary is midnight Asia/Kolkata. Performance: each function for a one-month period returns in under 1 second on staging data, so a section report can load under 2 seconds. Open decision D7: branch scope is a single fixed branch until D7 is decided.
+- **Non-functional checks:** Precision: integer sums in units of 0.0001 g, converted only for display, percentages from integer units (epic section 13). Time: periods chosen in Asia/Kolkata and queried in UTC; a day boundary is midnight Asia/Kolkata. Performance: each function for a one-month period returns in under 1 second on staging data, so a section report can load under 2 seconds. D7 is decided: one shop, no branches.
 - **Depends on:** EP-02-S2, EP-10-S10, EP-03-S5, EP-16-S10, EP-18-S1, EP-22-S1, EP-22-S10, EP-32-S9
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -270,25 +270,23 @@ Role note: stories where the server computes figures or checks access on its own
 
 ---
 
-## EP-35-S12: Owner can choose one branch or all branches (if D7 says multi-branch)
+## EP-35-S12: Owner can choose one branch or all branches (Deferred: no branches in v1, D7)
 
 - **Story ID:** EP-35-S12
-- **Title:** Owner can choose one branch or all branches (if D7 says multi-branch)
+- **Title:** Owner can choose one branch or all branches (Deferred: no branches in v1, D7)
 - **As a:** Owner
-- **I want:** a branch picker on the hub and every section report with each open branch and "All branches", so every figure is computed for the branch I pick
-- **So that:** I can compare branches or see the whole business in one place (FR-35-13)
+- **I want:** Deferred: no branches in v1 (D7). Nothing is built for this story in v1. Was: a branch picker on the hub and every section report with each open branch and "All branches"
+- **So that:** the ID stays reserved and the decision is visible: every report covers the one shop, and the server scopes every report query to the signed-in user's shop (FR-35-13, D7)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given D7 is multi-branch and two branches exist, when Sanjay Seth opens the hub, then the picker shows both branch names and "All branches", with "All branches" selected by default (proposed, as in the header of mockup 08).
-  2. Given branch A holds 30 in-stock pieces and branch B holds 12, when Sanjay picks branch B on the stock report, then it shows 12 pieces and only branch B's pure gold.
-  3. Given "All branches" is picked, when any section loads, then each figure equals the sum of the same figure for each branch.
-  4. Given a request names a branch id that does not exist or is closed with no records in the period, when it reaches the server, then an unknown id is refused as not-found (EP-03-S5) and a closed branch returns its historical figures.
-  5. Given D7 says single branch, when the hub loads, then no branch picker is shown and every figure covers the one branch.
-- **Rules enforced on the server:** Owner-only (EP-35-S3). The branch scope is applied in every report query through EP-35-S2; the client cannot widen it. Branch ids come from the branches table (EP-02-S3, EP-13-S12).
+  1. Given v1, when Sanjay Seth opens the report hub or any section report, then no branch picker is shown and every figure covers the shop.
+  2. Given a report request that carries a branch id or a shop ID from the client, when it reaches the server, then the value is ignored and the figures are for the caller's shop (EP-35-S2).
+  3. Given the header pattern on mockup 08 ("All branches"), when a report header renders, then it shows the shop name instead.
+- **Rules enforced on the server:** None beyond EP-35-S2 and EP-35-S3: owner only, and every report query is scoped to the session's shop.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Reads are not audited.
-- **Data changes:** None in the product database. Adds the branch parameter to every report read in the shared contract. Relies on the branch key on each source table from the earlier epics if D7 is multi-branch.
-- **UI reference:** Not yet designed (branch picker from EP-35-S1, proposed route `reports`). Header pattern: `docs/ux/mockups/08-owner-home.svg` ("All branches").
-- **Non-functional checks:** Security: branch scope enforced on the server. Performance: "All branches" for one month loads in under 2 seconds. Open decision D7: whether reports are per branch, for all branches, or both; this story is built only if D7 says multi-branch.
+- **Data changes:** None. No branch parameter is added to the shared contract.
+- **UI reference:** No branch picker. Header pattern: `docs/ux/mockups/08-owner-home.svg` ("All branches", shown as the shop name).
+- **Non-functional checks:** Decision D7 is one shop, no branches. If branches or multi-shop are taken up later (PRODUCTION-SCOPE §6 Later notes), this story is rewritten then.
 - **Depends on:** EP-35-S2, EP-35-S3, EP-35-S4, EP-02-S3, EP-13-S12, EP-03-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -299,18 +297,18 @@ Role note: stories where the server computes figures or checks access on its own
 - **Story ID:** EP-35-S13
 - **Title:** Owner can export a section report (if export is decided)
 - **As a:** Owner
-- **I want:** an export action on each section report that, through Create Report export, produces a file of that section for the chosen period and branch in the decided format, which I can download through a signed, expiring link
+- **I want:** an export action on each section report that, through Create Report export, produces a file of that section for the chosen period in the decided format, which I can download through a signed, expiring link
 - **So that:** I can keep the figures or share them with my accountant without retyping (FR-35-14)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given Sanjay Seth is on the intake report for October, when he presses export, then a file is produced in the decided format with the same figures as the screen, weights to 4 decimals, and a header naming the section, period, branch and time of export in Asia/Kolkata.
+  1. Given Sanjay Seth is on the intake report for October, when he presses export, then a file is produced in the decided format with the same figures as the screen, weights to 4 decimals, and a header naming the shop, section, period and time of export in Asia/Kolkata.
   2. Given the file is ready, when Sanjay downloads it, then it is served through a signed link that expires (EP-09-S5), and a staff user opening the link after expiry or without the owner session is refused.
-  3. Given an export is made, when it completes, then a ReportExport record and an audit entry are written with requested by, section, period, branch and time.
+  3. Given an export is made, when it completes, then a ReportExport record and an audit entry are written with requested by, section, period and time.
   4. Given a staff user calls Create Report export, when it reaches the server, then it is refused (EP-35-S3).
   5. Given pricing is switched on, when an export is produced, then the file contains no value, rate or currency column.
 - **Rules enforced on the server:** Owner-only (EP-35-S3). The file is built on the server from the same functions as the screen (EP-35-S2), in a background job if it takes longer than the request allows (EP-10-S1). The file is stored through EP-09-S1 with the retention rule of EP-09-S12. The audit entry is written in the same transaction as the ReportExport record (EP-06-S2).
 - **Live events emitted / consumed:** None
-- **Audit entry written:** Yes: actor (owner), time, entity (ReportExport id), action `report_exported`, section, period, branch, file id.
-- **Data changes:** Migration creates `report_exports` (id, requested by, section, period start, period end, branch id, file id, created at) and adds the audit kind `report_exported` to the `audit_entries` kind list. Stores the export file in object storage (EP-09-S1). Adds Create Report export to the shared contract.
+- **Audit entry written:** Yes: actor (owner), time, entity (ReportExport id), action `report_exported`, section, period, file id.
+- **Data changes:** Migration creates `report_exports` (id, requested by, section, period start, period end, shop ID, file id, created at) and adds the audit kind `report_exported` to the `audit_entries` kind list. Stores the export file in object storage (EP-09-S1). Adds Create Report export to the shared contract.
 - **UI reference:** Not yet designed (export from EP-35-S1, proposed route `reports`).
 - **Non-functional checks:** Personal data: an export that lists customer names is personal data under the DPDP Act 2023 and follows the retention and erasure rules (EP-17-S13, EP-09-S12); EP-39 rules apply when written. Security: signed, expiring download links. Audit: every export recorded. Open question: whether export is needed and in which format; this story is built only if export is decided.
 - **Depends on:** EP-35-S2, EP-35-S3, EP-35-S6, EP-35-S8, EP-35-S9, EP-35-S10, EP-35-S11, EP-09-S1, EP-09-S5, EP-09-S6, EP-09-S12, EP-10-S1, EP-06-S2, EP-17-S13
@@ -322,7 +320,7 @@ Role note: stories where the server computes figures or checks access on its own
 
 Copied from the epic's section 17. Not answered here.
 
-- D7: are reports per branch, for all branches, or both? (EP-35-S1, S2, S12)
+- D7 is decided: one shop, no branches; reports cover the shop and EP-35-S12 is deferred (EP-35-S1, S2, S12).
 - Which figures does each section show, beyond those listed in SCOPE-ANALYSIS App. F and mockup 08? (EP-35-S1, S6, S8, S9, S10, S11)
 - What periods are offered (day, week, month, custom), and what is the default? (EP-35-S1, S4, S5)
 - Is export needed, and in which format? (EP-35-S1, S13)

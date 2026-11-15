@@ -36,7 +36,7 @@ operations on top.
 
 ## 5. Out of scope
 
-- Sign-in, OTP and sessions (EP-04).
+- Sign-in with phone and password, activation and reset links, and sessions (EP-04).
 - Permission checks per role (EP-05); this epic provides the place where they plug in.
 - Audit writing (EP-06).
 - The push connection for live events (EP-07).

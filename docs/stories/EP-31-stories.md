@@ -24,7 +24,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 - **Audit entry written:** No. Reads are not audited.
 - **Data changes:** None in the product database. Adds Read Today cards and the card shape to the shared contract. Ports the card building in `src/components/home/StaffToday.tsx` and `gapPhrase`, `plural` from `src/components/home/util.ts` to the server.
 - **UI reference:** `docs/ux/mockups/02-staff-home.svg` ("NEEDS YOU NOW · 3"), route `today`.
-- **Non-functional checks:** Performance: one aggregated query, under 2 seconds (epic section 13). Security: only cards the caller may act on; no owner-only action offered to staff. Open decision D7: whether cards are scoped to the staff member's branch; until decided the read covers the single shop, and adds a branch filter if D7 chooses multiple branches.
+- **Non-functional checks:** Performance: one aggregated query, under 2 seconds (epic section 13). Security: only cards the caller may act on; no owner-only action offered to staff. D7 is decided: one shop, no branches; the read covers the shop.
 - **Depends on:** EP-03-S1, EP-03-S2, EP-03-S3, EP-05-S2, EP-21-S1, EP-21-S10, EP-23-S2, EP-24-S1, EP-28-S1, EP-28-S8
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -192,7 +192,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 - **Audit entry written:** No. Reads are not audited.
 - **Data changes:** None in the product database. Adds Read Showcase figures to the shared contract; replaces the browser selectors `pureGoldOnFloor`, `inStockPieces`, `heldBackPieces`, `piecesOutToday` and `goldOutToday` in `src/store/selectors.ts` with the server read.
 - **UI reference:** `docs/ux/mockups/02-staff-home.svg` ("THE SHOWCASE RIGHT NOW", "Pure gold on the floor 1,847.2 g", "Pieces you can sell today 42", "Held back from the floor 14", "Pieces out today 11", "GOLD OUT TODAY 212.4 g"), route `today`. Weights show to 4 decimals in v1.
-- **Non-functional checks:** Precision: every weight is an integer sum in units of 0.0001 g, formatted to 4 decimals only for display. Time: the day boundary is midnight Asia/Kolkata. Performance: the figures return in under 2 seconds. Open decision D7: whether the figures cover only the staff member's branch; until decided they cover the single shop.
+- **Non-functional checks:** Precision: every weight is an integer sum in units of 0.0001 g, formatted to 4 decimals only for display. Time: the day boundary is midnight Asia/Kolkata. Performance: the figures return in under 2 seconds. D7 is decided: the figures cover the shop.
 - **Depends on:** EP-31-S3, EP-22-S1, EP-22-S10, EP-26-S13, EP-10-S10, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -298,7 +298,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 Copied from the epic's section 17. Not answered here.
 
 - What is the card ranking rule: leads first (SCOPE-ANALYSIS §3) or stops first (prototype)? (EP-31-S2)
-- D7: does Today show only the staff member's branch? (EP-31-S1, S8)
+- D7 is decided: one shop, no branches; Today shows the shop's work (EP-31-S1, S8).
 - A3: how long before the SLA does staff see a lead card (prototype: 2 hours)? (EP-31-S6)
 - Should staff be able to dismiss or snooze a card? (EP-31-S1, S4, S5, S6)
 - G21: how does Today relate to a notification centre, which has no route id today? (EP-31-S1, S11)

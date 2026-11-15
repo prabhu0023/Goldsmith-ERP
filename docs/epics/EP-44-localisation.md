@@ -30,7 +30,7 @@ stay in grams to four decimals everywhere. Which languages and which screens are
 - The language toggle on the karigar phone (the हिन्दी chip on mockup 09), switching the app language at once.
 - The language choice on `karigar-new` (mockup 24 தமிழ் / हिन्दी / English) and on the karigar edit form, writing the karigar's stored language preference (EP-16).
 - A per-user language preference for staff and owner (if staff screens are in scope), read by the shell after sign-in.
-- Translated WhatsApp templates for the messages each recipient gets (OTP, job alerts, wishes, broadcast, catalogue share), registered and approved per language through EP-12, and chosen by the recipient's language.
+- Translated WhatsApp templates for the messages each recipient gets (owner edit code, job alerts, wishes, broadcast, catalogue share), and translated activation and reset emails, registered and approved per language through EP-12, and chosen by the recipient's language.
 - Number and date formatting per locale (digit grouping, date order, month names, weekday names), always in Asia/Kolkata time.
 - Weights stay in grams to four decimals in every language (for example 186.4000 g); the unit is not translated into another unit, and the digits used for weights are decided with the language list.
 - Right fonts for Tamil and Devanagari script at the UX-SPEC §6 text sizes, and layouts that fit longer translated text.

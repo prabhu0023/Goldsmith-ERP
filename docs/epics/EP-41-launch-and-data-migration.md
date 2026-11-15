@@ -30,7 +30,7 @@ register stops. A go-live checklist confirms that monitoring, backups, tests and
 - Register the real scales with their true readability and capacity (SCOPE-ANALYSIS App. E).
 - Record the opening balance of the metal pool (App. B sub-question 1).
 - Record gold currently with each karigar at launch, as open jobs or opening ledger entries.
-- Create user accounts for the owner, staff and karigars, and run the first-owner bootstrap.
+- Create user accounts for staff and karigars, each with an email so they get their activation email. The first shop and the owner are created by the first-run setup wizard (EP-45) on production; there is no developer bootstrap command. EP-45 has a higher number but belongs to M2, so it is built before launch.
 - Load shop settings (lead SLA hours, notification channels, wish time) and reference data lists.
 - Training for staff, the owner and karigars, per role.
 - A parallel run with the paper register and a daily comparison.
@@ -39,7 +39,7 @@ register stops. A go-live checklist confirms that monitoring, backups, tests and
 ## 5. Out of scope
 
 - Import formats for each master are built on the master's own create rules (EP-13 to EP-17).
-- The first-owner bootstrap mechanism (EP-04).
+- The first-run setup wizard that creates the shop and its owner (EP-45) and the one-time owner creation it calls (EP-04).
 - User accounts and roles (EP-05).
 - Pool ledger rules (EP-18).
 - Backups and restore drills (EP-38).
@@ -68,7 +68,7 @@ register stops. A go-live checklist confirms that monitoring, backups, tests and
 - FR-41-5. The owner can register each real scale with its true readability and capacity before the first parcel is weighed.
 - FR-41-6. The owner can record the opening pool balance once, as an `opening` ledger entry with a reason and audit entry.
 - FR-41-7. The owner can record the gold each karigar holds at launch, so gold with karigars matches the paper register.
-- FR-41-8. The owner can create accounts for every staff member and karigar, and each can sign in before go-live.
+- FR-41-8. The owner can create accounts for every staff member and karigar with name, phone, email and role, and each sets a password from the activation email and signs in before go-live.
 - FR-41-9. Each import is recorded with who ran it, when, the file, rows loaded and rows refused, and the loaded rows are audited.
 - FR-41-10. An import can be run again on staging as a rehearsal without touching production.
 - FR-41-11. During the parallel run, the system shows daily figures for comparison with the paper register: pieces in stock, pure gold on the floor, gold with karigars, pool balance, pieces out.
@@ -157,7 +157,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Risk: the opening pool balance is not known. Mitigation: settle App. B sub-question 1 with the owner before launch.
 - Risk: customer consent cannot be proven for existing customers. Mitigation: import as no consent unless a record exists, and collect consent at the next visit.
 - Risk: staff keep using paper after go-live. Mitigation: agree the end date of the parallel run and compare daily.
-- Risk: karigars cannot sign in on their phones on day one. Mitigation: sign each karigar in during training, before go-live.
+- Risk: karigars cannot sign in on their phones on day one, for example because the activation email went to a wrong address. Mitigation: activate and sign each karigar in during training, before go-live; the owner corrects the email and resends the link (EP-05).
 - Risk: real scale readabilities differ from the seed and change ceilings. Mitigation: register the true values from each scale's documentation.
 
 ## 17. Open decisions and questions
@@ -170,7 +170,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Which customer records have proof of WhatsApp consent?
 - G13: is past purchase history imported for customers, and from where?
 - G24: is EP-35 Reports required before launch, or after as M8 says?
-- D7: is launch for one shop or several branches at once?
+- D7 is decided: launch is for one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)).
 - In which spoken language is each karigar trained? The app itself is English only in v1 (G2 resolved; other languages in EP-44).
 
 ## 18. Candidate stories

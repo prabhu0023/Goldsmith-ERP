@@ -24,7 +24,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 - **Audit entry written:** No. Reads change nothing, and refused writes store nothing.
 - **Data changes:** None in the product database. Adds the karigar response shapes and the allow-list contract test to the shared package and the `api` test suite.
 - **UI reference:** No screen. The rule is drawn on `docs/ux/mockups/11-roles-and-permissions.svg` ("See the jobs issued to him, and only those", "NEVER SEES", "Prices, margins or invoices", "Customers, leads or stock", "Any other karigar's work or scorecard").
-- **Non-functional checks:** Security: every karigar request is filtered on the server; other jobs return not-found (epic section 13). Personal data: the phone receives only the karigar's own jobs. Open decision D4: if karigars may share a phone, the link from session to karigar must still name one karigar per session.
+- **Non-functional checks:** Security: every karigar request is filtered on the server; other jobs return not-found (epic section 13). Personal data: the phone receives only the karigar's own jobs. D4 is decided: phone numbers are unique, so each session names one karigar.
 - **Depends on:** EP-03-S1, EP-03-S5, EP-05-S1, EP-05-S2, EP-05-S3, EP-05-S13, EP-16-S6, EP-19-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -48,7 +48,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 - **Audit entry written:** Yes, through EP-04-S14: actor, time, action (sign-in, failure, lockout, sign-out), with no code value.
 - **Data changes:** None beyond EP-04 sessions. Moves `KarigarPhone.tsx` off the demo identity (`Identity.karigarId` and "Sign in as a karigar from the switcher") onto the real session.
 - **UI reference:** Not yet designed for the phone sign-in. Landing is `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs` ("Vijay Kumar · KG-04", "My jobs").
-- **Non-functional checks:** Security: no demo role switcher in the build (EP-08-S19); deactivation ends sessions at once (BR-20-8). Open decision D4: sign-in method and whether a karigar can sign in on a shared phone; criteria are written for any EP-04 method. Open decision D5: installable web app or native app; this story assumes the browser on the phone.
+- **Non-functional checks:** Security: no demo role switcher in the build (EP-08-S19); deactivation ends sessions at once (BR-20-8). D4 is decided: phone and password, phone numbers unique, so a karigar cannot sign in on a shared phone number. Open decision D5: installable web app or native app; this story assumes the browser on the phone.
 - **Depends on:** EP-04-S3, EP-04-S5, EP-04-S6, EP-04-S7, EP-04-S11, EP-04-S12, EP-04-S13, EP-04-S14, EP-05-S10, EP-05-S13, EP-07-S10, EP-08-S12, EP-08-S15, EP-08-S19
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -378,7 +378,7 @@ Copied from the epic's section 17. Not answered here.
 
 - D5: installable web app or native app? (EP-20-S2, S12a)
 - D6: no offline, read-only offline, or queued updates? (EP-20-S10a, S12a, S12b)
-- D4: can a karigar sign in on a shared phone? (EP-20-S1, S2)
+- D4 is decided: phone and password; phone numbers are unique, so a karigar cannot sign in on a shared phone number (EP-20-S1, S2).
 - D6 side question: what happens to a queued update that is no longer valid when it syncs? (EP-20-S12b)
 - G14: can one hand-over carry several jobs (mockup 12)? (EP-20-S6, S13)
 - G16: are bench voice notes ("Type or speak") in scope, and in which languages? (EP-20-S10b)

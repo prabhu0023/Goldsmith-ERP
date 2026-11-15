@@ -20,7 +20,7 @@ depends on epics with a lower number.
 | Live | A change made by one person appears on everyone else's screen within about a second, with no refresh. |
 | Authoritative | The server enforces every rule: the match gate, permissions, the edit token. The browser only displays. |
 | Auditable | Every state change records who did it, when, and the before and after values. The record cannot be edited. |
-| Connected | Real WhatsApp messages, real email intake of POs, real OTP delivery. |
+| Connected | Real WhatsApp messages (including the owner edit code), real email intake of POs, real activation and password-reset emails. |
 
 ### Live events the system must push
 
@@ -68,7 +68,8 @@ The prototype is the **UI contract**. Most screens survive; what changes underne
                              ├─► Live channel ──► pushes events to all open clients
                              ├─► Job scheduler (SLA timers, wishes, token expiry, overdue)
                              └─► Integrations
-                                  ├─ WhatsApp Business (OTP, alerts, wishes, broadcast, inbound POs)
+                                  ├─ WhatsApp Business (owner edit code, alerts, wishes, broadcast, inbound POs)
+                                  ├─ Email sending (activation and password-reset links, email alerts)
                                   ├─ Email inbox (inbound POs)
                                   └─ LLM parser (PO text/image → lead fields)
 ```
@@ -84,19 +85,20 @@ shop's own domain.
 ## 4. Decisions to make before EP-01
 
 These shape the bottom layer. The recommended option is listed first; each is reversible only at cost.
-D1, D2 and D10 are decided. D1a and D3 to D9 are open.
+D1, D2, D4, D7 and D10 are decided. D1a, D3, D4a (email provider), D5, D6, D8 and D9 are open.
 
 | # | Decision | Options | Recommendation and reason |
 | --- | --- | --- | --- |
-| D1 | Backend approach | **Decided: Option C**, own Node + TypeScript API | All server logic (rules, sign-in and OTP, sessions, live channel, jobs, notifications, WhatsApp) runs in the team's own Node API; `express` is already in `package.json`. Managed PostgreSQL in an India region on the same cloud provider, reached over its private network. Managed backend platforms are not used. See [decisions/D1-backend-approach.md](decisions/D1-backend-approach.md). |
+| D1 | Backend approach | **Decided: Option C**, own Node + TypeScript API | All server logic (rules, sign-in, sessions, live channel, jobs, notifications, WhatsApp) runs in the team's own Node API; `express` is already in `package.json`. Managed PostgreSQL in an India region on the same cloud provider, reached over its private network. Managed backend platforms are not used. See [decisions/D1-backend-approach.md](decisions/D1-backend-approach.md). |
 | D1a | Cloud provider | AWS / Google Cloud / Azure / other major cloud | **Open.** One provider hosts the Node API, the managed PostgreSQL database and the S3-compatible object storage, in an India region. |
 | D2 | Database | Relational (PostgreSQL class) / document | **Decided: PostgreSQL** (managed, per D1). The domain is ledgers, foreign keys and transactions. |
 | D3 | Live transport | WebSocket / Server-Sent Events | WebSocket. Needs two-way for presence. Built in the Node API (D1). Still open. |
-| D4 | Sign-in method | Phone + WhatsApp OTP / phone + password / email + password | Phone + WhatsApp OTP. Staff and karigars already live on WhatsApp, and you already use OTP for edits. Keep a password fallback for the owner. |
+| D4 | Sign-in method | **Decided: phone number + password** | Phone numbers are unique. No OTP sign-in in v1 (deferred). The owner adds a user with name, phone, email and role; a single-use activation link (24 hours, resendable) lets the user set their own password. Forgot password sends a single-use reset link (1 hour) to the account's email. 5 wrong passwords lock the account for 15 minutes. Every user has an email address. See [decisions/D4-sign-in.md](decisions/D4-sign-in.md). |
+| D4a | Email provider | Any transactional email service | **Open.** Sends the activation and password-reset emails (now a required channel) and email alerts (EP-11). The sender sits behind one interface. |
 | D5 | Karigar app | Installable web app (PWA) / native app | PWA. One codebase, no app store, works on any phone. |
 | D6 | Offline for karigars | None / read-only offline / queue updates offline | Queue status updates offline. Workshops often have weak signal. |
-| D7 | Branches | Single shop / multiple branches | Decide now. The mockups say "All branches". Adding branches later means migrating every table. |
-| D8 | WhatsApp provider | Meta Cloud API directly / a Business Solution Provider | Either. Outbound messages outside a conversation need pre-approved templates, so wishes, broadcasts and OTP need template approval lead time. Verify current Meta terms. |
+| D7 | Branches | **Decided: one shop, no branches** | v1 is a single shop with one owner, its staff and karigars. Every business table still carries a shop ID from the first migration, uniqueness (tag number, HUID, phone) is scoped to the shop, and the server sets the shop from the signed-in user. Multi-shop is deferred. See [decisions/tenancy-and-branches.md](decisions/tenancy-and-branches.md). |
+| D8 | WhatsApp provider | Meta Cloud API directly / a Business Solution Provider | Either. Outbound messages outside a conversation need pre-approved templates, so wishes, broadcasts and the owner edit code need template approval lead time. Verify current Meta terms. |
 | D9 | Scale integration | Typed by hand / read directly from the balance | Read directly where the balance supports it (EP-36). It removes typing errors at the exact-match gate. |
 | D10 | Hosting region | India / elsewhere | **Decided: India region**, for latency and personal-data law. The exact region follows the D1a provider. |
 
@@ -112,7 +114,11 @@ These apply to every epic and belong in every story's acceptance criteria where 
 
 **Security.**
 - Every permission is checked on the server. Hiding a button is not a control.
-- OTP and edit tokens: 6 digits, single use, 10-minute expiry, rate-limited, never logged in plain text.
+- No OTP is used for sign-in (D4). Users sign in with phone number and password; passwords are stored only as salted hashes with a modern algorithm, minimum length 8; 5 wrong passwords lock the account for 15 minutes.
+- Owner edit code (edit token): sent as a WhatsApp message to the owner's registered mobile number when he applies an edit. 6 digits, single use, 10-minute expiry, rate-limited, never logged in plain text.
+- Activation and password-reset links sent by email: single use, activation expires in 24 hours, reset in 1 hour, stored only as hashes, never logged.
+- Every query is scoped to the signed-in user's shop; the shop ID is never taken from the client.
+- Every record that holds or measures gold (pieces, parcels, trays, metal pool ledger entries, scales) carries a location ID. v1 has one location, "Main shop", created with the shop; the server sets the location ID, never the client.
 - Sessions expire. Deactivating a user ends their sessions at once.
 - Secrets live in environment configuration, never in the repo.
 
@@ -135,27 +141,28 @@ These apply to every epic and belong in every story's acceptance criteria where 
 | ID | Epic | Scope | Depends on |
 | --- | --- | --- | --- |
 | EP-01 | Repository, environments and CI | Monorepo layout (web, api, shared), dev / staging / production environments, secrets management, CI running lint, typecheck, tests and build on every push | — |
-| EP-02 | Database and data model | Full schema for every entity in `src/types/jewellery.ts` plus users, sessions, branches; migrations; integer weight units; seed scripts for dev | EP-01 |
+| EP-02 | Database and data model | Full schema for every entity in `src/types/jewellery.ts` plus shops, users, sessions; a shop ID on every business table and shop-scoped uniqueness (D7); migrations; integer weight units; seed scripts for dev | EP-01 |
 | EP-03 | API foundation | API framework, request validation, error format, pagination, API contract shared with the front end, health check | EP-02 |
-| EP-04 | Authentication | Sign-in (per D4), OTP send and verify, sessions, sign-out, lockout after failed attempts, first-owner bootstrap | EP-03 |
-| EP-05 | Users, roles and permissions | Owner adds, edits, deactivates and reactivates users; assigns Owner / Staff / Karigar; server-side permission checks on every endpoint; replaces the demo role switcher with an account menu | EP-04 |
+| EP-04 | Authentication | Sign-in with phone number and password (D4), activation and password-reset links, sessions, sign-out, lockout after 5 wrong passwords, the one-time first-owner creation used by the setup wizard | EP-03 |
+| EP-05 | Users, roles and permissions | Owner adds users with name, phone, email and role (activation email sent, resendable), edits, deactivates and reactivates users, and unlocks locked accounts; one owner per shop; assigns Owner / Staff / Karigar; server-side permission checks on every endpoint; replaces the demo role switcher with an account menu | EP-04 |
 | EP-06 | Audit log | Append-only store, write-on-every-transition, owner view (the existing Security log screen) | EP-05 |
 | EP-07 | Live channel | Push connection, per-user and per-role subscriptions, event catalogue (section 1), reconnect and catch-up after a dropped connection, presence on shared parcels | EP-05 |
 | EP-08 | Front-end production foundation | Connect the screens to the real system: shared API client replacing `useStore()` reads, query cache and invalidation, live-subscription hooks, loading, error, reconnecting and offline states, signed-in app shell hosting the account menu | EP-03, EP-04, EP-05, EP-07 |
 | EP-09 | File storage | Upload, resize and serve piece photos, reference images and PO attachments; access control on files | EP-03 |
 | EP-10 | Background jobs | Scheduler for SLA breaches, overdue jobs, token expiry, 9 am wishes; retries; idempotency | EP-03 |
-| EP-11 | Notifications engine | One service for in-app, WhatsApp and email; templates; escalation rules (staff first, then owner); delivery status | EP-07, EP-10, EP-08 |
-| EP-12 | WhatsApp integration | Provider connection, template registration, outbound send, inbound webhook, delivery and read receipts | EP-11 |
+| EP-11 | Notifications engine | One service for in-app, WhatsApp and email; email sending for activation and password-reset links (provider open, D4a); templates; escalation rules (staff first, then owner); delivery status | EP-07, EP-10, EP-08 |
+| EP-12 | WhatsApp integration | Provider connection, template registration, outbound send (owner edit code, alerts, wishes, broadcasts; not sign-in), inbound webhook, delivery and read receipts | EP-11 |
 
 ### Layer B: Master data
 
 | ID | Epic | Scope | Depends on |
 | --- | --- | --- | --- |
-| EP-13 | Branches and shop settings | Branch records if D7 says multi-branch; settings such as lead SLA hours, auto-send wishes, pricing flag | EP-05, EP-08 |
+| EP-13 | Shop settings | Settings such as lead SLA hours, auto-send wishes, pricing flag; no branches (D7) | EP-05, EP-08 |
 | EP-14 | Scale registry | Scales with readability, assignment to counters, the ceiling formula reading from it | EP-02, EP-13, EP-08 |
 | EP-15 | Reference data | Categories, styles, purities, inclusion types, tag number and HUID format rules | EP-02, EP-08 |
 | EP-16 | Karigar master | Onboard karigar, specialty, language (stored only; v1 is English only, see EP-44), wastage allowance, karigar user account link | EP-05, EP-08 |
 | EP-17 | Customer master | Onboard customer, group, birthday, anniversary, WhatsApp consent, piece history | EP-05, EP-08 |
+| EP-45 | Shop setup wizard | First-run wizard, shown once: shop details (name, address, GSTIN, logo), owner account and activation email, scales and their readability, basic settings (lead response time, opening hours), invite the first staff and karigars. Numbered EP-45 to avoid renumbering; belongs to Layer B and milestone M2 | EP-04, EP-05, EP-08, EP-09, EP-11, EP-13, EP-14 |
 
 ### Layer C: Core gold pipeline
 
@@ -212,8 +219,11 @@ directly by staff before any lead exists.
 Notes for Later:
 
 - Holds: deferred, not in v1.
+- OTP sign-in (WhatsApp or SMS): deferred, not in v1. v1 signs in with phone number and password (D4).
+- Multi-shop (many shops in one installation, shop sign-up, staff or karigars in several shops): deferred, not in v1. v1 is one shop with no branches, and every business table already carries a shop ID (D7).
+- Branches and locations: deferred, not in v1. Gold records already carry a location ID (one location, "Main shop"), but transfers between locations, a metal pool per location, staff assignment to a location and reports per location are all deferred (D7).
 
-**Totals:** 44 epics. Layers A and B (17 epics) contain no visible features and must come first.
+**Totals:** 45 epics. Layers A and B (18 epics, including EP-45) must come first. Apart from the EP-45 setup wizard, they contain no visible features.
 
 ---
 
@@ -221,8 +231,8 @@ Notes for Later:
 
 | Milestone | Epics | What you can demonstrate |
 | --- | --- | --- |
-| M1 Platform | EP-01 to EP-12 | A user signs in with a WhatsApp OTP, the owner adds a user, two browsers receive each other's events live, and screens show loading, error and reconnecting states |
-| M2 Masters | EP-13 to EP-17 | Real karigars, customers and scales stored and editable |
+| M1 Platform | EP-01 to EP-12 | A user signs in with phone number and password, the owner (from the staging seed until EP-45 exists) adds a user who sets a password from the activation email, two browsers receive each other's events live, and screens show loading, error and reconnecting states |
+| M2 Masters | EP-13 to EP-17, EP-45 | The shop is set up once through the first-run wizard; real karigars, customers and scales stored and editable |
 | M3 Intake loop | EP-18 to EP-23 | Gold issued, karigar job done on a phone, parcel tagged by two staff at once, matched and released |
 | M4 Exceptions | EP-24 to EP-27 | Stop the line, edit with token, stock-out without double-selling, scrap to pool |
 | M5 Front door | EP-28 to EP-30 | Leads from counter, email and WhatsApp, converted per item |
@@ -230,7 +240,7 @@ Notes for Later:
 | M7 Production ready | EP-36 to EP-41 | Monitored, backed up, tested, migrated, launched |
 | M8 Insight | EP-35 | Reports |
 
-Milestones follow epic numbers exactly, so working bottom-up and working milestone by milestone are the same path.
+Milestones follow epic numbers, so working bottom-up and working milestone by milestone are the same path. EP-45 Shop setup wizard is out of number order: it is numbered 45 to avoid renumbering, but it belongs to M2 and is built after EP-14. It depends only on lower-numbered epics, so the bottom-up rule still holds.
 
 ---
 

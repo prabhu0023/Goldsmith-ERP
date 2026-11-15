@@ -275,21 +275,23 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 - **Story ID:** EP-11-S12
 - **Title:** System can send notifications by email
 - **As a:** System
-- **I want:** an email sender that takes each queued email Notification, renders it from its template, sends it to the recipient's email address and records sent or failed with the time
-- **So that:** the owner can choose email on the rules panel and actually receive mail (FR-11-13)
+- **I want:** an email sender that takes each queued email Notification, renders it from its template, sends it to the recipient's email address and records sent or failed with the time, and that also sends the EP-04 account emails (activation link and password-reset link) to the address on the user record, whatever `notifyChannels` says
+- **So that:** the owner can choose email on the rules panel and actually receive mail, and every new user can activate their account and every user can reset a forgotten password in production (FR-11-13, FR-11-17, BR-11-11)
 - **Acceptance criteria (Given / When / Then):**
   1. Given Sanjay Seth has email switched on and an email address on his user record, when a queued email notification for BATCH-2026-044 is picked up, then one email is sent with the rendered subject and body, the row's status is sent and sent at is set.
   2. Given the mail provider rejects the message, when the attempt ends, then attempts is 1, status stays queued for retry, and the error is kept without the recipient's address in logs.
   3. Given a recipient with no email address, when an email row would be created, then no row is created and an app row still exists.
   4. Given the mail credentials, when the code and repository are checked, then they come from environment variables only and appear in no file or log.
   5. Given the same email row is picked up by two workers, when both run, then one email is sent.
+  6. Given `notifyChannels.email` is off and EP-04 issues an activation link for Deepak Rao, when the account email is queued, then it is still sent to his email address with the subject "Set your JGD password", and the stored row holds no link.
+  7. Given production, when EP-04 sends an activation or reset email, then this sender is used and the EP-04-S4 stub is not.
 - **Rules enforced on the server:** Sends run as background jobs (EP-10-S1) keyed by notification id (EP-10-S4). Credentials come from environment variables (EP-01-S6). The email body uses the same template text as other channels (EP-11-S2), HTML-escaped.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Delivery status is recorded on the notification (epic section 13).
-- **Data changes:** Updates Notification status, sent at and attempts. Reads the user's email address; if users have no email field yet, adds an optional email column to the user table by migration (EP-02-S3 table).
+- **Data changes:** Updates Notification status, sent at and attempts. Reads the user's email address, which is required on every user (EP-02-S3, D4). Registers this sender as the production implementation of the EP-04-S4 account-email interface.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: mail credentials in environment variables only. Personal data: no email addresses in logs or job error text. Concurrency: one send per row. Open question: the email provider is not named in the sources; the sender sits behind one interface.
-- **Depends on:** EP-11-S1, EP-11-S2, EP-11-S9, EP-01-S6, EP-02-S3, EP-10-S1, EP-10-S4
+- **Non-functional checks:** Security: mail credentials in environment variables only. Personal data: no email addresses in logs or job error text. Concurrency: one send per row. Security: activation and reset links are rendered at send time and never stored in the row, logs or error text. Open decision D4a: the email provider is not chosen; the sender sits behind one interface.
+- **Depends on:** EP-11-S1, EP-11-S2, EP-11-S9, EP-01-S6, EP-02-S3, EP-10-S1, EP-10-S4, EP-04-S4
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---
@@ -307,7 +309,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
   3. Given receipts arrive out of order (read before delivered), when both are applied, then the row ends as read and does not move back to delivered.
   4. Given the kind has no approved WhatsApp template, when routing creates the rows, then no whatsapp row is created and the app row still exists.
   5. Given the owner calls Read Notification delivery status for that notice, when it returns, then he sees each channel's status; a Staff or Karigar caller gets `forbidden`.
-- **Rules enforced on the server:** Update Delivery status is internal and callable only by the WhatsApp integration's receipt handler and the email sender. Status only moves forward: queued, sent, delivered, read; failed is final. Until EP-12 is built, the send interface is a stub that records the call, as EP-04-S4 does for OTPs. Read Notification delivery status is Owner only.
+- **Rules enforced on the server:** Update Delivery status is internal and callable only by the WhatsApp integration's receipt handler and the email sender. Status only moves forward: queued, sent, delivered, read; failed is final. Until EP-12 is built, the send interface is a stub that records the call, as EP-04-S4 does for account emails. Read Notification delivery status is Owner only.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Delivery status is recorded on the notification, not in the audit log (epic section 13).
 - **Data changes:** Updates Notification status, sent at, read at, attempts. Adds a provider message id column to Notification by migration. Adds Read Notification delivery status and the internal Update Delivery status to the shared contract (EP-03-S1).
@@ -354,3 +356,4 @@ Copied from the epic's section 17. Not answered here.
 - G21: who owns the notification centre screen and its route id, given the navigation map shows it for all three roles? (EP-11-S4, S8, S10, S11)
 - G12: may staff change `notifyChannels` or `lateLeadAudience`? (EP-11-S9)
 - Do staff and karigars get their own channel preferences, or only the owner? (EP-11-S6, S8, S9)
+- D4a: which email provider sends the account emails and email alerts? (EP-11-S12)

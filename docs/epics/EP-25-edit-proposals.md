@@ -9,6 +9,13 @@ holds. Every applied or refused change is kept in the audit log with the old val
 reason and a token reference. The business needs this because a tag weight is the record of how much gold is on the
 floor, and nobody should be able to quietly shave milligrams off it.
 
+The owner confirmed this flow, as designed here and on mockup 05: (1) staff propose a change and the piece's real
+values are not changed; (2) the proposal is stored separately and goes to the owner; (3) only the owner account can
+apply it; (4) when the owner applies it, a one-time code is sent as a WhatsApp message to the owner's registered
+mobile number and he enters it to confirm. The code is single use, expires in 10 minutes, is rate-limited and is
+never logged in plain text. This owner edit code is a WhatsApp authentication-template use (EP-12). It is the only
+one-time code in v1: sign-in uses phone and password (D4).
+
 ## 2. Layer, milestone, status
 
 - Layer: C · Core gold pipeline
@@ -46,7 +53,7 @@ floor, and nobody should be able to quietly shave milligrams off it.
 - Tagging a piece for the first time inside an open parcel (EP-21); that is not an edit.
 - Changing a billed piece: never allowed (EP-26 locks it).
 - The Decisions card layout (EP-32).
-- Owner sign-in OTP (EP-04); this token is separate.
+- Sign-in (EP-04): phone and password, no code (D4). The owner edit code is not a sign-in factor.
 
 ## 6. Current state in the prototype
 
@@ -62,7 +69,7 @@ floor, and nobody should be able to quietly shave milligrams off it.
 - Selectors: `openEditFor(s, pieceId)`; `ownerQueues.pendingEdits` counts all open edits as one blocking card.
 - Components: `src/components/stock/EditPropose.tsx` (route `edit-propose`, param `pieceId`), `src/components/stock/EditApply.tsx` (route `edit-apply`, param `editId`), `src/components/ui/OtpPanel.tsx`, the "Propose edit" button (mockup 03 calls it "Edit tag"; disabled while an edit is open on the piece) and edit history in `PieceDrawer.tsx`, the toggle in `OwnerDecisions.tsx` rules panel.
 - Seed: ED-101 and ED-102 (mockup 13 "2 edits proposed").
-- Reusable: the field list, state list, sentences, propose and apply screens, OTP panel.
+- Reusable: the field list, state list, sentences, propose and apply screens, the code panel (`OtpPanel`) for the owner edit code.
 - Must be rebuilt server-side: token generation with a secure random source, hashed storage, single use, rate limit, delivery through EP-12, owner check, transactional apply with a row lock on the piece, audit of every step without the plain token.
 
 ## 7. Functional requirements
@@ -72,7 +79,7 @@ floor, and nobody should be able to quietly shave milligrams off it.
 - FR-25-3. The server refuses a proposal whose new value equals the current one.
 - FR-25-4. The server validates the new value for its field: weights are positive integers in units of 0.0001 g, stone weight does not exceed gross, stone count is a whole number, purity is one of the purities in reference data (EP-15), and a new HUID is not used on another piece.
 - FR-25-5. The owner sees each open proposal with the piece, field, old and new values, the change in mg for weights, the effect on pure gold, the proposer and the reason.
-- FR-25-6. The owner can agree, which issues a 6-digit token and sends it to the owner's registered WhatsApp number.
+- FR-25-6. The owner can agree, which issues a 6-digit token and sends it as a WhatsApp message to the owner's registered mobile number.
 - FR-25-7. The token is single use and expires 10 minutes after issue.
 - FR-25-8. Token requests and token attempts are rate-limited per owner and per proposal.
 - FR-25-9. The owner can apply the change by entering the token; the server rejects a wrong, expired or already used token.
@@ -167,7 +174,8 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - A4: does a piece stay sellable while an edit proposal is open, or is it frozen pending the edit?
 - G18: may the owner switch off the edit token (mockup 08 "Code before a tag edit · On"), given §5 requires it?
 - UX-SPEC Q5: may the owner approve a code request by replying on WhatsApp instead of opening the app?
-- D8: which provider and which approved template carries the token message?
+- D8: which provider and which approved authentication template carries the token message?
+- The flow above is confirmed by the owner; D4 does not change it.
 - May a piece have more than one open proposal at once, on the same or different fields?
 - May the proposer withdraw a proposal before the owner decides?
 - Must the owner give a reason when refusing?

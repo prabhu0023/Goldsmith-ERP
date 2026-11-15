@@ -7,7 +7,9 @@ weigh up and only the owner can clear it, staff are waiting at the counter for a
 hours, a karigar three days past his date. Today the prototype stores the owner's preferences ("Who hears about a
 late lead", "How it reaches me") but sends nothing. This epic builds one service that turns events into
 notifications, routes them by channel (in the app, WhatsApp, email), fills templates, applies escalation (staff
-first, then the owner), and tracks delivery status.
+first, then the owner), and tracks delivery status. Under D4, email is also a required channel for account emails:
+the activation link a new user opens to set a password, and the password-reset link. These go out whatever the
+owner's alert channel settings are. The email provider is an open choice (D4a).
 
 ## 2. Layer, milestone, status
 
@@ -18,8 +20,8 @@ first, then the owner), and tracks delivery status.
 ## 3. Roles involved
 
 - Owner: receives "your signature" items (parcel stopped, edit proposed, scrap request, late leads after escalation, overdue jobs); chooses how notifications reach him (WhatsApp, in the app, email) and who hears about a late lead first.
-- Staff: receive late-lead alerts first when `lateLeadAudience` is `staff_then_owner`; receive edit-applied and job-status notices relevant to them; read an in-app list.
-- Karigar: receives reminders and status notices about their own jobs only.
+- Staff: receive their activation and password-reset emails; receive late-lead alerts first when `lateLeadAudience` is `staff_then_owner`; receive edit-applied and job-status notices relevant to them; read an in-app list.
+- Karigar: receives their activation and password-reset emails, and reminders and status notices about their own jobs only.
 - System: converts consumed events into notification records, picks recipients and channels, schedules escalation, retries delivery, records status.
 
 ## 4. In scope
@@ -35,7 +37,8 @@ first, then the owner), and tracks delivery status.
 - Grouping for the owner by the kind of answer needed: your signature, someone stopped the line, running late, for information.
 - Delivery status: queued, sent, delivered, read, failed (filled by EP-12 receipts for WhatsApp).
 - Deduplication so one event produces one notification per recipient per channel.
-- An email sender for the email channel.
+- An email sender for the email channel, behind one interface so the provider (D4a, open) can be chosen later.
+- Account emails (D4): activation link and password-reset link, sent to the address on the user record, always by email, never subject to `notifyChannels`, and replacing the EP-04 stub in staging and production.
 
 ## 5. Out of scope
 
@@ -47,6 +50,8 @@ first, then the owner), and tracks delivery status.
 - Raising and clearing problems (EP-24).
 - Wishes and broadcasts to customers (EP-33, EP-34); they use EP-12 directly with their own consent rules.
 - Alerting on failed sends to operations (EP-37).
+- Issuing and checking activation and reset links (EP-04); this epic only sends the emails.
+- Sign-in codes: there is no OTP sign-in in v1 (D4).
 
 ## 6. Current state in the prototype
 
@@ -54,7 +59,7 @@ first, then the owner), and tracks delivery status.
 - `src/components/home/OwnerDecisions.tsx` (route `decisions`) shows the rules panel and calls `setSetting` for these keys; `setSetting` has no owner check (gap G12).
 - `src/domain/leads.ts` `slaState` label says "owner told" but nobody is told.
 - `src/store/selectors.ts` `ownerQueues` groups the owner's work into blocking items and late items; this is the closest model of the owner's notification grouping.
-- `src/components/ui/OtpPanel.tsx` shows a simulated WhatsApp bubble, the only "message" in the prototype.
+- `src/components/ui/OtpPanel.tsx` shows a simulated WhatsApp bubble for the owner edit code, the only "message" in the prototype. No email is sent anywhere in the prototype.
 - No in-app notification list exists; `src/nav.ts` has no route id for a notification centre (gap G21).
 - Mockup 13 groups: "NOTHING MOVES UNTIL YOU ANSWER", "RUNNING LATE · THE CLOCK TOLD ME, NOT A PERSON", "WENT THROUGH WITHOUT YOU TODAY · NO BUTTONS HERE"; rules panel "Who hears about a late lead: Staff first, then me / Only me" and "How it reaches me: WhatsApp / In the app / Email".
 - `10-navigation-map.mmd`: node `NOTIF["Notification centre<br/>stoppages, decisions, late things"]` reachable from owner, staff and karigar.
@@ -79,6 +84,7 @@ first, then the owner), and tracks delivery status.
 - FR-11-14. A failed delivery is retried, and after the last retry it is marked failed and reported to EP-37.
 - FR-11-15. The same event processed twice produces no duplicate notification.
 - FR-11-16. A karigar never receives a notification about another karigar's job, a customer, a lead or stock.
+- FR-11-17. Activation and password-reset emails from EP-04 are sent by the same email sender to the address on the user record, whatever `notifyChannels` says, and their delivery status is recorded without the link.
 
 ## 8. Business rules
 
@@ -92,10 +98,12 @@ first, then the owner), and tracks delivery status.
 - BR-11-8. A karigar never sees prices, customers, leads or stock. [mockup 11]
 - BR-11-9. The notification centre is always available to owner, staff and karigar. [mockup 10-navigation-map.mmd]
 - BR-11-10. Outbound WhatsApp outside a conversation needs approved templates. [PRODUCTION-SCOPE §4 D8]
+- BR-11-11. Email is a required channel for activation and password-reset links; every user has an email address. [PRODUCTION-SCOPE §4 D4; decisions/D4-sign-in.md]
 
 ## 9. Data
 
 - Notification: id, recipient user id, kind, group (signature, stopped, late, info), source event name, entity type, entity id, template id, variables, channel (app, whatsapp, email), status (queued, sent, delivered, read, failed), created at, sent at, read at, attempts, dedupe key.
+- Notification kinds include `account_activation` and `password_reset` (email only; the link is a variable that is never stored in plain text after sending).
 - Template: id, kind, text with variables, per-channel variant if needed, WhatsApp template reference (EP-12).
 - EscalationTimer: notification group id, escalate at (UTC), escalated flag.
 - Settings read (EP-13): `notifyChannels`, `lateLeadAudience`.
@@ -135,6 +143,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Performance: in-app notifications appear within about 1 second of the source event.
 - Concurrency: dedupe key per event, recipient and channel prevents duplicates when events are redelivered.
 - Security: recipients are chosen on the server with EP-05 permissions; a karigar's notifications are filtered to their own jobs.
+- Security: activation and reset links are rendered into the email at send time and are not kept in the notification row, logs or error text.
 - Personal data: customer names in late-lead notices (for example "Sharma wedding enquiry") go only to staff and the owner; WhatsApp copies are kept no longer than needed.
 - Audit: changes to channel preferences and late-lead audience are audited by EP-13; delivery status changes are recorded on the notification, not in the audit log.
 - Time: escalation waits and quiet hours (if decided) use Asia/Kolkata.
@@ -142,7 +151,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 ## 14. Dependencies
 
 - Upstream (from PRODUCTION-SCOPE): EP-07, EP-10, EP-08
-- Downstream: EP-12, EP-24, EP-40, EP-41.
+- Downstream: EP-12, EP-24, EP-40, EP-41, EP-45 (activation email).
 
 ## 15. Epic acceptance criteria
 
@@ -160,6 +169,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Risk: escalation fires although staff already acted. Mitigation: escalation checks the lead state at the moment it fires.
 - Risk: the notification centre has no screen or route, so in-app notices are invisible. Mitigation: resolve G21 before EP-24 starts.
 - Risk: settings can be changed by staff (G12). Mitigation: EP-13 decides who may change notification settings.
+- Risk: the email provider (D4a) is not chosen before M1 ends, so new users cannot activate in production. Mitigation: choose it before EP-11-S12 starts; staging uses the EP-04 stub.
 
 ## 17. Open decisions and questions
 
@@ -171,6 +181,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - G21: who owns the notification centre screen and its route id, given the navigation map shows it for all three roles?
 - G12: may staff change `notifyChannels` or `lateLeadAudience`?
 - Do staff and karigars get their own channel preferences, or only the owner?
+- D4a: which email provider sends the account emails and email alerts? Open.
 
 ## 18. Candidate stories
 

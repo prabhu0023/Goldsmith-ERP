@@ -11,20 +11,20 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 - **Story ID:** EP-26-S1
 - **Title:** System can store a stock-out with its pieces, seller, reference and invoice number
 - **As a:** System
-- **I want:** the `stock_outs` and `stock_out_pieces` tables from EP-02-S10 to hold one record per stock-out with id (`SO-` prefix), seller id, actor id, reference (text), invoice number (text), at (UTC), a nullable branch id, a nullable customer id and a nullable amount socket, and one child row per piece
+- **I want:** the `stock_outs` and `stock_out_pieces` tables from EP-02-S10 to hold one record per stock-out with id (`SO-` prefix), seller id, actor id, reference (text), invoice number (text), at (UTC), the shop ID, a nullable customer id and a nullable amount socket, and one child row per piece
 - **So that:** every piece that left the floor is linked to one record that says who sold it, who recorded it and which billing-book entry it matches, with no amount held (FR-26-7, FR-26-13, BR-26-1, BR-26-10)
 - **Acceptance criteria (Given / When / Then):**
   1. Given the migration has run, when a stock-out of TAG-8841 and TAG-9040 with reference "REF-2026-1182" and invoice number "INV-2026-0855" is stored, then `stock_outs` has one row with seller id and actor id set, `at` from the server clock in UTC, and `stock_out_pieces` has two rows, one per piece.
-  2. Given the stored record, when it is read, then the amount column is empty with no default and the customer id and branch id are empty (epic acceptance criterion 5).
+  2. Given the stored record, when it is read, then the amount column is empty with no default, the customer id is empty and the shop ID is the shop's (epic acceptance criterion 5).
   3. Given a second stock-out row that lists TAG-8841, when it is written while TAG-8841 is already on a stock-out, then the database rejects it through the unique key on piece id in `stock_out_pieces`.
   4. Given a row with an empty seller id, an empty reference or an empty invoice number, when it is written, then the database rejects it.
   5. Given the stock-outs in the prototype seed (EP-02-S13), when the table is read, then each seeded billed piece points to its `SO-` record through `pieces.stockOutId`, and new ids continue after them.
-- **Rules enforced on the server:** Reference and invoice number are non-empty text after trimming (check constraints). Seller id and actor id reference users. `pieces.stockOutId` references `stock_outs`. The unique key on `stock_out_pieces.piece_id` is the last line of double-sell prevention below the service check (EP-02-S10). The amount column is never written until EP-42 and pricing are on. The customer id column stays empty and unused until G13 is decided. Branch id is filled only if D7 chooses multi-branch.
+- **Rules enforced on the server:** Reference and invoice number are non-empty text after trimming (check constraints). Seller id and actor id reference users. `pieces.stockOutId` references `stock_outs`. The unique key on `stock_out_pieces.piece_id` is the last line of double-sell prevention below the service check (EP-02-S10). The amount column is never written until EP-42 and pricing are on. The customer id column stays empty and unused until G13 is decided. The shop ID is set by the server from the session (D7).
 - **Live events emitted / consumed:** None. Storing the tables publishes nothing; the event comes from EP-26-S2.
 - **Audit entry written:** No. Table rules only; each stock-out is audited by EP-26-S12.
-- **Data changes:** Migration on `stock_outs` (EP-02-S10): adds or confirms `actorId`, `sellerId`, `ref`, `invoiceNo`, `at`, nullable `branchId`, nullable `customerId`, nullable `amountINR` with no default, the non-empty checks, and an index on `at` for the today list. Confirms `stock_out_pieces` with its unique piece key. Ports `StockOutRecord` from `src/types/jewellery.ts` into the shared package, dropping `sellerName` (read from the user) and the prototype `heldForLeadId` clearing.
+- **Data changes:** Migration on `stock_outs` (EP-02-S10): adds or confirms `actorId`, `sellerId`, `ref`, `invoiceNo`, `at`, the shop ID (EP-02-S3), nullable `customerId`, nullable `amountINR` with no default, the non-empty checks, and an index on `at` for the today list. Confirms `stock_out_pieces` with its unique piece key. Ports `StockOutRecord` from `src/types/jewellery.ts` into the shared package, dropping `sellerName` (read from the user) and the prototype `heldForLeadId` clearing.
 - **UI reference:** No screen. The record is shown under "THE RECORD" on `docs/ux/mockups/06-stock-out.svg`, route `stock-out`.
-- **Non-functional checks:** Time: `at` stored in UTC, shown in Asia/Kolkata. Concurrency: the unique piece key refuses a second stock-out of the same piece even if the service check is bypassed. Open decision G13: the customer id column is a socket only. Open decision D7: whether reference or invoice series depend on the branch. Open question: whether reference or invoice numbers must be unique; no unique key is added until that is answered.
+- **Non-functional checks:** Time: `at` stored in UTC, shown in Asia/Kolkata. Concurrency: the unique piece key refuses a second stock-out of the same piece even if the service check is bypassed. Open decision G13: the customer id column is a socket only. D7 is decided: one shop, so any series is per shop. Open question: whether reference or invoice numbers must be unique; no unique key is added until that is answered.
 - **Depends on:** EP-02-S10, EP-02-S13, EP-02-S3, EP-22-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -303,12 +303,12 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
   3. Given a stock-out at 23:50 Asia/Kolkata on 31 October and one at 00:10 on 1 November, when `today` is read on 1 November, then only the 00:10 one is counted.
   4. Given Rajesh opens a stock-out from the recent list on `stock-out`, when Read Stock-out returns, then it shows the time, seller, actor, reference, invoice number, and each piece's tag, name and pure gold, and no amount.
   5. Given a karigar calls List Stock-outs, when the server answers, then it is refused with `forbidden`.
-- **Rules enforced on the server:** List Stock-outs, Read Stock-out and the today summary are Staff and Owner only (EP-05-S2). "Today" is computed on the server from Asia/Kolkata day boundaries. The gold out is the integer sum of the billed pieces' nets. Lists page with a cursor, newest first (EP-03-S9). Branch filtering applies only if D7 chooses multi-branch.
+- **Rules enforced on the server:** List Stock-outs, Read Stock-out and the today summary are Staff and Owner only (EP-05-S2). "Today" is computed on the server from Asia/Kolkata day boundaries. The gold out is the integer sum of the billed pieces' nets. Lists page with a cursor, newest first (EP-03-S9). Reads are scoped to the shop (D7).
 - **Live events emitted / consumed:** Consumed: "Piece billed by one staff member" to refetch the summary and lists (EP-08-S9). Emitted: none.
 - **Audit entry written:** No. Reads change nothing.
 - **Data changes:** None in the product database. Adds List Stock-outs, Read Stock-out and the today summary to the shared contract. Moves the `piecesOutToday` and `goldOutToday` selectors used by `StaffToday.tsx` and `OwnerDecisions.tsx`, and the recent list of `StockOut.tsx`, onto the EP-08 data layer.
 - **UI reference:** `docs/ux/mockups/02-staff-home.svg`, route `today` ("GOLD OUT TODAY 212.4 g", "Pieces out today 11", "Sell a piece"); `docs/ux/mockups/06-stock-out.svg`, route `stock-out`. The recent list and stock-out detail view are not yet designed.
-- **Non-functional checks:** Precision: gold out summed as integers, shown to 4 decimals. Time: "today" in Asia/Kolkata, sold time stored in UTC (epic section 13). Performance: the home figures update within about 1 second of a sale. Open decision D7: whether today's figures are per branch.
+- **Non-functional checks:** Precision: gold out summed as integers, shown to 4 decimals. Time: "today" in Asia/Kolkata, sold time stored in UTC (epic section 13). Performance: the home figures update within about 1 second of a sale. D7 is decided: today's figures are for the shop.
 - **Depends on:** EP-26-S1, EP-26-S2, EP-05-S2, EP-03-S9, EP-08-S2, EP-08-S3, EP-08-S9, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -323,4 +323,4 @@ Copied from the epic's section 17. Not answered here.
 - Must reference numbers and invoice numbers be unique, and in what format? (EP-26-S1, S7)
 - Is a mistaken stock-out ever reversible, and by whom? Mockup 06 says no edit at all. (EP-26-S7, S10)
 - A4: if a seventh state "frozen pending edit" is introduced, can such a piece be sold? (EP-26-S2, S8)
-- D7: does the reference or invoice number series depend on the branch? (EP-26-S1, S13)
+- D7 is decided: one shop, no branches; any reference or invoice series is per shop (EP-26-S1, S13).

@@ -30,17 +30,17 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 
 ---
 
-## EP-37-S2: System can redact OTPs, tokens, phones and names from every log line
+## EP-37-S2: System can redact passwords, links, tokens, phones and names from every log line
 
 - **Story ID:** EP-37-S2
-- **Title:** System can redact OTPs, tokens, phones and names from every log line
+- **Title:** System can redact passwords, links, tokens, phones and names from every log line
 - **As a:** System
-- **I want:** the logger itself to remove OTPs, edit tokens, session secrets, phone numbers and customer names from every log line, by field name and by pattern, before the line leaves the process
+- **I want:** the logger itself to remove passwords, activation and reset links, edit tokens, session secrets, phone numbers, email addresses and customer names from every log line, by field name and by pattern, before the line leaves the process
 - **So that:** secrets and personal data never reach logs, whatever a developer passes to the logger (FR-37-2, BR-37-2, BR-37-5)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given a staff member signs in with a 6-digit OTP, when all logs for that request are searched for the code, then it does not appear (epic acceptance criterion 4).
+  1. Given a staff member signs in with phone and password, and another resets a password from an emailed link, when all logs for those requests are searched for the password and the link, then neither appears (epic acceptance criterion 4).
   2. Given Sanjay Seth agrees an edit proposal and an edit token is sent and then applied, when the logs for both requests are searched for the token value, then it does not appear; the line shows the token reference only.
-  3. Given a log call that passes an object with fields `phone`, `otp`, `token`, `sessionSecret`, `customerName` or `name` of a customer, when the line is written, then each of those values is replaced by `[redacted]` and the internal id is kept.
+  3. Given a log call that passes an object with fields `phone`, `email`, `password`, `link`, `token`, `sessionSecret`, `customerName` or `name` of a customer, when the line is written, then each of those values is replaced by `[redacted]` and the internal id is kept.
   4. Given a free-text detail that contains a 10-digit Indian mobile number, when the line is written, then the number is replaced by `[redacted]`.
   5. Given the redaction test suite, when it runs in CI, then it fails if any of the above values reaches the log output.
 - **Rules enforced on the server:** Redaction runs inside the logger, not by convention at each call site (epic section 13). The redacted field list lives in one place in the shared package. Error reports (EP-37-S3) and alerts (EP-37-S5, EP-37-S6) use the same redaction.
@@ -48,7 +48,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Audit entry written:** No. No business state changes.
 - **Data changes:** None in the product database. Adds the redaction list and the redacting step to the logger.
 - **UI reference:** No screen
-- **Non-functional checks:** Security: OTPs, edit tokens and session secrets never logged in plain text (BR-37-2). Personal data: phones and customer names are personal data under the DPDP Act 2023 and stay out of logs; the internal id is logged instead (BR-37-5).
+- **Non-functional checks:** Security: passwords, links, edit tokens and session secrets never logged in plain text (BR-37-2). Personal data: phones and customer names are personal data under the DPDP Act 2023 and stay out of logs; the internal id is logged instead (BR-37-5).
 - **Depends on:** EP-37-S1, EP-04-S14, EP-12-S11, EP-06-S4, EP-01-S8
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -107,21 +107,21 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Story ID:** EP-37-S5
 - **Title:** Operator can receive an alert when a WhatsApp send fails after retries
 - **As a:** Developer
-- **I want:** an alert when a WhatsApp send has failed after its last retry, naming the message kind (OTP, edit token, wish, broadcast, alert)
-- **So that:** staff are not left waiting at the counter for an edit token or OTP that never arrives, and a lost alert does not go unnoticed (FR-37-6, BR-37-1, BR-37-6)
+- **I want:** an alert when a WhatsApp send has failed after its last retry, naming the message kind (edit token, wish, broadcast, alert)
+- **So that:** staff are not left waiting at the counter for an owner edit code that never arrives, and a lost alert does not go unnoticed (FR-37-6, BR-37-1, BR-37-6)
 - **Acceptance criteria (Given / When / Then):**
   1. Given an edit token send that fails after its last retry, when the failure is recorded, then the operator gets an alert naming "edit token", and no phone number or token value appears in the alert or in any log (epic acceptance criterion 1).
-  2. Given an OTP send fails after its last retry, when the failure is reported by EP-12-S12, then the alert names "OTP", the template name and the error code, and severity is high.
+  2. Given the edit token send to Sanjay Seth's registered mobile fails after its last retry, when the failure is reported by EP-12-S12, then the alert names "edit token", the template name and the error code, and severity is high.
   3. Given 30 wish sends fail in the same 9 am run, when they are reported, then the operator gets one grouped alert for "wish" with the count 30, not 30 alerts.
   4. Given a send fails on its first attempt and succeeds on retry, when it ends, then no alert is raised.
   5. Given a broadcast message reported failed by a later receipt (EP-12-S9), when the last retry is used up, then an alert names "broadcast".
-- **Rules enforced on the server:** Alerts are raised only for exhausted retries (EP-11-S14, EP-12-S12), never for a first failure. Message kind is one of OTP, edit token, wish, broadcast, alert. Alerts carry message id, template name and error code, and never recipient number, text or variables. Repeats within a short window are grouped.
+- **Rules enforced on the server:** Alerts are raised only for exhausted retries (EP-11-S14, EP-12-S12), never for a first failure. Message kind is one of edit token, wish, broadcast, alert. Sign-in sends no WhatsApp message (D4). Alerts carry message id, template name and error code, and never recipient number, text or variables. Repeats within a short window are grouped.
 - **Live events emitted / consumed:** None. Business events are not used; the failure report from EP-12-S12 is the input.
 - **Audit entry written:** No. The failure is recorded on the OutboundMessage (EP-12) and in the alert.
 - **Data changes:** None in the product database unless the tool cannot store alerts; then an Alert record (time, kind, severity, message, acknowledged by, acknowledged at). Adds an alert rule for failed sends.
 - **UI reference:** No screen. The alert arrives by the agreed alert route.
-- **Non-functional checks:** Personal data: no phone, customer name or message text in alerts. Security: no OTP or token value in alerts (BR-37-2). Availability: the alert route runs outside the main app. Open question: who receives alerts, by which channel and at which hours; the alert route cannot use WhatsApp alone, since WhatsApp may be what failed.
-- **Depends on:** EP-37-S1, EP-37-S2, EP-12-S12, EP-11-S14, EP-25-S5, EP-04-S4
+- **Non-functional checks:** Personal data: no phone, customer name or message text in alerts. Security: no edit code or token value in alerts (BR-37-2). Availability: the alert route runs outside the main app. Open question: who receives alerts, by which channel and at which hours; the alert route cannot use WhatsApp alone, since WhatsApp may be what failed.
+- **Depends on:** EP-37-S1, EP-37-S2, EP-12-S12, EP-11-S14, EP-25-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---
@@ -208,7 +208,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 - **Acceptance criteria (Given / When / Then):**
   1. Given production has been running for a day, when the operator opens the dashboards, then they show request count and error count per operation for the last 24 hours, with refusals shown apart from errors.
   2. Given job runs recorded by EP-10, when the job panel is opened, then it shows runs and failures per job name for 24 hours and 30 days.
-  3. Given WhatsApp sends, when the send panel is opened, then it shows attempts, successes and final failures per message kind (OTP, edit token, wish, broadcast, alert).
+  3. Given WhatsApp sends, when the send panel is opened, then it shows attempts, successes and final failures per message kind (edit token, wish, broadcast, alert).
   4. Given the dashboards, when the time axis is read, then times are in Asia/Kolkata.
   5. Given Sanjay Seth, Rajesh Verma or Lakshmi Devi with a shop account only, when they try to open the dashboards, then access is refused.
   6. Given staging and production, when the dashboards are opened for each, then both show request, error, job and send figures (epic acceptance criterion 6).

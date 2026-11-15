@@ -21,14 +21,15 @@ from real job and ledger data.
 
 - Owner: adds a karigar, edits their details, changes their wastage allowance, deactivates them, links them to a user account, and reads the directory and scorecard.
 - Staff: picks a karigar on the order copy and parcel forms; does not see the scorecard or wastage figures beyond what the order copy shows (to confirm with G4).
-- Karigar: signs in with the phone recorded here; sees their own profile in the "Me" tab; never sees another karigar's record or scorecard.
+- Karigar: signs in with the phone recorded here and their own password, set from the activation email sent to the email recorded here (D4); sees their own profile in the "Me" tab; never sees another karigar's record or scorecard.
 - System: generates the `KG-NN` code, enforces the wastage range, computes scorecard figures from EP-18 and EP-19 data, and audits every change.
 
 ## 4. In scope
 
-- Karigar record: code, name, phone, workshop location, specialties, language preference (stored only, unused until EP-44), wastage allowance, status.
+- Karigar record: code, name, phone, email (required; every karigar has one, D4), workshop location, specialties, language preference (stored only, unused until EP-44), wastage allowance, status.
 - Owner adds a karigar; code assigned `KG-NN` in sequence.
-- Owner edits name, phone, workshop location and specialties.
+- Owner edits name, phone, email, workshop location and specialties.
+- Every karigar record belongs to the one shop: it carries the shop ID set by the server, and the karigar code and phone are unique within the shop (D7).
 - Owner changes the wastage allowance within 0.6% to 1.2%, audited with old and new value.
 - Owner deactivates a karigar; refused while the karigar has open jobs or gold out, unless the decided rule says otherwise.
 - Link between a karigar record and a karigar user account (EP-05 owns the user side).
@@ -39,7 +40,7 @@ from real job and ledger data.
 
 ## 5. Out of scope
 
-- Signing in and the OTP for the karigar phone (EP-04); the user account itself (EP-05).
+- Signing in with phone and password, the activation and reset emails (EP-04); the user account itself (EP-05). There is no OTP sign-in in v1 (D4).
 - Issuing gold and creating jobs (EP-19); the gold ledger (EP-18).
 - Reconciliation B, judging a finished job against the allowance and flagging it (EP-19 with EP-18, gap G23).
 - Parcel gaps at intake that feed "last six parcels" (EP-23 produces them).
@@ -62,12 +63,12 @@ from real job and ledger data.
 
 ## 7. Functional requirements
 
-- FR-16-1. The owner can add a karigar with name, phone, workshop location, one or more specialties and wastage allowance.
+- FR-16-1. The owner can add a karigar with name, phone, email, workshop location, one or more specialties and wastage allowance.
 - FR-16-2. The server assigns the next free code `KG-NN` and never reuses a code.
 - FR-16-3. The server rejects a missing name with "Add the karigar name." and an empty specialty list with "Pick at least one thing they are best at."
 - FR-16-4. The server rejects a wastage allowance below 0.6% or above 1.2% with "The wastage allowance is between 0.6% and 1.2%."
 - FR-16-5. A staff or karigar user who calls add, edit or wastage change is refused with "Only the owner can add a karigar or change their wastage allowance."
-- FR-16-6. The owner can edit name, phone, workshop location and specialties.
+- FR-16-6. The owner can edit name, phone, email, workshop location and specialties.
 - FR-16-7. The server records which allowance was in force for each job, so a later change can be applied by the decided rule (new jobs only, or open jobs too).
 - FR-16-8. The owner can deactivate a karigar; the server refuses while the karigar has an open job or gold issued and not returned, naming the jobs.
 - FR-16-9. A deactivated karigar is not offered on the order copy or parcel forms and cannot sign in to the portal.
@@ -82,17 +83,19 @@ from real job and ledger data.
 
 - BR-16-1. The wastage allowance is between 0.6% and 1.2%. [mockup 24; src/store/transitions.ts onboardKarigar]
 - BR-16-2. Only the owner can add a karigar or change their wastage allowance. [mockup 24]
-- BR-16-3. The phone number is the karigar's portal login. [mockup 24]
+- BR-16-3. The phone number is the karigar's portal login, with a password the karigar sets from the activation email. [mockup 24; D4]
 - BR-16-4. More than the allowance against a job is flagged to the owner. [mockup 24 "More than that against a job, and it is flagged to you"; SCOPE-ANALYSIS App. C reconciliation B]
 - BR-16-5. The allowance is judged against the job (reconciliation B), not at parcel intake (reconciliation A). [SCOPE-ANALYSIS App. C]
 - BR-16-6. Metal loss is shown as a percentage and in grams, never as a cost. [SCOPE-ANALYSIS App. F]
 - BR-16-7. The owner sees karigars worst first. [mockup 08 "KARIGARS, WORST FIRST"]
 - BR-16-8. The owner's clearance screen shows the karigar's last six parcels' gold gap. [mockup 22 "His last six parcels, gold gap"]
 - BR-16-9. A karigar never sees any other karigar's work or scorecard. [mockup 11]
+- BR-16-10. Every karigar has an email address. [D4]
+- BR-16-11. Karigar records are scoped to the one shop; codes and phones are unique within the shop. [D7]
 
 ## 9. Data
 
-- Karigar: id (`KG-NN`), name, phone, workshop location, specialties (references to EP-15 list), language (`Tamil`, `Hindi`, `English`, set open; default `English`; stored only, unused until EP-44), wastage allowance (basis points, integer; 0.70% = 70), status (`active`, `deactivated`), user id (nullable link to EP-05 user), open since, version.
+- Karigar: id (`KG-NN`, unique within the shop), shop ID, name, phone (unique within the shop), email (required), workshop location, specialties (references to EP-15 list), language (`Tamil`, `Hindi`, `English`, set open; default `English`; stored only, unused until EP-44), wastage allowance (basis points, integer; 0.70% = 70), status (`active`, `deactivated`), user id (nullable link to EP-05 user), open since, version.
 - KarigarScorecard (derived, may be cached): karigar id, metal loss % over a period, days late (sum or average, per decision), rating (nullable until G4 formula is decided), finished jobs count, last six parcel gaps (integer, units of 0.0001 g each).
 - Gold with the karigar: derived from EP-18 ledger, integer, units of 0.0001 g.
 - The job stores the allowance in force when it was issued (EP-19 owns the field).
@@ -105,7 +108,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
 | Create | Karigar | Add a karigar | Owner |
-| Update | Karigar details | Edit name, phone, location, specialties | Owner |
+| Update | Karigar details | Edit name, phone, email, location, specialties | Owner |
 | Update | Karigar wastage | Change the allowance (audited) | Owner |
 | Update | Karigar status | Deactivate or reactivate | Owner |
 | Update | Karigar account link | Link to a karigar user account | Owner |
@@ -128,7 +131,7 @@ None from the catalogue. The scorecard updates when EP-19 and EP-23 settle jobs 
 - Precision: the allowance is stored as an integer (basis points), and every gram figure on the scorecard is integer, units of 0.0001 g; percentages are computed from integers, not stored floats.
 - Security: add, edit, wastage change, link and deactivate are owner-only on the server; a karigar reads only their own profile.
 - Audit: a wastage change records old and new allowance, because it changes how every future job is judged.
-- Personal data: karigar phone and workshop location are personal data; only the owner sees the full directory.
+- Personal data: karigar phone, email and workshop location are personal data; only the owner sees the full directory.
 - Concurrency: a deactivation and a new order copy for the same karigar at once cannot both succeed; the job creation re-checks status in the same transaction.
 - Performance: the directory with scorecards for 50 karigars loads under 2 seconds.
 
@@ -139,7 +142,7 @@ None from the catalogue. The scorecard updates when EP-19 and EP-23 settle jobs 
 
 ## 15. Epic acceptance criteria
 
-1. Given the owner on `karigar-new`, when they add "Ravi Achari", phone, Temple and Kundan, 0.9%, then the record KG-05 (next free code) is stored and audited.
+1. Given the owner on `karigar-new`, when they add "Ravi Achari", phone, email, Temple and Kundan, 0.9%, then the record KG-05 (next free code) is stored and audited.
 2. Given a staff user, when they call the add-karigar operation directly, then the server refuses and nothing is stored.
 3. Given the owner, when they set the allowance to 1.5%, then the server refuses with "The wastage allowance is between 0.6% and 1.2%."
 4. Given KG-04 Vijay Kumar has an open job, when the owner tries to deactivate him, then the server refuses and names the job.
@@ -150,15 +153,16 @@ None from the catalogue. The scorecard updates when EP-19 and EP-23 settle jobs 
 
 - Risk: the scorecard rating looks authoritative before its formula is agreed and causes unfair judgement. Mitigation: hide rating until G4 is decided; show only measured figures.
 - Risk: an allowance change is applied to jobs already issued and changes past verdicts. Mitigation: record the allowance in force on each job, and decide (section 17) whether a change reaches open jobs.
-- Risk: karigars share one phone in a workshop, so "phone = login" breaks. Mitigation: keep D4 and the shared-phone question open and decide before EP-20.
+- Risk: karigars in one workshop share a phone, so "phone = login" breaks. Mitigation: D4 decided that phone numbers are unique. How to handle a karigar without their own phone is open (see section 17).
 - Risk: language is stored but nothing reads it in v1. Mitigation: the field is kept only for EP-44, which reads it; v1 is English only (G2 resolved).
 
 ## 17. Open decisions and questions
 
-- D4: does the sign-in method allow a karigar without their own phone, and can two karigars share a workshop phone?
+- D4 is decided: phone and password; phone numbers are unique, so two karigars cannot share a phone, and every karigar has an email address ([decision record](../decisions/D4-sign-in.md)).
 - G4: how is the rating computed, over what period are loss % and days late measured, and do staff see any of it?
 - G23: is reconciliation B (gold issued vs net returned vs allowance) settled per job or per period, and where is the flag raised?
 - Does a changed wastage allowance apply only to jobs issued after the change, or also to jobs already open?
+- If two karigars share one phone, or a karigar has no phone of their own, how do they get a portal account? Proposed option: no portal account, and staff record that karigar's job updates for them.
 - Can a karigar with open jobs be deactivated if the owner takes the gold back first?
 - Should the workshop location be free text or an address with a map pin?
 

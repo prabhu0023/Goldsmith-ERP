@@ -38,7 +38,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 - Signed-in app shell: the app opens on sign-in (EP-04) when there is no session, routes a signed-in user to their role's landing route (`today`, `decisions`, `k-jobs`), refuses routes their role may not open, and returns to sign-in when the session ends or is ended ("User deactivated or role changed").
 - The shell hosts the EP-05 account menu in the rail foot and the karigar shell in place of the `RoleChip` identity switcher; the demo `PricingToggle` is removed from the shell (the pricing switch belongs to EP-13 and EP-42).
 - Rail badge counts (`railBadges` today) read from the server and kept current by live events.
-- Shared current-user, current-branch (if D7) and server-time context for screens, replacing `identity`, `actor` and the demo clock `now` from `StoreProvider`.
+- Shared current-user, current-shop (name only; one shop, D7) and server-time context for screens, replacing `identity`, `actor` and the demo clock `now` from `StoreProvider`.
 - A documented pattern and one worked example for moving a screen from `useStore()` onto the data layer, so each feature epic wires its own screens the same way.
 - Moving the screens of the epics that come before this one onto the data layer: sign-in (EP-04), `staff-directory` and `staff-new` (EP-05), `security` (EP-06).
 - Removing the in-memory `StoreProvider` state, the seed load, the demo clock and the identity switch from production builds.
@@ -46,7 +46,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 ## 5. Out of scope
 
 - The API itself, its contract and error format (EP-03).
-- Sign-in, OTP and sessions on the server (EP-04); the sign-in and OTP screens' rules (EP-04).
+- Sign-in, activation and reset links and sessions on the server (EP-04); the rules of the sign-in, set-password and forgot-password screens (EP-04).
 - Users, roles, permissions and the account menu's rules and contents (EP-05).
 - The live connection, subscriptions, sequence numbers and catch-up on the server (EP-07).
 - Wiring each feature screen to its reads, actions and events: each feature epic does that for its own routes (EP-11 to EP-44), using this epic's patterns.
@@ -88,7 +88,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 - FR-08-14. When the session expires or "User deactivated or role changed" arrives for the user, the shell clears cached data and returns to sign-in.
 - FR-08-15. The rail foot and the karigar shell show the EP-05 account menu; no screen offers an identity switch or the pricing dev switch.
 - FR-08-16. Rail badge counts come from the server and update within about 1 second of a relevant event.
-- FR-08-17. Screens get the current user, role, branch (if D7) and server time from the shell; no screen uses the demo clock.
+- FR-08-17. Screens get the current user, role, shop name and server time from the shell; no screen uses the demo clock.
 - FR-08-18. The sign-in, `staff-directory`, `staff-new` and `security` screens use the data layer, as the worked examples for feature epics.
 
 ## 8. Business rules
@@ -111,7 +111,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 - Client query cache: query key (operation and parameters), data, fetched at, entity versions seen, status (loading, ready, failed, possibly stale).
 - Event-to-query map: for each catalogue event, the query keys it invalidates (for example "Piece billed by one staff member" invalidates in-stock pieces, stock totals, Today cards and the sale list).
 - Live client state: connection status (connected, reconnecting, offline), last sequence number received.
-- Session context in memory only: user id, name, role, branch (if D7), landing route; cleared on sign-out or session end.
+- Session context in memory only: user id, name, role, shop name, landing route; cleared on sign-out or session end.
 - Weights arrive as integers in units of 0.0001 g and are formatted to grams by the existing display helpers; no weight is converted to floating point for storage or comparison.
 - No money fields; `ValueSlot` keeps reading the pricing setting, now from the server.
 
@@ -122,7 +122,7 @@ adds no server operation; it consumes these.
 
 | Verb | Resource | Purpose | Who may call |
 | --- | --- | --- | --- |
-| Read | Current session | Who am I, role, landing route, branch | Signed-in user (EP-04) |
+| Read | Current session | Who am I, role, landing route, shop name | Signed-in user (EP-04) |
 | Delete | Current session | Sign out from the account menu | Signed-in user (EP-04) |
 | Read | Contract version | Detect a browser tab built against an old contract | Any signed-in client (EP-03) |
 | Open / Resume | Live connection | Connect and catch up by sequence number | Signed-in user (EP-07) |
@@ -168,7 +168,7 @@ to the reads it affects, and refetches them.
 ## 14. Dependencies
 
 - Upstream (from PRODUCTION-SCOPE): EP-03, EP-04, EP-05, EP-07
-- Downstream: EP-11, EP-13, EP-14, EP-15, EP-16, EP-17, EP-18, EP-19, EP-20, EP-21, EP-22, EP-23, EP-24, EP-25, EP-26, EP-27, EP-28, EP-29, EP-30, EP-31, EP-32, EP-33, EP-34, EP-35, EP-36, EP-39, EP-40, EP-41, EP-42, EP-43, EP-44.
+- Downstream: EP-11, EP-13, EP-14, EP-15, EP-16, EP-17, EP-18, EP-19, EP-20, EP-21, EP-22, EP-23, EP-24, EP-25, EP-26, EP-27, EP-28, EP-29, EP-30, EP-31, EP-32, EP-33, EP-34, EP-35, EP-36, EP-39, EP-40, EP-41, EP-42, EP-43, EP-44, EP-45.
 
 ## 15. Epic acceptance criteria
 
@@ -192,7 +192,7 @@ to the reads it affects, and refetches them.
 
 - D3: WebSocket or Server-Sent Events from the Node API? It decides how the live hooks connect and how "reconnecting" is detected.
 - D6: does any of the karigar offline behaviour reach the web app, or is offline on the web read-only as proposed here?
-- D7: does the shell carry a current branch, and can the owner switch it?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); the shell shows the shop name where the mockups say "All branches" or "Main showroom", and there is no branch switch.
 - How long may cached data be shown while reconnecting before the screen hides it?
 - After how long without a response does a loading state turn into a read error?
 - Should staff actions ever be queued offline, or always refused with a reason as proposed here?

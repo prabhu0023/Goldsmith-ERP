@@ -30,7 +30,7 @@ retries, and idempotency so that each event is acted on exactly once.
 - A run history per job: started, finished, result, attempts.
 - SLA breach job: a lead in `needs_glance` or `opened` for `settings.leadSlaHours` (8) hours since `arrivedAt` becomes late and emits the passed-SLA event.
 - Overdue job: a karigar job past its agreed date (`confirmedDate ?? dueDate`) and not `handed_over` becomes overdue and triggers reminders.
-- Token expiry sweep: edit tokens and OTPs older than 10 minutes are marked expired.
+- Token expiry sweep: edit tokens older than 10 minutes are marked expired. Activation and reset links are checked for expiry at use by EP-04; there are no sign-in OTPs (D4).
 - 9 am wishes trigger: when `autoSendWishes` is on, the day's birthday and anniversary queue is sent at 9 am Asia/Kolkata.
 - A retention runner hook for EP-09 file retention.
 
@@ -39,7 +39,7 @@ retries, and idempotency so that each event is acted on exactly once.
 - Who is notified, on which channel, and the escalation from staff to owner (EP-11).
 - Lead states and the inbox (EP-28); this job only detects the breach.
 - Job states and the tracker (EP-19).
-- Edit token issue and check (EP-25); OTP issue and check (EP-04).
+- Edit token issue and check (EP-25); activation and reset link issue and check (EP-04).
 - The wishes queue, two sender identities and consent rules (EP-33).
 - Scheduled broadcasts ("schedule for Deepavali eve", gap G17) (EP-34).
 - Shop-hours calendar and settings values (EP-13).
@@ -67,7 +67,7 @@ retries, and idempotency so that each event is acted on exactly once.
 - FR-10-6. A lead that leaves `needs_glance` or `opened` before the limit is not marked late.
 - FR-10-7. A change to `settings.leadSlaHours` applies to leads still running.
 - FR-10-8. A karigar job not `handed_over` is marked overdue once per day it stays past its agreed date (`confirmedDate ?? dueDate`), and the reminder is handed to EP-11.
-- FR-10-9. Edit tokens and sign-in OTPs older than 10 minutes are marked expired, so a code entered after expiry is refused even if the check-at-use rule fails.
+- FR-10-9. Edit tokens older than 10 minutes are marked expired, so a code entered after expiry is refused even if the check-at-use rule fails.
 - FR-10-10. When `autoSendWishes` is on, the wishes job runs at 9 am Asia/Kolkata each day and hands that day's queue to EP-33.
 - FR-10-11. When `autoSendWishes` is off, the 9 am job does nothing.
 - FR-10-12. Day boundaries for overdue and wishes are computed in Asia/Kolkata, while all stored times are UTC.
@@ -91,7 +91,7 @@ retries, and idempotency so that each event is acted on exactly once.
 - JobRun: id, job name, idempotency key, scheduled at, started at, finished at, attempts, result (ok, retrying, failed), error text.
 - Lead (EP-02, changed here): SLA breached at (UTC), breach notified flag.
 - KarigarJob (EP-02, changed here): overdue since (UTC), last reminder at.
-- PieceEdit and OtpChallenge: expired at.
+- PieceEdit: expired at.
 - No weights or money fields are created or changed by this epic.
 
 ## 10. API surface
@@ -167,7 +167,7 @@ No screen of its own. Screens that depend on it: `leads` and `decisions` (late l
 5. EP-10-S5: System can mark a lead late when its SLA passes and emit the passed-SLA event
 6. EP-10-S6: System can cancel a lead's SLA timer when staff start working it
 7. EP-10-S7: System can mark a karigar job overdue past its agreed date
-8. EP-10-S8: System can expire edit tokens and OTPs after 10 minutes
+8. EP-10-S8: System can expire edit tokens after 10 minutes
 9. EP-10-S9: System can start the 9 am wishes run when auto-send is on
 10. EP-10-S10: System can compute day boundaries and 9 am in Asia/Kolkata
 11. EP-10-S11: System can run missed jobs after downtime

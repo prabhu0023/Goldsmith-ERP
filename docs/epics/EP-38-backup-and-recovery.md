@@ -63,7 +63,7 @@ Restores must keep the append-only audit log whole.
 - FR-38-8. The restore drill is run in staging before launch and then on the agreed schedule, and each run is recorded with its date and duration.
 - FR-38-9. After a restore, the audit log contains every entry up to the restore point and no entry is altered.
 - FR-38-10. After a restore, open clients reconnect and refetch state, so no screen shows data from after the restore point.
-- FR-38-11. The restore procedure says how to find WhatsApp messages and OTPs sent after the restore point and how staff are told what to re-enter.
+- FR-38-11. The restore procedure says how to find WhatsApp messages (including owner edit codes) and account emails sent after the restore point and how staff are told what to re-enter.
 - FR-38-12. Backups older than the retention period are deleted.
 
 ## 8. Business rules
@@ -128,7 +128,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 - Risk: backups run but have never been restored. Mitigation: the drill restores in staging before launch and on a schedule.
 - Risk: the database and file backups come from different times, leaving rows that point at missing photos. Mitigation: restore files to the same point and check references after each drill.
-- Risk: WhatsApp messages and OTPs sent after the restore point cannot be unsent. Mitigation: the restore procedure lists them from provider logs and tells staff what to recheck.
+- Risk: WhatsApp messages, edit codes and activation or reset emails sent after the restore point cannot be unsent. Mitigation: the restore procedure lists them from provider logs and tells staff what to recheck.
 - Risk: a deletion request removes a customer, then a restore brings them back. Mitigation: decide with EP-39 how deletions are reapplied after a restore (G22).
 - Risk: backups stored outside India conflict with D10. Mitigation: keep backups in an India region of the D1a provider.
 

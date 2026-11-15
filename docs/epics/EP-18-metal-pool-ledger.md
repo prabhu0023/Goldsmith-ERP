@@ -159,7 +159,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Who may post an opening or adjustment entry besides the owner?
 - Does unused gold returned by a karigar go back to the pool, and is it weighed in?
 - G10: which stored unit holds balances exactly?
-- D7: is there one pool per branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); there is one pool per shop. Every ledger entry carries the location ID ("Main shop" in v1, set by the server); a pool per location and transfers between locations are deferred.
 
 ## 18. Candidate stories
 

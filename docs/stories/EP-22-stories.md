@@ -19,12 +19,13 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
   3. Given the migration has run, when `pieces` is inspected, then there is no `heldForLeadId` column and no hold-expiry column, and `piece_state_transitions` has piece id, from, to, actor, at and reason.
   4. Given the prototype seed is loaded into staging (EP-02-S13), when the migration runs, then every seeded piece with `heldForLeadId` set is stored as `in_stock` with no link to the lead, every other piece keeps its state, and the migration can be rolled back.
   5. Given a piece with `status` `stopped`, when it is saved with `prevStatus` empty, then the database rejects it, because a stopped piece must record the state it returns to.
+  6. Given any piece in stock, when it is read, then it carries `location_id` "Main shop" (EP-02-S5); no state transition or operation changes the location in v1, because transfers between locations are deferred (D7).
 - **Rules enforced on the server:** Status is one of six values (check constraint). `prevStatus` is required when status is `stopped` and empty otherwise. Gross is greater than 0 and stones are from 0 up to gross. Pure gold is never stored from client input. `version` increments on every write and backs the EP-02-S14 stale-write check. Indexes on `status`, (`status`, `inStockAt`), tag number, HUID and `design_id` so the stock list stays fast.
 - **Live events emitted / consumed:** None. This story only stores data.
 - **Audit entry written:** No. Schema changes are tracked by the migration history (EP-02-S1); state changes are audited by EP-22-S11.
-- **Data changes:** Migration on `pieces` adds or confirms `status` (check constraint), `prevStatus`, `inStockAt`, `soldAt`, `stockOutId` (nullable), `valueINR` (nullable, unused until EP-42), `version`, and the indexes above; drops `heldForLeadId` if EP-02-S5 created it. Migration creates `piece_state_transitions` (id, piece id, from status, to status, actor id, at, reason, operation name).
+- **Data changes:** Migration on `pieces` adds or confirms `status` (check constraint), `prevStatus`, `inStockAt`, `soldAt`, `stockOutId` (nullable), `valueINR` (nullable, unused until EP-42), `version`, and the indexes above; drops `heldForLeadId` if EP-02-S5 created it. Migration creates `piece_state_transitions` (id, piece id, from status, to status, actor id, at, reason, operation name). Uses `pieces.location_id` from EP-02-S5; no transition writes it after the piece is created.
 - **UI reference:** No screen.
-- **Non-functional checks:** Precision: weights are integers in units of 0.0001 g, shown to 4 decimals with the EP-02-S2 helper. Time: `inStockAt`, `soldAt` and transition `at` stored in UTC. Performance: indexes sized for 5,000 pieces in stock and their history. Open decision D7: if stock is per branch, a `branchId` column is added here before EP-22-S3.
+- **Non-functional checks:** Precision: weights are integers in units of 0.0001 g, shown to 4 decimals with the EP-02-S2 helper. Time: `inStockAt`, `soldAt` and transition `at` stored in UTC. Performance: indexes sized for 5,000 pieces in stock and their history. D7 is decided: one shop, no branches; pieces carry the shop ID (EP-02-S3) and tag number and HUID are unique within the shop.
 - **Depends on:** EP-02-S1, EP-02-S2, EP-02-S5, EP-02-S13, EP-02-S14, EP-21-S1, EP-15-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -72,7 +73,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 - **Audit entry written:** No. Reading the list changes nothing.
 - **Data changes:** None in the product database. Adds List Pieces with filter, cursor and counts to the shared contract. Moves `ShowroomStock.tsx` from `useStore()` onto the EP-08 data layer and drops the held cards and `heldBackPieces`.
 - **UI reference:** `docs/ux/mockups/03-showroom-stock.svg`, route `stock` ("Showroom stock", "Can sell · 42", "With QC · 5", "Sold out · 9", "Billed · 23", "More filters", "Newest first", "In showcase", "Pure gold", "Gross · stones").
-- **Non-functional checks:** Performance: first page under 2 seconds for 5,000 pieces (epic section 13). Precision: card weights from integer units, shown to 4 decimals. Security: karigars have no stock read. Open question: which pieces count in "With QC", `draft` only or `with_owner` too; the count is one server function so the answer changes one place. Open decision D7: whether the list filters by branch. "More filters" is not yet designed and is not part of this story.
+- **Non-functional checks:** Performance: first page under 2 seconds for 5,000 pieces (epic section 13). Precision: card weights from integer units, shown to 4 decimals. Security: karigars have no stock read. Open question: which pieces count in "With QC", `draft` only or `with_owner` too; the count is one server function so the answer changes one place. D7 is decided: one shop, so the list has no branch filter. "More filters" is not yet designed and is not part of this story.
 - **Depends on:** EP-22-S1, EP-22-S2, EP-03-S9, EP-05-S2, EP-08-S2, EP-08-S3, EP-08-S4, EP-08-S9, EP-08-S13, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -240,7 +241,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 - **Audit entry written:** No. Reading a total changes nothing.
 - **Data changes:** None in the product database. Adds Read Stock totals to the shared contract. Replaces the `pureGoldOnFloor` selector in `src/store/selectors.ts`.
 - **UI reference:** `docs/ux/mockups/03-showroom-stock.svg`, route `stock` ("42 pieces you can sell · 1,847.2 g pure gold on the floor"; the mockup prints 1 decimal, production shows 4). The Decisions card is built in EP-32.
-- **Non-functional checks:** Precision: gold totals are sums of integer weights (epic section 13). Performance: the total answers in under 500 ms for 5,000 pieces (proposed). Open decision D7: whether the total is per branch or for the whole shop.
+- **Non-functional checks:** Precision: gold totals are sums of integer weights (epic section 13). Performance: the total answers in under 500 ms for 5,000 pieces (proposed). D7 is decided: the total is for the whole shop.
 - **Depends on:** EP-22-S1, EP-22-S3, EP-02-S2, EP-05-S2, EP-08-S9
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -277,5 +278,5 @@ Copied from the epic's section 17. Not answered here.
 - A4: does a piece stay sellable while an edit proposal is open, or does it need a seventh state? (EP-22-S6)
 - G3: what makes a design "Sold out" and how are requests counted? (EP-22-S9)
 - G5: what ageing threshold marks stock as sitting too long? (EP-22-S5)
-- D7: is stock per branch? (EP-22-S1, S3, S10)
+- D7 is decided: one shop, no branches; stock belongs to the shop (EP-22-S1, S3, S10).
 - Which pieces count in "With QC": draft only, or with_owner too? (EP-22-S3, S8)

@@ -19,13 +19,13 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
   3. Given any environment, when a developer runs the migration status command, then it lists each migration with its number, name, applied time in UTC and checksum, read from a migration history table.
   4. Given a migration file whose content changed after it was applied on staging, when the migrate command runs on staging, then it stops with an error naming the file and the checksum mismatch, and applies nothing.
   5. Given a green main build deployed to staging by EP-01-S12, when the deploy runs, then pending migrations are applied before the new `api` build starts serving, and a failed migration stops the deploy and leaves the previous build serving.
-  6. Given the first migration, when it is inspected, then it records the D7 choice (single shop or branches) in a comment, and it cannot be applied until that choice is filled in (BR-02-7).
+  6. Given the first migration, when it is inspected, then it records the D7 decision (one shop, no branches, a shop ID on every business table) in a comment (BR-02-7).
 - **Rules enforced on the server:** Migrations run inside a transaction where the database supports it, so a failed migration leaves no half-applied schema. Only the deploy pipeline (System) applies migrations to staging and production; developers apply them only to development. The migration history table is written only by the migrations tool.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. No product state changes. The migration history table records number, name, checksum and applied time per environment.
 - **Data changes:** Creates the migration history table. Adds the migrations folder and the migrate and status commands to the `api` package.
 - **UI reference:** No screen
-- **Non-functional checks:** Availability: a migration that needs to rewrite a large table is written to run without taking the shop offline, or is flagged for a planned window. Security: production migrations use the production credential held only by the deploy pipeline. Time: applied times are stored in UTC. D2 is decided (PostgreSQL): the migration tool targets the managed PostgreSQL database. Staging and production migrations run from the deploy pipeline inside the cloud provider's private network; the database has no public endpoint. Open decision D7: the branch key choice must be made before migration 1. D10 is decided (India region): the region is set in configuration, not in migrations, and follows the D1a cloud provider.
+- **Non-functional checks:** Availability: a migration that needs to rewrite a large table is written to run without taking the shop offline, or is flagged for a planned window. Security: production migrations use the production credential held only by the deploy pipeline. Time: applied times are stored in UTC. D2 is decided (PostgreSQL): the migration tool targets the managed PostgreSQL database. Staging and production migrations run from the deploy pipeline inside the cloud provider's private network; the database has no public endpoint. Open decision D1a: how the CI and deploy pipeline reaches that private network (a runner inside the provider, a bastion, or the provider's own deploy service) depends on the cloud provider, so this constraint is confirmed when D1a is decided. D7 is decided: one shop, no branches; the shop ID is in migration 1. D10 is decided (India region): the region is set in configuration, not in migrations, and follows the D1a cloud provider.
 - **Depends on:** EP-01-S2, EP-01-S6, EP-01-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -55,26 +55,28 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 
 ---
 
-## EP-02-S3: System can store users, sessions and branches
+## EP-02-S3: System can store the shop, users and sessions
 
 - **Story ID:** EP-02-S3
-- **Title:** System can store users, sessions and branches
+- **Title:** System can store the shop, users and sessions
 - **As a:** System
-- **I want:** tables for Branch (id, name), User (id, name, phone, role, karigarId, status, branch key) and Session (id, userId, created, expires, ended)
-- **So that:** real sign-in (EP-04) and user management (EP-05) have somewhere to store people and their sessions, with exactly three roles (FR-02-12, BR-02-8, BR-02-9)
+- **I want:** tables for Shop (id, name, address, GSTIN, logo key, setup completed at), User (id, shop ID, name, phone, email, role, karigarId, status) and Session (id, shop ID, userId, created, expires, ended), and the rule that every business table carries a shop ID
+- **So that:** real sign-in (EP-04) and user management (EP-05) have somewhere to store people and their sessions, with exactly three roles, and every record belongs to the one shop from the first migration (FR-02-12, FR-02-13, FR-02-14, BR-02-7, BR-02-8, BR-02-9)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given the migrations have run, when the schema is inspected, then the `branches`, `users` and `sessions` tables exist with the columns listed in epic section 9.
+  1. Given the migrations have run, when the schema is inspected, then the `shops`, `users` and `sessions` tables exist with the columns listed in epic section 9, and no `branches` table exists (D7).
   2. Given a User insert with role `manager`, when it is written, then the database rejects it, and only `owner`, `staff` and `karigar` are accepted.
-  3. Given a User insert with status other than `active` or `deactivated`, when it is written, then the database rejects it.
+  3. Given a User insert with status other than `pending_activation`, `active` or `deactivated`, or with no email, when it is written, then the database rejects it.
   4. Given a Session insert whose `userId` does not exist in `users`, when it is written, then the database rejects it with a foreign key error.
-  5. Given the `sessions` table, when its columns are inspected, then no column holds a plain-text OTP or session token; the session secret is stored only as a hash or reference.
-  6. Given two users with the same phone number, when the second is inserted, then the database rejects it with a unique constraint error.
-- **Rules enforced on the server:** Role is an enumerated column limited to `owner`, `staff`, `karigar`. Phone is unique among users. `sessions.userId` is a foreign key to `users`. `created`, `expires` and `ended` are UTC timestamps. The `karigarId` column is nullable here; its foreign key to the karigar table and the rule "required when role is karigar, empty otherwise" are added in EP-02-S4 once that table exists.
+  5. Given the `sessions` and `users` tables, when their columns are inspected, then no column holds a plain-text password or session token; secrets are stored only as hashes or references.
+  6. Given two users of the same shop with the same phone number, when the second is inserted, then the database rejects it with a unique constraint error; the constraint is on (shop ID, phone).
+  7. Given a schema test that lists every business table, when it runs, then each has a not-null shop ID with a foreign key to `shops`, and the test fails if a table lacks one.
+  8. Given a shop row is created (by the setup wizard, EP-45, or by the seed), when the `locations` table is read, then exactly one location exists for that shop, named "Main shop"; there is no operation to add a second one in v1 (D7).
+- **Rules enforced on the server:** Role is an enumerated column limited to `owner`, `staff`, `karigar`. Phone is unique per shop among users that are not deactivated (a partial unique index on shop ID and phone). Email is required. Every business table created in this epic and later carries `shop ID` (not null, foreign key to `shops`); the data-access layer fills it from the session, never from the request (D7). `sessions.userId` is a foreign key to `users`. `created`, `expires` and `ended` are UTC timestamps. The `karigarId` column is nullable here; its foreign key to the karigar table and the rule "required when role is karigar, empty otherwise" are added in EP-02-S4 once that table exists.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. This story creates tables only. Audit of user changes belongs to EP-05 and EP-06.
-- **Data changes:** Migration creates `branches`, `users` and `sessions`. If D7 is single shop, one branch row is created by the migration so every branch key has a valid target.
+- **Data changes:** Migration creates `shops`, `users` and `sessions`. The shop row itself is created by the first-run setup wizard (EP-45), not by the migration; development and staging get one from the seed (EP-02-S13). No `branches` table (D7). Migration also creates `locations` (id, shop ID, name); the default row "Main shop" is inserted in the same transaction as the shop row. Later tables that hold or measure gold reference it (EP-02-S4, S5, S6, S9).
 - **UI reference:** No screen
-- **Non-functional checks:** Security: no plain-text OTP or token column (epic section 13). Personal data: `users.name` and `users.phone` are marked as personal data columns for export and deletion in EP-39. Time: all timestamps in UTC. Open decision D4: the sign-in method may add columns (for example an OTP request table); keep the Session shape neutral to D4. Open decision D7: whether `users` carries a branch key that limits access.
+- **Non-functional checks:** Security: no plain-text password, link or token column (epic section 13). Personal data: `users.name`, `users.phone` and `users.email` are marked as personal data columns for export and deletion in EP-39. Time: all timestamps in UTC. D4 is decided (phone and password): EP-04 adds the password hash column and the `password_links` and `sign_in_lockouts` tables. D7 is decided: one shop, no branches; the shop ID replaces any branch key.
 - **Depends on:** EP-02-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -93,10 +95,11 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
   3. Given the `customers` table, when it is inspected, then `budgetINR` and `spentINR` columns exist, are nullable and have no default, and `group` accepts only `VIP Bridal`, `High net worth`, `Regular` and `Wholesale`.
   4. Given a HistoryRow insert, when it is written, then `pureG` is an integer in units of 0.0001 g and `customerId` must exist in `customers`.
   5. Given a User with role `karigar` and a `karigarId` that does not exist, or a User with role `staff` that has a `karigarId`, when it is written, then the database rejects it.
+  6. Given the `scales` table, when it is inspected, then it has a not-null `location_id` referencing `locations`, and a scale inserted without one is rejected.
 - **Rules enforced on the server:** Foreign keys from HistoryRow to Customer, from the gap-history child table to Karigar, and from `users.karigarId` to Karigar. StaffMember role limited to `owner` and `staff`. Customer `dob` and `anniversary` are dates, not timestamps. No floating-point column for any weight.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Tables only; changes to masters are audited by EP-14, EP-16 and EP-17.
-- **Data changes:** Migration creates `scales`, `karigars`, `karigar_gap_history`, `staff_members`, `customers`, `customer_history`, and adds the foreign key from `users.karigarId`. Each table has the branch key if D7 is multi-branch.
+- **Data changes:** Migration creates `scales`, `karigars`, `karigar_gap_history`, `staff_members`, `customers`, `customer_history`, and adds the foreign key from `users.karigarId`. Each table has the shop ID (EP-02-S3); customer phone uniqueness, if any, is per shop. Karigars have a required email on their user account (D4). `scales` carries `location_id` (not null), set by the server to the shop's default location "Main shop" (D7).
 - **UI reference:** No screen
 - **Non-functional checks:** Precision: weight columns are integers; a test inserts `0.0001 g` readability and reads back `1`. Personal data: Customer name, phone, city, dob, anniversary and `optedIn` consent, and Karigar and StaffMember phone, are tagged as personal data for EP-39 export and deletion (DPDP Act 2023). Open decision G13: `Customer.history` is stored here as seed data; whether it is later derived from stock-outs is not decided, so the table must be removable without changing `customers`. Open decision: whether StaffMember stays a separate table or merges into `users` follows EP-05.
 - **Depends on:** EP-02-S1, EP-02-S2, EP-02-S3
@@ -118,10 +121,11 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
   4. Given a PieceEdit insert with status `pending` or a `pieceId` that does not exist, when it is written, then the database rejects it; only `proposed`, `token_sent`, `applied`, `refused` and `void` are accepted, and `field` accepts only `grossG`, `stoneG`, `stoneCount`, `purity`, `huid` and `name`.
   5. Given a PieceEdit on `grossG` from 48.65 to 48.61, when it is stored, then before and after are kept as the integers `486500` and `486100`, and the token column holds a hash or reference, never the plain token value.
   6. Given a piece with three photos, when it is stored, then the photos are three rows in a child table with piece id, position and storage key, read back in the same order.
-- **Rules enforced on the server:** Status and edit enums are checked by the database. `pieces.scaleId` references `scales`; `madeById` references `karigars`; `piece_edits.pieceId` references `pieces`. The tag number is unique. Foreign keys for `parcelId`, `jobId` and `stockOutId` are added by EP-02-S6, EP-02-S8 and EP-02-S10 when those tables exist. The stale-version check itself is EP-02-S14.
+  7. Given the `pieces` table, when it is inspected, then it has a not-null `location_id` referencing `locations`, set by the server; a request body that names a location is ignored.
+- **Rules enforced on the server:** Status and edit enums are checked by the database. `pieces.scaleId` references `scales`; `madeById` references `karigars`; `piece_edits.pieceId` references `pieces`. The tag number is unique per shop (shop ID, tag number), and HUID is unique per shop when present (D7). Foreign keys for `parcelId`, `jobId` and `stockOutId` are added by EP-02-S6, EP-02-S8 and EP-02-S10 when those tables exist. The stale-version check itself is EP-02-S14.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Tables only; piece and edit changes are audited by EP-22, EP-25 and EP-06.
-- **Data changes:** Migration creates `pieces`, `piece_photos` and `piece_edits` with `version` columns on `pieces` and `piece_edits`.
+- **Data changes:** Migration creates `pieces`, `piece_photos` and `piece_edits` with `version` columns on `pieces` and `piece_edits`. `pieces` carries `location_id` (not null, default location "Main shop", set by the server, D7).
 - **UI reference:** No screen
 - **Non-functional checks:** Precision: `grossG`, `stoneG` and edit before/after weights are integers of 0.0001 g. Concurrency: `version` on `pieces` and `piece_edits` (epic section 13). Security: token stored as hash or reference. Open question: whether net gold is stored on each piece or always derived; this story stores only gross and stone and derives net in `shared`.
 - **Depends on:** EP-02-S2, EP-02-S4
@@ -143,10 +147,11 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
   4. Given the manifest of BATCH-2026-044, when it is stored, then its eight rows (MF-044-1 to MF-044-8) are rows in a manifest table with kind and count, and count must be at least 1.
   5. Given a QC tick for piece TAG-8841 on parcel BATCH-2026-043, when the same tick is inserted twice, then the second insert is rejected by a unique key on parcel id and piece id.
   6. Given the `parcels` table, when it is inspected, then `gapNetG` and `lossG` are nullable integers in units of 0.0001 g, `version` is an integer, and the foreign key from `pieces.parcelId` to `parcels` now exists.
+  7. Given the `parcels` and `parcel_weighings` tables, when they are inspected, then each has a not-null `location_id` referencing `locations`, so every parcel and every tray weighing records where it was weighed.
 - **Rules enforced on the server:** Enum and range checks on stage, status, verdict and resolution. `parcels.karigarId` references `karigars`; weighing `scaleId` references `scales`; QC tick `pieceId` references `pieces`. The verdict is recomputed by the server and never written from client input (BR-02-6); this story only stores it. The foreign key from `parcels.jobId` to jobs is added in EP-02-S8.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Tables only; parcel transitions are audited by EP-21, EP-23 and EP-06.
-- **Data changes:** Migration creates `parcels`, `parcel_weighings` (with position), `parcel_manifest_rows` (with position), `parcel_qc_ticks`, and adds the foreign key `pieces.parcelId`.
+- **Data changes:** Migration creates `parcels`, `parcel_weighings` (with position), `parcel_manifest_rows` (with position), `parcel_qc_ticks`, and adds the foreign key `pieces.parcelId`. `parcels` and `parcel_weighings` (trays) carry `location_id` (not null, set by the server to "Main shop", D7).
 - **UI reference:** No screen. The stored weighings feed the readouts on `parcel-match` (`docs/ux/mockups/04-parcel-match.svg`) and `parcel-clear` (`docs/ux/mockups/14-match-rule-any-parcel.svg`).
 - **Non-functional checks:** Precision: weighing gross and stone, `gapNetG` and `lossG` are integers of 0.0001 g. Concurrency: `version` on `parcels`. Time: `arrivedAt`, `releasedAt` and `stoppedAt` in UTC. Open decision G14: one hand-over may carry many jobs (mockup 12); keep `parcels.jobId` nullable and do not block a later parcel-to-jobs link table.
 - **Depends on:** EP-02-S4, EP-02-S5
@@ -214,12 +219,13 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
   2. Given entries with `deltaG` of +500.0000, -80.0000 and +79.6000, when they are stored, then the deltas are the integers `5000000`, `-800000` and `796000`.
   3. Given the stored ledger, when the sum of all `deltaG` values is compared with `metal_pools.balanceG`, then they are equal for the seeded data.
   4. Given the `metal_pools` table, when it is inspected, then `balanceG` is an integer in units of 0.0001 g and `version` is an integer.
+  5. Given the `pool_entries` table, when it is inspected, then each entry has a not-null `location_id` referencing `locations`; v1 keeps one pool per shop, not one per location (per-location pools are deferred, D7).
 - **Rules enforced on the server:** Enum check on entry kind. Weight columns are integers. Posting rules (which transitions post which entries, and keeping the balance equal to the ledger on every write) belong to EP-18; this story stores the rows.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Tables only; pool postings are audited by EP-18 and EP-06.
-- **Data changes:** Migration creates `metal_pools` (one row per shop, or per branch if D7 is multi-branch) and `pool_entries`.
+- **Data changes:** Migration creates `metal_pools` (one row per shop, D7) and `pool_entries`, both with shop ID. `pool_entries` carries `location_id` (not null, "Main shop" in v1, set by the server).
 - **UI reference:** No screen
-- **Non-functional checks:** Precision: `balanceG` and `deltaG` are integers of 0.0001 g; the seed balance is computed by summing integers, not floats. Concurrency: `version` on `metal_pools`. Time: `at` stored in UTC. Open decision D7: one pool per shop or per branch.
+- **Non-functional checks:** Precision: `balanceG` and `deltaG` are integers of 0.0001 g; the seed balance is computed by summing integers, not floats. Concurrency: `version` on `metal_pools`. Time: `at` stored in UTC. D7 is decided: one pool per shop.
 - **Depends on:** EP-02-S2, EP-02-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -284,12 +290,12 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
   2. Given a WishRecord insert with kind `festival` or a `customerId` that does not exist, when it is written, then the database rejects it; kind accepts `birthday` and `anniversary`.
   3. Given the `settings` table after migration, when it is read, then it holds one row with `pricingEnabled` false, `leadSlaHours` 8, `requireEditToken` true, the three notify-channel flags, `lateLeadAudience` and `autoSendWishes`.
   4. Given a second settings row for the same shop, or a `lateLeadAudience` value other than `staff_then_owner` or `owner_only`, when it is written, then the database rejects it.
-- **Rules enforced on the server:** Enum checks on audience, wish kind and late-lead audience. One settings row per shop (or per branch if D7 is multi-branch). `leadSlaHours` must be greater than 0. Foreign keys from recipients to customers, from broadcast pieces to pieces, and from wishes to customers.
+- **Rules enforced on the server:** Enum checks on audience, wish kind and late-lead audience. One settings row per shop, unique on shop ID (D7). `leadSlaHours` must be greater than 0. Foreign keys from recipients to customers, from broadcast pieces to pieces, and from wishes to customers.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Tables only; settings changes are audited as `setting_changed` by EP-13 and EP-06.
 - **Data changes:** Migration creates `broadcasts`, `broadcast_recipients`, `broadcast_pieces`, `wishes` and `settings`, and inserts the default settings row.
 - **UI reference:** No screen
-- **Non-functional checks:** Personal data: broadcast message text and recipient links are personal data for EP-39. Time: `at` columns in UTC. Open decision D7: one settings row per shop or per branch.
+- **Non-functional checks:** Personal data: broadcast message text and recipient links are personal data for EP-39. Time: `at` columns in UTC. D7 is decided: one settings row per shop.
 - **Depends on:** EP-02-S4, EP-02-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -314,7 +320,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 - **Audit entry written:** No. Seed data is loaded below the product; no actor exists yet. Seeded `audit_entries` rows from the prototype are loaded as data.
 - **Data changes:** Inserts seed rows into every table created in EP-02-S3 to EP-02-S12, plus one User row per seeded staff member and karigar so seeded records have valid actors.
 - **UI reference:** No screen. Smoke check: the staff `today` route shows the seeded parcels once EP-03 serves them.
-- **Non-functional checks:** Precision: a test compares every seeded weight to its source string. Security: seeded users have no usable password or OTP; sign-in for them is set up through EP-04. Personal data: seed customers are fictional; real customer data is never used in dev or staging. Open question: if human ids such as BATCH-2026-044 become display references next to an internal key, the seed keeps them in the reference column.
+- **Non-functional checks:** Precision: a test compares every seeded weight to its source string. Security: seeded users have no usable password; sign-in for them is set up through the EP-04 activation link. The seed creates one shop row so every seeded record has a shop ID. Personal data: seed customers are fictional; real customer data is never used in dev or staging. Open question: if human ids such as BATCH-2026-044 become display references next to an internal key, the seed keeps them in the reference column.
 - **Depends on:** EP-02-S2, EP-02-S3, EP-02-S4, EP-02-S5, EP-02-S6, EP-02-S7, EP-02-S8, EP-02-S9, EP-02-S10, EP-02-S11, EP-02-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -348,8 +354,8 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 
 Copied from the epic's section 17. Not answered here.
 
-- D7: single shop or multiple branches? This decides whether every table gets a branch key now. (EP-02-S1, S3, S4, S9, S12)
-- D1a: which cloud provider hosts the managed PostgreSQL database? D2 (PostgreSQL) and D10 (India region) are decided; the exact India region follows the provider. (EP-02-S1)
+- D7 is decided: one shop, no branches; every business table gets a shop ID now (EP-02-S1, S3, S4, S9, S12).
+- D1a: which cloud provider hosts the managed PostgreSQL database? D2 (PostgreSQL) and D10 (India region) are decided; the exact India region follows the provider. It also decides how CI and the deploy pipeline reach the private network. (EP-02-S1)
 - G10: should stored weights be integers of 0.0001 g as PRODUCTION-SCOPE §5 says, or a finer unit (the prototype uses 0.00001 g) so the half-step ceiling is exact? (EP-02-S2, S4, S6)
 - Is net gold stored on each record, or always derived from gross and stone weights? (EP-02-S5, S6)
 - Are human-readable ids such as `BATCH-2026-044`, `LD-2026-…` and `KG-04` kept as the primary key, or kept as a display reference next to an internal key? (EP-02-S3 to S13)

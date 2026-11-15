@@ -48,7 +48,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. The envelope is transport data, not a state change.
 - **Data changes:** Adds sequence number and audience to `event_outbox` (EP-07-S1). Adds the envelope type to the shared package. Weights are never carried; clients refetch pieces whose weights are integers in units of 0.0001 g.
 - **UI reference:** No screen
-- **Non-functional checks:** Concurrency: events are ordered by sequence number per stream (epic section 13). Personal data: envelopes carry ids only. Precision: no weight is sent in an event, so no rounding can happen in transit. Time: emitted at is server UTC. Open decision D7: if branches are chosen, the envelope gains a branch key.
+- **Non-functional checks:** Concurrency: events are ordered by sequence number per stream (epic section 13). Personal data: envelopes carry ids only. Precision: no weight is sent in an event, so no rounding can happen in transit. Time: emitted at is server UTC. D7 is decided: one shop, no branches; the envelope carries no branch key, and the server scopes every event to the shop.
 - **Depends on:** EP-07-S1, EP-02-S14, EP-03-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -72,7 +72,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. Opening a connection changes no business record; sign-in itself is audited by EP-04-S14.
 - **Data changes:** None in the product database. The Node API holds a connection record in memory: connection id, user id, role, opened at.
 - **UI reference:** No screen. The connection starts from the app shell for every route; the shell's states are built in EP-08.
-- **Non-functional checks:** Security: an unauthenticated connection is refused (FR-07-1). Performance: the connection is open within 2 seconds of the shell loading on a shop connection. Open decision D3: WebSocket or Server-Sent Events; presence (EP-07-S8) needs two-way, which rules out plain Server-Sent Events unless presence uses API calls. D1 is decided (Option C): the connection is served by the Node API on the shop's own domain. Open decision D4: the session comes from whichever sign-in method is chosen; the connection only checks that the Node API session is valid.
+- **Non-functional checks:** Security: an unauthenticated connection is refused (FR-07-1). Performance: the connection is open within 2 seconds of the shell loading on a shop connection. Open decision D3: WebSocket or Server-Sent Events; presence (EP-07-S8) needs two-way, which rules out plain Server-Sent Events unless presence uses API calls. D1 is decided (Option C): the connection is served by the Node API on the shop's own domain. D4 is decided (phone and password); the connection only checks that the Node API session is valid.
 - **Depends on:** EP-04-S5, EP-04-S11, EP-04-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -96,7 +96,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. Joining a channel changes no business record.
 - **Data changes:** None in the product database. Subscription record per connection: connection id, user id, role, channels joined.
 - **UI reference:** No screen. Entity subscriptions are opened by `parcel-tag` and `parcel-match` (`docs/ux/mockups/21-tag-one-item.svg`, `docs/ux/mockups/04-parcel-match.svg`).
-- **Non-functional checks:** Security: every subscription is checked against EP-05 permissions (epic section 13). Open decision D7: if branches are chosen, role channels become per branch, for example `role:staff:<branch>`.
+- **Non-functional checks:** Security: every subscription is checked against EP-05 permissions (epic section 13). D7 is decided: one shop, so role channels are not split by branch.
 - **Depends on:** EP-07-S3, EP-05-S1, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -191,7 +191,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. Presence changes no business record.
 - **Data changes:** None in the product database. Presence record kept by the channel: parcel id, user id, user name, joined at, last seen.
 - **UI reference:** `docs/ux/mockups/21-tag-one-item.svg` (THIS PARCEL panel for BATCH-2026-044), route `parcel-tag`; `docs/ux/mockups/04-parcel-match.svg`, route `parcel-match`. Where the presence names sit on the screen is not yet designed.
-- **Non-functional checks:** Performance: join and leave reach others within about 1 second. Availability: stale entries expire by heartbeat timeout (epic section 16 risk). Open question: whether presence means "has the parcel open" or "is tagging an item now"; the criteria use "has the parcel open" until it is decided. Open decision D3: presence needs a two-way transport. Open decision D7: if branches are chosen, presence is per branch parcel.
+- **Non-functional checks:** Performance: join and leave reach others within about 1 second. Availability: stale entries expire by heartbeat timeout (epic section 16 risk). Open question: whether presence means "has the parcel open" or "is tagging an item now"; the criteria use "has the parcel open" until it is decided. Open decision D3: presence needs a two-way transport. D7 is decided: one shop, so presence is per parcel.
 - **Depends on:** EP-07-S4, EP-07-S5, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -215,7 +215,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. Reading counts changes nothing.
 - **Data changes:** None in the product database. Adds a badge-count read operation to the shared contract; the `railBadges` selector rules move to the server.
 - **UI reference:** Rail on `docs/ux/mockups/08-owner-home.svg` (Decisions 3) and `docs/ux/mockups/13-notifications-escalation.svg` (Decisions 6, Leads 2), route `decisions`; rail on `docs/ux/mockups/02-staff-home.svg` (Showroom stock 42, Parcels in 2), route `today`.
-- **Non-functional checks:** Performance: badges change within about 1 second of the event (FR-07-11); the count read answers in under 2 seconds. Security: counts are computed on the server per role. Open decision D7: the owner rail says "All branches"; per-branch counts depend on D7.
+- **Non-functional checks:** Performance: badges change within about 1 second of the event (FR-07-11); the count read answers in under 2 seconds. Security: counts are computed on the server per role. D7 is decided: one shop; the owner rail's "All branches" label shows the shop name and counts are for the shop.
 - **Depends on:** EP-07-S4, EP-07-S5, EP-07-S11, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -262,7 +262,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. Each emitting operation writes its own entry.
 - **Data changes:** None in the product database. Adds the event registry (name, entity type, audience rule) to the shared package.
 - **UI reference:** No screen of its own. Screens that react: `today`, `decisions`, `leads`, `stock`, `parcels`, `parcel-tag`, `parcel-match`, `order-copy` and `k-jobs` (epic section 12).
-- **Non-functional checks:** Performance: each event reaches its audience within about 1 second of commit under normal shop load (FR-07-7). Security: audiences match PRODUCTION-SCOPE §1 and karigars receive only their own job and account events. Open question G26: which proposed events are added to the catalogue; this story fixes the 10 and leaves room for more. Open decision D7: role channels may be per branch.
+- **Non-functional checks:** Performance: each event reaches its audience within about 1 second of commit under normal shop load (FR-07-7). Security: audiences match PRODUCTION-SCOPE §1 and karigars receive only their own job and account events. Open question G26: which proposed events are added to the catalogue; this story fixes the 10 and leaves room for more. D7 is decided: role channels are for the one shop.
 - **Depends on:** EP-07-S1, EP-07-S2, EP-07-S4, EP-07-S5, EP-07-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -298,7 +298,7 @@ Copied from the epic's section 17. Not answered here.
 
 - D3: WebSocket or Server-Sent Events? Presence needs two-way. Either way it is built in the Node API (D1, Option C), not taken from a platform. (EP-07-S1, S3, S8)
 - D6: how does the live channel behave for a karigar phone that is offline for hours? (EP-07-S6, S7)
-- D7: are channels scoped per branch? (EP-07-S2, S4, S8, S9, S11)
+- D7 is decided: one shop, no branches; channels are scoped to the shop (EP-07-S2, S4, S8, S9, S11).
 - What does presence mean exactly: "has the parcel open", or "is tagging an item now"? (EP-07-S8)
 - How long is the replay buffer kept before a client must refetch everything? (EP-07-S7)
 - G26: which proposed events (for example "Parcel released into stock", "Problem cleared", "Setting changed") are added to the catalogue? (EP-07-S9, S11)

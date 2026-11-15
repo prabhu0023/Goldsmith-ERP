@@ -11,7 +11,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **Story ID:** EP-14-S1
 - **Title:** System can store scales with readability and capacity as integer weights
 - **As a:** System
-- **I want:** the `scales` table from EP-02-S4 extended with status (`active` or `retired`), counter key (nullable), branch key (if D7), created at, retired at and version, with readability and capacity kept as integers in units of 0.0001 g, plus a List Scales operation that returns active scales by default and all scales when asked
+- **I want:** the `scales` table from EP-02-S4 extended with status (`active` or `retired`), counter key (nullable), shop ID (D7), created at, retired at and version, with readability and capacity kept as integers in units of 0.0001 g, plus a List Scales operation that returns active scales by default and all scales when asked
 - **So that:** every weighing in the shop can point at one stored scale whose smallest step and heaviest load are exact and survive a reload (BR-14-1, BR-14-8, FR-14-1)
 - **Acceptance criteria (Given / When / Then):**
   1. Given the migrations have run, when the `scales` table is inspected, then `readability` and `capacity` are integer columns in units of 0.0001 g, `status` accepts only `active` or `retired`, `counter_key` and `retired_at` are nullable, and `version` starts at 1.
@@ -19,12 +19,13 @@ Role note: stories where the server stores, checks, computes or audits on its ow
   3. Given an insert with readability `0`, a negative readability, capacity `0` or status `broken`, when it is written straight to the database, then the database check rejects it.
   4. Given one active and one retired scale, when Rajesh Verma (Staff) calls List Scales with no filter, then only the active scale is returned; when Sanjay Seth (Owner) calls it with "include retired", then both are returned with their status.
   5. Given Vijay Kumar (Karigar), when he calls List Scales, then the server refuses with `forbidden`.
+  6. Given Sanjay Seth registers a scale with a request that also names a location id, when it is stored, then its `location_id` is the shop's default location "Main shop", set by the server, and the client value is ignored.
 - **Rules enforced on the server:** List Scales is allowed for `owner` and `staff` and refused for `karigar` (EP-05-S2). Database checks: readability greater than 0, capacity greater than 0, status enum. Weights are converted only through the shared helpers (EP-02-S2), never with float arithmetic.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. This story creates storage and a read; changes are audited through EP-14-S12.
-- **Data changes:** Migration on `scales` (created in EP-02-S4) adds `status` (default `active`), `counter_key` (nullable), `branch_key` (nullable, only if D7 is multi-branch), `created_at`, `retired_at` (nullable) and `version`. Migration creates `user_scale_preference` (user id, last scale id, updated at) for EP-14-S9. Adds List Scales to the shared contract (EP-03-S1).
+- **Data changes:** Migration on `scales` (created in EP-02-S4) adds `status` (default `active`), `counter_key` (nullable), `created_at`, `retired_at` (nullable) and `version`. Migration creates `user_scale_preference` (user id, last scale id, updated at) for EP-14-S9. Adds List Scales to the shared contract (EP-03-S1). Uses `scales.location_id` from EP-02-S4 (not null, default location "Main shop").
 - **UI reference:** No screen
-- **Non-functional checks:** Precision: readability and capacity are integers of 0.0001 g; the half-step ceiling unit is settled under G10, not here. Time: created at and retired at stored in UTC. Open decision D7: branch key column only if multi-branch. Open decision D9: if weights are read from the balance, the registry may later need model, port and serial number; not added in this story.
+- **Non-functional checks:** Precision: readability and capacity are integers of 0.0001 g; the half-step ceiling unit is settled under G10, not here. Time: created at and retired at stored in UTC. D7 is decided: one shop, no branches; the table carries the shop ID (EP-02-S3) and no branch key. Open decision D9: if weights are read from the balance, the registry may later need model, port and serial number; not added in this story.
 - **Depends on:** EP-02-S1, EP-02-S2, EP-02-S4, EP-02-S14, EP-03-S1, EP-03-S2, EP-05-S1, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -179,21 +180,21 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **Story ID:** EP-14-S8
 - **Title:** Owner can assign a scale to a counter
 - **As a:** Owner
-- **I want:** to set which counter (and branch, if D7 is multi-branch) a scale sits at, through Update Scale assignment
+- **I want:** to set which counter a scale sits at, through Update Scale assignment
 - **So that:** the picker lists the scales at a staff member's own counter first and staff are less likely to pick a scale from another counter (FR-14-7)
 - **Acceptance criteria (Given / When / Then):**
   1. Given Sanjay Seth assigns "Counter 2 balance" to counter "Counter 2", when the change commits, then `counter_key` holds that counter and an audit entry records before (none) and after ("Counter 2").
-  2. Given Rajesh Verma's "Which counter / branch" is "Counter 2", when he opens the scale picker on `parcel-arrival`, then "Counter 2 balance" is listed first, followed by the other active scales.
+  2. Given Rajesh Verma's counter (the "Which counter / branch" field, used for the counter only) is "Counter 2", when he opens the scale picker on `parcel-arrival`, then "Counter 2 balance" is listed first, followed by the other active scales.
   3. Given a staff member with no counter set, when they open the picker, then all active scales are listed in name order.
   4. Given Sanjay clears the assignment, when he saves, then `counter_key` is null and the scale is listed with the others for everyone.
-  5. Given D7 is single-shop, when Sanjay assigns a scale, then no branch is asked for or stored.
-- **Rules enforced on the server:** Owner only (EP-14-S4). The counter value must be one of the counter values used for staff ("Which counter / branch", EP-05-S4), or null. The picker order is computed by List Scales on the server from the caller's counter. Assignment does not stop any staff member from picking any active scale until the open question is answered.
+  5. Given one shop and no branches (D7), when Sanjay assigns a scale, then no branch is asked for or stored.
+- **Rules enforced on the server:** Owner only (EP-14-S4). The counter value must be one of the counter values used for staff (the counter part of "Which counter / branch", EP-05-S4), or null. The picker order is computed by List Scales on the server from the caller's counter. Assignment does not stop any staff member from picking any active scale until the open question is answered.
 - **Live events emitted / consumed:** None
-- **Audit entry written:** Yes: actor, time, entity (scale id), action (`scale_assigned`), before and after counter (and branch). Written through EP-14-S12.
-- **Data changes:** Updates `scales.counter_key` (and `branch_key` if D7). If one scale may serve several counters, a migration creates `scale_assignments` (scale id, counter key, from, to) instead.
+- **Audit entry written:** Yes: actor, time, entity (scale id), action (`scale_assigned`), before and after counter. Written through EP-14-S12.
+- **Data changes:** Updates `scales.counter_key`. If one scale may serve several counters, a migration creates `scale_assignments` (scale id, counter key, from, to) instead.
 - **UI reference:** Route `scales`; picker on `docs/ux/mockups/20-parcel-arrival.svg`, route `parcel-arrival` ("Which scale is this on?"). The assignment control is not yet designed.
-- **Non-functional checks:** Open decision D7: branch assignment only if multi-branch. Open question: is a scale tied to one counter, or can any staff use any scale; if tied, the picker hides scales from other counters instead of ordering them. EP-13 has no separate counter record story; the counter value comes from the staff member's "Which counter / branch" field.
-- **Depends on:** EP-14-S1, EP-14-S4, EP-05-S4, EP-13-S12
+- **Non-functional checks:** D7 is decided: no branch assignment. Open question: is a scale tied to one counter, or can any staff use any scale; if tied, the picker hides scales from other counters instead of ordering them. EP-13 has no separate counter record story; the counter value comes from the counter part of the staff member's "Which counter / branch" field.
+- **Depends on:** EP-14-S1, EP-14-S4, EP-05-S4
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---

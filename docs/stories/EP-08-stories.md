@@ -283,12 +283,12 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
   3. Given a signed-in user, when any screen asks the shell for the current user, role and time, then it gets them from Read Current session and the server clock, and `demoNow()` is not called.
   4. Given a valid session and a reload of the tab, when the app opens, then it goes straight to the landing route without showing sign-in.
   5. Given the shell is open on `today`, when Rajesh's screen shows "today" figures, then the date is the server's date in Asia/Kolkata, not the browser's clock.
-- **Rules enforced on the server:** The session is created and checked by EP-04 (EP-04-S5). Read Current session returns user id, name, role, branch if D7, and landing route (EP-04-S6). Every data read is refused without a session.
+- **Rules enforced on the server:** The session is created and checked by EP-04 (EP-04-S5). Read Current session returns user id, name, role, shop name and landing route (EP-04-S6). Every data read is refused without a session.
 - **Live events emitted / consumed:** None in this story. The live connection opens after sign-in (EP-08-S8).
 - **Audit entry written:** No. Sign-in is audited by EP-04-S14.
-- **Data changes:** None in the product database. Adds the session context in memory: user id, name, role, branch if D7, landing route.
+- **Data changes:** None in the product database. Adds the session context in memory: user id, name, role, shop name, landing route.
 - **UI reference:** Node `SIGN` leading to STAFF home "Today", OWNER home "Decisions" and KARIGAR phone "My jobs" in `docs/ux/mockups/10-navigation-map.mmd`; routes `today`, `decisions`, `k-jobs`. Shell is `src/components/shell/AppShell.tsx`. The sign-in screen is not yet designed.
-- **Non-functional checks:** Security: no route renders data before the session is confirmed. Time: "today", SLA clocks and overdue figures use server time shown in Asia/Kolkata. Performance: the landing route shows first data within 2 seconds of sign-in. Open decision D4: the sign-in method (OTP or other) does not change this story. Open decision D7: the shell carries a current branch only if branches are chosen.
+- **Non-functional checks:** Security: no route renders data before the session is confirmed. Time: "today", SLA clocks and overdue figures use server time shown in Asia/Kolkata. Performance: the landing route shows first data within 2 seconds of sign-in. D4 is decided (phone and password); this story does not depend on the sign-in method. D7 is decided: one shop, no branches, so the shell carries no current branch.
 - **Depends on:** EP-08-S2, EP-04-S5, EP-04-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -330,13 +330,13 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
   2. Given Lakshmi Devi on `k-jobs`, when the karigar shell renders, then the account menu appears where `RoleChip` was and `PhoneFrame` is not drawn around the app in production.
   3. Given any signed-in user, when the shell renders, then the `PricingToggle` dev switch is not present.
   4. Given Rajesh chooses "Sign out", when the sign-out commits (EP-04-S11), then the cache is cleared and sign-in shows.
-  5. Given the owner rail, when it renders, then the branch line shows the value from the session ("All branches" or the branch name), not a fixed string.
+  5. Given the owner rail, when it renders, then the line where the mockups print "All branches" shows the shop name from the session, not a fixed string (one shop, no branches, D7).
 - **Rules enforced on the server:** The menu's contents come from Read Current user (EP-05-S12). Sign out is Delete Current session (EP-04-S11). The pricing switch is an owner-only setting owned by EP-13 and EP-42; no shell control calls it.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No in this story. Sign-out is audited by EP-04-S14.
 - **Data changes:** None in the product database. `RoleChip` and `PricingToggle` are removed from `src/components/shell/AppShell.tsx`.
 - **UI reference:** `src/components/ui/RoleChip.tsx` slot at the rail foot ("Sanjay Seth · Owner · switch" on `docs/ux/mockups/08-owner-home.svg`). The account menu is not yet designed (MOCKUP-COVERAGE §3).
-- **Non-functional checks:** Security: no client control lets a user act as another identity (BR-08-7). Personal data: cache is cleared on sign-out. Open decision D7: the branch line and any branch switch depend on D7.
+- **Non-functional checks:** Security: no client control lets a user act as another identity (BR-08-7). Personal data: cache is cleared on sign-out. D7 is decided: one shop, so there is no branch switch.
 - **Depends on:** EP-08-S12, EP-05-S12, EP-04-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -360,7 +360,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 - **Audit entry written:** No in this story. The deactivation or role change is audited by EP-05-S14.
 - **Data changes:** None in the product database. Clears the client query cache, session context and live client state.
 - **UI reference:** Not yet designed (session-ended state, epic section 12).
-- **Non-functional checks:** Security: access on screen ends within about 1 second of deactivation. Personal data: cached customer data is removed from memory on session end. Open decision D4: the sign-in screen shown depends on the sign-in method.
+- **Non-functional checks:** Security: access on screen ends within about 1 second of deactivation. Personal data: cached customer data is removed from memory on session end. D4 is decided: the sign-in screen asks for phone number and password.
 - **Depends on:** EP-08-S1, EP-08-S8, EP-08-S12, EP-04-S12, EP-04-S13, EP-05-S10, EP-07-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -384,7 +384,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 - **Audit entry written:** No. Reading counts changes nothing.
 - **Data changes:** None in the product database. Adds the badge-count query key to the event-to-query map.
 - **UI reference:** Rail on `docs/ux/mockups/08-owner-home.svg` and `docs/ux/mockups/13-notifications-escalation.svg`, route `decisions`; rail on `docs/ux/mockups/02-staff-home.svg` (Showroom stock 42, Parcels in 2), route `today`.
-- **Non-functional checks:** Performance: badges change within about 1 second of the event, with refetches coalesced. Open decision D7: per-branch counts depend on D7.
+- **Non-functional checks:** Performance: badges change within about 1 second of the event, with refetches coalesced. D7 is decided: counts are for the one shop.
 - **Depends on:** EP-08-S8, EP-08-S13, EP-07-S9
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -431,7 +431,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 - **Audit entry written:** No in this story. Adding a user is audited by EP-05-S14 through the existing operation.
 - **Data changes:** None in the product database. Changes `src/components/people/StaffDirectory.tsx`, the `staff-new` screen, `src/components/settings/SecurityLog.tsx` and the sign-in screen to use the data layer.
 - **UI reference:** `docs/ux/mockups/25-onboard-staff.svg`, route `staff-new`; route `staff-directory` (`src/components/people/StaffDirectory.tsx`); route `security` (`src/components/settings/SecurityLog.tsx`). The sign-in screen is not yet designed.
-- **Non-functional checks:** Performance: each screen shows first data under 2 seconds on a shop connection. Personal data: staff phone numbers stay in the in-memory cache only. Open decision D4: the sign-in screen's fields depend on the sign-in method.
+- **Non-functional checks:** Performance: each screen shows first data under 2 seconds on a shop connection. Personal data: staff phone numbers stay in the in-memory cache only. D4 is decided: the sign-in screen has phone number and password fields, plus "Forgot password".
 - **Depends on:** EP-08-S17, EP-08-S12, EP-04-S3, EP-04-S5, EP-05-S4, EP-05-S11, EP-06-S9
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -466,7 +466,7 @@ Copied from the epic's section 17. Not answered here.
 
 - D3: WebSocket or Server-Sent Events from the Node API? It decides how the live hooks connect and how "reconnecting" is detected. (EP-08-S8, S10)
 - D6: does any of the karigar offline behaviour reach the web app, or is offline on the web read-only as proposed here? (EP-08-S11)
-- D7: does the shell carry a current branch, and can the owner switch it? (EP-08-S12, S14, S16)
+- D7 is decided: one shop, no branches; the shell shows the shop name and has no branch switch (EP-08-S12, S14, S16).
 - How long may cached data be shown while reconnecting before the screen hides it? (EP-08-S10)
 - After how long without a response does a loading state turn into a read error? (EP-08-S3, S4)
 - Should staff actions ever be queued offline, or always refused with a reason as proposed here? (EP-08-S11)

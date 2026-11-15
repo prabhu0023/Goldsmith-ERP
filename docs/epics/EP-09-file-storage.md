@@ -83,7 +83,7 @@ serving and access control.
 
 ## 9. Data
 
-- StoredFile: id, storage key, original name, content type, size in bytes, width, height, thumbnail key, display key, uploaded by, uploaded at, retention class, branch key (if D7).
+- StoredFile: id, storage key, original name, content type, size in bytes, width, height, thumbnail key, display key, uploaded by, uploaded at, retention class, shop ID (D7).
 - Attachment: file id, owner entity type (piece, order copy, job, lead), owner entity id, role (photo, reference, PO, bench), position, attached by, attached at.
 - Replaces `Piece.photos`, `OrderCopy.refImages` and `KarigarJob.refImage` string arrays with attachment rows.
 - No weights or money fields in this epic.
@@ -124,7 +124,7 @@ photo), `catalogue` (shared pieces). Mockups: `21-tag-one-item.svg`, `07-qc-chec
 ## 14. Dependencies
 
 - Upstream (from PRODUCTION-SCOPE): EP-03
-- Downstream: EP-21, EP-29, EP-40, EP-41.
+- Downstream: EP-21, EP-29, EP-40, EP-41, EP-45 (shop logo).
 
 ## 15. Epic acceptance criteria
 

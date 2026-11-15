@@ -24,7 +24,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 - **Audit entry written:** No. Reading the queue is not audited (epic section 13).
 - **Data changes:** None in the product database. Adds Read Owner exception queue and the card shape to the shared contract. Ports `ownerQueues(s, now)` and its `blocking` and `late` counts from `src/store/selectors.ts` to the server.
 - **UI reference:** `docs/ux/mockups/13-notifications-escalation.svg` ("NOTHING MOVES UNTIL YOU ANSWER · 4", "RUNNING LATE · 2"), route `decisions`.
-- **Non-functional checks:** Performance: one aggregated read, under 2 seconds (epic section 13). Security: Owner only on the server. Open decision D7: whether the queue covers one branch or "All branches"; until decided it covers the single shop, and adds a branch filter if D7 chooses multiple branches.
+- **Non-functional checks:** Performance: one aggregated read, under 2 seconds (epic section 13). Security: Owner only on the server. D7 is decided: one shop, no branches; the queue covers the shop.
 - **Depends on:** EP-03-S1, EP-03-S2, EP-03-S3, EP-05-S2, EP-23-S2, EP-23-S7, EP-24-S1, EP-24-S8, EP-25-S1, EP-25-S4, EP-27-S1, EP-27-S5, EP-28-S8, EP-28-S9, EP-19-S9, EP-19-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -216,7 +216,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 - **Audit entry written:** No. Reads are not audited.
 - **Data changes:** None in the product database. Adds Read Gold locations to the shared contract, replacing `pureGoldOnFloor`, the gold-with-karigars sum, the pool balance and `piecesOutToday` selectors used by `OwnerDecisions.tsx`.
 - **UI reference:** `docs/ux/mockups/08-owner-home.svg` ("WHERE THE GOLD IS RIGHT NOW", "Gold on the floor 1,847 g · 42 pieces, ready to sell", "Gold with karigars 612 g · 7 open jobs · 2 past their date", "Metal lost this month 0.71% · 4.3 g across all jobs · under your 0.8% allowance"), route `decisions`. The metal pool balance tile is not drawn; it uses the same tile.
-- **Non-functional checks:** Precision: every weight is an integer sum in units of 0.0001 g, formatted to 4 decimals only for display. Time: "today" starts at midnight Asia/Kolkata. Performance: returns in under 2 seconds. Open question: how "Metal lost this month" is defined (mockup 08: 0.71%, 4.3 g across all jobs); the tile is added once it is answered. Open decision D7: whether the figures are per branch or "All branches".
+- **Non-functional checks:** Precision: every weight is an integer sum in units of 0.0001 g, formatted to 4 decimals only for display. Time: "today" starts at midnight Asia/Kolkata. Performance: returns in under 2 seconds. Open question: how "Metal lost this month" is defined (mockup 08: 0.71%, 4.3 g across all jobs); the tile is added once it is answered. D7 is decided: the figures are for the shop.
 - **Depends on:** EP-32-S2, EP-22-S10, EP-18-S1, EP-18-S11, EP-19-S10, EP-26-S13, EP-10-S10, EP-05-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -324,7 +324,7 @@ Copied from the epic's section 17. Not answered here.
 
 - G5: what ageing threshold marks gold as sitting too long (mockup 08 shows 90 days), and is it per style or global? (EP-32-S11)
 - G4: how is a karigar's rating computed, and what period do loss and lateness cover? (EP-32-S10)
-- D7: what does "All branches" show, and can the owner filter by branch? (EP-32-S1, S9)
+- D7 is decided: one shop, no branches; "All branches" on mockup 08 shows the shop name and there is no branch filter (EP-32-S1, S9).
 - A2: is the lead SLA in shop hours or clock hours? (EP-32-S6, S8)
 - A3: who hears about a late lead first, and how long before the owner? (EP-32-S6)
 - G18: does the rules panel keep a switch for the edit token? (EP-32-S8)

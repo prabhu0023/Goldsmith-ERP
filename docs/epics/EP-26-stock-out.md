@@ -97,7 +97,7 @@ exactly which gold left the floor, who sold it, and to stop two staff members se
 
 ## 9. Data
 
-- StockOut: id, piece ids (via a line table), seller id, actor id, reference (string), invoice number (string), at (UTC), branch id if D7, customer id (nullable, only if G13 is decided), amount (nullable value socket, unused until EP-42).
+- StockOut: id, piece ids (via a line table), seller id, actor id, reference (string), invoice number (string), at (UTC), shop ID (D7), customer id (nullable, only if G13 is decided), amount (nullable value socket, unused until EP-42).
 - Piece: status `billed`, sold at, stock-out id. Weights unchanged and frozen; integers, units of 0.0001 g.
 - StaffMember: sale count (integer).
 - PieceEdit: status `void` for open proposals.
@@ -163,7 +163,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Must reference numbers and invoice numbers be unique, and in what format?
 - Is a mistaken stock-out ever reversible, and by whom? Mockup 06 says no edit at all.
 - A4: if a seventh state "frozen pending edit" is introduced, can such a piece be sold?
-- D7: does the reference or invoice number series depend on the branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); any reference or invoice number series is per shop.
 
 ## 18. Candidate stories
 

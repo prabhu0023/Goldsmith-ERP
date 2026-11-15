@@ -22,9 +22,9 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 - **Rules enforced on the server:** Enum checks on occasion and delivery status. Foreign keys from wishes to customers, sender identities and wish templates. The unique key (customer id, occasion, occasion year) is the store for the one-wish-per-year rule (EP-33-S10). Times are stored in UTC. The server sets id, queued at and sent by; no client field sets them. No price, amount or weight column on any of these tables (BR-33-7).
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Creating tables writes no entry; changes to these rows are audited by EP-33-S13.
-- **Data changes:** Migration on `wishes` (EP-02-S12) adds occasion year, sender identity id, template id, template version, queued at, sent at, provider message id, delivery status, failure reason, sent by, and the unique key. Migration creates `wish_templates` (id, occasion, text, version, provider template name, edited by, edited at) and seeds version 1 of each occasion. Migration on SenderIdentity (EP-12-S1) adds linked user id, active and wish-sender slot. Branch key on each table if D7 is multi-branch.
+- **Data changes:** Migration on `wishes` (EP-02-S12) adds occasion year, sender identity id, template id, template version, queued at, sent at, provider message id, delivery status, failure reason, sent by, and the unique key. Migration creates `wish_templates` (id, occasion, text, version, provider template name, edited by, edited at) and seeds version 1 of each occasion. Migration on SenderIdentity (EP-12-S1) adds linked user id, active and wish-sender slot. Each table has the shop ID (EP-02-S3, D7).
 - **UI reference:** No screen.
-- **Non-functional checks:** Personal data: `wishes` holds customer ids only, never phones or dates of birth; those stay on `customers` (EP-17-S1). Time: all times in UTC. Open decision G20: whether a sender identity is tied to a user; linked user id is nullable until it is answered. Open decision D7: per-branch sender identities and templates if multi-branch.
+- **Non-functional checks:** Personal data: `wishes` holds customer ids only, never phones or dates of birth; those stay on `customers` (EP-17-S1). Time: all times in UTC. Open decision G20: whether a sender identity is tied to a user; linked user id is nullable until it is answered. D7 is decided: one shop, so sender identities and templates are per shop.
 - **Depends on:** EP-02-S1, EP-02-S12, EP-02-S13, EP-12-S1, EP-17-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -214,7 +214,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 - **Audit entry written:** Yes, by EP-33-S13: one `wish_sent` entry per wish with actor System "Scheduler", time, customer id, occasion, sender identity, template version. The run itself is recorded in the EP-10-S2 run history.
 - **Data changes:** Inserts `wishes` rows with sent by System. EP-12-S3 inserts OutboundMessage rows. JobRun and JobKey rows from EP-10.
 - **UI reference:** `docs/ux/mockups/26-wishes.svg`, route `wishes` ("Send wishes automatically at 9 am", "On, each morning's birthdays and anniversaries go out on WhatsApp without you lifting a finger."). The switch itself is EP-13-S7.
-- **Non-functional checks:** Time: 9 am Asia/Kolkata, converted to UTC by EP-10-S10. Availability: a failed run retries and never sends twice (epic section 13). Concurrency: a "Send now" racing the run creates one wish. Open question: whether 9 am is fixed or a setting, and per branch under D7; this story uses `wishSendTime` from EP-13-S7, which defaults to 09:00. Open decision G12: who may switch auto-send.
+- **Non-functional checks:** Time: 9 am Asia/Kolkata, converted to UTC by EP-10-S10. Availability: a failed run retries and never sends twice (epic section 13). Concurrency: a "Send now" racing the run creates one wish. Open question: whether 9 am is fixed or a setting (never per branch, D7); this story uses `wishSendTime` from EP-13-S7, which defaults to 09:00. Open decision G12: who may switch auto-send.
 - **Depends on:** EP-10-S1, EP-10-S2, EP-10-S3, EP-10-S4, EP-10-S9, EP-10-S10, EP-10-S11, EP-10-S12, EP-13-S7, EP-06-S6, EP-33-S2, EP-33-S5, EP-33-S7, EP-33-S8, EP-33-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -322,7 +322,7 @@ Copied from the epic's section 17. Not answered here.
 - G20: who is "Priya (Manager)" when only three roles exist, and is a sender identity tied to a user? (EP-33-S1, S7)
 - D8: which provider sends wishes, and which templates are approved? (EP-33-S4, S7, S8)
 - G12: who may switch auto-send on or off? (EP-33-S9, S13)
-- Is 9 am fixed, or a setting, and is it per branch (D7)? (EP-33-S1, S3, S9)
+- Is 9 am fixed, or a setting? It is never per branch: one shop, no branches (D7). (EP-33-S1, S3, S9)
 - Should a wish be sent on the day for a leap-day birthday (29 February) in other years? (EP-33-S2)
 - Is there one template per occasion, or several to choose from? (EP-33-S8)
 - Should wishes sent show on the customer's history (EP-17)? (EP-33-S12)

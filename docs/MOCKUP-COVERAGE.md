@@ -1,6 +1,6 @@
 # Mockups vs production epics: coverage check
 
-Checked every labelled element on mockups 01–28 and the navigation map against the 44 epics in
+Checked every labelled element on mockups 01–28 and the navigation map against the 45 epics in
 `PRODUCTION-SCOPE.md`. Result: every screen maps to at least one epic, but the screens contain
 features no epic owns, and several epics need screens that were never drawn.
 
@@ -55,9 +55,9 @@ features no epic owns, and several epics need screens that were never drawn.
 
 | Epic | Missing screen |
 | --- | --- |
-| EP-04 Authentication | Sign-in, OTP entry, signed-out and locked-out states |
+| EP-04 Authentication | Sign-in (phone and password), set password from the activation link, forgot password and reset, signed-out and locked-out states |
 | EP-08 Front-end foundation | Loading, read-error, reconnecting, offline and session-ended states |
-| EP-05 Users | User list, add / edit user, deactivate, account menu replacing the role switcher |
+| EP-05 Users | User list (awaiting activation, locked), add / edit user with email, resend activation, unlock, deactivate, account menu replacing the role switcher |
 | EP-06 Audit log | Security log list and filters |
 | EP-11 Notifications | Notification centre for staff; per-user channel preferences |
 | EP-13 Settings | Shop settings page (SLA hours, edit-token rule, ageing threshold, wish time) |
@@ -69,6 +69,7 @@ features no epic owns, and several epics need screens that were never drawn.
 | EP-20 Karigar portal | "Gold" and "Me" tabs; offline / sync status |
 | EP-21 Parcel intake | Parcels-in list; tray entry |
 | EP-35 Reports | Everything (never designed) |
+| EP-45 Shop setup wizard | Everything (never designed): setup key, shop details, owner account and "check your email", scales, basic settings, invite, finish |
 
 The prototype built simple versions of several of these without a mockup (parcels list, customers,
 karigars, staff, scales, security log, metal pool). They need a design pass before production.

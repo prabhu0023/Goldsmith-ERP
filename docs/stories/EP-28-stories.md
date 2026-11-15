@@ -11,7 +11,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 - **Story ID:** EP-28-S1
 - **Title:** System can store leads, items and their states
 - **As a:** System
-- **I want:** the `leads` and `lead_items` tables from EP-02-S7 extended with customer id (nullable), taken by (user id), taken at, lost reason, SLA limit hours, SLA breached at and branch id (if D7), plus a `lead_attachments` table, with state limited to `needs_glance`, `opened`, `being_worked`, `converted`, `lost`
+- **I want:** the `leads` and `lead_items` tables from EP-02-S7 extended with customer id (nullable), taken by (user id), taken at, lost reason, SLA limit hours, SLA breached at and shop ID (D7), plus a `lead_attachments` table, with state limited to `needs_glance`, `opened`, `being_worked`, `converted`, `lost`
 - **So that:** every lead, from the counter or from a message, is kept with its source, state, arrival time and items, and nothing a customer asks for is lost on a reload or redeploy (BR-28-1, BR-28-3, FR-28-3)
 - **Acceptance criteria (Given / When / Then):**
   1. Given the migration has run, when a manual lead LD-2026-214 for Mrs Nair with one item is stored, then the row has source `counter`, state `opened`, `arrivedAt` from the server clock in UTC, an empty message, `customerId` CU-005 or null, and `slaLimitHours` 8.
@@ -22,9 +22,9 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 - **Rules enforced on the server:** Enum checks on source and state (EP-02-S7). `customerId` references `customers`, `takenBy` references `users`, `lead_attachments.fileId` references the EP-09 file record. A `lost` lead must carry a non-empty `lostReason`. `arrivedAt`, `takenAt` and `slaBreachedAt` are UTC. Every update goes through the version check (EP-02-S14).
 - **Live events emitted / consumed:** None. Storing the tables publishes nothing; events come from EP-28-S13.
 - **Audit entry written:** No. Table rules only; each state change is audited by EP-28-S14.
-- **Data changes:** Migration on `leads` (EP-02-S7): adds `customerId` (nullable), changes `takenBy` from a name to a user id, adds `takenAt`, `lostReason`, `slaLimitHours`, an index on (`state`, `arrivedAt`) for the inbox, and `branchId` only if D7 says multi-branch. `slaBreachedAt` and the breach notified flag come from EP-10-S5. New `lead_attachments` (lead id, file id, position). Moves the prototype `note` reason of lost seed leads LD-2026-203 and LD-2026-204 into `lostReason`. Ports `Lead` and `LeadItem` from `src/types/jewellery.ts` into the shared package with `customerId` and user-id `takenBy`.
+- **Data changes:** Migration on `leads` (EP-02-S7): adds `customerId` (nullable), changes `takenBy` from a name to a user id, adds `takenAt`, `lostReason`, `slaLimitHours`, an index on (`state`, `arrivedAt`) for the inbox, and the shop ID (EP-02-S3, D7). `slaBreachedAt` and the breach notified flag come from EP-10-S5. New `lead_attachments` (lead id, file id, position). Moves the prototype `note` reason of lost seed leads LD-2026-203 and LD-2026-204 into `lostReason`. Ports `Lead` and `LeadItem` from `src/types/jewellery.ts` into the shared package with `customerId` and user-id `takenBy`.
 - **UI reference:** No screen.
-- **Non-functional checks:** Time: arrival, taken and breach times stored in UTC, shown in Asia/Kolkata. Precision: approximate weight stored as integer units. Personal data: customer name and phone on a lead are personal data under the DPDP Act 2023; the `customerId` link lets an erasure reach the lead (EP-17-S13). Open decision D7: `branchId` is added only for multi-branch. Open question G25: no `expired` state is added until the expiry rule is decided.
+- **Non-functional checks:** Time: arrival, taken and breach times stored in UTC, shown in Asia/Kolkata. Precision: approximate weight stored as integer units. Personal data: customer name and phone on a lead are personal data under the DPDP Act 2023; the `customerId` link lets an erasure reach the lead (EP-17-S13). D7 is decided: no `branchId`; leads carry the shop ID. Open question G25: no `expired` state is added until the expiry rule is decided.
 - **Depends on:** EP-02-S7, EP-02-S1, EP-02-S3, EP-02-S4, EP-02-S13, EP-02-S14, EP-10-S5, EP-09-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -139,12 +139,12 @@ Role note: stories where the server stores, times, checks, notifies or audits on
   3. Given the server clock, when the list loads, then each SLA label and age comes from the server response, not from the device clock.
   4. Given 200 leads, when the list is read, then it is paged by cursor and the first page loads in under 2 seconds.
   5. Given Vijay Kumar (Karigar) calls List Leads or Read Lead, when it reaches the server, then it is refused with `forbidden`, and the `leads` route is not offered to him.
-- **Rules enforced on the server:** List Leads and Read Lead are Staff and Owner only (EP-05-S2). Order is `arrivedAt` ascending. Each row carries the SLA phase, hours left and label computed on the server (EP-28-S8). Lists are paged with a cursor (EP-03-S9). If D7 is multi-branch, rows are limited to the caller's branch.
+- **Rules enforced on the server:** List Leads and Read Lead are Staff and Owner only (EP-05-S2). Order is `arrivedAt` ascending. Each row carries the SLA phase, hours left and label computed on the server (EP-28-S8). Lists are paged with a cursor (EP-03-S9). Rows are limited to the caller's shop (D7).
 - **Live events emitted / consumed:** Consumed through EP-28-S13: "Lead arrived / passed its SLA"; "Setting changed" (proposed, G26) to recompute labels. Emitted: none.
 - **Audit entry written:** No. Reading leads changes nothing.
 - **Data changes:** None in the product database. Adds List Leads and Read Lead to the shared contract. Moves `src/components/leads/LeadInbox.tsx` (route `leads`) onto the EP-08 data layer.
 - **UI reference:** `docs/ux/mockups/16-lead-inbox.svg` ("Leads", "Nothing a customer sends is ever dropped.", "Oldest first", "from WhatsApp", "by email", "typed at the counter", "8 h limit passed · owner told", "within time · 6 h left"), route `leads`.
-- **Non-functional checks:** Performance: inbox loads under 2 seconds on a shop connection (epic section 13). Time: ages and labels from the server clock, shown in Asia/Kolkata. Security: karigars never see leads (mockup 11). Open decision D7: whether the inbox is per branch.
+- **Non-functional checks:** Performance: inbox loads under 2 seconds on a shop connection (epic section 13). Time: ages and labels from the server clock, shown in Asia/Kolkata. Security: karigars never see leads (mockup 11). D7 is decided: one inbox for the shop.
 - **Depends on:** EP-28-S1, EP-28-S8, EP-05-S2, EP-03-S9, EP-08-S2, EP-08-S3, EP-08-S4, EP-08-S13, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -168,7 +168,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 - **Audit entry written:** No. Reading leads changes nothing.
 - **Data changes:** None in the product database. Adds the `tab` filter and counts to List Leads in the shared contract.
 - **UI reference:** `docs/ux/mockups/16-lead-inbox.svg` ("Needs a glance · 3", "Being worked · 4", "All · 11"), route `leads`.
-- **Non-functional checks:** Performance: switching tabs shows the new list within 1 second when cached and under 2 seconds otherwise. Open decision D7: counts per branch if multi-branch.
+- **Non-functional checks:** Performance: switching tabs shows the new list within 1 second when cached and under 2 seconds otherwise. D7 is decided: counts are for the shop.
 - **Depends on:** EP-28-S6, EP-03-S9, EP-08-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -307,7 +307,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
   3. Given Deepak starts working LD-2026-213, when it commits, then on Rajesh's inbox the row shows "taken just now by Deepak" without a refresh.
   4. Given the `leads` rail badge, when leads change, then staff see the "Needs a glance" count and the owner sees the late count, both from the server.
   5. Given Rajesh's connection drops while a lead is created, when it returns, then the inbox shows "Reconnecting…" and then catches up from the last sequence number with the new lead; given Vijay Kumar (Karigar) is connected, then he receives no lead event.
-- **Rules enforced on the server:** Events are published only after commit (EP-07-S1), stamped with sequence number, entity id and version (EP-07-S2), and routed to Staff and Owner only (EP-07-S5, EP-07-S11). The payload carries the lead id, state, version, SLA phase and source, and no phone number; screens refetch the lead to show details. If D7 is multi-branch, events are limited to the lead's branch.
+- **Rules enforced on the server:** Events are published only after commit (EP-07-S1), stamped with sequence number, entity id and version (EP-07-S2), and routed to Staff and Owner only (EP-07-S5, EP-07-S11). The payload carries the lead id, state, version, SLA phase and source, and no phone number; screens refetch the lead to show details. Events are limited to the lead's shop (D7).
 - **Live events emitted / consumed:** Emitted: "Lead arrived / passed its SLA" on create (EP-28-S2), late (EP-28-S9), start (EP-28-S10), lost (EP-28-S11) and expiry (EP-28-S12). Consumed: "Lead arrived / passed its SLA" by `leads`, the rail badge and `decisions`; "Setting changed" (proposed, G26) to recompute SLA labels.
 - **Audit entry written:** No. Publishing events changes nothing.
 - **Data changes:** None in the product database. Maps "Lead arrived / passed its SLA" to the List Leads, Read Lead, badge and late-leads reads in the EP-08 event map.
@@ -353,4 +353,4 @@ Copied from the epic's section 17. Not answered here.
 - G25: when does an unworked lead become "Lost or expired", and is that automatic? (EP-28-S1, S12)
 - Can a lead be assigned to, or claimed by, one staff member, and can another take it over (`takenBy`)? (EP-28-S10)
 - Does the clock stop at "being worked", or only when the customer gets a reply? (EP-28-S8)
-- D7: is the inbox per branch? (EP-28-S1, S6, S7, S13)
+- D7 is decided: one shop, no branches; one inbox for the shop (EP-28-S1, S6, S7, S13).

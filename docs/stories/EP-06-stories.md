@@ -65,7 +65,7 @@ Role note: stories where the server writes, protects or filters audit entries on
   1. Given lead LD-2026-213 in state `opened` with an empty note, when it is marked lost with reason "Customer went elsewhere.", then the entry has before `{state: "opened", note: null}` and after `{state: "lost", note: "Customer went elsewhere."}` and no unchanged field such as the customer name.
   2. Given a create operation, such as adding user Deepak Rao (EP-05-S4), when the entry is written, then before is empty and after holds the created fields, with the phone masked as "+91 ••••• 71145".
   3. Given a change to a field holding a list, such as `notifyChannels {whatsapp, app, email}`, when only `email` changes from false to true, then before and after hold `notifyChannels` with the old and new values.
-  4. Given a field named `code`, `token`, `otp`, `password` or `tokenHash`, when it changed, then it is left out of before and after.
+  4. Given a field named `code`, `token`, `password`, `link`, `secret` or `tokenHash`, when it changed, then it is left out of before and after.
   5. Given any entry, when it is inspected, then no money field is present, because value fields stay off until EP-42.
 - **Rules enforced on the server:** Before comes from the row read inside the transaction, not from the client. Only changed fields are stored. Secret fields are stripped before writing (shared with EP-04-S14). Phones are masked. A correction is a new entry; before and after of an earlier entry are never rewritten.
 - **Live events emitted / consumed:** None
@@ -83,17 +83,17 @@ Role note: stories where the server writes, protects or filters audit entries on
 - **Story ID:** EP-06-S4
 - **Title:** System can record a token reference instead of the token value
 - **As a:** System
-- **I want:** operations that use a one-time token (applying an edit, OTP-related actions) to store the id of the hashed token record in `token reference`, and never the 6-digit value
+- **I want:** operations that use a one-time token (applying an edit with the owner edit code) to store the id of the hashed token record in `token reference`, and never the 6-digit value
 - **So that:** nobody reading the log or a backup can reuse or learn a token, and the habit of writing "Token ${edit.token}" from `applyEdit` is not carried into production (FR-06-5, BR-06-3)
 - **Acceptance criteria (Given / When / Then):**
   1. Given Sanjay Seth applies an edit to TAG-8841 with a valid token, when the operation commits, then the entry has a token reference that points to the hashed token record and the entry contains no 6-digit token anywhere in summary, before, after or reason (epic acceptance criterion 1).
-  2. Given a test that searches every column of every entry written by the edit, sign-in and OTP tests for the 6 digits used, when it runs in CI, then it finds no match.
+  2. Given a test that searches every column of every entry written by the edit-token tests for the 6 digits used, and by the sign-in, activation and reset tests for the passwords and links used, when it runs in CI, then it finds no match.
   3. Given the audit entry type in the shared package, when it is read, then it has a `tokenReference` field and no field that can hold the code value (epic section 16 risk).
   4. Given an operation that used no token, such as marking a lead lost, when its entry is written, then `token reference` is empty.
 - **Rules enforced on the server:** The writer accepts a token record id only. The value is stripped by the same secret-field filter as EP-06-S3. Summary text is built by the server from field names and values and never from a client string that might include the token.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** Yes: token reference added to the fields written by EP-06-S2 when a token was used.
-- **Data changes:** Writes `audit_entries.token reference`. The hashed token records themselves come from EP-04-S2 (OTP) and EP-25 (edit token).
+- **Data changes:** Writes `audit_entries.token reference`. The hashed token records themselves come from EP-25 (edit token). Sign-in has no code (D4); passwords and links are never written to audit (EP-04-S14).
 - **UI reference:** `docs/ux/mockups/05-edit-propose-apply.svg` shows the edit and token flow that produces this entry ("Enter the token sent to your WhatsApp"). No screen in this story.
 - **Non-functional checks:** Security: tokens are never logged in plain text; the reference points to the hashed token record (PRODUCTION-SCOPE §5, epic section 13). Audit: the reference lets the owner match an edit to the token sent to his WhatsApp without seeing the token.
 - **Depends on:** EP-06-S3, EP-04-S2

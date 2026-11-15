@@ -22,9 +22,9 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 - **Rules enforced on the server:** Status accepts only `open` and `cleared`; a cleared row must have `clearedBy` and `clearedAt`, an open row must have neither (check constraint). Target existence is enforced by foreign keys. Text is stored trimmed. The "open problems on a target" read is a service function used inside transactions, not a browser endpoint; browser reads are EP-24-S8.
 - **Live events emitted / consumed:** None. Storing the table publishes nothing; events come from the raise and clear stories.
 - **Audit entry written:** No. Tables and a read only; raises and clears are audited by EP-24-S13.
-- **Data changes:** Migration on the EP-02-S10 `problems` table: adds the check that open and cleared rows carry the right cleared fields, a partial index on (target kind, target id) where `status` is `open`, and a nullable `branchId` only if D7 adds branches. Ports `openProblemOn` and `problemsOn` from `src/store/selectors.ts` into the server service layer.
+- **Data changes:** Migration on the EP-02-S10 `problems` table: adds the check that open and cleared rows carry the right cleared fields, a partial index on (target kind, target id) where `status` is `open`, and the shop ID (EP-02-S3, D7). Ports `openProblemOn` and `problemsOn` from `src/store/selectors.ts` into the server service layer.
 - **UI reference:** No screen.
-- **Non-functional checks:** Time: `raisedAt` and `clearedAt` in UTC, shown in Asia/Kolkata. Performance: the open-problem lookup uses the partial index so the guard in EP-24-S2 adds no table scan. Personal data: `text` is free text and may name a customer (G22). Open decision D7: whether a problem carries a branch id.
+- **Non-functional checks:** Time: `raisedAt` and `clearedAt` in UTC, shown in Asia/Kolkata. Performance: the open-problem lookup uses the partial index so the guard in EP-24-S2 adds no table scan. Personal data: `text` is free text and may name a customer (G22). D7 is decided: a problem carries the shop ID, not a branch id.
 - **Depends on:** EP-02-S10, EP-02-S13, EP-02-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -190,7 +190,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 - **Audit entry written:** No. Reads change nothing.
 - **Data changes:** None in the product database. Adds List Open problems and Read Problems on a target to the shared contract. Moves `ProblemBanner.tsx`, the `openProblems` selector and the `ownerQueues.raisedProblems` count onto the EP-08 data layer.
 - **UI reference:** `docs/ux/mockups/08-owner-home.svg` and `docs/ux/mockups/13-notifications-escalation.svg`, route `decisions` (block "NOTHING MOVES UNTIL YOU ANSWER", card "Vijay Kumar stopped his own job MO-2026-118", "a karigar can stop the line too"); banner on routes `parcel-match`, `parcel-clear`, `stock`, `k-jobs` (banner itself not separately drawn).
-- **Non-functional checks:** Security: role scoping on the server. Performance: the list updates within about 1 second of a raise or clear. Time: raised times shown in Asia/Kolkata. Personal data: problem text shown only to roles that can see the target. Open decision D7: whether a branch owner sees every branch's problems or only his own.
+- **Non-functional checks:** Security: role scoping on the server. Performance: the list updates within about 1 second of a raise or clear. Time: raised times shown in Asia/Kolkata. Personal data: problem text shown only to roles that can see the target. D7 is decided: one shop, one owner, who sees every problem.
 - **Depends on:** EP-24-S1, EP-05-S2, EP-05-S3, EP-03-S9, EP-08-S2, EP-08-S3, EP-08-S9, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -350,4 +350,4 @@ Copied from the epic's section 17. Not answered here.
 - Must the owner give a reason when clearing? (EP-24-S9, EP-24-S13)
 - G26: should "Problem raised on a job or piece" and "Problem cleared" be added to the live event catalogue? (EP-24-S4, EP-24-S5, EP-24-S11, EP-24-S12)
 - G22: how does a deletion request treat customer names inside problem text kept in the append-only audit? (EP-24-S1, EP-24-S13)
-- D7: if branches exist, is a problem visible to every branch's owner view or only its own? (EP-24-S1, EP-24-S8)
+- D7 is decided: one shop, no branches; the owner sees every problem in the shop (EP-24-S1, EP-24-S8).

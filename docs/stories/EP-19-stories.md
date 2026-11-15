@@ -24,7 +24,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 - **Audit entry written:** No. This story creates storage; EP-19-S14 and the writing stories state their audit entries.
 - **Data changes:** Migration on `order_copies` adds `designId` (nullable, foreign key to designs), `allowanceBp`, and makes `leadId` and `leadItemId` nullable if not already. Migration on `karigar_jobs` adds `title`, `style`, `qty`, `purity`, `sentAt`, `cancelledAt` and `settledAt` where missing. Migration creates `job_settlements` with a unique index on `jobId` and a foreign key to `karigar_jobs`. Reference images stay as attachment rows (EP-09-S8). Overdue columns come from EP-10-S7.
 - **UI reference:** No screen
-- **Non-functional checks:** Precision: all weights integers of 0.0001 g; `allowanceBp` is an integer so no percentage is stored as a float. Time: `sentAt`, `settledAt`, `cancelledAt` in UTC; due and confirmed dates are Asia/Kolkata dates. Open decision D7: if jobs are per branch, a `branchId` column is added here before EP-19-S2. Open decision G10: the stored unit must match EP-02 and EP-18.
+- **Non-functional checks:** Precision: all weights integers of 0.0001 g; `allowanceBp` is an integer so no percentage is stored as a float. Time: `sentAt`, `settledAt`, `cancelledAt` in UTC; due and confirmed dates are Asia/Kolkata dates. D7 is decided: one shop, no branches; jobs carry the shop ID (EP-02-S3) and no `branchId`. Open decision G10: the stored unit must match EP-02 and EP-18.
 - **Depends on:** EP-02-S1, EP-02-S2, EP-02-S8, EP-02-S14, EP-09-S8, EP-15-S4, EP-15-S10, EP-18-S1
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -192,7 +192,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 - **Audit entry written:** No. Reading the tracker changes nothing.
 - **Data changes:** None in the product database beyond indexes. Migration adds an index on `karigar_jobs` (`status`, `karigarId`). Adds List Jobs (tracker shape) to the shared contract and a tracker screen with a new route id, proposed `job-tracker`.
 - **UI reference:** Not yet designed (MOCKUP-COVERAGE §3: job tracker board with overdue lane). Entry point is "See tracker" on `docs/ux/mockups/13-notifications-escalation.svg`, route `decisions`. The lane names follow `docs/ux/mockups/12-state-lifecycles.svg`.
-- **Non-functional checks:** Performance: under 2 seconds for 500 open jobs (epic section 13). Time: overdue days in whole Asia/Kolkata days. Availability: loading, error, offline and reconnecting states (EP-08-S3, EP-08-S4, EP-08-S10, EP-08-S11). Open question: whether an overdue job shows only in the Overdue lane or also in its status lane; to settle in the design pass. Open decision D7: per-branch filter if jobs are per branch.
+- **Non-functional checks:** Performance: under 2 seconds for 500 open jobs (epic section 13). Time: overdue days in whole Asia/Kolkata days. Availability: loading, error, offline and reconnecting states (EP-08-S3, EP-08-S4, EP-08-S10, EP-08-S11). Open question: whether an overdue job shows only in the Overdue lane or also in its status lane; to settle in the design pass. D7 is decided: no branch filter.
 - **Depends on:** EP-19-S6, EP-19-S7, EP-03-S9, EP-05-S2, EP-08-S2, EP-08-S3, EP-08-S4, EP-08-S9, EP-08-S10, EP-08-S11, EP-08-S13, EP-10-S7, EP-10-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -240,7 +240,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 - **Audit entry written:** No. Reading the summary changes nothing.
 - **Data changes:** None in the product database. Adds Read Overdue jobs summary to the shared contract, replacing `overdueJobs` and the overdue part of `decisionsSummary` in `src/store/selectors.ts`. The `decisions` page layout itself is EP-32.
 - **UI reference:** `docs/ux/mockups/13-notifications-escalation.svg`, route `decisions` ("RUNNING LATE · 2 · THE CLOCK TOLD ME, NOT A PERSON", "2 karigar jobs past their agreed date", "Mahesh Soni 3 days over · Lakshmi Devi 1 day over · both reminded automatically", "See tracker").
-- **Non-functional checks:** Performance: the summary reads in under 500 ms for 500 open jobs (proposed target, to confirm). Time: days over in Asia/Kolkata. Availability: the card shows the EP-08-S4 error state if its read fails, without blocking the rest of `decisions`. Open decision D7: the mockup says "All branches"; per-branch counts if jobs are per branch.
+- **Non-functional checks:** Performance: the summary reads in under 500 ms for 500 open jobs (proposed target, to confirm). Time: days over in Asia/Kolkata. Availability: the card shows the EP-08-S4 error state if its read fails, without blocking the rest of `decisions`. D7 is decided: the mockup's "All branches" shows the shop name and counts are for the shop.
 - **Depends on:** EP-19-S8, EP-19-S9, EP-05-S2, EP-08-S2, EP-08-S3, EP-08-S4, EP-08-S9, EP-10-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -353,4 +353,4 @@ Copied from the epic's section 17. Not answered here.
 - G14: can one hand-over carry several jobs? (EP-19-S5, S6, S12)
 - Can an order copy be edited after send, and can a job be cancelled after accepted? (EP-19-S11)
 - G4: which job figures feed the karigar scorecard? (EP-19-S12)
-- D7: are jobs per branch? (EP-19-S1, S8, S10)
+- D7 is decided: one shop, no branches; jobs belong to the shop (EP-19-S1, S8, S10).

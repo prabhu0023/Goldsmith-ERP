@@ -98,7 +98,8 @@ and quality checks; it does not decide the match.
 ## 9. Data
 
 - Parcel: id (`BATCH-2026-NNN`), karigar id, job id (nullable), PO reference, arrived at, stage, status, resolution, verdict, gap net, loss, release fields (shared with EP-23).
-- ParcelWeighing: id, parcel id, label ("Whole parcel" or "Tray 3"), scale id, gross, stone (integer, units of 0.0001 g).
+- Parcel and ParcelWeighing (tray) each carry a location ID ("Main shop" in v1, set by the server; D7). Pieces tagged from the parcel get the same location ID.
+- ParcelWeighing: id, parcel id, location ID, label ("Whole parcel" or "Tray 3"), scale id, gross, stone (integer, units of 0.0001 g).
 - ManifestRow: id, parcel id, kind, count.
 - Piece: tag id, name, kind, collection, style, purity, HUID, gross, stone, stone count, size, scale id, status, parcel id, job id, tray (nullable), tagged by, tagged at, photo ids, note; weights integer, units of 0.0001 g; value field is a nullable value socket, unused until EP-42.
 - QcCheck: piece id, scale agrees, hallmark, deductions, by, at.
@@ -172,7 +173,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - G15: how is a tray linked to its pieces for a per-tray stop?
 - How are carats converted to grams for stones (SCOPE-ANALYSIS App. D)?
 - What does presence show when two staff open the same item?
-- D7: does a parcel belong to a branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); a parcel belongs to the shop.
 - How long may a draft piece wait before it is flagged?
 
 ## 18. Candidate stories

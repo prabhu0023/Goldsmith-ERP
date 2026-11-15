@@ -155,7 +155,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - A4: does a piece stay sellable while an edit proposal is open, or does it need a seventh state?
 - G3: what makes a design "Sold out" and how are requests counted?
 - G5: what ageing threshold marks stock as sitting too long?
-- D7: is stock per branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); stock belongs to the shop, and tag number and HUID are unique within it. Each piece carries a location ID ("Main shop" in v1, set by the server); moving a piece between locations is deferred.
 - Which pieces count in "With QC": draft only, or with_owner too?
 
 ## 18. Candidate stories

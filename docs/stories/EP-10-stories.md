@@ -39,7 +39,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 - **So that:** anyone investigating a missed alert can see when a job ran, how often it was tried and why it failed (FR-10-2)
 - **Acceptance criteria (Given / When / Then):**
   1. Given the SLA breach job runs and succeeds, when it finishes, then its JobRun row has started at, finished at, attempts 1 and result ok.
-  2. Given a run that throws an error, when it ends, then its JobRun row has result retrying or failed and the error text, with no customer phone numbers, OTPs or token values in that text.
+  2. Given a run that throws an error, when it ends, then its JobRun row has result retrying or failed and the error text, with no customer phone numbers, passwords, links or token values in that text.
   3. Given a run in progress, when the row is read, then started at is filled and finished at is empty.
   4. Given a run retried twice, when the row is read, then attempts is 3 and scheduled at still shows the original due time.
   5. Given JobRun rows older than the kept period, when the history is read, then the newest runs come first and old rows can be paged with a cursor.
@@ -174,26 +174,26 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 
 ---
 
-## EP-10-S8: System can expire edit tokens and OTPs after 10 minutes
+## EP-10-S8: System can expire edit tokens after 10 minutes
 
 - **Story ID:** EP-10-S8
-- **Title:** System can expire edit tokens and OTPs after 10 minutes
+- **Title:** System can expire edit tokens after 10 minutes
 - **As a:** System
-- **I want:** a sweep that runs every minute and sets expired at on every PieceEdit token and OtpChallenge issued more than 10 minutes ago and not yet used
+- **I want:** a sweep that runs every minute and sets expired at on every PieceEdit token (the owner edit code) issued more than 10 minutes ago and not yet used
 - **So that:** a code entered after 10 minutes is refused even if the check at use were wrong, and the owner's pending list does not show dead tokens (FR-10-9, BR-10-6)
 - **Acceptance criteria (Given / When / Then):**
   1. Given an edit token issued 11 minutes ago and not used, when the sweep runs, then its expired at is set (epic acceptance criterion 4).
-  2. Given a sign-in OTP issued 11 minutes ago, when the sweep runs, then its expired at is set and entering it returns the expired-code message from EP-04-S7.
+  2. Given edit tokens for ED-101 and ED-102 issued 11 and 12 minutes ago, when the sweep runs, then both get expired at, and entering either on `edit-apply` is refused. There is no sign-in OTP to sweep (D4); activation and reset links are refused at use by EP-04 once expired.
   3. Given a token issued 9 minutes ago, when the sweep runs, then it is untouched.
   4. Given a token already used, when the sweep runs, then it is not changed.
   5. Given the sweep has not run yet for a token issued 10 minutes and 30 seconds ago, when the code is entered, then the check at use still refuses it.
-- **Rules enforced on the server:** The 10-minute limit is `TOKEN_TTL_MS` from the shared package (EP-01-S3, EP-01-S4). The sweep sets expired at only; it never deletes rows. The check at use stays in EP-04 and EP-25 and does not rely on the sweep.
+- **Rules enforced on the server:** The 10-minute limit is `TOKEN_TTL_MS` from the shared package (EP-01-S3, EP-01-S4). The sweep sets expired at only; it never deletes rows. The check at use stays in EP-25 and does not rely on the sweep.
 - **Live events emitted / consumed:** None
-- **Audit entry written:** Yes, for edit tokens: actor (System, token sweep), time, entity (piece edit), action (token expired), token reference (never the token value, EP-06-S4). No for OTPs: sign-in events are audited by EP-04-S14 without the code.
-- **Data changes:** Adds expired at to PieceEdit (EP-02-S5 table) and to OtpChallenge (EP-04-S2) by migration.
+- **Audit entry written:** Yes, for edit tokens: actor (System, token sweep), time, entity (piece edit), action (token expired), token reference (never the token value, EP-06-S4). Sign-in uses no code (D4), so nothing else is swept.
+- **Data changes:** Adds expired at to PieceEdit (EP-02-S5 table) by migration.
 - **UI reference:** No screen of its own. Affects `docs/ux/mockups/05-edit-propose-apply.svg`, route `edit-apply`.
 - **Non-functional checks:** Security: tokens expire after 10 minutes and are single use (PRODUCTION-SCOPE §5). Audit: token reference only, never the value. Performance: the sweep finishes in under 5 seconds with an index on issued at.
-- **Depends on:** EP-10-S1, EP-10-S12, EP-02-S5, EP-04-S2, EP-04-S7, EP-06-S4
+- **Depends on:** EP-10-S1, EP-10-S12, EP-02-S5, EP-06-S4
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---

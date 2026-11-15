@@ -5,8 +5,8 @@
 Once the app is live, someone has to know when it breaks before the shop does. Observability collects logs from the
 web app, the API, background jobs and integrations; tracks errors; checks from outside that the app is up; measures
 how fast screens load and live events arrive; and alerts the people who run the system when a WhatsApp message fails
-to send or a scheduled job fails. A failed OTP or edit-token send leaves staff waiting at the counter, and a failed
-SLA job means a late lead nobody hears about, so these failures must raise an alert. Logs must never hold OTPs, edit
+to send or a scheduled job fails. A failed owner edit-code send leaves staff waiting at the counter, and a failed
+SLA job means a late lead nobody hears about, so these failures must raise an alert. Logs must never hold passwords, activation or reset links, edit
 tokens or customer personal data.
 
 ## 2. Layer, milestone, status
@@ -25,10 +25,10 @@ tokens or customer personal data.
 ## 4. In scope
 
 - Structured logs from the API, the background jobs (EP-10), the notifications engine (EP-11), the WhatsApp integration (EP-12) and the live channel (EP-07), with a request id across them.
-- Redaction: no OTP, edit token, session secret, phone number or customer name in any log line.
+- Redaction: no password, activation or reset link, edit token, session secret, phone number, email address or customer name in any log line.
 - Error tracking for the web app, the karigar portal and the API, with release version.
 - Uptime checks against the health check from EP-03.
-- Alert on failed WhatsApp sends (OTP, edit token, wishes, broadcasts, alerts) after retries are used up.
+- Alert on failed WhatsApp sends (owner edit code, wishes, broadcasts, alerts) and failed account emails (activation, reset) after retries are used up.
 - Alert on failed background jobs (SLA breach, overdue jobs, token expiry, 9 am wishes).
 - Measurement of screen load time and live-event delivery time against the §5 targets.
 - Dashboards for request rate, error rate, job runs and send success.
@@ -57,11 +57,11 @@ tokens or customer personal data.
 ## 7. Functional requirements
 
 - FR-37-1. Every API request writes one structured log line with request id, operation, actor id, role, outcome and duration.
-- FR-37-2. A log line never contains an OTP, an edit token, a session secret, a phone number or a customer name; a test proves the redaction.
+- FR-37-2. A log line never contains a password, an activation or reset link, an edit token, a session secret, a phone number, an email address or a customer name; a test proves the redaction.
 - FR-37-3. A rule refusal (`DomainError`) is logged as a refusal, not as a system error.
 - FR-37-4. An unhandled error in the web app, the karigar portal or the API is reported to error tracking with the release version and request id.
 - FR-37-5. An uptime check calls the health check at a set interval and alerts the operator after the agreed number of failures.
-- FR-37-6. A WhatsApp send that fails after its last retry raises an alert naming the message kind (OTP, edit token, wish, broadcast, alert) without the recipient's number.
+- FR-37-6. A WhatsApp send that fails after its last retry raises an alert naming the message kind (edit token, wish, broadcast, alert) without the recipient's number; a failed activation or reset email raises the same alert without the address.
 - FR-37-7. A background job run that fails after its last retry raises an alert naming the job.
 - FR-37-8. A scheduled job that does not run at its time (for example the 9 am wishes) raises an alert.
 - FR-37-9. The system measures the time from publishing a live event to its delivery and alerts when the median exceeds 1 second over the agreed window.
@@ -72,7 +72,7 @@ tokens or customer personal data.
 ## 8. Business rules
 
 - BR-37-1. Alert on failed WhatsApp sends and job failures. [PRODUCTION-SCOPE §6 EP-37]
-- BR-37-2. OTP and edit tokens are never logged in plain text. [PRODUCTION-SCOPE §5 Security]
+- BR-37-2. Passwords, activation and reset links and owner edit codes (edit tokens) are never logged in plain text. [PRODUCTION-SCOPE §5 Security]
 - BR-37-3. Secrets live in environment configuration, never in the repo. [PRODUCTION-SCOPE §5 Security]
 - BR-37-4. Screens load under 2 seconds on a shop connection; live events arrive within about 1 second. [PRODUCTION-SCOPE §5 Performance]
 - BR-37-5. Customer names and phones are personal data under the DPDP Act 2023. [PRODUCTION-SCOPE §5 Personal data]
@@ -113,7 +113,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 ## 13. Non-functional requirements
 
-- Security: logs and dashboards are visible only to operators; OTPs, edit tokens and session secrets are redacted at the logger, not by convention.
+- Security: logs and dashboards are visible only to operators; passwords, links, edit tokens and session secrets are redacted at the logger, not by convention.
 - Personal data: phone numbers and customer names are kept out of logs; where an id is needed, the internal id is logged.
 - Performance: logging adds less than 5 ms to a request (proposed target, to confirm; PRODUCTION-SCOPE §5 sets none); client timing reports are sampled so they do not slow the screen.
 - Availability and recovery: alerting runs outside the main app so an app outage still raises an alert.
@@ -129,13 +129,13 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 1. Given an edit token send that fails after its last retry, when the failure is recorded, then the operator gets an alert naming "edit token" and no phone number or token value appears anywhere in logs or the alert.
 2. Given the 9 am wishes job does not run, when the agreed grace period after 9 am Asia/Kolkata passes, then the operator gets an alert naming the job.
 3. Given the API is down, when the uptime check fails the agreed number of times, then the operator is alerted.
-4. Given a staff member signs in with an OTP, when the logs for that request are searched, then the OTP does not appear.
+4. Given a staff member signs in with phone and password, when the logs for that request are searched, then the password does not appear.
 5. Given live events are published, when the median delivery time over the window passes 1 second, then the operator is alerted.
 6. Done when the dashboards show request, error, job and send figures for staging and production.
 
 ## 16. Risks
 
-- Risk: an OTP or token reaches logs through a generic request logger. Mitigation: redact by field name at the logger and test it in EP-40.
+- Risk: a password, link or token reaches logs through a generic request logger. Mitigation: redact by field name at the logger and test it in EP-40.
 - Risk: too many alerts and the operator ignores them. Mitigation: alert only on exhausted retries and breached targets, and group repeats.
 - Risk: nobody is named to receive alerts. Mitigation: agree the alert route before launch (EP-41 checklist).
 - Risk: the monitoring tool stores data outside India. Mitigation: check its region against D10 (India region, decided) and keep personal data out of it.
@@ -152,7 +152,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 ## 18. Candidate stories
 
 1. EP-37-S1: System can write structured logs with a request id across services
-2. EP-37-S2: System can redact OTPs, tokens, phones and names from every log line
+2. EP-37-S2: System can redact passwords, links, tokens, phones and names from every log line
 3. EP-37-S3: System can report web, portal and API errors to error tracking
 4. EP-37-S4: System can run uptime checks against the health check
 5. EP-37-S5: Operator can receive an alert when a WhatsApp send fails after retries

@@ -118,13 +118,16 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
   3. Given each operation in the shared contract (EP-03-S1), when the suite's coverage report runs, then any operation without a success, validation, rule and permission test is listed and the run fails (epic acceptance criterion 6).
   4. Given a production configuration, when the API starts, then Create Test session is not registered and a call to it returns not found; a configuration test fails the deploy if it is enabled (epic section 16 risk).
   5. Given a rule refusal, when the response is read, then it has the code and the `DomainError` sentence in the format of EP-03-S4.
-- **Rules enforced on the server:** Create and Delete Test database are CI only and refuse any connection string that names the production database. Create Test session exists only when the environment is `test`, and is refused in staging and production. The suite uses the real API, contract validation and transactions (EP-03-S2, EP-03-S6).
+  6. Given a fixed test clock, when the suite signs in Deepak Rao with 5 wrong passwords, then the 6th try with the right password is refused, it is accepted 15 minutes 1 second later, and an owner unlock lets him in at once (EP-04-S8, EP-05-S11).
+  7. Given a fixed test clock, when an activation link is used at 23 hours 59 minutes it is accepted, a second use is refused, and a fresh link opened at 24 hours 1 minute is refused; a reset link is accepted at 59 minutes and refused at 61 minutes (EP-04-S7, EP-04-S10).
+  8. Given the fixture seed holds a second shop with its own user, piece TAG-8841 and customer, when every list and read operation is called by a user of the first shop, with and without a forged shop ID in the request, then no record of the second shop is returned or changed, and a schema check confirms every business table has a not-null shop ID (D7, EP-02-S3).
+- **Rules enforced on the server:** Create and Delete Test database are CI only and refuse any connection string that names the production database. Create Test session exists only when the environment is `test`, and is refused in staging and production. Sign-in tests use the real password, lockout and link operations, not the test session. The suite uses the real API, contract validation and transactions (EP-03-S2, EP-03-S6).
 - **Live events emitted / consumed:** None asserted here. Live-event tests are EP-40-S9.
 - **Audit entry written:** No by the suite. Audit writes by the operations under test go to the throwaway database and are asserted for each state change.
 - **Data changes:** None in the product database. Creates and drops a throwaway test database per run. Adds the Create Test database, Delete Test database and Create Test session operations to test configuration only.
 - **UI reference:** No screen
 - **Non-functional checks:** Security: the test sign-in path exists only in test environments and is checked to be absent in production (epic section 13). Personal data: fixtures hold made-up customers only; no production data is copied. Performance: the API suite stays within the agreed per-push time. D1 is decided (Option C): the server-side rules live in the Node API, so the suite runs them by calling the API against the throwaway PostgreSQL database; no platform emulator is needed.
-- **Depends on:** EP-40-S1, EP-02-S1, EP-02-S13, EP-03-S1, EP-03-S2, EP-03-S4, EP-03-S5, EP-03-S6, EP-04-S5, EP-01-S6
+- **Depends on:** EP-40-S1, EP-02-S1, EP-02-S13, EP-03-S1, EP-03-S2, EP-03-S4, EP-03-S5, EP-03-S6, EP-04-S5, EP-01-S6, EP-02-S3, EP-04-S7, EP-04-S8, EP-04-S10, EP-05-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---
@@ -249,26 +252,26 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 
 ---
 
-## EP-40-S11: Developer can run a test that OTPs and tokens never reach logs or audit
+## EP-40-S11: Developer can run a test that passwords, links and edit tokens never reach logs or audit
 
 - **Story ID:** EP-40-S11
-- **Title:** Developer can run a test that OTPs and tokens never reach logs or audit
+- **Title:** Developer can run a test that passwords, links and edit tokens never reach logs or audit
 - **As a:** Developer
-- **I want:** a security test that runs sign-in by OTP, a wrong OTP, an edit token request and an edit apply, captures the issued codes from the test delivery stub, and searches audit entries, application logs, error reports and stored messages for them
-- **So that:** no log line or audit entry ever holds a usable code (FR-40-13, BR-40-7)
+- **I want:** a security test that runs an activation, a password sign-in with one wrong password first, a password reset, an edit token request and an edit apply, captures the passwords used, the links from the account-email stub and the issued codes, and searches audit entries, application logs, error reports and stored messages for them
+- **So that:** no log line or audit entry ever holds a usable password, link or code (FR-40-13, BR-40-7)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given Rajesh Verma signs in by OTP and enters one wrong code first, when the audit log and captured log lines are searched for both six-digit values, then neither is found.
+  1. Given Rajesh Verma activates his account, signs in with one wrong password first and then the right one, and later resets his password, when the audit log and captured log lines are searched for both passwords and both links, then none is found.
   2. Given Sanjay Seth agrees to proposal ED-102 and applies it with the token, when the audit entries for the flow are read, then they hold a token reference and not the six digits.
   3. Given an apply edit call that fails validation with the token in the request body, when the error report and log line are read, then the token is redacted (EP-37-S2).
   4. Given the stored WhatsApp message for the token, when it is read from the message store, then it holds no code (EP-12-S11).
-  5. Given a developer adds a log line that prints the OTP, when the test runs, then it fails and names the flow.
-- **Rules enforced on the server:** OTPs and tokens are stored hashed (EP-04-S2, EP-25-S6). Audit entries carry a token reference only (EP-06-S4). Log redaction is on in every environment (EP-37-S2). The test reads codes only from the test delivery stub (EP-04-S4).
+  5. Given a developer adds a log line that prints a password, a link or the edit token, when the test runs, then it fails and names the flow.
+- **Rules enforced on the server:** Passwords are stored as salted hashes, links and tokens hashed (EP-04-S2, EP-04-S7, EP-25-S6). Audit entries carry a token reference only (EP-06-S4). Log redaction is on in every environment (EP-37-S2). The test reads links only from the account-email stub (EP-04-S4) and codes only from the test WhatsApp stub.
 - **Live events emitted / consumed:** None asserted here.
 - **Audit entry written:** No by the suite. The test asserts that the flow's entries hold actor, time, entity, action and token reference only.
 - **Data changes:** None in the product database. Uses the throwaway database from EP-40-S5 and captures log output for the run.
 - **UI reference:** No screen. Flow under test: route `edit-apply`, `docs/ux/mockups/05-edit-propose-apply.svg`.
-- **Non-functional checks:** Security: OTP and token never logged in plain text (BR-40-7, PRODUCTION-SCOPE §5). Cross-reference: EP-39-S10 adds the audit write check; this story is the full-flow test across logs, errors and messages. Open decision D4: the sign-in method; the test covers whichever OTP path is built.
-- **Depends on:** EP-40-S5, EP-04-S2, EP-04-S4, EP-04-S14, EP-06-S4, EP-25-S6, EP-25-S14, EP-37-S2, EP-37-S3, EP-12-S11, EP-39-S10
+- **Non-functional checks:** Security: passwords, links and edit tokens never logged in plain text (BR-40-7, PRODUCTION-SCOPE §5). Cross-reference: EP-39-S10 adds the audit write check; this story is the full-flow test across logs, errors and messages. D4 is decided: phone and password sign-in with email links; there is no sign-in OTP to test.
+- **Depends on:** EP-40-S5, EP-04-S2, EP-04-S4, EP-04-S7, EP-04-S10, EP-04-S14, EP-06-S4, EP-25-S6, EP-25-S14, EP-37-S2, EP-37-S3, EP-12-S11, EP-39-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
 ---
@@ -281,17 +284,17 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 - **I want:** end-to-end tests that drive the web app and the karigar portal in real browsers on staging through each main flow in FR-40-11
 - **So that:** the whole chain from lead to stock-out works together after every deploy, not only each part alone (FR-40-11, BR-40-1)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given staging, when the suite runs, then it covers: sign in by OTP; issue gold and create a job on `order-copy`; karigar accepts and hands over on `k-jobs`; parcel arrives on `parcel-arrival`, is tagged by two staff on `parcel-tag`, passes `parcel-qc` and matches exactly on `parcel-match`; a mismatched parcel is cleared by the owner on `parcel-clear`; stop the line and clear on `decisions`; edit with token on `edit-propose` and `edit-apply`; stock-out on `stock-out`; scrap to pool on `scrap-decision`; lead to conversion on `lead-create` and `lead-convert` (epic acceptance criterion 6).
+  1. Given staging, when the suite runs, then it covers: activate an account from the emailed link and sign in with phone and password; issue gold and create a job on `order-copy`; karigar accepts and hands over on `k-jobs`; parcel arrives on `parcel-arrival`, is tagged by two staff on `parcel-tag`, passes `parcel-qc` and matches exactly on `parcel-match`; a mismatched parcel is cleared by the owner on `parcel-clear`; stop the line and clear on `decisions`; edit with token on `edit-propose` and `edit-apply`; stock-out on `stock-out`; scrap to pool on `scrap-decision`; lead to conversion on `lead-create` and `lead-convert` (epic acceptance criterion 6).
   2. Given the tagging flow, when Rajesh Verma saves a tag in one browser, then Deepak Rao's open `parcel-tag` in a second browser shows it within about 1 second.
   3. Given the scrap flow on TAG-7701 (78.4000 g), when Sanjay Seth marks it scrapped, then the pool shown goes up by 78.4000 g.
   4. Given each key screen (`today`, `decisions`, `stock`, `parcels`, `leads`), when it is opened, then it loads in under 2 seconds.
   5. Given a flow fails, when the run ends, then the result names the flow and step and keeps a screenshot, and staging data is reset for the next run.
-- **Rules enforced on the server:** End-to-end tests use real sign-in on staging with the OTP read from the delivery stub (EP-04-S4); the test session path is not used on staging. Staging data is a fixture seed with made-up customers, never production data.
+- **Rules enforced on the server:** End-to-end tests use real sign-in on staging with phone and password, and read the activation link from the account-email stub mailbox (EP-04-S4); the test session path is not used on staging. Staging data is a fixture seed with made-up customers, never production data.
 - **Live events emitted / consumed:** consumed: "Tag saved on a shared parcel", "Karigar job status changed", "Parcel handed over by karigar", "Parcel stopped (mismatch or raised problem)", "Edit applied", "Piece billed by one staff member" and "Metal pool changed", observed in the browsers under test.
 - **Audit entry written:** No by the suite. Flows write their normal entries in staging.
 - **Data changes:** None in the product database. Resets the staging database to the fixture seed before each run (EP-02-S13).
 - **UI reference:** Routes `today`, `decisions`, `leads`, `lead-create`, `lead-convert`, `order-copy`, `k-jobs`, `parcels`, `parcel-arrival`, `parcel-tag`, `parcel-qc`, `parcel-match`, `parcel-clear`, `stock`, `edit-propose`, `edit-apply`, `stock-out`, `scrap-decision`. Acceptance references: `04-parcel-match.svg`, `05-edit-propose-apply.svg`, `06-stock-out.svg`, `22-owner-clear-mismatch.svg`.
-- **Non-functional checks:** Performance: screen load under 2 seconds and live events within about 1 second (epic section 13). Personal data: made-up customers only. Availability: tests limited to the main flows to stay stable (epic section 16 risk). Open question: which flows are required before launch and which can follow. Open question: which tooling drives the web app and the karigar PWA. Open decision D4: the sign-in method the first flow uses.
+- **Non-functional checks:** Performance: screen load under 2 seconds and live events within about 1 second (epic section 13). Personal data: made-up customers only. Availability: tests limited to the main flows to stay stable (epic section 16 risk). Open question: which flows are required before launch and which can follow. Open question: which tooling drives the web app and the karigar PWA. D4 is decided: the first flow uses phone and password after activation.
 - **Depends on:** EP-40-S5, EP-01-S12, EP-02-S13, EP-04-S4, EP-04-S5, EP-08-S9, EP-19-S2, EP-20-S4, EP-20-S6, EP-21-S2, EP-21-S6, EP-21-S8, EP-23-S4, EP-23-S11, EP-24-S3, EP-24-S9, EP-25-S2, EP-25-S7, EP-26-S7, EP-27-S6, EP-28-S2, EP-30-S6, EP-37-S8
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

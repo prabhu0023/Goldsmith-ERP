@@ -37,7 +37,7 @@ other people work. The business needs this so staff stop guessing what matters a
 - Birthdays and anniversaries due today and not yet wished, with "last bought" and a message action.
 - Empty state when nothing needs staff.
 - Live updates from the pipeline events.
-- Branch scope of every figure once D7 is decided.
+- Every figure scoped to the one shop (D7: one shop, no branches).
 
 ## 5. Out of scope
 
@@ -63,7 +63,7 @@ other people work. The business needs this so staff stop guessing what matters a
 - No card for a quotation or hold that expires (mockup 02 "Quotation QT-2026-0211 expires today"); production v1 does not add one, because v1 has no holds.
 - Everything is computed in the browser from the whole state on every render.
 - Reusable: the card set, wording, tiles, stats and the screen layout.
-- Must be rebuilt server-side: one aggregated "needs you now" query scoped to the user and branch, the ranking rule, the showcase figures as server reads, and live subscription to the pipeline events.
+- Must be rebuilt server-side: one aggregated "needs you now" query scoped to the user and the shop, the ranking rule, the showcase figures as server reads, and live subscription to the pipeline events.
 
 ## 7. Functional requirements
 
@@ -163,12 +163,12 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - Risk: too many cards and the screen becomes the old table. Mitigation: decided ranking and caps per kind (3 leads today).
 - Risk: one heavy query per screen load. Mitigation: aggregate on the server and update from live events.
 - Risk: the ranking disagrees with SCOPE-ANALYSIS §3 (leads first) and staff miss leads. Mitigation: decide the rule before build.
-- Risk: branch mixing shows another branch's parcels. Mitigation: decide D7 and scope every read.
+- Risk: a read misses the shop scope and would show another shop's data once multi-shop exists. Mitigation: every read is scoped to the session's shop ID (D7, EP-39).
 
 ## 17. Open decisions and questions
 
 - What is the card ranking rule: leads first (SCOPE-ANALYSIS §3) or stops first (prototype)?
-- D7: does Today show only the staff member's branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); Today shows the shop's work.
 - A3: how long before the SLA does staff see a lead card (prototype: 2 hours)?
 - Should staff be able to dismiss or snooze a card?
 - G21: how does Today relate to a notification centre, which has no route id today?

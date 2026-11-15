@@ -80,7 +80,7 @@ catch-up, and presence on shared parcels.
 
 ## 9. Data
 
-- Event envelope: sequence number, event name, entity type, entity id, entity version, emitted at (UTC), audience (role list, user list or entity channel), branch key (if D7).
+- Event envelope: sequence number, event name, entity type, entity id, entity version, emitted at (UTC), audience (role list, user list or entity channel), shop ID (set by the server, D7).
 - Replay buffer: recent events kept for catch-up, with a retention window to decide.
 - Subscription: connection id, user id, role, channels joined.
 - Presence: parcel id, user id, user name, joined at, last seen.
@@ -159,7 +159,7 @@ on one parcel), `02-staff-home.svg` and `08-owner-home.svg` (live cards).
 
 - D3: WebSocket or Server-Sent Events? Presence needs two-way. Either way it is built in the Node API (D1, Option C), not taken from a platform.
 - D6: how does the live channel behave for a karigar phone that is offline for hours?
-- D7: are channels scoped per branch?
+- D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); channels are scoped to the shop.
 - What does presence mean exactly: "has the parcel open", or "is tagging an item now"?
 - How long is the replay buffer kept before a client must refetch everything?
 - G26: which proposed events (for example "Parcel released into stock", "Problem cleared", "Setting changed") are added to the catalogue?

@@ -11,10 +11,10 @@ Role note: stories where the server checks a reading or records its source, and 
 - **Story ID:** EP-36-S1
 - **Title:** System can store devices and link a balance to a registered scale
 - **As a:** System
-- **I want:** a `devices` table holding each balance, label printer, sheet printer and scanner with its kind, model, counter (and branch if D7), active flag and, for a balance, the one registered scale it is linked to, plus a List Devices operation
+- **I want:** a `devices` table holding each balance, label printer, sheet printer and scanner with its kind, model, counter, active flag and, for a balance, the one registered scale it is linked to, plus a List Devices operation
 - **So that:** every reading can be traced to one physical device and one scale in the registry, and the ceiling never uses a scale other than the one that weighed (FR-36-3, FR-36-14, BR-36-2)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given the migration runs on an empty dev database, when it finishes, then `devices` exists with `id`, `kind` (`balance`, `label_printer`, `sheet_printer`, `scanner`), `model`, `counter_key`, `branch_key` (nullable), `scale_id` (nullable), `active`, `created_at` and `version`, and it can be rolled back.
+  1. Given the migration runs on an empty dev database, when it finishes, then `devices` exists with `id`, `kind` (`balance`, `label_printer`, `sheet_printer`, `scanner`), `model`, `counter_key`, shop ID, `scale_id` (nullable), `active`, `created_at` and `version`, and it can be rolled back.
   2. Given a device of kind `balance` with no `scale_id`, when it is inserted, then the database rejects it, because every balance must link to a registered scale.
   3. Given a device of kind `label_printer` with a `scale_id` set, when it is inserted, then the database rejects it, because only a balance links to a scale.
   4. Given two active balances at counter "Counter 1", one linked to Bench balance and one to Platform scale, when Rajesh Verma calls List Devices, then both are returned with the scale name, readability (1 unit, shown "0.0001 g") and capacity (6,000,000 units, shown "600.0000 g") of the linked scale.
@@ -24,7 +24,7 @@ Role note: stories where the server checks a reading or records its source, and 
 - **Audit entry written:** No. This story creates storage and a read; device changes are audited in EP-36-S3.
 - **Data changes:** Migration creates `devices` (columns above) with a foreign key to `scales` and an index on `counter_key`. Adds List Devices to the shared contract (EP-03-S1). No money fields.
 - **UI reference:** No screen.
-- **Non-functional checks:** Precision: readability and capacity are read from `scales` as integers in units of 0.0001 g and shown to 4 decimals. Security: List Devices returns no device secrets or local addresses beyond what the counter needs. Open decision D9: the `model` values and any connection fields depend on which devices the shop uses. Open decision D7: `branch_key` is only filled if the shop is multi-branch.
+- **Non-functional checks:** Precision: readability and capacity are read from `scales` as integers in units of 0.0001 g and shown to 4 decimals. Security: List Devices returns no device secrets or local addresses beyond what the counter needs. Open decision D9: the `model` values and any connection fields depend on which devices the shop uses. D7 is decided: one shop, no branches; devices carry the shop ID and no branch key.
 - **Depends on:** EP-02-S1, EP-02-S2, EP-02-S4, EP-02-S14, EP-03-S1, EP-05-S2, EP-14-S1, EP-14-S8
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -72,7 +72,7 @@ Role note: stories where the server checks a reading or records its source, and 
 - **Audit entry written:** Yes: actor, time, entity (device id), action (`device_added`, `device_edited`, `device_deactivated`, `device_reactivated`), before, after (kind, model, counter, linked scale id, active).
 - **Data changes:** Inserts and updates `devices` (EP-36-S1). Adds Create Device and Update Device to the shared contract and the four device kinds to the audit kind list.
 - **UI reference:** Not yet designed (device setup panel, epic section 12). It sits on route `scales`; the counter assignment control is EP-14-S8.
-- **Non-functional checks:** Security: only the owner can register or change a device; staff and karigars are refused on the server. Audit: every device change writes an append-only entry. Open decision D9: the list of models offered and any connection setting (port, local program address) depend on the devices chosen. Open decision D7: whether a branch is picked with the counter.
+- **Non-functional checks:** Security: only the owner can register or change a device; staff and karigars are refused on the server. Audit: every device change writes an append-only entry. Open decision D9: the list of models offered and any connection setting (port, local program address) depend on the devices chosen. D7 is decided: no branch is picked with the counter.
 - **Depends on:** EP-36-S1, EP-14-S3, EP-14-S7, EP-14-S8, EP-05-S2, EP-05-S4, EP-06-S2, EP-08-S5, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

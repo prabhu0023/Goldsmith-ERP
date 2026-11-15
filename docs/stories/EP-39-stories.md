@@ -30,26 +30,26 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 
 ---
 
-## EP-39-S2: System can rate-limit OTP and edit-token requests and entries
+## EP-39-S2: System can rate-limit sign-in, reset-link and edit-token requests and entries
 
 - **Story ID:** EP-39-S2
-- **Title:** System can rate-limit OTP and edit-token requests and entries
+- **Title:** System can rate-limit sign-in, reset-link and edit-token requests and entries
 - **As a:** System
-- **I want:** one shared rate-limit counter store, keyed by phone, user or address and by operation, that the sign-in OTP limits (EP-04-S8, EP-04-S9) and the edit-token limits (EP-25-S9) all use, with the limit values set in configuration
-- **So that:** nobody can flood a phone with codes or guess a 6-digit OTP or edit token, and the limits are checked before any message is sent (FR-39-1, FR-39-2, BR-39-2)
+- **I want:** one shared rate-limit counter store, keyed by phone, user or address and by operation, that the sign-in and reset-link limits (EP-04-S8, EP-04-S9) and the edit-token limits (EP-25-S9) all use, with the limit values set in configuration, plus an end-to-end review of the D4 password and link rules
+- **So that:** nobody can try passwords across accounts, flood an inbox with reset emails, or guess a 6-digit edit token, the limits are checked before any password is compared or any message is sent, and the password, lockout and link rules hold in the built system (FR-39-1, FR-39-2, BR-39-2)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given a phone that has requested OTPs up to the configured limit inside the window, when another OTP is requested for it, then the server refuses with `rate_limited` and no challenge is created and no message is sent (epic acceptance criterion 1).
-  2. Given one address that has requested OTPs for many different phones up to the per-address limit, when it requests one more, then the request is refused with `rate_limited`, whichever phone it names.
-  3. Given an OTP that has had wrong entries up to the per-code limit, when one more entry is made, even with the right code, then it is refused and the code is invalidated, so the user must ask for a new code.
+  1. Given a phone that has requested reset links up to the configured limit inside the window, when another reset is requested for it, then the server refuses with `rate_limited`, no link is created and no email is sent (epic acceptance criterion 1).
+  2. Given one address that has tried passwords for many different phones up to the per-address limit, when it tries one more, then the request is refused with `rate_limited` before any password is checked, whichever phone it names.
+  3. Given an account with 5 wrong passwords in a row, when the right password is then entered, then it is refused until 15 minutes have passed or the owner unlocks it (EP-04-S8).
   4. Given an edit token for proposal ED-102 that has had wrong entries up to the per-token limit on `edit-apply`, when Sanjay Seth enters any code again, then it is refused with "Too many wrong tokens. Ask for a new one." and the piece is unchanged.
   5. Given the API runs on two instances, when requests for the same phone reach both inside one window, then the counts add up in the shared store and the limit holds across both.
-  6. Given the window has passed, when a new request arrives, then the counter starts again from 0 and the request is allowed.
-- **Rules enforced on the server:** The limit check runs before an OTP or token is created or sent. Counters are kept in a store shared by every API instance, not in process memory. Limits per phone, per address and per code are all applied; a request must pass every one. Refusals for unknown and known phones look the same (EP-04-S9). Counter keys hold a hash of the phone, never the phone in plain text.
+  6. Given the review on staging, when the `users` and `password_links` tables and the logs are inspected after an activation, a reset and a sign-in, then passwords appear only as salted hashes from a modern algorithm, links only as hashes, a used or expired link (activation after 24 hours, reset after 1 hour) is refused, and the forgot-password response is the same for a known and an unknown number.
+- **Rules enforced on the server:** The limit check runs before a password is compared, a link is created or a token is sent. Counters are kept in a store shared by every API instance, not in process memory. Limits per phone, per address and per code are all applied; a request must pass every one. Refusals for unknown and known phones look the same (EP-04-S9). Counter keys hold a hash of the phone, never the phone in plain text. There is no sign-in OTP to limit (D4).
 - **Live events emitted / consumed:** None
-- **Audit entry written:** No for each counted request. A lockout or an invalidated code is audited by EP-04-S14 and EP-25-S14 with a token reference only.
+- **Audit entry written:** No for each counted request. A lockout is audited by EP-04-S14 and an invalidated edit code by EP-25-S14, with a token reference only.
 - **Data changes:** Adds a RateLimitCounter store (key, operation, window start, count) with expiry at the end of each window. Adds limit values per operation to environment configuration (EP-01-S6).
-- **UI reference:** No screen of its own. Refusal messages show on the sign-in screen (EP-04-S7) and on route `edit-apply` (EP-25-S8).
-- **Non-functional checks:** Security: limits apply before any OTP is sent, per phone, per user and per address (epic section 13). Concurrency: counts are atomic increments, so two requests in the same millisecond cannot both slip under the limit. Personal data: counter keys hold hashed phones. Open question: the actual limit values for OTP requests and wrong entries.
+- **UI reference:** No screen of its own. Refusal messages show on the sign-in and forgot-password screens (EP-04-S3, EP-04-S7) and on route `edit-apply` (EP-25-S8).
+- **Non-functional checks:** Security: limits apply before any password check or message, per phone, per user and per address (epic section 13); password, lockout and link rules from D4 confirmed end to end. Concurrency: counts are atomic increments, so two requests in the same millisecond cannot both slip under the limit. Personal data: counter keys hold hashed phones. Open question: the actual limit values for sign-in attempts, reset requests and wrong edit-token entries.
 - **Depends on:** EP-03-S11, EP-04-S2, EP-04-S8, EP-04-S9, EP-25-S6, EP-25-S9, EP-01-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -229,19 +229,19 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 - **Story ID:** EP-39-S10
 - **Title:** System can write token references instead of token values in audit
 - **As a:** System
-- **I want:** a check at audit write time that refuses any audit entry whose fields contain an OTP or edit-token value, plus a test that walks every token flow and scans audit entries, logs and stored messages for the six digits
+- **I want:** a check at audit write time that refuses any audit entry whose fields contain an edit-token value, a password or an activation or reset link, plus a test that walks every token and password flow and scans audit entries, logs and stored messages for them
 - **So that:** no audit entry, log line or stored message ever holds a usable token, unlike the prototype's `applyEdit`, which wrote `Token ${edit.token}` into the audit detail (FR-39-16, BR-39-2)
 - **Acceptance criteria (Given / When / Then):**
   1. Given an edit applied with a token, when the audit log is read, then it shows a token reference and not the six digits (epic acceptance criterion 5).
   2. Given a service that tries to write an audit entry containing the token value it holds, when the write is made, then it is refused and the transaction rolls back.
-  3. Given a sign-in with OTP, a token request on ED-102 and an edit applied on `edit-apply`, when audit entries, application logs and stored WhatsApp messages from those flows are searched for the issued codes, then none is found.
+  3. Given a password sign-in, an activation and a password reset, a token request on ED-102 and an edit applied on `edit-apply`, when audit entries, application logs, stored WhatsApp messages and stored email notifications from those flows are searched for the password, the links and the issued codes, then none is found.
   4. Given the token reference in an audit entry, when Sanjay Seth opens it on `security`, then it shows the reference, which cannot be turned back into the code.
-- **Rules enforced on the server:** Audit entries carry a token reference field only (EP-06-S4). Tokens are stored hashed (EP-25-S6, EP-04-S2). Log lines are redacted (EP-37-S2) and stored messages hold no codes (EP-12-S11).
+- **Rules enforced on the server:** Audit entries carry a token reference field only (EP-06-S4). Tokens and links are stored hashed and passwords as salted hashes (EP-25-S6, EP-04-S2, EP-04-S7). Log lines are redacted (EP-37-S2) and stored messages hold no codes (EP-12-S11).
 - **Live events emitted / consumed:** None
 - **Audit entry written:** Yes, as the subject of the story: entries for edit apply and sign-in hold actor, time, entity, action and token reference, never the token value.
 - **Data changes:** None in schema. Adds the audit write check and an automated scan test.
 - **UI reference:** `security` route (owner audit log, EP-06-S11) shows token references.
-- **Non-functional checks:** Security: OTP and edit tokens never logged in plain text (BR-39-2). Audit: entries stay append-only; the check refuses before insert.
+- **Non-functional checks:** Security: edit tokens, passwords and links never logged in plain text (BR-39-2). Audit: entries stay append-only; the check refuses before insert.
 - **Depends on:** EP-06-S4, EP-06-S11, EP-04-S2, EP-04-S14, EP-25-S6, EP-25-S14, EP-12-S11, EP-37-S2
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -352,11 +352,12 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 - **I want:** to approve the scope of an external penetration test on staging, have each finding recorded with severity and summary, and mark each one fixed or accept it in writing
 - **So that:** the product launches only after an outside tester has tried to break it and every finding has an owner decision (FR-39-17)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given the test scope (web app, karigar portal, API, public showcase link, WhatsApp webhook), when Sanjay Seth approves it, then the approval is recorded with date and scope before testing starts.
+  1. Given the test scope (web app, karigar portal, API, public showcase link, WhatsApp webhook, password sign-in and email links, shop isolation), when Sanjay Seth approves it, then the approval is recorded with date and scope before testing starts.
   2. Given the report is received, when the operator enters its findings, then each PenTestFinding has id, severity, summary and status `open`.
   3. Given a finding fixed on staging, when the fix is retested, then the finding is marked `fixed` with the fix reference, and Sanjay confirms it.
   4. Given a finding the shop will not fix before launch, when Sanjay accepts it, then status is `accepted` with his name, the date and a written reason.
   5. Given any finding still `open`, when the go-live checklist is checked, then launch is blocked; done when the report is received and each finding is fixed or accepted in writing (epic acceptance criterion 6).
+  6. Given a test database with a second shop's records, when the tester calls every operation as a user of the first shop, with and without a forged shop ID in the request, then no second-shop record is read or written; any hit is a finding of the highest severity (D7).
 - **Rules enforced on the server:** Accepting a finding is owner only. A finding needs a written reason to be accepted. The test runs against staging only, never production data.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No in the product audit log. The PenTestFinding record keeps status, decided by and decided at, and the written acceptance is kept with the report.
@@ -376,7 +377,7 @@ Copied from the epic's section 17. Not answered here.
 - G22: how does a deletion request apply to audit entries that name a customer? (EP-39-S9)
 - G9: should a public catalogue link exist, how long does it last, and what may it show? (EP-39-S14)
 - G12: which settings are owner-only, and is the pricing switch audited? (EP-39-S11)
-- What rate limits apply to OTP requests, wrong entries and the general API? (EP-39-S2, S3)
+- What rate limits apply to sign-in attempts, reset-link requests, wrong edit-token entries and the general API? (EP-39-S2, S3)
 - How often is the access review run? (EP-39-S12)
 - Who carries out the penetration test, and when? (EP-39-S15)
 - Is a ticked-by-default consent box acceptable, or must staff ask each time? (EP-39-S4)
