@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="900" fill="#FAF9F7"/>
+
+  <!-- rail : STAFF now, not QC manager -->
+  <rect x="0" y="0" width="248" height="900" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="900" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">Main showroom</text>
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">WORK</text>
+  <circle cx="40" cy="140" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="145" font-size="14" fill="#44403C">Today</text>
+  <circle cx="40" cy="186" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="191" font-size="14" fill="#44403C">Showroom stock</text>
+  <circle cx="40" cy="230" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="235" font-size="14" fill="#44403C">Sell</text>
+  <rect x="12" y="252" width="224" height="44" rx="10" fill="#1C1917"/>
+  <circle cx="40" cy="274" r="7" fill="#C9961F"/>
+  <text x="62" y="279" font-size="14" font-weight="600" fill="#FFFFFF">Parcels in</text>
+  <circle cx="40" cy="318" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="323" font-size="14" fill="#44403C">Customers</text>
+
+  <!-- tagging progress in rail -->
+  <text x="24" y="382" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">BATCH-2026-043</text>
+  <rect x="12" y="396" width="224" height="92" rx="12" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="28" y="424" font-size="14" font-weight="600" fill="#1C1917">Checking before match</text>
+  <text x="28" y="452" font-size="28" font-weight="700" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">3<tspan font-size="16" fill="#8A4208"> of 9</tspan></text>
+  <text x="28" y="474" font-size="13" fill="#8A8178">pieces checked</text>
+
+  <line x1="12" y1="822" x2="236" y2="822" stroke="#E7E3DC"/>
+  <circle cx="44" cy="870" r="18" fill="#E2DCD2"/>
+  <text x="44" y="875" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">RV</text>
+  <text x="72" y="864" font-size="14" font-weight="600" fill="#1C1917">Rajesh Verma</text>
+  <text x="72" y="884" font-size="13" fill="#8A8178">Showroom staff · switch</text>
+
+  <!-- header -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">Check this piece before the parcel is matched</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">Piece 4 of 9 in BATCH-2026-043 · three things to confirm, then on to the next</text>
+  <rect x="1200" y="36" width="88" height="40" rx="10" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <path d="M1250 48 l-8 8 l8 8" fill="none" stroke="#1C1917" stroke-width="1.8" stroke-linecap="round"/>
+  <text x="1232" y="61" font-size="14" font-weight="600" fill="#1C1917" text-anchor="end">Back</text>
+  <rect x="1300" y="36" width="100" height="40" rx="10" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <text x="1338" y="61" font-size="14" font-weight="600" fill="#1C1917" text-anchor="end">Skip</text>
+  <path d="M1372 48 l8 8 l-8 8" fill="none" stroke="#1C1917" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+
+  <!-- photo -->
+  <rect x="288" y="136" width="420" height="420" rx="16" fill="#EFE9DF" stroke="#E7E3DC"/>
+  <circle cx="498" cy="326" r="90" fill="#E2D8C6"/>
+  <circle cx="498" cy="326" r="46" fill="#D9CBB2"/>
+  <circle cx="498" cy="326" r="18" fill="#CBB894"/>
+  <rect x="304" y="152" width="140" height="30" rx="15" fill="#FFFFFF"/>
+  <text x="374" y="172" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">Photo at tagging</text>
+  <text x="288" y="586" font-size="14" font-weight="600" fill="#1C1917">Jadau Uncut Emerald Cocktail Ring</text>
+  <text x="288" y="608" font-size="13" fill="#8A8178">TAG-9110 · 18K · Jadau · tagged by Deepak Rao 20 min ago</text>
+
+  <!-- checks -->
+  <text x="748" y="136" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">THREE THINGS TO CONFIRM</text>
+
+  <rect x="748" y="152" width="652" height="120" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <circle cx="782" cy="186" r="14" fill="#E8F5EE"/>
+  <text x="782" y="191" font-size="13" font-weight="700" fill="#15603C" text-anchor="middle">1</text>
+  <text x="810" y="191" font-size="15" font-weight="600" fill="#1C1917">Does the scale agree?</text>
+  <rect x="1264" y="170" width="108" height="30" rx="15" fill="#E8F5EE"/>
+  <path d="M1282 185 l5 5 l9 -10" fill="none" stroke="#1D7A4C" stroke-width="2" stroke-linecap="round"/>
+  <text x="1304" y="190" font-size="13" font-weight="600" fill="#15603C">Matches</text>
+  <text x="782" y="226" font-size="13" fill="#8A8178">Tag says</text>
+  <text x="782" y="252" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">14.8500 g</text>
+  <text x="1000" y="226" font-size="13" fill="#8A8178">You re-weigh</text>
+  <text x="1000" y="252" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">14.8500 g</text>
+
+  <rect x="748" y="284" width="652" height="120" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <circle cx="782" cy="318" r="14" fill="#E8F5EE"/>
+  <text x="782" y="323" font-size="13" font-weight="700" fill="#15603C" text-anchor="middle">2</text>
+  <text x="810" y="323" font-size="15" font-weight="600" fill="#1C1917">Is the hallmark on the piece?</text>
+  <rect x="1264" y="302" width="108" height="30" rx="15" fill="#E8F5EE"/>
+  <path d="M1282 317 l5 5 l9 -10" fill="none" stroke="#1D7A4C" stroke-width="2" stroke-linecap="round"/>
+  <text x="1304" y="322" font-size="13" font-weight="600" fill="#15603C">Read it</text>
+  <text x="782" y="360" font-size="13" fill="#8A8178">HUID on the tag</text>
+  <text x="782" y="388" font-size="22" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" letter-spacing="2">8H33Z9</text>
+  <text x="1040" y="388" font-size="14" fill="#8A8178">purity 750 matches 18K</text>
+
+  <rect x="748" y="416" width="652" height="172" rx="14" fill="#FFFFFF" stroke="#B35309" stroke-width="2" filter="url(#sh)"/>
+  <circle cx="782" cy="450" r="14" fill="#FDF0E2"/>
+  <text x="782" y="455" font-size="13" font-weight="700" fill="#8A4208" text-anchor="middle">3</text>
+  <text x="810" y="455" font-size="15" font-weight="600" fill="#1C1917">Do the deductions look honest?</text>
+  <rect x="1222" y="434" width="150" height="30" rx="15" fill="#FDF0E2"/>
+  <circle cx="1240" cy="449" r="4" fill="#B35309"/>
+  <text x="1252" y="454" font-size="13" font-weight="600" fill="#8A4208">Look at the lac</text>
+  <text x="782" y="490" font-size="14" fill="#57534E">Emerald 3.100 cts · Polki 2.400 cts</text>
+  <text x="1368" y="490" font-size="14" fill="#15603C" text-anchor="end">fair</text>
+  <text x="782" y="518" font-size="14" font-weight="600" fill="#8A4208">Lac and foil 1.150 g</text>
+  <text x="1368" y="518" font-size="14" font-weight="600" fill="#8A4208" text-anchor="end">high for a ring</text>
+  <line x1="782" y1="536" x2="1372" y2="536" stroke="#F1EFEA"/>
+  <text x="782" y="562" font-size="13" fill="#8A8178">Rings this size usually carry 0.6–0.9 g of lac. Worth a second weigh before you pass it.</text>
+
+  <!-- decision : staff submits, does NOT release to floor -->
+  <rect x="748" y="604" width="652" height="120" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="782" y="640" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">WHAT HAPPENS WHEN YOU FINISH ALL 9</text>
+  <rect x="782" y="654" width="300" height="48" rx="10" fill="#1C1917"/>
+  <text x="932" y="684" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Checked — on to piece 5</text>
+  <rect x="1098" y="654" width="274" height="48" rx="10" fill="#FFFFFF" stroke="#B35309" stroke-width="1.6"/>
+  <text x="1235" y="684" font-size="15" font-weight="600" fill="#8A4208" text-anchor="middle">Send this tag back to Deepak</text>
+
+  <text x="748" y="756" font-size="13" fill="#57534E">Checking a piece does not put it on the floor. Once all 9 are checked, the parcel goes to the match step — and if the weights add up, you release it there.</text>
+  <text x="748" y="780" font-size="13" fill="#8A8178">There is no separate QC manager. You run the checks; the owner only appears if the parcel will not match.</text>
+</svg>

@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-serif {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Custom scrollbars for high-density tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d6d3d1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a29e;
+}
+
+/* ---- JGD design tokens: colour only ever means status (see docs/ux/mockups/01-foundations.svg) ---- */
+@theme {
+  --color-paper: #faf9f7;
+  --color-surface: #ffffff;
+  --color-ink: #1c1917;
+  --color-ink-2: #44403c;
+  --color-ink-3: #6b6560;
+  --color-ink-4: #8a847e;
+  --color-line: #e7e2da;
+  --color-line-2: #d6d1c8;
+  --color-gold: #c9961f;
+  --color-gold-ink: #8a5f0a;
+  --color-gold-soft: #fbf3e0;
+  --color-live: #1d7a4c;
+  --color-live-soft: #e8f5ee;
+  --color-wait: #b35309;
+  --color-wait-soft: #fdf0e1;
+  --color-stop: #b3261e;
+  --color-stop-soft: #fbe9e7;
+  --color-closed: #1c1917;
+  --color-closed-soft: #efedea;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+@layer base {
+  html,
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-size: 14px;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

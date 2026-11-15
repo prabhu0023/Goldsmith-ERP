@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="960" viewBox="0 0 1440 960" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="960" fill="#FAF9F7"/>
+
+  <!-- rail -->
+  <rect x="0" y="0" width="248" height="960" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="960" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">Main showroom</text>
+
+  <!-- the running tally lives in the rail -->
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">THIS PARCEL</text>
+  <rect x="12" y="118" width="224" height="150" rx="12" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="28" y="144" font-size="14" font-weight="600" fill="#1C1917">BATCH-2026-044</text>
+  <text x="28" y="168" font-size="13" fill="#8A4208">Mahesh Soni</text>
+  <text x="28" y="200" font-size="34" font-weight="700" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">7<tspan font-size="20" fill="#8A4208"> of 12</tspan></text>
+  <text x="28" y="222" font-size="13" fill="#8A8178">items tagged so far</text>
+  <rect x="28" y="234" width="192" height="8" rx="4" fill="#F1EFEA"/>
+  <rect x="28" y="234" width="112" height="8" rx="4" fill="#C9961F"/>
+  <text x="28" y="260" font-size="13" fill="#8A8178">pure gold so far 262.4100 g</text>
+
+  <text x="24" y="304" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">STILL TO TAG</text>
+  <text x="40" y="332" font-size="13" fill="#44403C">Temple Haram · 1 left</text>
+  <text x="40" y="356" font-size="13" fill="#44403C">Polki Kada · 1 left</text>
+  <text x="40" y="380" font-size="13" fill="#44403C">Meenakari Pendant · 1 left</text>
+  <text x="40" y="404" font-size="13" fill="#44403C">…and 2 more</text>
+
+  <line x1="12" y1="862" x2="236" y2="862" stroke="#E7E3DC"/>
+  <circle cx="44" cy="910" r="18" fill="#E2DCD2"/>
+  <text x="44" y="915" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">RV</text>
+  <text x="72" y="904" font-size="14" font-weight="600" fill="#1C1917">Rajesh Verma</text>
+  <text x="72" y="924" font-size="13" fill="#8A8178">Showroom staff</text>
+
+  <!-- header + steps -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">Tag item 8 of 12</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">Put the piece on the bench balance and read each figure off. Nothing is pre-filled — every piece is its own weight.</text>
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+
+  <circle cx="300" cy="148" r="14" fill="#1D7A4C"/>
+  <path d="M294 148 l4 4 l8 -8" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+  <text x="324" y="153" font-size="15" font-weight="600" fill="#15603C">1 · Parcel weighed</text>
+  <line x1="500" y1="148" x2="560" y2="148" stroke="#D6D1C8" stroke-width="2"/>
+  <circle cx="582" cy="148" r="14" fill="#1C1917"/>
+  <text x="582" y="153" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">2</text>
+  <text x="606" y="153" font-size="15" font-weight="600" fill="#1C1917">Tag each item</text>
+  <line x1="760" y1="148" x2="820" y2="148" stroke="#D6D1C8" stroke-width="2"/>
+  <circle cx="842" cy="148" r="14" fill="#FFFFFF" stroke="#D6D1C8" stroke-width="2"/>
+  <text x="842" y="153" font-size="13" font-weight="700" fill="#A8A29E" text-anchor="middle">3</text>
+  <text x="866" y="153" font-size="15" font-weight="600" fill="#A8A29E">Match and release</text>
+
+  <!-- ===== LEFT : identity ===== -->
+  <text x="288" y="202" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHAT IT IS</text>
+  <rect x="288" y="218" width="512" height="640" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <text x="312" y="250" font-size="13" fill="#8A8178">Kind of item</text>
+  <rect x="312" y="260" width="464" height="46" rx="10" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="332" y="289" font-size="15" font-weight="600" fill="#1C1917">Temple Haram · Chettinad</text>
+  <text x="312" y="330" font-size="13" fill="#8A8178">picked from the manifest · 1 of these still to tag</text>
+
+  <text x="312" y="368" font-size="13" fill="#8A8178">New tag number</text>
+  <rect x="312" y="378" width="222" height="48" rx="10" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="332" y="409" font-size="16" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">TAG-9108</text>
+  <text x="558" y="368" font-size="13" fill="#8A8178">Hallmark HUID</text>
+  <rect x="558" y="378" width="218" height="48" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="578" y="409" font-size="16" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" letter-spacing="2">4T71M9</text>
+
+  <text x="312" y="458" font-size="13" fill="#8A8178">Name</text>
+  <rect x="312" y="468" width="464" height="46" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="332" y="497" font-size="15" fill="#1C1917">Chettinad Temple Nakshi Long Haram</text>
+
+  <text x="312" y="548" font-size="13" fill="#8A8178">Purity</text>
+  <rect x="312" y="558" width="150" height="46" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="332" y="587" font-size="15" fill="#1C1917">22K (916)</text>
+  <text x="486" y="548" font-size="13" fill="#8A8178">Size</text>
+  <rect x="486" y="558" width="290" height="46" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="506" y="587" font-size="15" fill="#1C1917">28 inches</text>
+
+  <text x="312" y="638" font-size="13" fill="#8A8178">Photo</text>
+  <rect x="312" y="648" width="150" height="150" rx="12" fill="#EFE9DF"/>
+  <path d="M387 684 l34 56 h-68 z" fill="#D9CBB2"/>
+  <circle cx="387" cy="760" r="20" fill="#E2D8C6"/>
+  <rect x="486" y="648" width="290" height="150" rx="12" fill="#FFFFFF" stroke="#D6D1C8" stroke-dasharray="5 4"/>
+  <text x="631" y="728" font-size="14" fill="#57534E" text-anchor="middle">Add more angles</text>
+
+  <!-- ===== RIGHT : the weights ===== -->
+  <text x="832" y="202" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHAT IT WEIGHS · ON THE SAME BENCH BALANCE</text>
+  <rect x="832" y="218" width="560" height="500" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <text x="856" y="252" font-size="13" fill="#8A8178">On the scale now</text>
+  <rect x="856" y="262" width="400" height="56" rx="10" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="876" y="300" font-size="22" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">84.5000</text>
+  <text x="1236" y="300" font-size="15" fill="#8A8178" text-anchor="end">g</text>
+
+  <text x="856" y="358" font-size="13" fill="#8A8178">Stones, kemp, lac on this piece</text>
+  <rect x="856" y="368" width="400" height="56" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="876" y="406" font-size="22" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">6.1000</text>
+  <text x="1236" y="406" font-size="15" fill="#8A8178" text-anchor="end">g</text>
+  <text x="1280" y="400" font-size="13" fill="#8A8178">itemise →</text>
+
+  <rect x="856" y="452" width="512" height="92" rx="12" fill="#FBF3E0"/>
+  <text x="876" y="480" font-size="12" font-weight="700" fill="#8A4208" letter-spacing="1.2">PURE GOLD IN THIS PIECE</text>
+  <text x="876" y="520" font-size="28" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">78.4000 g</text>
+  <text x="1348" y="520" font-size="13" fill="#8A4208" text-anchor="end">84.5000 − 6.1000</text>
+
+  <rect x="856" y="568" width="512" height="48" rx="10" fill="#F1EFEA"/>
+  <text x="876" y="597" font-size="13" fill="#57534E">This piece is drawn against the parcel total — it does not match until all 12 are in.</text>
+
+  <!-- sticky action -->
+  <line x1="832" y1="648" x2="1392" y2="648" stroke="#F1EFEA"/>
+  <rect x="856" y="668" width="280" height="48" rx="10" fill="#1C1917"/>
+  <text x="996" y="698" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Save tag · go to item 9</text>
+  <rect x="1148" y="668" width="220" height="48" rx="10" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <text x="1258" y="698" font-size="15" font-weight="600" fill="#1C1917" text-anchor="middle">Save and stop here</text>
+
+  <!-- helper -->
+  <rect x="832" y="742" width="560" height="116" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="856" y="774" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">WHY NOTHING IS PRE-FILLED</text>
+  <text x="856" y="802" font-size="14" fill="#57534E">Every haram weighs something different — there is no standard piece.</text>
+  <text x="856" y="824" font-size="14" fill="#57534E">So the scale figure is always typed fresh, never guessed from the last one.</text>
+  <text x="856" y="848" font-size="13" fill="#8A8178">The tag number and HUID are suggested; the three weights are yours to read off.</text>
+</svg>

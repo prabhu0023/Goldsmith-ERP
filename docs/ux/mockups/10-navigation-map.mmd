@@ -1,0 +1,120 @@
+---
+title: JGD Suite — three roles, one pipeline (v4)
+---
+flowchart TB
+    classDef home fill:#1C1917,stroke:#1C1917,color:#ffffff
+    classDef dest fill:#ffffff,stroke:#D6D1C8,color:#1C1917
+    classDef owner fill:#FBF3E0,stroke:#C9961F,color:#8A4208
+    classDef stopped fill:#FBE9E7,stroke:#B3261E,color:#8F1D17
+    classDef auto fill:#F1EFEA,stroke:#A8A29E,color:#44403C
+    classDef live fill:#E8F5EE,stroke:#1D7A4C,color:#15603C
+    classDef closed fill:#44403C,stroke:#1C1917,color:#ffffff
+
+    %% ---------- who signs in ----------
+    SIGN["Sign in"]:::auto
+    SIGN --> STAFF["STAFF home<br/>Today"]:::home
+    SIGN --> OWN["OWNER home<br/>Decisions — exceptions only"]:::home
+    SIGN --> KAR["KARIGAR phone<br/>My jobs"]:::home
+
+    %% ---------- 1 inbound ----------
+    subgraph S1["1 · A purchase order arrives"]
+        PO["PO by email or WhatsApp"]:::auto
+        PARSE["Read and modelled automatically"]:::auto
+        LEADS["Lead inbox<br/>staff and owner both see it"]:::dest
+        LATE["Unopened past 8 h, configurable<br/>owner is told"]:::stopped
+        PO --> PARSE --> LEADS
+        LEADS -.-> LATE
+    end
+    STAFF --> LEADS
+    OWN --> LEADS
+
+    %% ---------- 2 convert ----------
+    subgraph S2["2 · Turn the lead into work"]
+        FORK{"Sell from stock,<br/>or have it made?"}:::dest
+        COPY["Order copy<br/>images and content"]:::dest
+        FORK -->|"have it made"| COPY
+    end
+    LEADS --> FORK
+
+    %% ---------- 3 karigar ----------
+    subgraph S3["3 · The karigar makes it"]
+        ASSIGN["Assign karigar<br/>due date, gold issued"]:::dest
+        ACCEPT["Karigar accepts<br/>and confirms the date"]:::dest
+        BENCH["On the bench<br/>status and photos"]:::dest
+        READY["Ready"]:::live
+        HAND["Handed over to the store"]:::closed
+        OVERDUE["Past the date<br/>tracker + owner told"]:::stopped
+        ASSIGN --> ACCEPT --> BENCH --> READY --> HAND
+        ACCEPT -.-> OVERDUE
+    end
+    COPY --> ASSIGN
+    KAR --> ACCEPT
+    KAR --> BENCH
+
+    %% ---------- 4 intake : staff release is the normal path ----------
+    subgraph S4["4 · The parcel comes in"]
+        PARCEL["Parcel weighed in bulk<br/>gross, net gold, stone, other<br/>+ what is inside"]:::dest
+        TAGONE["Tag each piece<br/>gross, net, stone — saved as draft"]:::dest
+        CHECKS["Staff checks<br/>scale, hallmark, deductions"]:::dest
+        MATCH{"Is every item tagged, and do<br/>gross, stone and net all match?"}:::dest
+        RELEASE["Staff release it<br/>no signature needed"]:::live
+        STOPPED["Stopped<br/>mismatch, or a person raised it"]:::stopped
+        CLEAR{"Owner clears it?"}:::owner
+        BACK["Sent back to the karigar"]:::closed
+        PARCEL --> TAGONE --> CHECKS --> MATCH
+        MATCH -->|"yes — the normal case"| RELEASE
+        MATCH -->|"no"| STOPPED
+        STOPPED --> CLEAR
+        CLEAR -->|"sends it back"| BACK
+    end
+    HAND --> PARCEL
+    STAFF --> PARCEL
+    OWN --> CLEAR
+
+    %% ---------- 5 stock and out ----------
+    subgraph S5["5 · In stock, then out"]
+        STOCK["In stock<br/>sellable"]:::live
+        SALE["Product-out sale<br/>seller, reference no., invoice no."]:::dest
+        BILLED["Billed and locked<br/>no edit, ever"]:::closed
+        SCRAPREQ["Staff ask to scrap it"]:::dest
+        SCRAP["Owner marks it as scrap"]:::owner
+        MELTED["Piece closed"]:::closed
+        POOL["Gold back in the metal pool"]:::live
+        STOCK --> SALE --> BILLED
+        STOCK --> SCRAPREQ --> SCRAP --> MELTED --> POOL
+    end
+    RELEASE --> STOCK
+    CLEAR -->|"clears it"| STOCK
+    FORK -->|"sell from stock"| STOCK
+    STAFF --> STOCK
+    POOL -.->|"issued again"| ASSIGN
+
+    %% ---------- 6 edits ----------
+    subgraph S6["6 · Changing a tag already in house"]
+        PROPOSE["Staff propose the edit<br/>draft, with a reason"]:::dest
+        READ["Owner reads it"]:::owner
+        TOKEN["Token to the owner's WhatsApp"]:::owner
+        APPLIED["Owner applies it"]:::live
+        REFUSED["Refused"]:::closed
+        PROPOSE --> READ --> TOKEN --> APPLIED
+        READ --> REFUSED
+    end
+    STOCK --> PROPOSE
+    APPLIED --> STOCK
+
+    %% ---------- always there ----------
+    subgraph S7["Always available"]
+        NOTIF["Notification centre<br/>stoppages, decisions, late things"]:::dest
+        ONB["Onboard<br/>customer · karigar · staff"]:::dest
+        MKT["Wishes, broadcast,<br/>product catalogue"]:::dest
+        REPORTS["Reports, section by section"]:::owner
+        PEOPLE["Staff performance<br/>every sale has a seller"]:::dest
+    end
+    OWN --> NOTIF
+    STAFF --> NOTIF
+    KAR --> NOTIF
+    OWN --> ONB
+    OWN --> REPORTS
+    OWN --> PEOPLE
+    STAFF --> MKT
+    SALE --> PEOPLE

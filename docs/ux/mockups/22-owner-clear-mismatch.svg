@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="940" viewBox="0 0 1440 940" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="940" fill="#FAF9F7"/>
+
+  <!-- rail -->
+  <rect x="0" y="0" width="248" height="940" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="940" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">All branches</text>
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">OVERSIGHT</text>
+  <rect x="12" y="118" width="224" height="44" rx="10" fill="#1C1917"/>
+  <circle cx="40" cy="140" r="7" fill="#C9961F"/>
+  <text x="62" y="145" font-size="14" font-weight="600" fill="#FFFFFF">Decisions</text>
+  <circle cx="40" cy="186" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="191" font-size="14" fill="#44403C">Leads</text>
+  <circle cx="40" cy="230" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="235" font-size="14" fill="#44403C">Money and stock</text>
+  <circle cx="40" cy="274" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="279" font-size="14" fill="#44403C">Karigars</text>
+  <line x1="12" y1="862" x2="236" y2="862" stroke="#E7E3DC"/>
+  <circle cx="44" cy="910" r="18" fill="#E2DCD2"/>
+  <text x="44" y="915" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">SS</text>
+  <text x="72" y="904" font-size="14" font-weight="600" fill="#1C1917">Sanjay Seth</text>
+  <text x="72" y="924" font-size="13" fill="#8A8178">Owner · switch</text>
+
+  <!-- header -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">BATCH-2026-044 will not add up</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">Mahesh Soni · all 12 items tagged, but the gold is 138 mg short of the parcel. Staff cannot release it — this is yours.</text>
+  <rect x="1248" y="36" width="144" height="40" rx="10" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <path d="M1282 48 l-8 8 l8 8" fill="none" stroke="#1C1917" stroke-width="1.8" stroke-linecap="round"/>
+  <text x="1300" y="61" font-size="14" font-weight="600" fill="#1C1917" text-anchor="end">Decisions</text>
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+
+  <!-- ===== LEFT : the gap, and where it is ===== -->
+  <text x="288" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHAT DOES NOT MATCH</text>
+  <rect x="288" y="166" width="620" height="300" rx="16" fill="#FFFFFF" stroke="#B3261E" stroke-width="2" filter="url(#sh)"/>
+
+  <text x="312" y="210" font-size="13" font-weight="600" fill="#8A8178">　</text>
+  <text x="648" y="206" font-size="13" font-weight="600" fill="#8A8178" text-anchor="end">PARCEL SAID</text>
+  <text x="792" y="206" font-size="13" font-weight="600" fill="#8A8178" text-anchor="end">12 TAGS SAY</text>
+  <text x="884" y="206" font-size="13" font-weight="600" fill="#8A8178" text-anchor="end">GAP</text>
+  <line x1="312" y1="220" x2="884" y2="220" stroke="#E7E3DC"/>
+
+  <text x="312" y="252" font-size="14" fill="#1C1917">On the scale</text>
+  <text x="648" y="252" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">485.5000</text>
+  <text x="792" y="252" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">485.3620</text>
+  <text x="884" y="252" font-size="14" font-weight="700" fill="#B3261E" font-family="ui-monospace, Menlo, monospace" text-anchor="end">138</text>
+  <line x1="312" y1="268" x2="884" y2="268" stroke="#F1EFEA"/>
+
+  <text x="312" y="300" font-size="14" fill="#1C1917">Stones and other</text>
+  <text x="648" y="300" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">38.2000</text>
+  <text x="792" y="300" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">38.2000</text>
+  <text x="884" y="300" font-size="14" font-weight="700" fill="#15603C" font-family="ui-monospace, Menlo, monospace" text-anchor="end">0</text>
+  <line x1="312" y1="316" x2="884" y2="316" stroke="#F1EFEA"/>
+
+  <rect x="296" y="330" width="596" height="48" rx="10" fill="#FBE9E7"/>
+  <text x="312" y="360" font-size="14" font-weight="600" fill="#8F1D17">Pure gold</text>
+  <text x="648" y="360" font-size="15" font-weight="700" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">447.3000</text>
+  <text x="792" y="360" font-size="15" font-weight="700" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">447.1620</text>
+  <text x="884" y="360" font-size="15" font-weight="700" fill="#B3261E" font-family="ui-monospace, Menlo, monospace" text-anchor="end">138 mg</text>
+
+  <text x="312" y="408" font-size="13" fill="#57534E">The stones match. All the gap is in the gold.</text>
+  <text x="312" y="432" font-size="13" fill="#57534E">The scales could only explain 0.7 mg. This is 197 times that —</text>
+  <text x="312" y="452" font-size="13" fill="#57534E">real gold, not rounding.</text>
+
+  <!-- ===== LEFT LOWER : the karigar context ===== -->
+  <text x="288" y="508" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">IS THIS LIKE HIM?</text>
+  <rect x="288" y="524" width="620" height="220" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <circle cx="330" cy="566" r="18" fill="#FBE9E7"/>
+  <text x="330" y="571" font-size="13" font-weight="700" fill="#B3261E" text-anchor="middle">MS</text>
+  <text x="360" y="560" font-size="15" font-weight="600" fill="#1C1917">Mahesh Soni · KG-02</text>
+  <text x="360" y="580" font-size="13" fill="#8A8178">Kundan and Polki · gold issued this job 447.300 g</text>
+
+  <text x="312" y="624" font-size="13" fill="#8A8178">His last six parcels, gold gap</text>
+  <!-- tiny sparkline of past gaps -->
+  <g font-family="ui-monospace, Menlo, monospace" font-size="13">
+    <rect x="312" y="640" width="60" height="14" rx="3" fill="#E8F5EE"/><text x="376" y="651" fill="#15603C">28 mg</text>
+    <rect x="452" y="640" width="60" height="14" rx="3" fill="#E8F5EE"/><text x="516" y="651" fill="#15603C">33 mg</text>
+    <rect x="592" y="640" width="60" height="14" rx="3" fill="#E8F5EE"/><text x="656" y="651" fill="#15603C">30 mg</text>
+  </g>
+  <g font-family="ui-monospace, Menlo, monospace" font-size="13">
+    <rect x="312" y="664" width="60" height="14" rx="3" fill="#E8F5EE"/><text x="376" y="675" fill="#15603C">29 mg</text>
+    <rect x="452" y="664" width="60" height="14" rx="3" fill="#E8F5EE"/><text x="516" y="675" fill="#15603C">35 mg</text>
+    <rect x="592" y="664" width="60" height="14" rx="3" fill="#E8F5EE"/><text x="656" y="675" fill="#15603C">31 mg</text>
+  </g>
+  <text x="312" y="712" font-size="14" font-weight="600" fill="#B3261E">Today: 138 mg — over four times his usual.</text>
+  <text x="312" y="732" font-size="13" fill="#8A8178">This is not his normal polishing loss.</text>
+
+  <!-- ===== RIGHT : the three ways out ===== -->
+  <text x="940" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">YOUR THREE WAYS OUT</text>
+
+  <!-- 1 send back -->
+  <rect x="940" y="166" width="452" height="168" rx="16" fill="#FFFFFF" stroke="#B3261E" stroke-width="2" filter="url(#sh)"/>
+  <text x="964" y="200" font-size="16" font-weight="600" fill="#1C1917">Send the parcel back to Mahesh</text>
+  <text x="964" y="226" font-size="13" fill="#57534E">He finds the missing 138 mg and returns the parcel.</text>
+  <text x="964" y="246" font-size="13" fill="#57534E">All 12 pieces stay off the floor until he does.</text>
+  <text x="964" y="272" font-size="13" fill="#8A8178">The expected answer when the gold is genuinely missing.</text>
+  <rect x="964" y="288" width="220" height="40" rx="10" fill="#B3261E"/>
+  <text x="1074" y="313" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Send it back</text>
+
+  <!-- 2 retag -->
+  <rect x="940" y="350" width="452" height="168" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="964" y="384" font-size="16" font-weight="600" fill="#1C1917">Have staff re-check a tag</text>
+  <text x="964" y="410" font-size="13" fill="#57534E">If one piece looks mis-weighed, send it back to tagging.</text>
+  <text x="964" y="430" font-size="13" fill="#57534E">Often a single figure typed wrong closes the whole gap.</text>
+  <text x="964" y="456" font-size="13" fill="#8A8178">The parcel stays stopped; only that tag reopens.</text>
+  <rect x="964" y="472" width="240" height="40" rx="10" fill="#FFFFFF" stroke="#1C1917"/>
+  <text x="1084" y="497" font-size="14" font-weight="600" fill="#1C1917" text-anchor="middle">Point to a tag to redo</text>
+
+  <!-- 3 accept -->
+  <rect x="940" y="534" width="452" height="210" rx="16" fill="#FFFFFF" stroke="#C9961F" stroke-width="2" filter="url(#sh)"/>
+  <text x="964" y="568" font-size="16" font-weight="600" fill="#1C1917">Accept the loss and release anyway</text>
+  <text x="964" y="594" font-size="13" fill="#57534E">You judge the 138 mg is genuine wastage, not an error.</text>
+  <text x="964" y="614" font-size="13" fill="#57534E">The parcel goes live and the loss is booked against Mahesh.</text>
+  <text x="964" y="642" font-size="13" fill="#8A8178">Needs a reason, kept against your name. This is the only</text>
+  <text x="964" y="662" font-size="13" fill="#8A8178">way a mismatched parcel ever reaches stock.</text>
+  <rect x="964" y="680" width="300" height="46" rx="10" fill="#FFFFFF" stroke="#C9961F"/>
+  <text x="984" y="708" font-size="14" fill="#A8A29E">Reason — why this loss is acceptable</text>
+
+  <!-- ===== bottom bar : the gated release ===== -->
+  <rect x="288" y="786" width="1104" height="96" rx="16" fill="#1C1917"/>
+  <text x="320" y="824" font-size="15" fill="#A8A29E">Releasing a parcel that does not add up is logged against you, with your reason.</text>
+  <text x="320" y="852" font-size="17" font-weight="600" fill="#FFFFFF">Nothing here can be done by staff. It waited for you.</text>
+  <rect x="1052" y="810" width="316" height="48" rx="10" fill="#2F2A26"/>
+  <text x="1210" y="840" font-size="15" font-weight="600" fill="#78716C" text-anchor="middle">Release with the loss booked</text>
+</svg>

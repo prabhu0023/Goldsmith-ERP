@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1010" viewBox="0 0 1440 1010" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="1010" fill="#FAF9F7"/>
+
+  <!-- header -->
+  <rect x="0" y="0" width="1440" height="96" fill="#1C1917"/>
+  <rect x="48" y="26" width="44" height="44" rx="10" fill="#C9961F"/>
+  <text x="70" y="55" font-size="15" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="108" y="44" font-size="20" font-weight="600" fill="#FFFFFF">JGD Enterprise Suite — UX Foundations</text>
+  <text x="108" y="68" font-size="14" fill="#A8A29E">One rule per decision. Every screen in this set obeys the six rules below.</text>
+  <rect x="1240" y="34" width="152" height="28" rx="14" fill="#2F2A26"/>
+  <text x="1316" y="53" font-size="12" font-weight="600" fill="#E7E3DC" text-anchor="middle">Version 3 · Nov 2026</text>
+
+  <!-- SIX RULES -->
+  <text x="48" y="146" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">THE SIX DECLUTTERING RULES</text>
+
+  <g>
+    <!-- rule card template -->
+    <g>
+      <rect x="48" y="162" width="432" height="118" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+      <circle cx="78" cy="192" r="13" fill="#FBF3E0"/>
+      <text x="78" y="197" font-size="13" font-weight="700" fill="#B8860B" text-anchor="middle">1</text>
+      <text x="102" y="197" font-size="15" font-weight="600" fill="#1C1917">One job per screen</text>
+      <text x="70" y="226" font-size="13" fill="#57534E">Each screen answers a single question. Everything</text>
+      <text x="70" y="246" font-size="13" fill="#57534E">else moves into a drawer, a step, or a second click.</text>
+      <text x="70" y="268" font-size="12" fill="#B3261E">Was: inventory screen carried 14 controls above row 1.</text>
+    </g>
+    <g>
+      <rect x="504" y="162" width="432" height="118" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+      <circle cx="534" cy="192" r="13" fill="#FBF3E0"/>
+      <text x="534" y="197" font-size="13" font-weight="700" fill="#B8860B" text-anchor="middle">2</text>
+      <text x="558" y="197" font-size="15" font-weight="600" fill="#1C1917">14px floor on everything readable</text>
+      <text x="526" y="226" font-size="13" fill="#57534E">No 10px or 11px text anywhere. Weights get 20px</text>
+      <text x="526" y="246" font-size="13" fill="#57534E">tabular numerals so decimals line up down a column.</text>
+      <text x="526" y="268" font-size="12" fill="#B3261E">Was: 10–11px mono for tag numbers, HUIDs, totals.</text>
+    </g>
+    <g>
+      <rect x="960" y="162" width="432" height="118" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+      <circle cx="990" cy="192" r="13" fill="#FBF3E0"/>
+      <text x="990" y="197" font-size="13" font-weight="700" fill="#B8860B" text-anchor="middle">3</text>
+      <text x="1014" y="197" font-size="15" font-weight="600" fill="#1C1917">Colour only means status</text>
+      <text x="982" y="226" font-size="13" fill="#57534E">Gold is the only brand accent. Green, amber and red</text>
+      <text x="982" y="246" font-size="13" fill="#57534E">mean exactly one thing each. Nothing else is coloured.</text>
+      <text x="982" y="268" font-size="12" fill="#B3261E">Was: purple, blue, rose, emerald, amber on one row.</text>
+    </g>
+    <g>
+      <rect x="48" y="296" width="432" height="118" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+      <circle cx="78" cy="326" r="13" fill="#FBF3E0"/>
+      <text x="78" y="331" font-size="13" font-weight="700" fill="#B8860B" text-anchor="middle">4</text>
+      <text x="102" y="331" font-size="15" font-weight="600" fill="#1C1917">Counter language, not schema language</text>
+      <text x="70" y="360" font-size="13" fill="#57534E">Labels say what a shopfloor person would say.</text>
+      <text x="70" y="380" font-size="13" fill="#57534E">Codes live on a quiet second line, never in the title.</text>
+      <text x="70" y="402" font-size="12" fill="#B3261E">Was: “Net Au Wt (auto-calc gross − Σ subtracted)”.</text>
+    </g>
+    <g>
+      <rect x="504" y="296" width="432" height="118" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+      <circle cx="534" cy="326" r="13" fill="#FBF3E0"/>
+      <text x="534" y="331" font-size="13" font-weight="700" fill="#B8860B" text-anchor="middle">5</text>
+      <text x="558" y="331" font-size="15" font-weight="600" fill="#1C1917">Long forms become short steps</text>
+      <text x="526" y="360" font-size="13" fill="#57534E">Intake, tagging and billing run as 3-step flows with</text>
+      <text x="526" y="380" font-size="13" fill="#57534E">one decision per step and a visible way back.</text>
+      <text x="526" y="402" font-size="12" fill="#B3261E">Was: single modal with 20+ fields and nested tables.</text>
+    </g>
+    <g>
+      <rect x="960" y="296" width="432" height="118" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+      <circle cx="990" cy="326" r="13" fill="#FBF3E0"/>
+      <text x="990" y="331" font-size="13" font-weight="700" fill="#B8860B" text-anchor="middle">6</text>
+      <text x="1014" y="331" font-size="15" font-weight="600" fill="#1C1917">Numbers are drawn, not just printed</text>
+      <text x="982" y="360" font-size="13" fill="#57534E">A weight gap, ageing and wastage appear as a gauge</text>
+      <text x="982" y="380" font-size="13" fill="#57534E">first and a figure second, so a glance is enough.</text>
+      <text x="982" y="402" font-size="12" fill="#B3261E">Was: nine raw gram figures in a grey grid.</text>
+    </g>
+  </g>
+
+  <!-- TYPE SCALE -->
+  <text x="48" y="470" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">TYPE SCALE</text>
+  <rect x="48" y="486" width="432" height="268" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="70" y="524" font-size="24" font-weight="600" fill="#1C1917">Screen title · 24 / 600</text>
+  <text x="70" y="556" font-size="18" font-weight="600" fill="#1C1917">Section heading · 18 / 600</text>
+  <text x="70" y="584" font-size="15" font-weight="600" fill="#1C1917">Card title · 15 / 600</text>
+  <text x="70" y="610" font-size="14" fill="#1C1917">Body copy · 14 / 400 — the smallest text allowed</text>
+  <text x="70" y="636" font-size="13" fill="#57534E">Supporting detail · 13 / 400, secondary ink only</text>
+  <text x="70" y="664" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">SECTION LABEL · 12 / 700 / +1.2 TRACKING</text>
+  <line x1="70" y1="682" x2="458" y2="682" stroke="#E7E3DC"/>
+  <text x="70" y="712" font-size="26" font-weight="600" fill="#1C1917" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">41.590 g</text>
+  <text x="212" y="712" font-size="13" fill="#8A8178">Hero weight · 26 tabular mono</text>
+  <text x="70" y="738" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">48.650 g</text>
+  <text x="212" y="738" font-size="13" fill="#8A8178">Table weight · 20 tabular mono</text>
+
+  <!-- COLOUR -->
+  <text x="504" y="470" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">COLOUR, AND THE ONE THING EACH COLOUR MEANS</text>
+  <rect x="504" y="486" width="432" height="268" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <rect x="526" y="508" width="40" height="40" rx="8" fill="#C9961F"/>
+  <text x="580" y="526" font-size="14" font-weight="600" fill="#1C1917">Gold #C9961F</text>
+  <text x="580" y="545" font-size="13" fill="#57534E">The one action you are meant to take</text>
+
+  <rect x="526" y="560" width="40" height="40" rx="8" fill="#1D7A4C"/>
+  <text x="580" y="578" font-size="14" font-weight="600" fill="#1C1917">Green #1D7A4C</text>
+  <text x="580" y="597" font-size="13" fill="#57534E">Settled: in stock, matched, verified</text>
+
+  <rect x="526" y="612" width="40" height="40" rx="8" fill="#B35309"/>
+  <text x="580" y="630" font-size="14" font-weight="600" fill="#1C1917">Amber #B35309</text>
+  <text x="580" y="649" font-size="13" fill="#57534E">Needs a person: waiting, ageing, out of stock</text>
+
+  <rect x="526" y="664" width="40" height="40" rx="8" fill="#B3261E"/>
+  <text x="580" y="682" font-size="14" font-weight="600" fill="#1C1917">Red #B3261E</text>
+  <text x="580" y="701" font-size="13" fill="#57534E">Blocked: gold unaccounted for, locked by invoice</text>
+
+  <rect x="526" y="716" width="40" height="18" rx="5" fill="#1C1917"/>
+  <rect x="526" y="716" width="13" height="18" rx="5" fill="#57534E"/>
+  <text x="580" y="730" font-size="13" fill="#57534E">Everything else is ink on warm paper #FAF9F7</text>
+
+  <!-- STATUS VOCABULARY -->
+  <text x="960" y="470" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">STATE WORDS STAFF ACTUALLY READ · v3</text>
+  <rect x="960" y="486" width="432" height="268" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <rect x="982" y="502" width="128" height="30" rx="15" fill="#F1EFEA"/>
+  <circle cx="1000" cy="517" r="4" fill="#57534E"/>
+  <text x="1012" y="522" font-size="13" font-weight="600" fill="#44403C">Draft</text>
+  <text x="1124" y="522" font-size="13" fill="#8A8178">staff typed it, not live</text>
+
+  <rect x="982" y="542" width="128" height="30" rx="15" fill="#FDF0E2"/>
+  <circle cx="1000" cy="557" r="4" fill="#B35309"/>
+  <text x="1012" y="562" font-size="13" font-weight="600" fill="#8A4208">With the owner</text>
+  <text x="1124" y="562" font-size="13" fill="#8A8178">waiting to be justified</text>
+
+  <rect x="982" y="582" width="128" height="30" rx="15" fill="#FBE9E7"/>
+  <circle cx="1000" cy="597" r="4" fill="#B3261E"/>
+  <text x="1012" y="602" font-size="13" font-weight="600" fill="#8F1D17">Stopped</text>
+  <text x="1124" y="602" font-size="13" fill="#8A8178">anyone raised a problem</text>
+
+  <rect x="982" y="622" width="128" height="30" rx="15" fill="#E8F5EE"/>
+  <circle cx="1000" cy="637" r="4" fill="#1D7A4C"/>
+  <text x="1012" y="642" font-size="13" font-weight="600" fill="#15603C">In stock</text>
+  <text x="1124" y="642" font-size="13" fill="#8A8178">sellable, counted</text>
+
+  <rect x="982" y="662" width="128" height="30" rx="15" fill="#1C1917"/>
+  <circle cx="1000" cy="677" r="4" fill="#C9961F"/>
+  <text x="1012" y="682" font-size="13" font-weight="600" fill="#FFFFFF">Billed</text>
+  <text x="1124" y="682" font-size="13" fill="#8A8178">locked by its invoice</text>
+
+  <rect x="982" y="702" width="128" height="30" rx="15" fill="#1C1917"/>
+  <circle cx="1000" cy="717" r="4" fill="#C9961F"/>
+  <text x="1012" y="722" font-size="13" font-weight="600" fill="#FFFFFF">Scrapped</text>
+  <text x="1124" y="722" font-size="13" fill="#8A8178">melted on owner's say-so</text>
+
+  <text x="982" y="748" font-size="13" fill="#57534E">Six states, six words. The enum stays in the data, never on the badge.</text>
+
+  <!-- BEFORE / AFTER DENSITY -->
+  <text x="48" y="808" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">ONE INVENTORY ROW, BEFORE AND AFTER</text>
+
+  <rect x="48" y="824" width="660" height="150" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="70" y="852" font-size="13" font-weight="700" fill="#B3261E">BEFORE · 11 data points, 6 colours, 10px type</text>
+  <rect x="70" y="864" width="616" height="1" fill="#E7E3DC"/>
+  <rect x="70" y="876" width="34" height="34" rx="5" fill="#E7E3DC"/>
+  <text x="112" y="884" font-size="9" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">TAG-2026-8841 · HUID 9X82K1 · 22K (916) · Kundan</text>
+  <text x="112" y="896" font-size="9" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">Gross 48.650 g · Incl 7.060 g · Net Au 41.590 g · 13 d</text>
+  <text x="112" y="908" font-size="9" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">13 d · Festive Bridal 2026 · BATCH-2026-041 · reorder ×3</text>
+  <rect x="470" y="874" width="58" height="15" rx="4" fill="#E8F5EE"/><text x="499" y="885" font-size="8" fill="#15603C" text-anchor="middle">In Stock</text>
+  <rect x="532" y="874" width="54" height="15" rx="4" fill="#F3E8FF"/><text x="559" y="885" font-size="8" fill="#6B21A8" text-anchor="middle">Pending QC</text>
+  <rect x="590" y="874" width="44" height="15" rx="4" fill="#DBEAFE"/><text x="612" y="885" font-size="8" fill="#1E40AF" text-anchor="middle">Reserved</text>
+  <rect x="470" y="893" width="40" height="15" rx="4" fill="#FEF3C7"/><text x="490" y="904" font-size="8" fill="#92400E" text-anchor="middle">Reorder</text>
+  <rect x="514" y="893" width="34" height="15" rx="4" fill="#FFE4E6"/><text x="531" y="904" font-size="8" fill="#9F1239" text-anchor="middle">Edit</text>
+  <rect x="552" y="893" width="34" height="15" rx="4" fill="#E7E3DC"/><text x="569" y="904" font-size="8" fill="#44403C" text-anchor="middle">View</text>
+  <rect x="590" y="893" width="44" height="15" rx="4" fill="#E7E3DC"/><text x="612" y="904" font-size="8" fill="#44403C" text-anchor="middle">Mark Sold</text>
+  <text x="70" y="938" font-size="12" fill="#57534E">Nothing is emphasised, so the eye has no entry point. Four</text>
+  <text x="70" y="956" font-size="12" fill="#57534E">actions compete before the staff member has read the piece.</text>
+
+  <rect x="732" y="824" width="660" height="150" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="754" y="852" font-size="13" font-weight="700" fill="#1D7A4C">AFTER · 4 data points, 1 action, 14px floor</text>
+  <rect x="754" y="864" width="616" height="1" fill="#E7E3DC"/>
+  <rect x="754" y="878" width="56" height="56" rx="10" fill="#F1EFEA"/>
+  <circle cx="782" cy="906" r="15" fill="#E2DCD2"/>
+  <text x="826" y="898" font-size="15" font-weight="600" fill="#1C1917">Antique Kundan Choker</text>
+  <text x="826" y="920" font-size="13" fill="#8A8178">TAG-8841 · 22K · Kundan</text>
+  <text x="1120" y="898" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">41.590 g</text>
+  <text x="1120" y="919" font-size="13" fill="#8A8178" text-anchor="end">pure gold</text>
+  <rect x="1150" y="884" width="110" height="30" rx="15" fill="#E8F5EE"/>
+  <circle cx="1168" cy="899" r="4" fill="#1D7A4C"/>
+  <text x="1180" y="904" font-size="13" font-weight="600" fill="#15603C">In stock</text>
+  <rect x="1276" y="884" width="94" height="30" rx="8" fill="#1C1917"/>
+  <text x="1323" y="904" font-size="13" font-weight="600" fill="#FFFFFF" text-anchor="middle">Add to sale</text>
+  <text x="754" y="958" font-size="12" fill="#57534E">Name, pure gold, state, one action. Value, ageing, batch, HUID and audit trail open in the detail drawer.</text>
+</svg>

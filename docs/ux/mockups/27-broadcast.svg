@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="900" fill="#FAF9F7"/>
+
+  <!-- rail -->
+  <rect x="0" y="0" width="248" height="900" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="900" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">Main showroom</text>
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">OUTREACH</text>
+  <circle cx="40" cy="140" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="145" font-size="14" fill="#44403C">Wishes</text>
+  <rect x="12" y="164" width="224" height="44" rx="10" fill="#1C1917"/>
+  <circle cx="40" cy="186" r="7" fill="#C9961F"/>
+  <text x="62" y="191" font-size="14" font-weight="600" fill="#FFFFFF">Broadcast</text>
+  <circle cx="40" cy="230" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="235" font-size="14" fill="#44403C">Catalogue share</text>
+  <line x1="12" y1="822" x2="236" y2="822" stroke="#E7E3DC"/>
+  <circle cx="44" cy="870" r="18" fill="#E2DCD2"/>
+  <text x="44" y="875" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">RV</text>
+  <text x="72" y="864" font-size="14" font-weight="600" fill="#1C1917">Rajesh Verma</text>
+  <text x="72" y="884" font-size="13" fill="#8A8178">Showroom staff · switch</text>
+
+  <!-- header -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">Send a broadcast on WhatsApp</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">Pick who hears it, write it once, see it as they will. Only customers who opted in are counted.</text>
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+
+  <!-- ===== LEFT : audience + message ===== -->
+  <text x="288" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHO HEARS IT</text>
+  <rect x="288" y="166" width="620" height="180" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="312" y="190" width="170" height="40" rx="20" fill="#1C1917"/>
+  <text x="397" y="215" font-size="13" font-weight="600" fill="#FFFFFF" text-anchor="middle">VIP Bridal · 86</text>
+  <rect x="494" y="190" width="210" height="40" rx="20" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="599" y="215" font-size="13" fill="#44403C" text-anchor="middle">High net worth · 142</text>
+  <rect x="716" y="190" width="170" height="40" rx="20" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="801" y="215" font-size="13" fill="#44403C" text-anchor="middle">Collectors · 210</text>
+  <rect x="312" y="242" width="220" height="40" rx="20" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="422" y="267" font-size="13" fill="#44403C" text-anchor="middle">Bought in last 6 months</text>
+  <rect x="544" y="242" width="160" height="40" rx="20" fill="#FFFFFF" stroke="#D6D1C8" stroke-dasharray="4 3"/>
+  <text x="624" y="267" font-size="13" fill="#57534E" text-anchor="middle">+ add a filter</text>
+  <rect x="312" y="300" width="572" height="30" rx="8" fill="#E8F5EE"/>
+  <text x="332" y="320" font-size="13" font-weight="600" fill="#15603C">86 customers · all opted in to WhatsApp</text>
+
+  <text x="288" y="388" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHAT YOU SEND</text>
+  <rect x="288" y="404" width="620" height="320" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <text x="312" y="438" font-size="13" fill="#8A8178">Start from a template</text>
+  <rect x="312" y="448" width="180" height="36" rx="18" fill="#1C1917"/>
+  <text x="402" y="471" font-size="13" font-weight="600" fill="#FFFFFF" text-anchor="middle">Festive preview</text>
+  <rect x="504" y="448" width="150" height="36" rx="18" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="579" y="471" font-size="13" fill="#44403C" text-anchor="middle">New arrivals</text>
+  <rect x="666" y="448" width="120" height="36" rx="18" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="726" y="471" font-size="13" fill="#44403C" text-anchor="middle">Blank</text>
+
+  <text x="312" y="516" font-size="13" fill="#8A8178">Message · {name} is filled in per person</text>
+  <rect x="312" y="526" width="572" height="110" rx="10" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="332" y="554" font-size="14" fill="#1C1917">Namaste {name}, our Deepavali bridal collection is</text>
+  <text x="332" y="576" font-size="14" fill="#1C1917">now in the showroom. A few antique Kundan pieces</text>
+  <text x="332" y="598" font-size="14" fill="#1C1917">this year. Shall we keep some aside for you to see?</text>
+
+  <text x="312" y="668" font-size="13" fill="#8A8178">Attach pieces from the catalogue</text>
+  <rect x="312" y="680" width="56" height="30" rx="8" fill="#EFE9DF"/>
+  <rect x="376" y="680" width="56" height="30" rx="8" fill="#EFE9DF"/>
+  <rect x="440" y="680" width="56" height="30" rx="8" fill="#EFE9DF"/>
+  <rect x="504" y="680" width="120" height="30" rx="8" fill="#FFFFFF" stroke="#D6D1C8" stroke-dasharray="4 3"/>
+  <text x="564" y="700" font-size="12" font-weight="600" fill="#57534E" text-anchor="middle">pick pieces</text>
+  <text x="648" y="700" font-size="13" fill="#8A8178">3 attached</text>
+
+  <!-- ===== RIGHT : the phone preview ===== -->
+  <text x="952" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">HOW IT LANDS ON THEIR PHONE</text>
+  <rect x="1012" y="166" width="320" height="520" rx="36" fill="#1C1917" filter="url(#sh)"/>
+  <rect x="1024" y="178" width="296" height="496" rx="28" fill="#F0F6EF"/>
+  <rect x="1120" y="188" width="104" height="18" rx="9" fill="#1C1917"/>
+
+  <circle cx="1052" cy="230" r="14" fill="#C9961F"/>
+  <text x="1052" y="235" font-size="11" font-weight="700" fill="#1C1917" text-anchor="middle">JGD</text>
+  <text x="1074" y="227" font-size="13" font-weight="600" fill="#1C1917">Jai Gulab Dev Jewellers</text>
+  <text x="1074" y="245" font-size="11" fill="#8A8178">business account</text>
+
+  <rect x="1044" y="266" width="256" height="150" rx="12" fill="#FFFFFF" stroke="#DCE9DA"/>
+  <rect x="1044" y="266" width="256" height="90" rx="12" fill="#EFE9DF"/>
+  <circle cx="1172" cy="311" r="28" fill="#E2D8C6"/>
+  <text x="1060" y="382" font-size="12" fill="#44403C">Namaste Meera, our Deepavali bridal</text>
+  <text x="1060" y="400" font-size="12" fill="#44403C">collection is now in the showroom…</text>
+
+  <rect x="1044" y="428" width="256" height="40" rx="10" fill="#FFFFFF" stroke="#CFE3CC"/>
+  <text x="1172" y="453" font-size="13" font-weight="600" fill="#15603C" text-anchor="middle">See the pieces</text>
+  <text x="1172" y="500" font-size="11" fill="#8A8178" text-anchor="middle">{name} shows as their real name</text>
+
+  <rect x="1044" y="540" width="256" height="120" rx="12" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="1060" y="566" font-size="12" font-weight="700" fill="#8A8178">AFTER YOU SEND</text>
+  <text x="1060" y="590" font-size="13" fill="#44403C">Delivered, opened, and who replied</text>
+  <text x="1060" y="610" font-size="13" fill="#44403C">are tracked — replies become leads.</text>
+  <text x="1060" y="640" font-size="12" fill="#8A8178">A reply lands in the lead inbox (16),</text>
+  <text x="1060" y="656" font-size="12" fill="#8A8178">so nothing a customer sends is lost.</text>
+
+  <!-- sticky action -->
+  <rect x="288" y="760" width="620" height="92" rx="16" fill="#1C1917"/>
+  <text x="312" y="796" font-size="15" fill="#A8A29E">Going to 86 opted-in VIP Bridal customers</text>
+  <text x="312" y="824" font-size="17" font-weight="600" fill="#FFFFFF">Send now, or schedule for Deepavali eve</text>
+  <rect x="712" y="784" width="80" height="44" rx="10" fill="#2F2A26"/>
+  <text x="752" y="812" font-size="14" font-weight="600" fill="#E7E3DC" text-anchor="middle">Later</text>
+  <rect x="804" y="784" width="88" height="44" rx="10" fill="#C9961F"/>
+  <text x="848" y="812" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle">Send</text>
+</svg>

@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1120" viewBox="0 0 1440 1120" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="1120" fill="#FAF9F7"/>
+
+  <!-- header -->
+  <rect x="0" y="0" width="1440" height="96" fill="#1C1917"/>
+  <rect x="48" y="26" width="44" height="44" rx="10" fill="#C9961F"/>
+  <text x="70" y="55" font-size="15" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="108" y="44" font-size="20" font-weight="600" fill="#FFFFFF">One match rule, for any parcel that ever arrives</text>
+  <text x="108" y="68" font-size="14" fill="#A8A29E">We cannot predict the size or the piece count, so the rule depends on neither. It is computed from the scales used — nothing is set by hand.</text>
+  <rect x="1240" y="34" width="152" height="28" rx="14" fill="#2F2A26"/>
+  <text x="1316" y="53" font-size="12" font-weight="600" fill="#E7E3DC" text-anchor="middle">Phase 1 · the formula</text>
+
+  <!-- ===== THE FORMULA ===== -->
+  <rect x="48" y="128" width="1344" height="150" rx="16" fill="#1C1917"/>
+  <text x="80" y="168" font-size="12" font-weight="700" fill="#C9961F" letter-spacing="1.4">THE ONLY RULE — IT HAS NO SETTINGS</text>
+  <text x="80" y="206" font-size="22" font-weight="600" fill="#FFFFFF">A parcel matches when every item is tagged and the weight gap is no bigger than the scales could cause.</text>
+  <rect x="80" y="224" width="820" height="38" rx="8" fill="#2F2A26"/>
+  <text x="96" y="249" font-size="15" fill="#E7E3DC" font-family="ui-monospace, Menlo, monospace">ceiling = sum of ( ½ × the scale's smallest step )  for every weighing taken</text>
+  <text x="936" y="241" font-size="13" fill="#A8A29E">Each weighing can be off by half a</text>
+  <text x="936" y="259" font-size="13" fill="#A8A29E">step. Add them up. That is the most</text>
+  <text x="936" y="277" font-size="13" fill="#A8A29E">the instruments alone can explain.</text>
+
+  <!-- ===== SCALE REGISTRY ===== -->
+  <text x="48" y="326" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">SET UP ONCE · THE SCALES IN THE SHOP</text>
+  <rect x="48" y="342" width="1344" height="92" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="72" y="366" width="400" height="44" rx="10" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="92" y="384" font-size="14" font-weight="600" fill="#1C1917">Bench balance</text>
+  <text x="92" y="402" font-size="13" fill="#8A4208">reads to 0.0001 g · up to 600 g</text>
+  <rect x="492" y="366" width="400" height="44" rx="10" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="512" y="384" font-size="14" font-weight="600" fill="#1C1917">Platform scale</text>
+  <text x="512" y="402" font-size="13" fill="#8A4208">reads to 0.01 g · up to 30 kg</text>
+  <text x="912" y="382" font-size="13" fill="#57534E">Each scale is named once with its smallest step. Every weighing</text>
+  <text x="912" y="402" font-size="13" fill="#57534E">remembers which scale it was on. Staff never retype it.</text>
+
+  <!-- ===== THREE PARCELS ===== -->
+  <text x="48" y="482" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">THE SAME RULE ON THREE PARCELS THAT HAVE NOTHING IN COMMON</text>
+
+  <!-- PARCEL 1 : small, all fine -->
+  <rect x="48" y="498" width="432" height="560" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="72" y="534" font-size="17" font-weight="600" fill="#1C1917">A small parcel</text>
+  <text x="72" y="556" font-size="13" fill="#8A8178">485 g · 12 pieces · all on the bench balance</text>
+
+  <text x="72" y="596" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">WEIGHINGS</text>
+  <text x="72" y="624" font-size="14" fill="#1C1917">12 pieces on 0.0001 g</text>
+  <text x="456" y="624" font-size="14" fill="#8A8178" text-anchor="end" font-family="ui-monospace, Menlo, monospace">12 ×</text>
+  <text x="72" y="650" font-size="14" fill="#1C1917">1 parcel on 0.0001 g</text>
+  <text x="456" y="650" font-size="14" fill="#8A8178" text-anchor="end" font-family="ui-monospace, Menlo, monospace">1 ×</text>
+  <line x1="72" y1="668" x2="456" y2="668" stroke="#F1EFEA"/>
+  <text x="72" y="694" font-size="14" font-weight="600" fill="#1C1917">13 weighings</text>
+
+  <rect x="72" y="712" width="384" height="72" rx="12" fill="#F1EFEA"/>
+  <text x="92" y="740" font-size="13" fill="#57534E">13 × ½ × 0.0001 g</text>
+  <text x="92" y="770" font-size="13" fill="#8A8178">the ceiling for this parcel</text>
+  <text x="436" y="760" font-size="22" font-weight="700" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">0.0007 g</text>
+
+  <text x="72" y="828" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">THE GAP TODAY</text>
+  <text x="72" y="856" font-size="14" fill="#1C1917">Parcel said</text>
+  <text x="456" y="856" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">485.5000 g</text>
+  <text x="72" y="882" font-size="14" fill="#1C1917">12 tags add to</text>
+  <text x="456" y="882" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">485.4996 g</text>
+  <line x1="72" y1="900" x2="456" y2="900" stroke="#F1EFEA"/>
+  <text x="72" y="926" font-size="14" font-weight="600" fill="#1C1917">Gap</text>
+  <text x="456" y="926" font-size="15" font-weight="600" fill="#15603C" font-family="ui-monospace, Menlo, monospace" text-anchor="end">0.0004 g</text>
+
+  <rect x="72" y="952" width="384" height="84" rx="12" fill="#E8F5EE"/>
+  <path d="M96 994 l7 7 l14 -15" fill="none" stroke="#1D7A4C" stroke-width="2.6" stroke-linecap="round"/>
+  <text x="130" y="986" font-size="16" font-weight="600" fill="#15603C">Match</text>
+  <text x="130" y="1008" font-size="13" fill="#15603C">0.4 mg is inside the 0.7 mg the</text>
+  <text x="130" y="1026" font-size="13" fill="#15603C">scales could cause. Staff release it.</text>
+
+  <!-- PARCEL 2 : huge, one coarse reading -->
+  <rect x="504" y="498" width="432" height="560" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="528" y="534" font-size="17" font-weight="600" fill="#1C1917">A 10 kg parcel, weighed whole</text>
+  <text x="528" y="556" font-size="13" fill="#8A8178">300 pieces · parcel on the platform scale</text>
+
+  <text x="528" y="596" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">WEIGHINGS</text>
+  <text x="528" y="624" font-size="14" fill="#1C1917">300 pieces on 0.0001 g</text>
+  <text x="912" y="624" font-size="14" fill="#8A8178" text-anchor="end" font-family="ui-monospace, Menlo, monospace">300 ×</text>
+  <text x="528" y="650" font-size="14" fill="#B35309">1 parcel on 0.01 g</text>
+  <text x="912" y="650" font-size="14" fill="#B35309" text-anchor="end" font-family="ui-monospace, Menlo, monospace">1 ×</text>
+  <line x1="528" y1="668" x2="912" y2="668" stroke="#F1EFEA"/>
+  <text x="528" y="694" font-size="14" font-weight="600" fill="#1C1917">301 weighings, one of them coarse</text>
+
+  <rect x="528" y="712" width="384" height="72" rx="12" fill="#FDF0E2"/>
+  <text x="548" y="738" font-size="13" fill="#8A4208">300 × 0.00005 + 1 × 0.005</text>
+  <text x="548" y="768" font-size="13" fill="#8A4208">the one coarse reading dominates</text>
+  <text x="892" y="760" font-size="22" font-weight="700" fill="#8A4208" font-family="ui-monospace, Menlo, monospace" text-anchor="end">0.0200 g</text>
+
+  <text x="528" y="828" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">THE GAP TODAY</text>
+  <text x="528" y="856" font-size="14" fill="#1C1917">Parcel said</text>
+  <text x="912" y="856" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">9,480.52 g</text>
+  <text x="528" y="882" font-size="14" fill="#1C1917">300 tags add to</text>
+  <text x="912" y="882" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">9,480.5158 g</text>
+  <line x1="528" y1="900" x2="912" y2="900" stroke="#F1EFEA"/>
+  <text x="528" y="926" font-size="14" font-weight="600" fill="#1C1917">Gap</text>
+  <text x="912" y="926" font-size="15" font-weight="600" fill="#15603C" font-family="ui-monospace, Menlo, monospace" text-anchor="end">0.0042 g</text>
+
+  <rect x="528" y="952" width="384" height="84" rx="12" fill="#E8F5EE"/>
+  <path d="M552 994 l7 7 l14 -15" fill="none" stroke="#1D7A4C" stroke-width="2.6" stroke-linecap="round"/>
+  <text x="586" y="986" font-size="16" font-weight="600" fill="#15603C">Match, but a blunt one</text>
+  <text x="586" y="1008" font-size="13" fill="#15603C">Inside 0.020 g — but that ceiling is</text>
+  <text x="586" y="1026" font-size="13" fill="#15603C">wide because of one coarse weighing.</text>
+
+  <!-- PARCEL 3 : huge, trays -->
+  <rect x="960" y="498" width="432" height="560" rx="16" fill="#FFFFFF" stroke="#1D7A4C" stroke-width="2" filter="url(#sh)"/>
+  <text x="984" y="534" font-size="17" font-weight="600" fill="#1C1917">The same 10 kg, in trays</text>
+  <text x="984" y="556" font-size="13" fill="#8A8178">300 pieces · 20 trays, all on the bench balance</text>
+
+  <text x="984" y="596" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">WEIGHINGS</text>
+  <text x="984" y="624" font-size="14" fill="#1C1917">300 pieces on 0.0001 g</text>
+  <text x="1368" y="624" font-size="14" fill="#8A8178" text-anchor="end" font-family="ui-monospace, Menlo, monospace">300 ×</text>
+  <text x="984" y="650" font-size="14" fill="#15603C">20 trays on 0.0001 g</text>
+  <text x="1368" y="650" font-size="14" fill="#15603C" text-anchor="end" font-family="ui-monospace, Menlo, monospace">20 ×</text>
+  <line x1="984" y1="668" x2="1368" y2="668" stroke="#F1EFEA"/>
+  <text x="984" y="694" font-size="14" font-weight="600" fill="#1C1917">320 weighings, every one fine</text>
+
+  <rect x="984" y="712" width="384" height="72" rx="12" fill="#E8F5EE"/>
+  <text x="1004" y="738" font-size="13" fill="#15603C">320 × ½ × 0.0001 g</text>
+  <text x="1004" y="768" font-size="13" fill="#15603C">tighter than the single coarse reading</text>
+  <text x="1348" y="760" font-size="22" font-weight="700" fill="#15603C" font-family="ui-monospace, Menlo, monospace" text-anchor="end">0.0160 g</text>
+
+  <text x="984" y="828" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">AND IT IS TRACEABLE</text>
+  <text x="984" y="856" font-size="14" fill="#1C1917">19 trays match cleanly</text>
+  <text x="984" y="882" font-size="14" fill="#8A4208">Tray 14 is off by</text>
+  <text x="1368" y="882" font-size="15" font-weight="600" fill="#8A4208" font-family="ui-monospace, Menlo, monospace" text-anchor="end">0.0380 g</text>
+  <line x1="984" y1="900" x2="1368" y2="900" stroke="#F1EFEA"/>
+  <text x="984" y="926" font-size="13" fill="#57534E">A single whole-parcel weighing would</text>
+  <text x="984" y="946" font-size="13" fill="#57534E">only say "the parcel is off". This says where.</text>
+
+  <rect x="984" y="968" width="384" height="68" rx="12" fill="#FBE9E7"/>
+  <text x="1004" y="996" font-size="15" font-weight="600" fill="#8F1D17">Stops at tray 14 only</text>
+  <text x="1004" y="1018" font-size="13" fill="#8F1D17">38 mg unaccounted for, in one tray of 15. The rest release.</text>
+
+  <!-- footer -->
+  <text x="48" y="1090" font-size="13" fill="#8A8178">No parcel size and no piece count appears in the rule — only grams and the scales used. Trays are never required, but because they sharpen the ceiling and pin a gap to one tray, the screen rewards them.</text>
+</svg>

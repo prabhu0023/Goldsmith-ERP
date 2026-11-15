@@ -1,0 +1,224 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1200" viewBox="0 0 1440 1200" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#8A8178"/>
+    </marker>
+  </defs>
+  <rect width="1440" height="1200" fill="#FAF9F7"/>
+
+  <!-- header -->
+  <rect x="0" y="0" width="1440" height="96" fill="#1C1917"/>
+  <rect x="48" y="26" width="44" height="44" rx="10" fill="#C9961F"/>
+  <text x="70" y="55" font-size="15" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="108" y="44" font-size="20" font-weight="600" fill="#FFFFFF">Five things move through states. Nobody has to guess which.</text>
+  <text x="108" y="68" font-size="14" fill="#A8A29E">Every state has one word, one colour and one person who can move it on. The words under the arrows are who may pull it.</text>
+  <rect x="1240" y="34" width="152" height="28" rx="14" fill="#2F2A26"/>
+  <text x="1316" y="53" font-size="12" font-weight="600" fill="#E7E3DC" text-anchor="middle">Phase 1 · v4</text>
+
+  <!-- ===== LEGEND ===== -->
+  <text x="48" y="140" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">FIVE COLOURS, FIVE MEANINGS — THE SAME ON EVERY SCREEN</text>
+  <rect x="48" y="156" width="1344" height="88" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <rect x="76" y="184" width="124" height="34" rx="17" fill="#F1EFEA"/>
+  <circle cx="96" cy="201" r="4" fill="#57534E"/>
+  <text x="110" y="206" font-size="14" font-weight="600" fill="#44403C">Not live yet</text>
+  <text x="76" y="236" font-size="12" fill="#8A8178">draft, nothing depends on it</text>
+
+  <rect x="340" y="184" width="150" height="34" rx="17" fill="#FDF0E2"/>
+  <circle cx="360" cy="201" r="4" fill="#B35309"/>
+  <text x="374" y="206" font-size="14" font-weight="600" fill="#8A4208">Waiting on someone</text>
+  <text x="340" y="236" font-size="12" fill="#8A8178">a named person owes an action</text>
+
+  <rect x="630" y="184" width="124" height="34" rx="17" fill="#FBE9E7"/>
+  <circle cx="650" cy="201" r="4" fill="#B3261E"/>
+  <text x="664" y="206" font-size="14" font-weight="600" fill="#8F1D17">Stopped</text>
+  <text x="630" y="236" font-size="12" fill="#8A8178">only the owner can clear it</text>
+
+  <rect x="920" y="184" width="110" height="34" rx="17" fill="#E8F5EE"/>
+  <circle cx="940" cy="201" r="4" fill="#1D7A4C"/>
+  <text x="954" y="206" font-size="14" font-weight="600" fill="#15603C">Live</text>
+  <text x="920" y="236" font-size="12" fill="#8A8178">real, sellable, counted</text>
+
+  <rect x="1180" y="184" width="124" height="34" rx="17" fill="#1C1917"/>
+  <circle cx="1200" cy="201" r="4" fill="#C9961F"/>
+  <text x="1214" y="206" font-size="14" font-weight="600" fill="#FFFFFF">Closed</text>
+  <text x="1180" y="236" font-size="12" fill="#8A8178">billed, scrapped or refused</text>
+
+  <!-- ============ RAIL 1 · LEAD ============ -->
+  <text x="48" y="304" font-size="15" font-weight="600" fill="#1C1917">A lead</text>
+  <text x="48" y="324" font-size="13" fill="#8A8178">from a PO on</text>
+  <text x="48" y="342" font-size="13" fill="#8A8178">mail or WhatsApp</text>
+
+  <rect x="180" y="286" width="200" height="48" rx="24" fill="#F1EFEA"/>
+  <text x="280" y="316" font-size="14" font-weight="600" fill="#44403C" text-anchor="middle">Read in, not opened</text>
+  <line x1="388" y1="310" x2="420" y2="310" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="404" y="354" font-size="12" fill="#8A8178" text-anchor="middle">staff opens it</text>
+
+  <rect x="428" y="286" width="200" height="48" rx="24" fill="#F1EFEA"/>
+  <text x="528" y="316" font-size="14" font-weight="600" fill="#44403C" text-anchor="middle">Opened</text>
+  <line x1="636" y1="310" x2="668" y2="310" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="652" y="354" font-size="12" fill="#8A8178" text-anchor="middle">staff replies</text>
+
+  <rect x="676" y="286" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="776" y="316" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Being worked</text>
+  <line x1="884" y1="310" x2="916" y2="310" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="900" y="354" font-size="12" fill="#8A8178" text-anchor="middle">staff converts</text>
+
+  <rect x="924" y="286" width="200" height="48" rx="24" fill="#E8F5EE"/>
+  <text x="1024" y="316" font-size="14" font-weight="600" fill="#15603C" text-anchor="middle">Converted</text>
+  <line x1="1132" y1="310" x2="1164" y2="310" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="1172" y="286" width="200" height="48" rx="24" fill="#1C1917"/>
+  <text x="1272" y="316" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Lost or expired</text>
+
+  <circle cx="186" cy="382" r="4" fill="#B3261E"/>
+  <text x="200" y="387" font-size="13" fill="#57534E">Untouched for 8 hours (you can change the figure) the lead turns red in both inboxes and the owner is told.</text>
+  <circle cx="186" cy="406" r="4" fill="#8A8178"/>
+  <text x="200" y="411" font-size="13" fill="#57534E">Converting forks two ways: sell from stock, or raise an order copy to a karigar. Both keep the lead attached.</text>
+
+  <line x1="48" y1="440" x2="1392" y2="440" stroke="#E7E3DC"/>
+
+  <!-- ============ RAIL 2 · KARIGAR JOB ============ -->
+  <text x="48" y="490" font-size="15" font-weight="600" fill="#1C1917">A karigar job</text>
+  <text x="48" y="510" font-size="13" fill="#8A8178">the order copy</text>
+  <text x="48" y="528" font-size="13" fill="#8A8178">with images</text>
+
+  <rect x="180" y="472" width="200" height="48" rx="24" fill="#F1EFEA"/>
+  <text x="280" y="502" font-size="14" font-weight="600" fill="#44403C" text-anchor="middle">Sent to him</text>
+  <line x1="388" y1="496" x2="420" y2="496" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="404" y="540" font-size="12" fill="#8A8178" text-anchor="middle">karigar accepts</text>
+
+  <rect x="428" y="472" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="528" y="502" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Accepted, date set</text>
+  <line x1="636" y1="496" x2="668" y2="496" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="652" y="540" font-size="12" fill="#8A8178" text-anchor="middle">karigar starts</text>
+
+  <rect x="676" y="472" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="776" y="502" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">On the bench</text>
+  <line x1="884" y1="496" x2="916" y2="496" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="900" y="540" font-size="12" fill="#8A8178" text-anchor="middle">karigar marks ready</text>
+
+  <rect x="924" y="472" width="200" height="48" rx="24" fill="#E8F5EE"/>
+  <text x="1024" y="502" font-size="14" font-weight="600" fill="#15603C" text-anchor="middle">Ready</text>
+  <line x1="1132" y1="496" x2="1164" y2="496" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="1148" y="540" font-size="12" fill="#8A8178" text-anchor="middle">hands over</text>
+
+  <rect x="1172" y="472" width="200" height="48" rx="24" fill="#1C1917"/>
+  <text x="1272" y="502" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Sent to the store</text>
+
+  <circle cx="186" cy="568" r="4" fill="#B3261E"/>
+  <text x="200" y="573" font-size="13" fill="#57534E">Past the agreed date the job joins the overdue tracker, the karigar is reminded and the owner sees it on Decisions.</text>
+  <circle cx="186" cy="592" r="4" fill="#8A8178"/>
+  <text x="200" y="597" font-size="13" fill="#57534E">Handing over creates the arriving parcel. One handover can carry many jobs.</text>
+
+  <line x1="48" y1="626" x2="1392" y2="626" stroke="#E7E3DC"/>
+
+  <!-- ============ RAIL 3 · PARCEL ============ -->
+  <text x="48" y="676" font-size="15" font-weight="600" fill="#1C1917">A parcel</text>
+  <text x="48" y="696" font-size="13" fill="#8A8178">bulk, many</text>
+  <text x="48" y="714" font-size="13" fill="#8A8178">pieces, daily</text>
+
+  <rect x="180" y="658" width="200" height="48" rx="24" fill="#F1EFEA"/>
+  <text x="280" y="688" font-size="14" font-weight="600" fill="#44403C" text-anchor="middle">Weighed in bulk</text>
+  <line x1="388" y1="682" x2="420" y2="682" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="404" y="726" font-size="12" fill="#8A8178" text-anchor="middle">staff tags pieces</text>
+
+  <rect x="428" y="658" width="200" height="48" rx="24" fill="#F1EFEA"/>
+  <text x="528" y="688" font-size="14" font-weight="600" fill="#44403C" text-anchor="middle">Tagging · 8 of 12</text>
+  <line x1="636" y1="682" x2="668" y2="682" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="652" y="726" font-size="12" fill="#8A8178" text-anchor="middle">all 12 tagged</text>
+
+  <rect x="676" y="658" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="776" y="688" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Weights compared</text>
+  <line x1="884" y1="682" x2="916" y2="682" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="900" y="726" font-size="12" font-weight="700" fill="#15603C" text-anchor="middle">they agree</text>
+
+  <rect x="924" y="658" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="1024" y="688" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Checks passed</text>
+  <line x1="1132" y1="682" x2="1164" y2="682" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="1148" y="726" font-size="12" font-weight="700" fill="#15603C" text-anchor="middle">staff releases</text>
+
+  <rect x="1172" y="658" width="200" height="48" rx="24" fill="#E8F5EE"/>
+  <text x="1272" y="688" font-size="14" font-weight="600" fill="#15603C" text-anchor="middle">Pieces go live</text>
+
+  <circle cx="186" cy="754" r="4" fill="#15603C"/>
+  <text x="200" y="759" font-size="13" fill="#57534E"><tspan font-weight="600">The normal case needs no signature.</tspan> A parcel that matches exactly is released by the staff member who tagged it. The owner never sees it.</text>
+  <circle cx="186" cy="778" r="4" fill="#B3261E"/>
+  <text x="200" y="783" font-size="13" fill="#57534E">If the weights disagree the parcel stops and lands with the owner. Only he can clear it into stock or send the whole parcel back.</text>
+  <circle cx="186" cy="802" r="4" fill="#B3261E"/>
+  <text x="200" y="807" font-size="13" fill="#57534E">A problem raised by a person — staff or karigar — stops it just as hard, at any point along this rail.</text>
+
+  <line x1="48" y1="836" x2="1392" y2="836" stroke="#E7E3DC"/>
+
+  <!-- ============ RAIL 4 · PIECE ============ -->
+  <text x="48" y="886" font-size="15" font-weight="600" fill="#1C1917">A piece</text>
+  <text x="48" y="906" font-size="13" fill="#8A8178">one tag, one</text>
+  <text x="48" y="924" font-size="13" fill="#8A8178">ornament</text>
+
+  <rect x="180" y="868" width="200" height="48" rx="24" fill="#F1EFEA"/>
+  <text x="280" y="898" font-size="14" font-weight="600" fill="#44403C" text-anchor="middle">Draft</text>
+  <line x1="388" y1="892" x2="420" y2="892" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="404" y="936" font-size="12" fill="#8A8178" text-anchor="middle">with its parcel</text>
+
+  <rect x="428" y="868" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="528" y="898" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Checked</text>
+  <line x1="636" y1="892" x2="668" y2="892" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="652" y="936" font-size="12" font-weight="700" fill="#15603C" text-anchor="middle">staff releases</text>
+
+  <rect x="676" y="868" width="200" height="48" rx="24" fill="#E8F5EE"/>
+  <text x="776" y="898" font-size="14" font-weight="600" fill="#15603C" text-anchor="middle">In stock</text>
+  <line x1="884" y1="892" x2="916" y2="892" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="900" y="936" font-size="12" fill="#8A8178" text-anchor="middle">staff quotes</text>
+
+  <rect x="924" y="868" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="1024" y="898" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Held for a customer</text>
+  <line x1="1132" y1="892" x2="1164" y2="892" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="1148" y="936" font-size="12" fill="#8A8178" text-anchor="middle">staff bills</text>
+
+  <rect x="1172" y="868" width="200" height="48" rx="24" fill="#1C1917"/>
+  <text x="1272" y="898" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Billed · locked</text>
+
+  <circle cx="186" cy="958" r="4" fill="#B3261E"/>
+  <text x="200" y="963" font-size="13" fill="#57534E">If its parcel does not weigh up, the piece waits with the owner instead of going live. That is the only time a piece needs him to go in.</text>
+  <circle cx="186" cy="980" r="4" fill="#C9961F"/>
+  <text x="200" y="985" font-size="13" fill="#57534E"><tspan font-weight="600">Second way out: scrap.</tspan> The owner marks the piece as scrap, the piece closes, and its gold goes back into the metal pool to be issued again.</text>
+  <circle cx="186" cy="1002" r="4" fill="#8A8178"/>
+  <text x="200" y="1007" font-size="13" fill="#57534E">Billed is the end. The invoice number and sale date freeze the weights permanently — no edit, no owner override.</text>
+
+  <line x1="48" y1="1022" x2="1392" y2="1022" stroke="#E7E3DC"/>
+
+  <!-- ============ RAIL 5 · EDIT ============ -->
+  <text x="48" y="1072" font-size="15" font-weight="600" fill="#1C1917">An edit</text>
+  <text x="48" y="1092" font-size="13" fill="#8A8178">to a piece</text>
+  <text x="48" y="1110" font-size="13" fill="#8A8178">already in house</text>
+
+  <rect x="180" y="1054" width="200" height="48" rx="24" fill="#F1EFEA"/>
+  <text x="280" y="1084" font-size="14" font-weight="600" fill="#44403C" text-anchor="middle">Proposed by staff</text>
+  <line x1="388" y1="1078" x2="420" y2="1078" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="404" y="1122" font-size="12" fill="#8A8178" text-anchor="middle">lands with owner</text>
+
+  <rect x="428" y="1054" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="528" y="1084" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Owner reading it</text>
+  <line x1="636" y1="1078" x2="668" y2="1078" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="652" y="1122" font-size="12" fill="#8A8178" text-anchor="middle">owner agrees</text>
+
+  <rect x="676" y="1054" width="200" height="48" rx="24" fill="#FDF0E2"/>
+  <text x="776" y="1084" font-size="14" font-weight="600" fill="#8A4208" text-anchor="middle">Token on WhatsApp</text>
+  <line x1="884" y1="1078" x2="916" y2="1078" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="900" y="1122" font-size="12" font-weight="700" fill="#8A4208" text-anchor="middle">owner applies it</text>
+
+  <rect x="924" y="1054" width="200" height="48" rx="24" fill="#E8F5EE"/>
+  <text x="1024" y="1084" font-size="14" font-weight="600" fill="#15603C" text-anchor="middle">Applied</text>
+  <line x1="1132" y1="1078" x2="1164" y2="1078" stroke="#8A8178" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="1172" y="1054" width="200" height="48" rx="24" fill="#1C1917"/>
+  <text x="1272" y="1084" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Refused</text>
+
+  <circle cx="186" cy="1150" r="4" fill="#8A4208"/>
+  <text x="200" y="1155" font-size="13" fill="#57534E"><tspan font-weight="600">Staff never touch the field.</tspan> They describe the change and why; the owner reads it, holds the token, and presses apply. Two factors: his login and his phone.</text>
+  <circle cx="186" cy="1174" r="4" fill="#8A8178"/>
+  <text x="200" y="1179" font-size="13" fill="#57534E">Old value, new value, who asked, the reason and the token used are all kept. The piece stays sellable while a proposal is open. <tspan fill="#B3261E" font-weight="600">Assumption — confirm.</tspan></text>
+</svg>

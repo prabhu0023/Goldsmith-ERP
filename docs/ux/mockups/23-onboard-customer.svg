@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="900" fill="#FAF9F7"/>
+
+  <!-- rail -->
+  <rect x="0" y="0" width="248" height="900" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="900" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">Main showroom</text>
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">WORK</text>
+  <circle cx="40" cy="140" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="145" font-size="14" fill="#44403C">Today</text>
+  <circle cx="40" cy="186" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="191" font-size="14" fill="#44403C">Showroom stock</text>
+  <circle cx="40" cy="230" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="235" font-size="14" fill="#44403C">Sell</text>
+  <rect x="12" y="296" width="224" height="44" rx="10" fill="#1C1917"/>
+  <circle cx="40" cy="318" r="7" fill="#C9961F"/>
+  <text x="62" y="323" font-size="14" font-weight="600" fill="#FFFFFF">Customers</text>
+  <line x1="12" y1="822" x2="236" y2="822" stroke="#E7E3DC"/>
+  <circle cx="44" cy="870" r="18" fill="#E2DCD2"/>
+  <text x="44" y="875" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">RV</text>
+  <text x="72" y="864" font-size="14" font-weight="600" fill="#1C1917">Rajesh Verma</text>
+  <text x="72" y="884" font-size="13" fill="#8A8178">Showroom staff · switch</text>
+
+  <!-- header -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">Add a customer</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">Who they are and when to wish them. Their pieces attach by weight; budget and spend stay dark until pricing is on.</text>
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+
+  <!-- ===== LEFT : contact ===== -->
+  <text x="288" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHO THEY ARE</text>
+  <rect x="288" y="166" width="640" height="420" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <text x="312" y="200" font-size="13" fill="#8A8178">Name</text>
+  <rect x="312" y="210" width="592" height="48" rx="10" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="332" y="240" font-size="15" fill="#1C1917">Meera Iyer</text>
+
+  <text x="312" y="288" font-size="13" fill="#8A8178">Phone · also the WhatsApp number</text>
+  <rect x="312" y="298" width="288" height="48" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="332" y="328" font-size="15" fill="#1C1917">+91 98840 21107</text>
+  <text x="624" y="288" font-size="13" fill="#8A8178">City</text>
+  <rect x="624" y="298" width="280" height="48" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="644" y="328" font-size="15" fill="#1C1917">Chennai</text>
+
+  <text x="312" y="376" font-size="13" fill="#8A8178">Address (optional)</text>
+  <rect x="312" y="386" width="592" height="70" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="332" y="414" font-size="15" fill="#A8A29E">door, street, area…</text>
+
+  <text x="312" y="486" font-size="13" fill="#8A8178">Group</text>
+  <rect x="312" y="496" width="150" height="40" rx="20" fill="#1C1917"/>
+  <text x="387" y="521" font-size="13" font-weight="600" fill="#FFFFFF" text-anchor="middle">VIP Bridal</text>
+  <rect x="474" y="496" width="170" height="40" rx="20" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="559" y="521" font-size="13" fill="#44403C" text-anchor="middle">High net worth</text>
+  <rect x="656" y="496" width="170" height="40" rx="20" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="741" y="521" font-size="13" fill="#44403C" text-anchor="middle">Festive collector</text>
+
+  <!-- ===== RIGHT : wishes + deferred value ===== -->
+  <text x="952" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHEN TO WISH THEM</text>
+  <rect x="952" y="166" width="440" height="200" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <text x="976" y="200" font-size="13" fill="#8A8178">Birthday</text>
+  <rect x="976" y="210" width="180" height="48" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="996" y="240" font-size="15" fill="#1C1917">14 Mar</text>
+  <text x="1188" y="200" font-size="13" fill="#8A8178">Anniversary</text>
+  <rect x="1188" y="210" width="180" height="48" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="1208" y="240" font-size="15" fill="#1C1917">2 Dec</text>
+
+  <rect x="976" y="286" width="392" height="56" rx="10" fill="#E8F5EE"/>
+  <rect x="992" y="300" width="44" height="28" rx="14" fill="#1D7A4C"/>
+  <circle cx="1022" cy="314" r="11" fill="#FFFFFF"/>
+  <text x="1048" y="319" font-size="14" font-weight="600" fill="#15603C">Send wishes on WhatsApp</text>
+
+  <!-- deferred value card -->
+  <text x="952" y="408" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">COMES LATER · WITH PRICING</text>
+  <rect x="952" y="424" width="440" height="162" rx="16" fill="#FFFFFF" stroke="#D6D1C8" stroke-dasharray="6 4"/>
+  <text x="976" y="458" font-size="14" font-weight="600" fill="#A8A29E">Budget</text>
+  <rect x="976" y="470" width="392" height="36" rx="8" fill="#F1EFEA"/>
+  <text x="992" y="493" font-size="13" fill="#A8A29E" font-style="italic">fills in when pricing is switched on</text>
+  <text x="976" y="536" font-size="14" font-weight="600" fill="#A8A29E">Spend so far</text>
+  <rect x="976" y="548" width="392" height="24" rx="6" fill="#F1EFEA"/>
+
+  <!-- piece history, by weight -->
+  <text x="288" y="640" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHAT THEY HAVE TAKEN HOME · BY WEIGHT, NOT PRICE</text>
+  <rect x="288" y="656" width="1104" height="100" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <text x="312" y="690" font-size="14" fill="#1C1917">Chettinad Haram · TAG-7521 · 78.400 g · Oct 2026</text>
+  <text x="312" y="716" font-size="14" fill="#1C1917">Polki Kada pair · TAG-6690 · 57.490 g · Feb 2026</text>
+  <text x="312" y="740" font-size="13" fill="#8A8178">6 pieces in all · their history ties to the same tags and grams the system already tracks</text>
+  <text x="1368" y="690" font-size="14" fill="#8A8178" text-anchor="end">135.890 g taken home</text>
+
+  <!-- action -->
+  <rect x="288" y="794" width="260" height="52" rx="10" fill="#1C1917"/>
+  <text x="418" y="826" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Add this customer</text>
+  <rect x="564" y="794" width="120" height="52" rx="10" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <text x="624" y="826" font-size="15" font-weight="600" fill="#1C1917" text-anchor="middle">Cancel</text>
+</svg>

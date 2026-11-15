@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1000" viewBox="0 0 1440 1000" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="ph" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="14" flood-color="#1C1917" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="1000" fill="#EDEAE4"/>
+
+  <text x="48" y="56" font-size="22" font-weight="600" fill="#1C1917">The karigar's phone</text>
+  <text x="48" y="82" font-size="14" fill="#57534E">Oily hands, 5-inch screen, bench light. Targets are 56 px tall, text starts at 15 px, and each screen asks for one thing.</text>
+  <text x="48" y="104" font-size="14" fill="#57534E">He sees only his own jobs: no prices, no customers, no other karigar's work.</text>
+
+  <!-- ================= PHONE 1 : my jobs ================= -->
+  <rect x="80" y="144" width="390" height="800" rx="40" fill="#1C1917" filter="url(#ph)"/>
+  <rect x="92" y="156" width="366" height="776" rx="32" fill="#FAF9F7"/>
+  <rect x="200" y="166" width="150" height="22" rx="11" fill="#1C1917"/>
+
+  <text x="124" y="226" font-size="13" fill="#8A8178">Vijay Kumar · KG-04</text>
+  <text x="124" y="256" font-size="22" font-weight="600" fill="#1C1917">My jobs</text>
+  <rect x="374" y="206" width="62" height="34" rx="17" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <text x="405" y="228" font-size="13" font-weight="600" fill="#1C1917" text-anchor="middle">हिन्दी</text>
+
+  <!-- gold ledger, the thing he cares about most -->
+  <rect x="124" y="276" width="312" height="92" rx="14" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="144" y="304" font-size="12" font-weight="700" fill="#8A4208" letter-spacing="1.2">GOLD WITH ME</text>
+  <text x="144" y="340" font-size="28" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">186.400 g</text>
+  <text x="144" y="360" font-size="13" fill="#8A4208">across 2 jobs · 0.8% wastage allowed</text>
+
+  <!-- job card 1 : due today -->
+  <rect x="124" y="390" width="312" height="196" rx="16" fill="#FFFFFF" stroke="#B35309" stroke-width="2"/>
+  <rect x="140" y="406" width="64" height="64" rx="10" fill="#EFE9DF"/>
+  <circle cx="172" cy="438" r="20" fill="#E2D8C6"/>
+  <text x="218" y="426" font-size="16" font-weight="600" fill="#1C1917">Peacock Pendant</text>
+  <text x="218" y="448" font-size="14" fill="#8A8178">2 pieces · Antique</text>
+  <rect x="218" y="458" width="92" height="26" rx="13" fill="#FDF0E2"/>
+  <text x="264" y="476" font-size="13" font-weight="700" fill="#8A4208" text-anchor="middle">Due today</text>
+
+  <line x1="140" y1="492" x2="420" y2="492" stroke="#F1EFEA"/>
+  <text x="140" y="518" font-size="13" fill="#8A8178">Make it weigh</text>
+  <text x="420" y="520" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">18.200 g</text>
+  <text x="140" y="544" font-size="13" fill="#8A8178">Gold inside, after stones</text>
+  <text x="420" y="546" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">15.100 g</text>
+  <text x="140" y="570" font-size="13" fill="#15603C">You may be off by 500 mg either way</text>
+
+  <!-- job card 2 -->
+  <rect x="124" y="602" width="312" height="140" rx="16" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <rect x="140" y="618" width="64" height="64" rx="10" fill="#EFE9DF"/>
+  <circle cx="172" cy="650" r="18" fill="none" stroke="#D9CBB2" stroke-width="7"/>
+  <text x="218" y="638" font-size="16" font-weight="600" fill="#1C1917">Temple Haram</text>
+  <text x="218" y="660" font-size="14" fill="#8A8178">1 piece · Chettinad</text>
+  <rect x="218" y="670" width="128" height="26" rx="13" fill="#F1EFEA"/>
+  <text x="282" y="688" font-size="13" font-weight="600" fill="#57534E" text-anchor="middle">Due in 9 days</text>
+  <line x1="140" y1="708" x2="420" y2="708" stroke="#F1EFEA"/>
+  <text x="140" y="730" font-size="13" fill="#8A8178">Target 84.500 g · gold 78.400 g</text>
+
+  <text x="124" y="786" font-size="13" fill="#8A8178">Finished jobs</text>
+  <text x="124" y="812" font-size="15" font-weight="600" fill="#1C1917">14 delivered this year</text>
+
+  <!-- bottom bar -->
+  <line x1="92" y1="852" x2="458" y2="852" stroke="#E7E3DC"/>
+  <circle cx="176" cy="890" r="9" fill="#C9961F"/>
+  <text x="176" y="918" font-size="12" font-weight="600" fill="#1C1917" text-anchor="middle">Jobs</text>
+  <circle cx="275" cy="890" r="9" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="275" y="918" font-size="12" fill="#8A8178" text-anchor="middle">Gold</text>
+  <circle cx="374" cy="890" r="9" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="374" y="918" font-size="12" fill="#8A8178" text-anchor="middle">Me</text>
+
+  <text x="80" y="976" font-size="13" font-weight="700" fill="#57534E">1 · WHAT IS ON MY BENCH</text>
+
+  <!-- ================= PHONE 2 : job sheet ================= -->
+  <rect x="525" y="144" width="390" height="800" rx="40" fill="#1C1917" filter="url(#ph)"/>
+  <rect x="537" y="156" width="366" height="776" rx="32" fill="#FAF9F7"/>
+  <rect x="645" y="166" width="150" height="22" rx="11" fill="#1C1917"/>
+
+  <path d="M575 222 l-10 10 l10 10" fill="none" stroke="#1C1917" stroke-width="2" stroke-linecap="round"/>
+  <text x="596" y="238" font-size="15" font-weight="600" fill="#1C1917">My jobs</text>
+  <rect x="800" y="218" width="82" height="34" rx="17" fill="#FDF0E2"/>
+  <text x="841" y="240" font-size="13" font-weight="700" fill="#8A4208" text-anchor="middle">Due today</text>
+
+  <!-- reference photo first: that is what he works from -->
+  <rect x="569" y="268" width="302" height="240" rx="16" fill="#EFE9DF"/>
+  <path d="M720 318 l40 66 h-80 z" fill="#D9CBB2"/>
+  <circle cx="720" cy="404" r="26" fill="#E2D8C6"/>
+  <circle cx="720" cy="404" r="12" fill="#CBB894"/>
+  <rect x="585" y="284" width="156" height="30" rx="15" fill="#FFFFFF"/>
+  <text x="663" y="304" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">What it should look like</text>
+  <rect x="762" y="466" width="94" height="30" rx="15" fill="#1C1917"/>
+  <text x="809" y="486" font-size="13" font-weight="600" fill="#FFFFFF" text-anchor="middle">See bigger</text>
+
+  <text x="569" y="546" font-size="20" font-weight="600" fill="#1C1917">Peacock Ruby Pendant</text>
+  <text x="569" y="570" font-size="14" fill="#8A8178">2 pieces · 22K · Antique · MO-2026-118</text>
+
+  <!-- the three numbers, huge -->
+  <rect x="569" y="590" width="302" height="76" rx="14" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="589" y="618" font-size="13" fill="#8A8178">Finished piece must weigh</text>
+  <text x="589" y="650" font-size="26" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">18.200 g</text>
+
+  <rect x="569" y="676" width="302" height="76" rx="14" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="589" y="704" font-size="13" fill="#8A4208">Gold inside it, after stones</text>
+  <text x="589" y="736" font-size="26" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">15.100 g</text>
+
+  <rect x="569" y="762" width="302" height="60" rx="14" fill="#E8F5EE"/>
+  <text x="589" y="788" font-size="13" fill="#15603C">Allowed to be off by</text>
+  <text x="589" y="812" font-size="19" font-weight="600" fill="#15603C" font-family="ui-monospace, Menlo, monospace">± 500 mg</text>
+
+  <text x="569" y="852" font-size="13" fill="#8A8178">Note from the desk: keep the kemp stones deep</text>
+  <text x="569" y="872" font-size="13" fill="#8A8178">set, last pair had two loose.</text>
+
+  <rect x="569" y="888" width="302" height="56" rx="12" fill="#C9961F"/>
+  <text x="720" y="922" font-size="16" font-weight="700" fill="#1C1917" text-anchor="middle">Update what I have done</text>
+
+  <text x="525" y="976" font-size="13" font-weight="700" fill="#57534E">2 · WHAT I HAVE TO MAKE</text>
+
+  <!-- ================= PHONE 3 : update ================= -->
+  <rect x="970" y="144" width="390" height="800" rx="40" fill="#1C1917" filter="url(#ph)"/>
+  <rect x="982" y="156" width="366" height="776" rx="32" fill="#FAF9F7"/>
+  <rect x="1090" y="166" width="150" height="22" rx="11" fill="#1C1917"/>
+
+  <path d="M1020 222 l-10 10 l10 10" fill="none" stroke="#1C1917" stroke-width="2" stroke-linecap="round"/>
+  <text x="1041" y="238" font-size="15" font-weight="600" fill="#1C1917">Peacock Ruby Pendant</text>
+
+  <text x="1014" y="292" font-size="20" font-weight="600" fill="#1C1917">Where is it now?</text>
+  <text x="1014" y="316" font-size="14" fill="#8A8178">Tap one. The desk sees it at once.</text>
+
+  <rect x="1014" y="336" width="302" height="64" rx="14" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <circle cx="1046" cy="368" r="11" fill="#E8F5EE"/>
+  <path d="M1041 368 l4 4 l7 -8" fill="none" stroke="#1D7A4C" stroke-width="2" stroke-linecap="round"/>
+  <text x="1070" y="374" font-size="16" fill="#57534E">Gold received</text>
+
+  <rect x="1014" y="410" width="302" height="64" rx="14" fill="#1C1917"/>
+  <circle cx="1046" cy="442" r="11" fill="#C9961F"/>
+  <text x="1070" y="448" font-size="16" font-weight="600" fill="#FFFFFF">Working on it</text>
+
+  <rect x="1014" y="484" width="302" height="64" rx="14" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <circle cx="1046" cy="516" r="11" fill="none" stroke="#A8A29E" stroke-width="2"/>
+  <text x="1070" y="522" font-size="16" fill="#44403C">Ready for checking</text>
+
+  <rect x="1014" y="558" width="302" height="64" rx="14" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <circle cx="1046" cy="590" r="11" fill="none" stroke="#A8A29E" stroke-width="2"/>
+  <text x="1070" y="596" font-size="16" fill="#44403C">Sent to the showroom</text>
+
+  <text x="1014" y="664" font-size="15" font-weight="600" fill="#1C1917">Add a photo (optional)</text>
+  <rect x="1014" y="680" width="302" height="92" rx="14" fill="#FFFFFF" stroke="#D6D1C8" stroke-dasharray="5 4"/>
+  <circle cx="1165" cy="722" r="20" fill="#F1EFEA"/>
+  <rect x="1156" y="716" width="18" height="13" rx="3" fill="none" stroke="#57534E" stroke-width="2"/>
+  <circle cx="1165" cy="723" r="3.5" fill="none" stroke="#57534E" stroke-width="2"/>
+  <text x="1165" y="760" font-size="13" fill="#57534E" text-anchor="middle">Take a photo of the bench</text>
+
+  <text x="1014" y="812" font-size="15" font-weight="600" fill="#1C1917">Anything to tell the desk?</text>
+  <rect x="1014" y="828" width="302" height="56" rx="14" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="1034" y="862" font-size="14" fill="#A8A29E">Type or speak</text>
+  <circle cx="1292" cy="856" r="14" fill="#F1EFEA"/>
+  <rect x="1288" y="849" width="8" height="12" rx="4" fill="none" stroke="#57534E" stroke-width="1.8"/>
+
+  <rect x="1014" y="896" width="302" height="56" rx="12" fill="#1C1917"/>
+  <text x="1165" y="930" font-size="16" font-weight="700" fill="#FFFFFF" text-anchor="middle">Send the update</text>
+
+  <text x="970" y="976" font-size="13" font-weight="700" fill="#57534E">3 · WHAT I HAVE DONE</text>
+</svg>

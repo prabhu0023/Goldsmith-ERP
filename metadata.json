@@ -1,0 +1,6 @@
+{
+  "name": "Goldsmith ERP",
+  "description": "Unified Jewellery Management Platform featuring single-screen product intake with dynamic weight calculations, out-of-stock goldsmith reorders, manufacturing lifecycle tracking, and executive analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

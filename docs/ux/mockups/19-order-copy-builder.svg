@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="940" viewBox="0 0 1440 940" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="940" fill="#FAF9F7"/>
+
+  <!-- rail -->
+  <rect x="0" y="0" width="248" height="940" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="940" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">Main showroom</text>
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">WORK</text>
+  <circle cx="40" cy="140" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="145" font-size="14" fill="#44403C">Today</text>
+  <rect x="12" y="164" width="224" height="44" rx="10" fill="#1C1917"/>
+  <circle cx="40" cy="186" r="7" fill="#C9961F"/>
+  <text x="62" y="191" font-size="14" font-weight="600" fill="#FFFFFF">Leads</text>
+  <circle cx="40" cy="230" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="235" font-size="14" fill="#44403C">Showroom stock</text>
+  <circle cx="40" cy="274" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="279" font-size="14" fill="#44403C">Sell</text>
+  <circle cx="40" cy="318" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="323" font-size="14" fill="#44403C">Parcels in</text>
+  <line x1="12" y1="822" x2="236" y2="822" stroke="#E7E3DC"/>
+  <circle cx="44" cy="870" r="18" fill="#E2DCD2"/>
+  <text x="44" y="875" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">RV</text>
+  <text x="72" y="864" font-size="14" font-weight="600" fill="#1C1917">Rajesh Verma</text>
+  <text x="72" y="884" font-size="13" fill="#8A8178">Showroom staff · switch</text>
+
+  <!-- header -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">Order copy to a karigar</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">From the Sharma lead · 2 × Temple Haram, Chettinad · this becomes a job on the karigar's phone</text>
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+
+  <!-- ===== LEFT : the brief the karigar will see ===== -->
+  <text x="288" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">WHAT YOU SEND · IMAGES AND THE BRIEF</text>
+  <rect x="288" y="166" width="620" height="420" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <rect x="312" y="190" width="180" height="180" rx="12" fill="#EFE9DF"/>
+  <path d="M402 226 l40 66 h-80 z" fill="#D9CBB2"/>
+  <circle cx="402" cy="312" r="24" fill="#E2D8C6"/>
+  <rect x="504" y="190" width="180" height="86" rx="12" fill="#EFE9DF"/>
+  <circle cx="594" cy="233" r="26" fill="none" stroke="#D9CBB2" stroke-width="8"/>
+  <rect x="504" y="284" width="180" height="86" rx="12" fill="#FFFFFF" stroke="#D6D1C8" stroke-dasharray="5 4"/>
+  <text x="594" y="330" font-size="13" fill="#57534E" text-anchor="middle">Add a photo</text>
+  <text x="708" y="214" font-size="13" fill="#8A8178">3 reference images</text>
+  <text x="708" y="236" font-size="13" fill="#8A8178">attached from the lead</text>
+  <text x="708" y="266" font-size="13" fill="#8A8178">and the catalogue.</text>
+
+  <text x="312" y="412" font-size="13" fill="#8A8178">The brief, in your words and theirs</text>
+  <rect x="312" y="424" width="572" height="140" rx="12" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="332" y="452" font-size="14" fill="#1C1917">Chettinad long haram, Goddess Lakshmi centre,</text>
+  <text x="332" y="474" font-size="14" fill="#1C1917">peacock and elephant motifs, antique matte finish.</text>
+  <text x="332" y="496" font-size="14" fill="#1C1917">Kemp rubies and emeralds. Pair, matched.</text>
+  <text x="332" y="524" font-size="13" fill="#8A8178">Same as the Sharma reference photo — keep the drops</text>
+  <text x="332" y="544" font-size="13" fill="#8A8178">deep-set, last batch had two loose.</text>
+
+  <!-- ===== RIGHT : the numbers and the assignment ===== -->
+  <text x="936" y="150" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">THE TARGETS AND WHO MAKES IT</text>
+  <rect x="936" y="166" width="456" height="420" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <text x="960" y="200" font-size="13" fill="#8A8178">How many</text>
+  <rect x="960" y="210" width="120" height="44" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="980" y="238" font-size="16" font-weight="600" fill="#1C1917">2 pieces</text>
+
+  <text x="1120" y="200" font-size="13" fill="#8A8178">Purity</text>
+  <rect x="1120" y="210" width="248" height="44" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="1140" y="238" font-size="16" font-weight="600" fill="#1C1917">22K (916)</text>
+
+  <text x="960" y="286" font-size="13" fill="#8A8178">Finished piece should weigh</text>
+  <rect x="960" y="296" width="200" height="48" rx="10" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="980" y="327" font-size="18" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">80.000 g</text>
+  <text x="1180" y="315" font-size="13" fill="#8A8178">each · their</text>
+  <text x="1180" y="333" font-size="13" fill="#8A8178">asking weight</text>
+
+  <text x="960" y="378" font-size="13" fill="#8A8178">Allowed to be off by</text>
+  <rect x="960" y="388" width="200" height="48" rx="10" fill="#E8F5EE"/>
+  <text x="980" y="419" font-size="18" font-weight="600" fill="#15603C" font-family="ui-monospace, Menlo, monospace">± 500 mg</text>
+  <text x="1180" y="416" font-size="13" fill="#8A8178">the karigar's wastage</text>
+
+  <line x1="960" y1="462" x2="1368" y2="462" stroke="#F1EFEA"/>
+
+  <text x="960" y="492" font-size="13" fill="#8A8178">Who makes it</text>
+  <rect x="960" y="502" width="408" height="56" rx="10" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <circle cx="990" cy="530" r="16" fill="#E2DCD2"/>
+  <text x="990" y="535" font-size="12" font-weight="600" fill="#44403C" text-anchor="middle">LD</text>
+  <text x="1018" y="525" font-size="15" font-weight="600" fill="#1C1917">Lakshmi Devi · KG-01</text>
+  <text x="1018" y="544" font-size="13" fill="#8A4208">Chettinad specialist · 0.7% loss · always on time</text>
+
+  <!-- ===== BOTTOM : date, gold issued, send ===== -->
+  <text x="288" y="636" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">THE DUE DATE AND THE GOLD YOU HAND OVER</text>
+  <rect x="288" y="652" width="1104" height="140" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+
+  <text x="312" y="686" font-size="13" fill="#8A8178">Due date</text>
+  <rect x="312" y="696" width="220" height="48" rx="10" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="332" y="727" font-size="16" font-weight="600" fill="#1C1917">17 Nov 2026</text>
+  <text x="312" y="770" font-size="13" fill="#8A4208">3 days before the customer needs it, for QC</text>
+
+  <text x="580" y="686" font-size="13" fill="#8A8178">Pure gold issued to Lakshmi</text>
+  <rect x="580" y="696" width="220" height="48" rx="10" fill="#FFFFFF" stroke="#1C1917" stroke-width="2"/>
+  <text x="600" y="727" font-size="16" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">162.400 g</text>
+  <text x="580" y="770" font-size="13" fill="#8A8178">160 g target + her 0.7% wastage, from the metal pool</text>
+
+  <rect x="1052" y="692" width="316" height="56" rx="10" fill="#C9961F"/>
+  <text x="1210" y="726" font-size="15" font-weight="700" fill="#1C1917" text-anchor="middle">Send the order copy</text>
+  <text x="1210" y="772" font-size="13" fill="#8A8178" text-anchor="middle">Lands on Lakshmi's phone to accept</text>
+
+  <!-- footer -->
+  <text x="288" y="836" font-size="13" fill="#8A8178">On send this becomes a karigar job (mockup 09) and starts the make rail: she accepts and confirms the date, works it, marks it ready, hands it over as a parcel.</text>
+  <text x="288" y="860" font-size="13" fill="#8A8178">The gold issued is drawn from the metal pool — including anything recovered from scrapped pieces — and settled against this job when the parcel is reconciled.</text>
+</svg>

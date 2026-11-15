@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="940" viewBox="0 0 1440 940" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="940" fill="#FAF9F7"/>
+
+  <!-- rail -->
+  <rect x="0" y="0" width="248" height="940" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="940" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">Main showroom</text>
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">WORK</text>
+  <circle cx="40" cy="140" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="145" font-size="14" fill="#44403C">Today</text>
+  <rect x="12" y="164" width="224" height="44" rx="10" fill="#1C1917"/>
+  <circle cx="40" cy="186" r="7" fill="#C9961F"/>
+  <text x="62" y="191" font-size="14" font-weight="600" fill="#FFFFFF">Leads</text>
+  <rect x="196" y="177" width="28" height="20" rx="10" fill="#FBE9E7"/>
+  <text x="210" y="191" font-size="12" font-weight="700" fill="#B3261E" text-anchor="middle">2</text>
+  <circle cx="40" cy="230" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="235" font-size="14" fill="#44403C">Showroom stock</text>
+  <circle cx="40" cy="274" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="279" font-size="14" fill="#44403C">Sell</text>
+  <circle cx="40" cy="318" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="323" font-size="14" fill="#44403C">Parcels in</text>
+  <circle cx="40" cy="362" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="367" font-size="14" fill="#44403C">Customers</text>
+  <line x1="12" y1="822" x2="236" y2="822" stroke="#E7E3DC"/>
+  <circle cx="44" cy="870" r="18" fill="#E2DCD2"/>
+  <text x="44" y="875" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">RV</text>
+  <text x="72" y="864" font-size="14" font-weight="600" fill="#1C1917">Rajesh Verma</text>
+  <text x="72" y="884" font-size="13" fill="#8A8178">Showroom staff · switch</text>
+
+  <!-- header -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">Leads</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">Orders that came in by message, and ones you took at the counter. Nothing a customer sends is ever dropped.</text>
+  <rect x="1208" y="34" width="184" height="40" rx="10" fill="#1C1917"/>
+  <path d="M1232 54 h14 M1239 47 v14" stroke="#C9961F" stroke-width="2" stroke-linecap="round"/>
+  <text x="1254" y="59" font-size="14" font-weight="600" fill="#FFFFFF">Add a lead by hand</text>
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+
+  <!-- filter chips -->
+  <rect x="288" y="124" width="150" height="36" rx="18" fill="#1C1917"/>
+  <text x="363" y="147" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Needs a glance · 3</text>
+  <rect x="448" y="124" width="132" height="36" rx="18" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="514" y="147" font-size="14" fill="#44403C" text-anchor="middle">Being worked · 4</text>
+  <rect x="590" y="124" width="104" height="36" rx="18" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="642" y="147" font-size="14" fill="#44403C" text-anchor="middle">All · 11</text>
+  <text x="1368" y="147" font-size="14" fill="#8A8178" text-anchor="end">Oldest first</text>
+
+  <!-- ===== LIST ===== -->
+  <!-- lead 1 : unreadable, flagged, overdue -->
+  <rect x="288" y="180" width="1104" height="96" rx="14" fill="#FFFFFF" stroke="#B3261E" stroke-width="2" filter="url(#sh)"/>
+  <rect x="312" y="204" width="110" height="26" rx="13" fill="#FBE9E7"/>
+  <text x="367" y="222" font-size="12" font-weight="700" fill="#B3261E" text-anchor="middle">Please check</text>
+  <rect x="430" y="204" width="128" height="26" rx="13" fill="#F0F6EF"/>
+  <text x="494" y="222" font-size="12" font-weight="600" fill="#15603C" text-anchor="middle">from WhatsApp</text>
+  <text x="312" y="256" font-size="15" font-weight="600" fill="#1C1917">A photo we could not read · +91 90037 44120</text>
+  <text x="840" y="243" font-size="13" fill="#8A8178">arrived 11 h ago</text>
+  <text x="840" y="263" font-size="13" font-weight="700" fill="#B3261E">8 h limit passed · owner told</text>
+  <rect x="1240" y="206" width="128" height="44" rx="10" fill="#1C1917"/>
+  <text x="1304" y="234" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Open and read</text>
+
+  <!-- lead 2 : parsed, low confidence -->
+  <rect x="288" y="288" width="1104" height="96" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="288" y="288" width="4" height="96" rx="2" fill="#B35309"/>
+  <rect x="312" y="312" width="150" height="26" rx="13" fill="#FDF0E2"/>
+  <text x="387" y="330" font-size="12" font-weight="700" fill="#8A4208" text-anchor="middle">2 fields to confirm</text>
+  <rect x="470" y="312" width="110" height="26" rx="13" fill="#F0F6EF"/>
+  <text x="525" y="330" font-size="12" font-weight="600" fill="#15603C" text-anchor="middle">from WhatsApp</text>
+  <text x="312" y="364" font-size="15" font-weight="600" fill="#1C1917">Sharma wedding · 2 harams, 1 choker · read automatically</text>
+  <text x="840" y="351" font-size="13" fill="#8A8178">arrived 9 h ago</text>
+  <text x="840" y="371" font-size="13" font-weight="700" fill="#B3261E">8 h limit passed · owner told</text>
+  <rect x="1240" y="314" width="128" height="44" rx="10" fill="#C9961F"/>
+  <text x="1304" y="342" font-size="14" font-weight="600" fill="#1C1917" text-anchor="middle">Check and keep</text>
+
+  <!-- lead 3 : parsed, clean, email -->
+  <rect x="288" y="396" width="1104" height="96" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="288" y="396" width="4" height="96" rx="2" fill="#B35309"/>
+  <rect x="312" y="420" width="130" height="26" rx="13" fill="#E8F5EE"/>
+  <path d="M328 433 l4 4 l8 -8" fill="none" stroke="#1D7A4C" stroke-width="2" stroke-linecap="round"/>
+  <text x="378" y="438" font-size="12" font-weight="600" fill="#15603C" text-anchor="middle">read cleanly</text>
+  <rect x="450" y="420" width="88" height="26" rx="13" fill="#EEF2F8"/>
+  <text x="494" y="438" font-size="12" font-weight="600" fill="#3B5171" text-anchor="middle">by email</text>
+  <text x="312" y="472" font-size="15" font-weight="600" fill="#1C1917">Bulk chain order · Erode wholesaler · 40 pieces</text>
+  <text x="840" y="459" font-size="13" fill="#8A8178">arrived 2 h ago</text>
+  <text x="840" y="479" font-size="13" fill="#15603C">within time · 6 h left</text>
+  <rect x="1240" y="422" width="128" height="44" rx="10" fill="#1C1917"/>
+  <text x="1304" y="450" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Open</text>
+
+  <!-- lead 4 : manual -->
+  <rect x="288" y="504" width="1104" height="96" rx="14" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="312" y="528" width="150" height="26" rx="13" fill="#F1EFEA"/>
+  <text x="387" y="546" font-size="12" font-weight="600" fill="#44403C" text-anchor="middle">typed at the counter</text>
+  <text x="312" y="580" font-size="15" font-weight="600" fill="#1C1917">Mrs Nair · wants a Polki choker like the one in the window</text>
+  <text x="840" y="567" font-size="13" fill="#8A8178">taken 40 min ago by Rajesh</text>
+  <text x="840" y="587" font-size="13" fill="#15603C">being worked</text>
+  <rect x="1240" y="530" width="128" height="44" rx="10" fill="#1C1917"/>
+  <text x="1304" y="558" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Open</text>
+
+  <!-- footnote -->
+  <text x="288" y="640" font-size="13" fill="#8A8178">A message we cannot read still becomes a lead, flagged in red. It is never thrown away — the clock just starts ticking on it like any other.</text>
+
+  <!-- ===== LEGEND : the two ways in ===== -->
+  <text x="288" y="700" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.4">EVERY LEAD ARRIVES ONE OF TWO WAYS</text>
+
+  <rect x="288" y="716" width="540" height="164" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="312" y="740" width="150" height="28" rx="14" fill="#F0F6EF"/>
+  <text x="387" y="759" font-size="13" font-weight="700" fill="#15603C" text-anchor="middle">1 · By itself</text>
+  <text x="312" y="796" font-size="14" fill="#1C1917">A PO comes by email or WhatsApp. The system reads it</text>
+  <text x="312" y="816" font-size="14" fill="#1C1917">and makes the lead on its own — you never retype it.</text>
+  <text x="312" y="844" font-size="13" fill="#8A8178">If it read cleanly, open and work it. If it was unsure, or could</text>
+  <text x="312" y="864" font-size="13" fill="#8A8178">not read at all, it is flagged for a few seconds of your eyes.</text>
+
+  <rect x="852" y="716" width="540" height="164" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="876" y="740" width="196" height="28" rx="14" fill="#F1EFEA"/>
+  <text x="974" y="759" font-size="13" font-weight="700" fill="#44403C" text-anchor="middle">2 · You add it by hand</text>
+  <text x="876" y="796" font-size="14" fill="#1C1917">A walk-in or a phone call. You type it straight in — there</text>
+  <text x="876" y="816" font-size="14" fill="#1C1917">is no message to read, so there is nothing to check.</text>
+  <text x="876" y="844" font-size="13" fill="#8A8178">This is the preorder you raise at the counter. From here it</text>
+  <text x="876" y="864" font-size="13" fill="#8A8178">behaves exactly like one that arrived by message.</text>
+</svg>

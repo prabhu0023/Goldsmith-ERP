@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" font-family="Inter, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif">
+  <defs>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1C1917" flood-opacity="0.07"/>
+    </filter>
+    <filter id="drawer" x="-30%" y="-10%" width="160%" height="120%">
+      <feDropShadow dx="-6" dy="0" stdDeviation="12" flood-color="#1C1917" flood-opacity="0.13"/>
+    </filter>
+  </defs>
+  <rect width="1440" height="900" fill="#FAF9F7"/>
+
+  <!-- rail (collapsed to icons + labels, same as home) -->
+  <rect x="0" y="0" width="248" height="900" fill="#FFFFFF"/>
+  <line x1="248" y1="0" x2="248" y2="900" stroke="#E7E3DC"/>
+  <rect x="24" y="24" width="40" height="40" rx="10" fill="#C9961F"/>
+  <text x="44" y="51" font-size="14" font-weight="700" fill="#1C1917" text-anchor="middle" font-family="Georgia, serif">JGD</text>
+  <text x="76" y="42" font-size="15" font-weight="600" fill="#1C1917">Jai Gulab Dev</text>
+  <text x="76" y="60" font-size="13" fill="#8A8178">Main showroom</text>
+  <text x="24" y="104" font-size="12" font-weight="700" fill="#A8A29E" letter-spacing="1.2">WORK</text>
+  <circle cx="40" cy="140" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="145" font-size="14" fill="#44403C">Today</text>
+  <rect x="12" y="164" width="224" height="44" rx="10" fill="#1C1917"/>
+  <circle cx="40" cy="186" r="7" fill="#C9961F"/>
+  <text x="62" y="191" font-size="14" font-weight="600" fill="#FFFFFF">Showroom stock</text>
+  <circle cx="40" cy="230" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="235" font-size="14" fill="#44403C">Sell</text>
+  <circle cx="40" cy="274" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="279" font-size="14" fill="#44403C">Parcels in</text>
+  <rect x="196" y="265" width="28" height="20" rx="10" fill="#FDF0E2"/>
+  <text x="210" y="279" font-size="12" font-weight="700" fill="#8A4208" text-anchor="middle">2</text>
+  <circle cx="40" cy="318" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <text x="62" y="323" font-size="14" fill="#44403C">Customers</text>
+  <line x1="12" y1="782" x2="236" y2="782" stroke="#E7E3DC"/>
+  <circle cx="44" cy="830" r="18" fill="#E2DCD2"/>
+  <text x="44" y="835" font-size="13" font-weight="600" fill="#44403C" text-anchor="middle">RV</text>
+  <text x="72" y="824" font-size="14" font-weight="600" fill="#1C1917">Rajesh Verma</text>
+  <text x="72" y="844" font-size="13" fill="#8A8178">Showroom staff · switch</text>
+
+  <!-- top bar: ONE title, ONE search, ONE action -->
+  <text x="288" y="52" font-size="24" font-weight="600" fill="#1C1917">Showroom stock</text>
+  <text x="288" y="76" font-size="14" fill="#8A8178">42 pieces you can sell · 1,847.2 g pure gold on the floor</text>
+  <rect x="880" y="34" width="296" height="40" rx="10" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <circle cx="904" cy="54" r="7" fill="none" stroke="#8A8178" stroke-width="1.6"/>
+  <path d="M909 59 l6 6" stroke="#8A8178" stroke-width="1.6" stroke-linecap="round"/>
+  <text x="922" y="59" font-size="14" fill="#8A8178">Search tag, HUID, name or collection</text>
+  <rect x="1192" y="34" width="208" height="40" rx="10" fill="#1C1917"/>
+  <path d="M1216 54 h14 M1223 47 v14" stroke="#C9961F" stroke-width="2" stroke-linecap="round"/>
+  <text x="1238" y="59" font-size="14" font-weight="600" fill="#FFFFFF">Register new arrival</text>
+
+  <!-- filter row: 4 chips + one overflow, nothing else -->
+  <line x1="248" y1="104" x2="1440" y2="104" stroke="#E7E3DC"/>
+  <rect x="288" y="124" width="132" height="36" rx="18" fill="#1C1917"/>
+  <text x="354" y="147" font-size="14" font-weight="600" fill="#FFFFFF" text-anchor="middle">Can sell · 42</text>
+  <rect x="430" y="124" width="140" height="36" rx="18" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="500" y="147" font-size="14" fill="#44403C" text-anchor="middle">With QC · 5</text>
+  <rect x="580" y="124" width="140" height="36" rx="18" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="650" y="147" font-size="14" fill="#44403C" text-anchor="middle">Sold out · 9</text>
+  <rect x="730" y="124" width="150" height="36" rx="18" fill="#FFFFFF" stroke="#E7E3DC"/>
+  <text x="805" y="147" font-size="14" fill="#44403C" text-anchor="middle">Billed · 23</text>
+  <rect x="902" y="124" width="124" height="36" rx="18" fill="#FFFFFF" stroke="#D6D1C8" stroke-dasharray="4 3"/>
+  <text x="964" y="147" font-size="14" fill="#57534E" text-anchor="middle">More filters</text>
+  <text x="1368" y="147" font-size="14" fill="#8A8178" text-anchor="end">Newest first</text>
+  <path d="M1382 140 l6 6 l6 -6" fill="none" stroke="#8A8178" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- ===== card grid (3 visible behind drawer) ===== -->
+  <!-- card 1 selected -->
+  <rect x="288" y="188" width="276" height="330" rx="16" fill="#FFFFFF" stroke="#C9961F" stroke-width="2" filter="url(#sh)"/>
+  <rect x="300" y="200" width="252" height="164" rx="10" fill="#EFE9DF"/>
+  <circle cx="426" cy="282" r="46" fill="#E2D8C6"/>
+  <circle cx="426" cy="282" r="26" fill="#D9CBB2"/>
+  <rect x="312" y="212" width="112" height="28" rx="14" fill="#E8F5EE"/>
+  <circle cx="330" cy="226" r="4" fill="#1D7A4C"/>
+  <text x="342" y="231" font-size="13" font-weight="600" fill="#15603C">In showcase</text>
+  <text x="300" y="392" font-size="16" font-weight="600" fill="#1C1917">Antique Kundan Choker</text>
+  <text x="300" y="414" font-size="13" fill="#8A8178">TAG-8841 · 22K · Kundan</text>
+  <line x1="300" y1="432" x2="552" y2="432" stroke="#F1EFEA"/>
+  <text x="300" y="458" font-size="13" fill="#8A8178">Pure gold</text>
+  <text x="552" y="460" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">41.590 g</text>
+  <text x="300" y="482" font-size="13" fill="#8A8178">Gross · stones</text>
+  <text x="552" y="483" font-size="15" font-weight="600" fill="#1C1917" text-anchor="end">48.650 g · 7.060 g</text>
+
+  <!-- card 2 -->
+  <rect x="588" y="188" width="276" height="330" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="600" y="200" width="252" height="164" rx="10" fill="#EFE9DF"/>
+  <circle cx="726" cy="282" r="40" fill="none" stroke="#D9CBB2" stroke-width="12"/>
+  <rect x="612" y="212" width="112" height="28" rx="14" fill="#E8F5EE"/>
+  <circle cx="630" cy="226" r="4" fill="#1D7A4C"/>
+  <text x="642" y="231" font-size="13" font-weight="600" fill="#15603C">In showcase</text>
+  <text x="600" y="392" font-size="16" font-weight="600" fill="#1C1917">Floral Polki Bangles</text>
+  <text x="600" y="414" font-size="13" fill="#8A8178">TAG-8802 · 22K · Polki · pair</text>
+  <line x1="600" y1="432" x2="852" y2="432" stroke="#F1EFEA"/>
+  <text x="600" y="458" font-size="13" fill="#8A8178">Pure gold</text>
+  <text x="852" y="460" font-size="20" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace" text-anchor="end">57.490 g</text>
+  <text x="600" y="482" font-size="13" fill="#8A8178">Gross · stones</text>
+  <text x="852" y="483" font-size="15" font-weight="600" fill="#1C1917" text-anchor="end">64.200 g · 6.710 g</text>
+
+  <!-- card 3 : sold out, single clear recovery action -->
+  <rect x="888" y="188" width="276" height="330" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="900" y="200" width="252" height="164" rx="10" fill="#EFE9DF"/>
+  <path d="M1026 240 l34 56 h-68 z" fill="#D9CBB2"/>
+  <circle cx="1026" cy="310" r="12" fill="#E2D8C6"/>
+  <rect x="912" y="212" width="98" height="28" rx="14" fill="#FDF0E2"/>
+  <circle cx="930" cy="226" r="4" fill="#B35309"/>
+  <text x="942" y="231" font-size="13" font-weight="600" fill="#8A4208">Sold out</text>
+  <text x="900" y="392" font-size="16" font-weight="600" fill="#1C1917">Peacock Ruby Pendant</text>
+  <text x="900" y="414" font-size="13" fill="#8A8178">TAG-7914 · 22K · Antique</text>
+  <line x1="900" y1="432" x2="1152" y2="432" stroke="#F1EFEA"/>
+  <text x="900" y="458" font-size="13" fill="#8A8178">Asked for 4 times since July</text>
+  <rect x="900" y="470" width="252" height="36" rx="9" fill="#C9961F"/>
+  <text x="1026" y="493" font-size="14" font-weight="600" fill="#1C1917" text-anchor="middle">Order another from Vijay</text>
+
+  <!-- second row peeking -->
+  <rect x="288" y="542" width="276" height="330" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="300" y="554" width="252" height="164" rx="10" fill="#EFE9DF"/>
+  <rect x="588" y="542" width="276" height="330" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="600" y="554" width="252" height="164" rx="10" fill="#EFE9DF"/>
+  <rect x="888" y="542" width="276" height="330" rx="16" fill="#FFFFFF" stroke="#E7E3DC" filter="url(#sh)"/>
+  <rect x="900" y="554" width="252" height="164" rx="10" fill="#EFE9DF"/>
+
+  <!-- ===== DETAIL DRAWER ===== -->
+  <rect x="960" y="0" width="480" height="900" fill="#FFFFFF" filter="url(#drawer)"/>
+  <line x1="960" y1="0" x2="960" y2="900" stroke="#E7E3DC"/>
+
+  <path d="M992 36 l16 16 M1008 36 l-16 16" stroke="#57534E" stroke-width="1.8" stroke-linecap="round"/>
+  <rect x="1032" y="30" width="112" height="28" rx="14" fill="#E8F5EE"/>
+  <circle cx="1050" cy="44" r="4" fill="#1D7A4C"/>
+  <text x="1062" y="49" font-size="13" font-weight="600" fill="#15603C">In showcase</text>
+  <text x="1408" y="49" font-size="14" fill="#8A8178" text-anchor="end">13 days old</text>
+
+  <text x="992" y="96" font-size="22" font-weight="600" fill="#1C1917">Antique Kundan Choker</text>
+  <text x="992" y="122" font-size="14" fill="#8A8178">Festive Bridal 2026 · 16 in adjustable dori</text>
+
+  <!-- hero weight block: the one number that matters -->
+  <rect x="992" y="146" width="416" height="118" rx="14" fill="#FBF3E0" stroke="#EBD9A8"/>
+  <text x="1016" y="178" font-size="12" font-weight="700" fill="#8A4208" letter-spacing="1.2">PURE GOLD IN THIS PIECE</text>
+  <text x="1016" y="222" font-size="34" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">41.590 g</text>
+  <text x="1016" y="248" font-size="13" fill="#8A4208">48.650 g on the scale, minus 7.060 g of stones, pearls and lac</text>
+  <rect x="1300" y="166" width="88" height="30" rx="8" fill="#FFFFFF" stroke="#EBD9A8"/>
+  <text x="1344" y="186" font-size="13" font-weight="600" fill="#8A4208" text-anchor="middle">Breakdown</text>
+  <path d="M1352 236 l10 -10 l10 10" fill="none" stroke="#B8860B" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- key facts, two columns, no badges -->
+  <text x="992" y="300" font-size="12" font-weight="700" fill="#8A8178" letter-spacing="1.2">THE FACTS</text>
+  <text x="992" y="330" font-size="13" fill="#8A8178">Tag</text>
+  <text x="992" y="352" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">TAG-2026-8841</text>
+  <text x="1208" y="330" font-size="13" fill="#8A8178">BIS hallmark</text>
+  <text x="1208" y="352" font-size="15" font-weight="600" fill="#1C1917" font-family="ui-monospace, Menlo, monospace">9X82K1</text>
+  <line x1="992" y1="372" x2="1408" y2="372" stroke="#F1EFEA"/>
+  <text x="992" y="400" font-size="13" fill="#8A8178">Made by</text>
+  <text x="992" y="422" font-size="15" font-weight="600" fill="#1C1917">Mahesh Soni (KG-02)</text>
+  <text x="1208" y="400" font-size="13" fill="#8A8178">Came in with</text>
+  <text x="1208" y="422" font-size="15" font-weight="600" fill="#1C1917">BATCH-2026-041</text>
+  <line x1="992" y1="442" x2="1408" y2="442" stroke="#F1EFEA"/>
+  <text x="992" y="470" font-size="13" fill="#8A8178">Days in stock</text>
+  <text x="992" y="494" font-size="20" font-weight="600" fill="#1C1917">13 days</text>
+  <text x="1208" y="470" font-size="13" fill="#8A8178">Reordered before</text>
+  <text x="1208" y="494" font-size="20" font-weight="600" fill="#1C1917">3 times</text>
+
+  <!-- collapsed sections: progressive disclosure -->
+  <rect x="992" y="526" width="416" height="52" rx="12" fill="#FAF9F7" stroke="#E7E3DC"/>
+  <text x="1016" y="558" font-size="14" font-weight="600" fill="#1C1917">Weight breakdown · 5 inclusions</text>
+  <path d="M1372 548 l8 8 l8 -8" fill="none" stroke="#57534E" stroke-width="1.8" stroke-linecap="round"/>
+
+  <rect x="992" y="590" width="416" height="52" rx="12" fill="#FAF9F7" stroke="#E7E3DC"/>
+  <text x="1016" y="622" font-size="14" font-weight="600" fill="#1C1917">Edit history · 2 entries</text>
+  <path d="M1372 612 l8 8 l8 -8" fill="none" stroke="#57534E" stroke-width="1.8" stroke-linecap="round"/>
+
+  <rect x="992" y="654" width="416" height="52" rx="12" fill="#FAF9F7" stroke="#E7E3DC"/>
+  <text x="1016" y="686" font-size="14" font-weight="600" fill="#1C1917">Description and photos</text>
+  <path d="M1372 676 l8 8 l8 -8" fill="none" stroke="#57534E" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- sticky actions: one primary, two quiet -->
+  <line x1="960" y1="750" x2="1440" y2="750" stroke="#E7E3DC"/>
+  <rect x="992" y="778" width="200" height="48" rx="10" fill="#1C1917"/>
+  <text x="1092" y="808" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Add to a sale</text>
+  <rect x="1204" y="778" width="100" height="48" rx="10" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <text x="1254" y="808" font-size="15" font-weight="600" fill="#1C1917" text-anchor="middle">Edit tag</text>
+  <rect x="1316" y="778" width="92" height="48" rx="10" fill="#FFFFFF" stroke="#D6D1C8"/>
+  <text x="1362" y="808" font-size="15" font-weight="600" fill="#1C1917" text-anchor="middle">Share</text>
+  <text x="992" y="856" font-size="13" fill="#8A8178">Editing a tag needs the owner's WhatsApp code.</text>
+</svg>
