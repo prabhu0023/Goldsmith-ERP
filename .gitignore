@@ -2,11 +2,12 @@ node_modules/
 build/
 dist/
 coverage/
+*.tsbuildinfo
 .DS_Store
 *.log
 .env*
 !.env.example
-
 # Local working folders
 docs.backup-*/
 .agents/
+.worktrees/
