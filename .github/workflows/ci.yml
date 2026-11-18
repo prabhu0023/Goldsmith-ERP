@@ -1,0 +1,136 @@
+# CI for every push and pull request (EP-01-S7 to S10).
+# Each check is its own job so a failure in one does not hide the others, and each job name is a
+# required status check on main (see docs/setup/branch-protection.md, EP-01-S11):
+#   Lint, Typecheck, Test, Build, Secret scan
+# A deploy job (EP-01-S12, waiting on decision D1a) can later be added with `needs:` on these
+# jobs and `if: github.ref == 'refs/heads/main'`, consuming the release artefact from Build.
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  GITLEAKS_VERSION: 8.30.1
+  GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Lint (all packages + shared duplicate check)
+        run: npx biome lint --reporter=github && node scripts/check-shared-duplicates.mjs
+
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Typecheck shared
+        if: ${{ !cancelled() }}
+        run: npm run typecheck -w @goldsmith/shared
+      - name: Typecheck web
+        if: ${{ !cancelled() }}
+        run: npm run typecheck -w @goldsmith/web
+      - name: Typecheck api
+        if: ${{ !cancelled() }}
+        run: npm run typecheck -w @goldsmith/api
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Test shared
+        if: ${{ !cancelled() }}
+        run: npm test -w @goldsmith/shared -- --reporter=default --reporter=github-actions
+      - name: Test web
+        if: ${{ !cancelled() }}
+        run: npm test -w @goldsmith/web -- --reporter=default --reporter=github-actions
+      - name: Test api
+        if: ${{ !cancelled() }}
+        run: npm test -w @goldsmith/api -- --reporter=default --reporter=github-actions
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install
+        run: npm ci
+      # Dependency order: shared first, then web and api.
+      - name: Build shared
+        run: npm run build -w @goldsmith/shared
+      - name: Build web
+        run: npm run build -w @goldsmith/web
+      - name: Build api
+        run: npm run build -w @goldsmith/api
+      - name: Store release artefact (main only)
+        if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-${{ github.sha }}
+          path: |
+            packages/shared/dist
+            packages/web/dist
+            packages/api/dist
+            packages/shared/package.json
+            packages/api/package.json
+            package.json
+            package-lock.json
+          if-no-files-found: error
+          retention-days: 90
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Install gitleaks (checksum verified)
+        run: |
+          curl -sSfL -o gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum --check
+          tar -xzf gitleaks.tar.gz gitleaks
+          rm gitleaks.tar.gz
+      - name: Scan every commit (values redacted)
+        run: ./gitleaks git --config .gitleaks.toml --redact --verbose --no-banner .
