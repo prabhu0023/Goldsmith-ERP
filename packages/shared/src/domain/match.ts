@@ -1,5 +1,5 @@
-import type { Parcel, Piece, Scale, Verdict } from '../types/jewellery';
-import { fromU, fmtG, netOf, toU, trimNum } from './weights';
+import type { Parcel, Piece, Scale, Verdict } from '../types/jewellery.js';
+import { fromU, fmtG, netOf, toU, trimNum } from './weights.js';
 
 export interface CeilingRow {
   scaleId: string;

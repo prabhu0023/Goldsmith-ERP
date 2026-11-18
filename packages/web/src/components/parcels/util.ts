@@ -1,6 +1,6 @@
 import type { RouteId } from '../../nav';
 import { evaluate } from '../../store/selectors';
-import type { AppState, Parcel, RoleId } from '../../types/jewellery';
+import type { AppState, Parcel, RoleId } from '@goldsmith/shared';
 
 export interface Target {
   id: RouteId;

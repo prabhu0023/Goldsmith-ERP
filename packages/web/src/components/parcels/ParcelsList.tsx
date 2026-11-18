@@ -1,9 +1,9 @@
 import { Plus } from 'lucide-react';
-import { ago } from '../../domain/clock';
-import { fmtG, fromU } from '../../domain/weights';
+import { ago } from '@goldsmith/shared';
+import { fmtG, fromU } from '@goldsmith/shared';
 import { evaluate } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Parcel } from '../../types/jewellery';
+import type { Parcel } from '@goldsmith/shared';
 import { Button, Card, PageHeader, Pill, SectionLabel, StatusChip } from '../ui';
 import { parcelTarget } from './util';
 

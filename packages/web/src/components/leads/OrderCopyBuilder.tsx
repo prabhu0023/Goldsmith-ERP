@@ -1,10 +1,10 @@
 import { ArrowLeft, Check } from 'lucide-react';
 import { useState } from 'react';
-import { DAY, startOfDay } from '../../domain/clock';
-import { fmtG, parseWeight, round4 } from '../../domain/weights';
+import { DAY, startOfDay } from '@goldsmith/shared';
+import { fmtG, parseWeight, round4 } from '@goldsmith/shared';
 import { imageList } from '../../data/images';
 import { useStore } from '../../store/StoreProvider';
-import type { Karigar, Lead, LeadItem } from '../../types/jewellery';
+import type { Karigar, Lead, LeadItem } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, Textarea, cn } from '../ui';
 import { fromDateInput, toDateInput } from './util';
 

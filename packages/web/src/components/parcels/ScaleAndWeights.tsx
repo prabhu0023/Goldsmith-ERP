@@ -1,4 +1,4 @@
-import { trimNum } from '../../domain/weights';
+import { trimNum } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
 import { Field, Input, Select } from '../ui';
 

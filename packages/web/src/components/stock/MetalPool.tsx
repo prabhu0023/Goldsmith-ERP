@@ -1,5 +1,5 @@
-import { fmtDateTime } from '../../domain/clock';
-import { fmtG, fmtSignedG } from '../../domain/weights';
+import { fmtDateTime } from '@goldsmith/shared';
+import { fmtG, fmtSignedG } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
 import { Card, SectionLabel, WeightReadout } from '../ui';
 

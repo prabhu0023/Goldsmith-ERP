@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { fmtG, round4 } from '../../domain/weights';
+import { fmtG, round4 } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, cn } from '../ui';
 import { phoneLooksValid } from './util';

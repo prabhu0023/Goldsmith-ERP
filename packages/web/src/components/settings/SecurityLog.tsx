@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { fmtDateTime } from '../../domain/clock';
+import { fmtDateTime } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
-import type { AuditKind } from '../../types/jewellery';
+import type { AuditKind } from '@goldsmith/shared';
 import { Card, PageHeader, Pill, SectionLabel, cn } from '../ui';
 
 type Group = 'all' | 'edits' | 'losses' | 'problems' | 'scrap' | 'stock-out' | 'rules';

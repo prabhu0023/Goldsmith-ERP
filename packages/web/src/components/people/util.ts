@@ -1,5 +1,5 @@
-import type { Customer } from '../../types/jewellery';
-import { sumG } from '../../domain/weights';
+import type { Customer } from '@goldsmith/shared';
+import { sumG } from '@goldsmith/shared';
 
 export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 

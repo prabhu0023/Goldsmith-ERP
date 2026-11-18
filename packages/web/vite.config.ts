@@ -1,15 +1,17 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
-
+import {defaultClientConditions, defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(import.meta.dirname, '.'),
       },
+      // Resolve @goldsmith/shared to its TypeScript source, so edits in shared reload the app
+      // without a separate shared build.
+      conditions: ['@goldsmith/source', ...defaultClientConditions],
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

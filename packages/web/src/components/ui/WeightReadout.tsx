@@ -1,4 +1,4 @@
-import { fmtG } from '../../domain/weights';
+import { fmtG } from '@goldsmith/shared';
 import { cn } from './cn';
 
 interface Props {

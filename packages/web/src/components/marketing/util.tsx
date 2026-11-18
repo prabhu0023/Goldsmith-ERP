@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import type { Customer, CustomerGroup } from '../../types/jewellery';
+import type { Customer, CustomerGroup } from '@goldsmith/shared';
 
 export const GROUPS: CustomerGroup[] = ['VIP Bridal', 'High net worth', 'Regular', 'Wholesale'];
 

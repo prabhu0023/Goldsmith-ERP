@@ -1,10 +1,10 @@
 import { Check, Circle } from 'lucide-react';
 import { useState } from 'react';
-import { ago } from '../../domain/clock';
-import { fmtG, fmtMg, netOf, parseWeight, toU } from '../../domain/weights';
+import { ago } from '@goldsmith/shared';
+import { fmtG, fmtMg, netOf, parseWeight, toU } from '@goldsmith/shared';
 import { parcelPieces } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Parcel, Piece } from '../../types/jewellery';
+import type { Parcel, Piece } from '@goldsmith/shared';
 import { Button, Card, Notice, PageHeader, QueueReview, SectionLabel, cn } from '../ui';
 import { WeightField } from './ScaleAndWeights';
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { ago, fmtLongDate, fmtTime, sameDay } from '../../domain/clock';
-import { fmtG, fromU, netOf, sumG } from '../../domain/weights';
+import { ago, fmtLongDate, fmtTime, sameDay } from '@goldsmith/shared';
+import { fmtG, fromU, netOf, sumG } from '@goldsmith/shared';
 import {
   agreedDate,
   evaluate,
@@ -14,7 +14,7 @@ import {
   pureGoldOnFloor,
 } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Karigar, Problem, Settings } from '../../types/jewellery';
+import type { Karigar, Problem, Settings } from '@goldsmith/shared';
 import { fieldWords, showValue } from '../stock/PieceDrawer';
 import { AttentionCard, Button, Card, Input, Notice, SectionLabel, StatusChip, WeightReadout, cn } from '../ui';
 import { avgGapMg, firstName, gapPhrase, netGapG, numberWord, plural } from './util';

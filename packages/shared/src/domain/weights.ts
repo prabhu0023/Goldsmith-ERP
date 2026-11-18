@@ -3,7 +3,11 @@
  * so a gap of exactly zero is really zero. Format only at the edge, with fmtG / fmtMg.
  */
 
-/** Units per gram (1 unit = 0.00001 g = 0.01 mg). Four-decimal weights are multiples of 10 units. */
+/**
+ * Units per gram (1 unit = 0.00001 g = 0.01 mg). Four-decimal weights are multiples of 10 units.
+ * Gap G10: the stored unit is still open here. EP-02 settles it in favour of integer units of
+ * 0.0001 g; until then this constant stays unchanged.
+ */
 export const UNITS_PER_G = 100000;
 
 export const toU = (g: number): number => Math.round(g * UNITS_PER_G);

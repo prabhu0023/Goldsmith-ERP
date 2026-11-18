@@ -1,9 +1,9 @@
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
-import { fmtG, fmtMg, netOf, parseWeight, toU } from '../../domain/weights';
+import { fmtG, fmtMg, netOf, parseWeight, toU } from '@goldsmith/shared';
 import { openEditFor } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { EditableField, Piece } from '../../types/jewellery';
+import type { EditableField, Piece } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, Textarea } from '../ui';
 import { fieldWords, showValue } from './PieceDrawer';
 

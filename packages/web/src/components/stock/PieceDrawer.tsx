@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { fmtDateTime } from '../../domain/clock';
-import { fmtG, netOf } from '../../domain/weights';
+import { fmtDateTime } from '@goldsmith/shared';
+import { fmtG, netOf } from '@goldsmith/shared';
 import { daysInStock, openEditFor } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { EditableField, Piece } from '../../types/jewellery';
+import type { EditableField, Piece } from '@goldsmith/shared';
 import { ProblemBanner } from '../problems/ProblemBanner';
 import { RaiseProblem } from '../problems/RaiseProblem';
 import { Button, DetailDrawer, DrawerSection, Modal, Notice, StatusChip, Textarea, ValueSlot, WeightReadout } from '../ui';

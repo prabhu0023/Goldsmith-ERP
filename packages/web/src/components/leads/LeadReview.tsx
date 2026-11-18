@@ -1,9 +1,9 @@
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
-import { fmtDate, fmtTime } from '../../domain/clock';
-import { slaState } from '../../domain/leads';
+import { fmtDate, fmtTime } from '@goldsmith/shared';
+import { slaState } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
-import type { Lead } from '../../types/jewellery';
+import type { Lead } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, StatusChip } from '../ui';
 import { ItemsEditor, parseRows, rowsFromItems } from './ItemsEditor';
 import { fromDateInput, sourceLabel, toDateInput } from './util';

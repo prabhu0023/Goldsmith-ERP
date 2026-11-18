@@ -1,9 +1,9 @@
 import { Gift, PackagePlus, ReceiptText, Search, UserPlus } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
-import { ago, fmtLongDate, sameDay } from '../../domain/clock';
-import { slaState } from '../../domain/leads';
-import { fmtG, netOf, sumG } from '../../domain/weights';
+import { ago, fmtLongDate, sameDay } from '@goldsmith/shared';
+import { slaState } from '@goldsmith/shared';
+import { fmtG, netOf, sumG } from '@goldsmith/shared';
 import type { RouteId } from '../../nav';
 import {
   evaluate,
@@ -16,7 +16,7 @@ import {
   wishesDueToday,
 } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Lead } from '../../types/jewellery';
+import type { Lead } from '@goldsmith/shared';
 import { AttentionCard, Button, Card, Input, SectionLabel, WeightReadout } from '../ui';
 import type { CardTone } from '../ui';
 import { parcelTarget } from '../parcels/util';

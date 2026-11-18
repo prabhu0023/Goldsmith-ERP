@@ -1,9 +1,9 @@
 import { ArrowLeft, Hammer, PackageCheck } from 'lucide-react';
 import { useState } from 'react';
-import { fmtDayMonth } from '../../domain/clock';
-import { fmtG, netOf } from '../../domain/weights';
+import { fmtDayMonth } from '@goldsmith/shared';
+import { fmtG, netOf } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
-import type { AppState, Lead, LeadItem, Piece } from '../../types/jewellery';
+import type { AppState, Lead, LeadItem, Piece } from '@goldsmith/shared';
 import { Button, Card, Modal, Notice, PageHeader, Pill, SectionLabel, Select, StatusChip, Textarea } from '../ui';
 import { itemsLine } from './util';
 

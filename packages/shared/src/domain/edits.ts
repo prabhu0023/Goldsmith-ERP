@@ -1,5 +1,5 @@
-import type { PieceEdit } from '../types/jewellery';
-import { MIN } from './clock';
+import type { PieceEdit } from '../types/jewellery.js';
+import { MIN } from './clock.js';
 
 export const TOKEN_TTL_MS = 10 * MIN;
 

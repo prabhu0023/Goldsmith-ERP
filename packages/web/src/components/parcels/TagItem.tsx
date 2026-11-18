@@ -1,10 +1,10 @@
 import { Check } from 'lucide-react';
 import { useState } from 'react';
 import { imageList } from '../../data/images';
-import { fmtG, fromU, parseWeight, toU } from '../../domain/weights';
+import { fmtG, fromU, parseWeight, toU } from '@goldsmith/shared';
 import { evaluate, parcelPieces } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Parcel, Piece } from '../../types/jewellery';
+import type { Parcel, Piece } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Notice, SectionLabel, Select, StepFrame, cn } from '../ui';
 import { ScalePicker, WeightField } from './ScaleAndWeights';
 import { PURITIES, nextTagNumber } from './util';

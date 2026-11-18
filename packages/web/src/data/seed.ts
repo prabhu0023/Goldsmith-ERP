@@ -3,8 +3,8 @@
  * screens read the same as the drawings. Everything is laid out around DEMO_BASE
  * (Sunday 1 November 2026, 11:06).
  */
-import { DEMO_BASE, DAY, HOUR, MIN, daysAgo, dueIn, hoursAgo } from '../domain/clock';
-import { round4, toU, fromU } from '../domain/weights';
+import { DEMO_BASE, DAY, HOUR, MIN, daysAgo, dueIn, hoursAgo } from '@goldsmith/shared';
+import { round4, toU, fromU } from '@goldsmith/shared';
 import type {
   AppState,
   AuditEntry,
@@ -17,7 +17,7 @@ import type {
   Piece,
   PoolEntry,
   StockOutRecord,
-} from '../types/jewellery';
+} from '@goldsmith/shared';
 import { images, imageForKey } from './images';
 import { BILLED_EARLIER, BILLED_TODAY, STOCK_ROWS } from './seedRows';
 import type { ImageKey } from './seedRows';

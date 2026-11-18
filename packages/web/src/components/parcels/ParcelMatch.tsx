@@ -1,11 +1,11 @@
 import { OctagonAlert } from 'lucide-react';
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { fmtDate, fmtTime } from '../../domain/clock';
-import { fmtG, fmtMg, fromU, netOf } from '../../domain/weights';
+import { fmtDate, fmtTime } from '@goldsmith/shared';
+import { fmtG, fmtMg, fromU, netOf } from '@goldsmith/shared';
 import { evaluate, parcelPieces } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Verdict } from '../../types/jewellery';
+import type { Verdict } from '@goldsmith/shared';
 import { ProblemBanner } from '../problems/ProblemBanner';
 import { RaiseProblem } from '../problems/RaiseProblem';
 import { Button, Card, MatchGauge, Notice, SectionLabel, StatusChip, StepFrame, cn } from '../ui';

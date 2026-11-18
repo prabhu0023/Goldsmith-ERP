@@ -1,6 +1,6 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { fmtG, fromU, parseWeight, toU } from '../../domain/weights';
+import { fmtG, fromU, parseWeight, toU } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
 import { Button, Card, Field, Input, Notice, SectionLabel, Select, StepFrame } from '../ui';
 import { ScalePicker, WeightField } from './ScaleAndWeights';

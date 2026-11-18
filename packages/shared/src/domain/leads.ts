@@ -1,5 +1,5 @@
-import type { Lead } from '../types/jewellery';
-import { HOUR } from './clock';
+import type { Lead } from '../types/jewellery.js';
+import { HOUR } from './clock.js';
 
 export type SlaPhase = 'late' | 'running' | 'met';
 

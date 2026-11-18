@@ -1,9 +1,9 @@
 import { Check, Search } from 'lucide-react';
 import { useState } from 'react';
-import { fmtG, netOf, sumG } from '../../domain/weights';
+import { fmtG, netOf, sumG } from '@goldsmith/shared';
 import { inStockPieces } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { CustomerGroup } from '../../types/jewellery';
+import type { CustomerGroup } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, ValueSlot, cn } from '../ui';
 import { GROUPS, reachable } from './util';
 

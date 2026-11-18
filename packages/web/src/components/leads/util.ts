@@ -1,4 +1,4 @@
-import type { Lead, LeadSource } from '../../types/jewellery';
+import type { Lead, LeadSource } from '@goldsmith/shared';
 
 /** "2026-11-20" for an <input type="date">; empty when there is no date. */
 export function toDateInput(at: number | null): string {

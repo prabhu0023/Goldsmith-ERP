@@ -6,11 +6,11 @@
  * Every argument object carries `by` (who is acting) and `at` (demo-clock time).
  * A broken rule throws a DomainError with a message that is fit to show a person.
  */
-import { checkToken, makeToken } from '../domain/edits';
-import { isFullyRouted } from '../domain/leads';
-import { isMonthDayToday } from '../domain/clock';
-import { evaluateParcel } from '../domain/match';
-import { fmtG, netOf, round4, toU, fromU } from '../domain/weights';
+import { checkToken, makeToken } from '@goldsmith/shared';
+import { isFullyRouted } from '@goldsmith/shared';
+import { isMonthDayToday } from '@goldsmith/shared';
+import { evaluateParcel } from '@goldsmith/shared';
+import { fmtG, netOf, round4, toU, fromU } from '@goldsmith/shared';
 import type {
   Actor,
   AppState,
@@ -40,7 +40,7 @@ import type {
   StaffMember,
   StockOutRecord,
   Verdict,
-} from '../types/jewellery';
+} from '@goldsmith/shared';
 
 export class DomainError extends Error {
   constructor(message: string) {

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { fmtDateTime } from '../../domain/clock';
-import { fmtG, netOf } from '../../domain/weights';
+import { fmtDateTime } from '@goldsmith/shared';
+import { fmtG, netOf } from '@goldsmith/shared';
 import { inStockPieces } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { CustomerGroup } from '../../types/jewellery';
+import type { CustomerGroup } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Modal, Notice, PageHeader, SectionLabel, Select, Textarea, cn } from '../ui';
 import { GROUPS, PhonePreview, fillName, reachable } from './util';
 

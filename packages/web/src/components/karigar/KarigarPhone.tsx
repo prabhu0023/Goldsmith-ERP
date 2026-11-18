@@ -1,10 +1,10 @@
 import { ArrowLeft, Briefcase, Check, Coins, TriangleAlert, User } from 'lucide-react';
 import { useState } from 'react';
-import { daysBetween, fmtDayMonth } from '../../domain/clock';
-import { fmtG } from '../../domain/weights';
+import { daysBetween, fmtDayMonth } from '@goldsmith/shared';
+import { fmtG } from '@goldsmith/shared';
 import { agreedDate, goldWithKarigar, jobsForKarigar } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { JobStatus, Karigar, KarigarJob } from '../../types/jewellery';
+import type { JobStatus, Karigar, KarigarJob } from '@goldsmith/shared';
 import { RaiseProblem } from '../problems/RaiseProblem';
 import { Button, Notice, StatusChip, Textarea, cn } from '../ui';
 import { fromDateInput, toDateInput } from '../leads/util';

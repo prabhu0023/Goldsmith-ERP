@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../../store/StoreProvider';
-import type { ProblemTarget } from '../../types/jewellery';
+import type { ProblemTarget } from '@goldsmith/shared';
 import { Button, Modal, Notice, Textarea } from '../ui';
 
 interface Props {

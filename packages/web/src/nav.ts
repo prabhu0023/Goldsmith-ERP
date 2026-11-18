@@ -15,7 +15,7 @@ import {
   UserCog,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import type { RoleId } from './types/jewellery';
+import type { RoleId } from '@goldsmith/shared';
 import type { BadgeKey } from './store/selectors';
 
 /** Every screen has one id. FEAT-002 onwards replace the placeholder behind an id in components/registry.tsx. */

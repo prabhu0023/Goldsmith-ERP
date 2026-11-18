@@ -1,9 +1,9 @@
 import { Plus, Search } from 'lucide-react';
 import { useState } from 'react';
-import { fmtDate } from '../../domain/clock';
-import { fmtG } from '../../domain/weights';
+import { fmtDate } from '@goldsmith/shared';
+import { fmtG } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
-import type { Customer, CustomerGroup } from '../../types/jewellery';
+import type { Customer, CustomerGroup } from '@goldsmith/shared';
 import { Button, Card, DetailDrawer, DrawerSection, Input, PageHeader, Pill, SectionLabel, StatusChip, ValueSlot, WeightReadout, cn } from '../ui';
 import { dayMonthLabel, takenHomeG } from './util';
 

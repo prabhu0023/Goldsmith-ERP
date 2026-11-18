@@ -1,9 +1,9 @@
 import { Lock, Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import { fmtDateTime } from '../../domain/clock';
-import { fmtG, netOf, sumG } from '../../domain/weights';
+import { fmtDateTime } from '@goldsmith/shared';
+import { fmtG, netOf, sumG } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
-import type { Piece } from '../../types/jewellery';
+import type { Piece } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, ValueSlot } from '../ui';
 
 /** Screen 06: which pieces left the showcase, who sold them, and the reference from the billing book. No prices. */

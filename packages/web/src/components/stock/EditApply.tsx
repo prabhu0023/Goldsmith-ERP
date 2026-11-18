@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { fmtG, netOf } from '../../domain/weights';
+import { fmtG, netOf } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
-import type { PieceEdit } from '../../types/jewellery';
+import type { PieceEdit } from '@goldsmith/shared';
 import { Button, Card, Notice, OtpPanel, PageHeader, SectionLabel, StatusChip } from '../ui';
 import { fieldWords, showValue } from './PieceDrawer';
 

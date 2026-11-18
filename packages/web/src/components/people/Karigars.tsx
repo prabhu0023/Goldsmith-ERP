@@ -1,10 +1,10 @@
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
-import { fmtDate } from '../../domain/clock';
-import { fmtG } from '../../domain/weights';
+import { fmtDate } from '@goldsmith/shared';
+import { fmtG } from '@goldsmith/shared';
 import { agreedDate, goldWithKarigar, jobOverdueDays, jobsForKarigar, openJobsForKarigar } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Karigar } from '../../types/jewellery';
+import type { Karigar } from '@goldsmith/shared';
 import { Button, Card, PageHeader, Pill, StatusChip, WeightReadout } from '../ui';
 import { avgGapMg, plural } from '../home/util';
 

@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { DAY, fmtTime, sameDay } from '../../domain/clock';
+import { DAY, fmtTime, sameDay } from '@goldsmith/shared';
 import { wishesDueToday } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Customer } from '../../types/jewellery';
+import type { Customer } from '@goldsmith/shared';
 import { Button, Card, Notice, PageHeader, SectionLabel, StatusChip, Textarea, cn } from '../ui';
 import { PhonePreview, fillName, firstName } from './util';
 

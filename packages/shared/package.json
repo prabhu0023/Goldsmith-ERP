@@ -1,0 +1,26 @@
+{
+  "name": "@goldsmith/shared",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Framework-free domain rules and types used by web and api.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "@goldsmith/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint .",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}

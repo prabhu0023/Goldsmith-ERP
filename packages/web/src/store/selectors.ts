@@ -1,9 +1,9 @@
 /** Read-side helpers over AppState: queues, badges, per-person lists. Pure; no React. */
-import { isMonthDayToday, sameDay, startOfDay } from '../domain/clock';
-import { slaState } from '../domain/leads';
-import { evaluateParcel } from '../domain/match';
-import type { ParcelEvaluation } from '../domain/match';
-import { netOf, sumG } from '../domain/weights';
+import { isMonthDayToday, sameDay, startOfDay } from '@goldsmith/shared';
+import { slaState } from '@goldsmith/shared';
+import { evaluateParcel } from '@goldsmith/shared';
+import type { ParcelEvaluation } from '@goldsmith/shared';
+import { netOf, sumG } from '@goldsmith/shared';
 import type {
   AppState,
   Actor,
@@ -17,7 +17,7 @@ import type {
   Problem,
   RoleId,
   ScrapRequest,
-} from '../types/jewellery';
+} from '@goldsmith/shared';
 
 export const initialsOf = (name: string): string =>
   name

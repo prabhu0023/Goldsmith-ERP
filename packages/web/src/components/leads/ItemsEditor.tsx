@@ -1,6 +1,6 @@
 import { Plus, X } from 'lucide-react';
-import { parseWeight } from '../../domain/weights';
-import type { LeadItem } from '../../types/jewellery';
+import { parseWeight } from '@goldsmith/shared';
+import type { LeadItem } from '@goldsmith/shared';
 import { Button, Field, Input } from '../ui';
 
 export interface ItemRow {

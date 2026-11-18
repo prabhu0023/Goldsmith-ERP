@@ -1,9 +1,9 @@
 import { Plus, Search } from 'lucide-react';
 import { useState } from 'react';
-import { fmtG, netOf } from '../../domain/weights';
+import { fmtG, netOf } from '@goldsmith/shared';
 import { daysInStock, pureGoldOnFloor } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Piece } from '../../types/jewellery';
+import type { Piece } from '@goldsmith/shared';
 import { Button, Card, Input, PageHeader, StatusChip, ValueSlot, cn } from '../ui';
 import { MetalPool } from './MetalPool';
 import { PieceDrawer } from './PieceDrawer';

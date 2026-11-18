@@ -1,6 +1,6 @@
-import { fmtMg, fromU } from '../../domain/weights';
+import { fmtMg, fromU } from '@goldsmith/shared';
 import { evaluate } from '../../store/selectors';
-import type { AppState, Karigar, Parcel } from '../../types/jewellery';
+import type { AppState, Karigar, Parcel } from '@goldsmith/shared';
 
 const WORDS = ['Nothing', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 /** 0 to 12 as a word ("Six"), larger numbers as digits. */

@@ -1,9 +1,9 @@
 import { AlertTriangle, Mail, MessageCircle, Plus, Store } from 'lucide-react';
 import { useState } from 'react';
-import { ago } from '../../domain/clock';
-import { slaRunning, slaState } from '../../domain/leads';
+import { ago } from '@goldsmith/shared';
+import { slaRunning, slaState } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
-import type { Lead, LeadSource } from '../../types/jewellery';
+import type { Lead, LeadSource } from '@goldsmith/shared';
 import { Button, Card, PageHeader, Pill, SectionLabel, StatusChip, cn } from '../ui';
 import { firstName, flaggedCount, sourceLabel } from './util';
 

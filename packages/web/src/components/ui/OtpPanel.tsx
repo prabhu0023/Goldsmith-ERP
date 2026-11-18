@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import type { ClipboardEvent, KeyboardEvent, ReactNode } from 'react';
-import { formatToken } from '../../domain/edits';
+import { formatToken } from '@goldsmith/shared';
 import { cn } from './cn';
 
 interface Props {

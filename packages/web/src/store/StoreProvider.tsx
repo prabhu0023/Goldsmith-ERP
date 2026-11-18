@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { initialState } from '../data/seed';
-import { demoNow } from '../domain/clock';
+import { demoNow } from '@goldsmith/shared';
 import { landingRoute } from '../nav';
 import type { Route, RouteId } from '../nav';
-import type { Actor, AppState, Identity, RoleId, Settings } from '../types/jewellery';
+import type { Actor, AppState, Identity, RoleId, Settings } from '@goldsmith/shared';
 import { actorOf, identities as identitiesOf } from './selectors';
 import * as T from './transitions';
 

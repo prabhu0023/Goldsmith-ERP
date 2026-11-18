@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ago } from '../../domain/clock';
-import { fmtG, netOf, round4 } from '../../domain/weights';
+import { ago } from '@goldsmith/shared';
+import { fmtG, netOf, round4 } from '@goldsmith/shared';
 import { daysInStock } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { ScrapRequest } from '../../types/jewellery';
+import type { ScrapRequest } from '@goldsmith/shared';
 import { Button, Card, Notice, PageHeader, SectionLabel, StatusChip } from '../ui';
 
 /** The owner decides on a scrap request: mark it scrapped (gold back to the pool) or keep it in stock. */

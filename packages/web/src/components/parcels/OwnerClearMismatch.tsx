@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { fmtG, fmtMg, fromU } from '../../domain/weights';
+import { fmtG, fmtMg, fromU } from '@goldsmith/shared';
 import { evaluate, parcelPieces } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
 import { ProblemBanner } from '../problems/ProblemBanner';

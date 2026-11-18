@@ -1,4 +1,4 @@
-import { fmtMg } from '../../domain/weights';
+import { fmtMg } from '@goldsmith/shared';
 import { cn } from './cn';
 
 interface Props {

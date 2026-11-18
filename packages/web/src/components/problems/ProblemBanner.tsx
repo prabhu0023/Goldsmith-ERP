@@ -1,9 +1,9 @@
 import { OctagonAlert } from 'lucide-react';
 import { useState } from 'react';
-import { ago } from '../../domain/clock';
+import { ago } from '@goldsmith/shared';
 import { problemsOn } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { ProblemTarget } from '../../types/jewellery';
+import type { ProblemTarget } from '@goldsmith/shared';
 import { Button, Notice } from '../ui';
 
 /** Open problems raised on a parcel, job or piece. Anyone sees them; only the owner can clear one. */

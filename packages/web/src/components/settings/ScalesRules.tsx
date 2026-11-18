@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { fmtG, fmtMg, fromU, trimNum } from '../../domain/weights';
+import { fmtG, fmtMg, fromU, trimNum } from '@goldsmith/shared';
 import { evaluate } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
-import type { Scale } from '../../types/jewellery';
+import type { Scale } from '@goldsmith/shared';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, StatusChip } from '../ui';
 
 const fmtCapacity = (g: number): string => (g >= 1000 ? `${trimNum(g / 1000)} kg` : `${trimNum(g)} g`);

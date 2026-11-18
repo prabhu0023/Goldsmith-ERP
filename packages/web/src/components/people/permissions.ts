@@ -1,4 +1,4 @@
-import type { RoleId } from '../../types/jewellery';
+import type { RoleId } from '@goldsmith/shared';
 
 export interface RoleInfo {
   id: RoleId;
