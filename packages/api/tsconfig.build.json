@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "rootDir": "src",
+    "outDir": "dist",
+    "sourceMap": true,
+    // The build compiles against the built shared package (dist), so shared must build first.
+    "customConditions": []
+  },
+  "include": ["src"]
+}
