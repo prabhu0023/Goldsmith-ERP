@@ -74,6 +74,35 @@ export async function columnsOf(client: Queryable, table: string): Promise<Recor
   return cols;
 }
 
+export interface TestShop {
+  shopId: string;
+  locationId: string;
+}
+
+/** Insert a piece in stock (48.65 g gross, 7.06 g stone unless overridden); returns its id. */
+export async function addPiece(
+  client: Queryable,
+  shop: TestShop,
+  tagNo: string,
+  values: { huid?: string | null; grossUnits?: number; stoneUnits?: number } = {},
+): Promise<string> {
+  const res = await client.query<{ id: string }>(
+    `insert into pieces (shop_id, location_id, tag_no, name, huid, gross_units, stone_units, status)
+     values ($1, $2, $3, 'Test piece', $4, $5, $6, 'in_stock') returning id`,
+    [shop.shopId, shop.locationId, tagNo, values.huid ?? null, values.grossUnits ?? 486500, values.stoneUnits ?? 70600],
+  );
+  return res.rows[0].id;
+}
+
+/** Insert a karigar; returns its id. */
+export async function addKarigar(client: Queryable, shop: TestShop, code = 'KG-01'): Promise<string> {
+  const res = await client.query<{ id: string }>(
+    `insert into karigars (shop_id, code, name) values ($1, $2, 'Test karigar') returning id`,
+    [shop.shopId, code],
+  );
+  return res.rows[0].id;
+}
+
 /**
  * Expect the promise to fail with the given PostgreSQL error code: 23514 check, 23503 foreign
  * key, 23505 unique, 23502 not null, P0001 raised exception.
