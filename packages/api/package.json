@@ -11,7 +11,11 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome lint .",
     "test": "vitest run",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "db:migrate": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts migrate",
+    "db:status": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts status",
+    "db:reset": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts reset",
+    "db:seed": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts seed"
   },
   "dependencies": {
     "@goldsmith/shared": "0.0.0",
