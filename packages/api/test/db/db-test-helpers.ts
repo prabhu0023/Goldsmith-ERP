@@ -54,6 +54,26 @@ export async function newShop(client: Queryable, name = 'Test shop'): Promise<{ 
   return { shopId, locationId: loc.rows[0].id };
 }
 
+export interface ColumnInfo {
+  type: string;
+  nullable: boolean;
+  default: string | null;
+}
+
+/** Columns of a table in schema public, keyed by name (from information_schema). */
+export async function columnsOf(client: Queryable, table: string): Promise<Record<string, ColumnInfo>> {
+  const res = await client.query<{ column_name: string; data_type: string; is_nullable: string; column_default: string | null }>(
+    `select column_name, data_type, is_nullable, column_default from information_schema.columns
+      where table_schema = 'public' and table_name = $1`,
+    [table],
+  );
+  const cols: Record<string, ColumnInfo> = {};
+  for (const r of res.rows) {
+    cols[r.column_name] = { type: r.data_type, nullable: r.is_nullable === 'YES', default: r.column_default };
+  }
+  return cols;
+}
+
 /**
  * Expect the promise to fail with the given PostgreSQL error code: 23514 check, 23503 foreign
  * key, 23505 unique, 23502 not null, P0001 raised exception.
