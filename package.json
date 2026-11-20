@@ -17,7 +17,9 @@
     "lint": "biome lint && node scripts/check-shared-duplicates.mjs",
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm run test --workspaces",
-    "clean": "npm run clean --workspaces"
+    "clean": "npm run clean --workspaces",
+    "db:up": "docker compose up -d --wait postgres",
+    "db:down": "docker compose down"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",
