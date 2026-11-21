@@ -1,8 +1,10 @@
 /**
- * `db:dev-session` (EP-03-S3): opens a session for a seeded user, so a developer can call the
- * api locally with the `x-dev-session` header until sign-in (EP-04) exists. Development only.
+ * `db:dev-session` (EP-03-S3, EP-04): opens a real session for a seeded user, so a developer can
+ * call the api locally with the `gs_session` cookie without signing in. Development only.
  */
+import type { RoleId } from '@goldsmith/shared';
 import type pg from 'pg';
+import { issueSession } from '../auth/session-store.js';
 import type { AppEnv } from '../config.js';
 
 export interface DevSessionOptions {
@@ -14,6 +16,8 @@ export interface DevSessionOptions {
 }
 
 export interface DevSession {
+  /** Send as the cookie `gs_session=<token>`. */
+  token: string;
   sessionId: string;
   name: string;
   role: string;
@@ -25,18 +29,31 @@ export async function createDevSession(
   { appEnv, userName, now = new Date(), hours = 12 }: DevSessionOptions,
 ): Promise<DevSession> {
   if (appEnv !== 'development') throw new Error(`db:dev-session is refused when APP_ENV=${appEnv}`);
-  const users = await pool.query<{ id: string; shop_id: string; name: string; role: string }>(
-    'select id, shop_id, name, role from users where name = $1',
+  const users = await pool.query<{ id: string; shop_id: string; name: string; role: RoleId; status: string }>(
+    'select id, shop_id, name, role, status from users where name = $1',
     [userName],
   );
   if (users.rows.length !== 1) {
     throw new Error(`Expected one user named "${userName}", found ${users.rows.length}`);
   }
   const user = users.rows[0];
-  const expiresAt = new Date(now.getTime() + hours * 3600_000);
-  const { rows } = await pool.query<{ id: string }>(
-    'insert into sessions (shop_id, user_id, expires_at) values ($1, $2, $3) returning id',
-    [user.shop_id, user.id, expiresAt],
-  );
-  return { sessionId: rows[0].id, name: user.name, role: user.role, expiresAt };
+  // Sessions of users who are not active are refused (EP-04-S3), so the token would not work.
+  if (user.status !== 'active') {
+    throw new Error(`${user.name} is ${user.status}, not active: set a password first (npm run db:dev-password)`);
+  }
+  const session = await issueSession(pool, {
+    shopId: user.shop_id,
+    userId: user.id,
+    role: user.role,
+    deviceLabel: 'db:dev-session',
+    now,
+    idleMinutes: hours * 60,
+  });
+  return {
+    token: session.token,
+    sessionId: session.sessionId,
+    name: user.name,
+    role: user.role,
+    expiresAt: session.expiresAt,
+  };
 }

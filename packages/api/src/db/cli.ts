@@ -55,8 +55,8 @@ async function runSeed(pool: ReturnType<typeof createPool>, appEnv: AppEnv): Pro
 async function runDevSession(pool: ReturnType<typeof createPool>, appEnv: AppEnv, userName: string): Promise<void> {
   const s = await createDevSession(pool, { appEnv, userName });
   console.log(`Session for ${s.name} (${s.role}), valid until ${s.expiresAt.toISOString()}:`);
-  console.log(s.sessionId);
-  console.log(`Send it with every api call as the header  x-dev-session: ${s.sessionId}`);
+  console.log(s.token);
+  console.log(`Send it with every api call as the gs_session cookie, e.g.  curl -b 'gs_session=${s.token}' ...`);
 }
 const COMMANDS = ['migrate', 'status', 'reset', 'seed', 'dev-session', 'create', 'new'];
 

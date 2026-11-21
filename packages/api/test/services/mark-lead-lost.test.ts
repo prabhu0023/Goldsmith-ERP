@@ -13,11 +13,11 @@ import { loadConfig } from '../../src/config.js';
 import { createPool } from '../../src/db/connection.js';
 import { migrate } from '../../src/db/migrator.js';
 import { seedPrototype } from '../../src/db/seed/seed-database.js';
+import { createSessionResolver } from '../../src/auth/session-store.js';
 import { fixedClock } from '../../src/pipeline/server-clock.js';
-import { createDevSessionResolver, DEV_SESSION_HEADER } from '../../src/pipeline/session-resolver.js';
 import { handlers } from '../../src/services/index.js';
 import { createTempDatabase, describeDb, newShop } from '../db/db-test-helpers.js';
-import { leaksIn, newSession, SERVER_NOW } from '../support/api-harness.js';
+import { leaksIn, newSession, SERVER_NOW, sessionCookie } from '../support/api-harness.js';
 
 interface LeadRow {
   state: string;
@@ -43,6 +43,8 @@ describeDb('markLeadLost reference service (EP-03-S12)', () => {
       await pool.query<{ id: string; shop_id: string }>(`select id, shop_id from users where name = 'Rajesh Verma'`)
     ).rows[0];
     shopId = user.shop_id;
+    // Seeded users are pending until they set a password; sessions need an active user (EP-04).
+    await pool.query(`update users set status = 'active' where id = $1`, [user.id]);
     const locationId = (await pool.query<{ id: string }>('select id from locations where shop_id = $1', [shopId]))
       .rows[0].id;
     session = await newSession(pool, { shopId, locationId }, user.id);
@@ -55,7 +57,7 @@ describeDb('markLeadLost reference service (EP-03-S12)', () => {
     });
     const app = createApp(config, {
       pool,
-      sessions: createDevSessionResolver({ appEnv: 'development', pool, clock }),
+      sessions: createSessionResolver({ pool, clock, idleMinutes: config.sessionIdleMinutes }),
       clock,
       contract,
       handlers,
@@ -75,7 +77,7 @@ describeDb('markLeadLost reference service (EP-03-S12)', () => {
   const call = async (body: unknown) => {
     const res = await fetch(`${base}/api/ops/markLeadLost`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', [DEV_SESSION_HEADER]: session },
+      headers: { 'content-type': 'application/json', cookie: sessionCookie(session) },
       body: JSON.stringify(body),
     });
     return { status: res.status, body: (await res.json()) as Record<string, unknown> };

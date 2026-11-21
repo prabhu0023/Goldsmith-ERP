@@ -1,8 +1,7 @@
 import { CONTRACT_VERSION } from '@goldsmith/shared';
 import { afterAll, beforeAll, beforeEach, expect, it } from 'vitest';
-import { DEV_SESSION_HEADER } from '../../src/pipeline/session-resolver.js';
 import { addKarigar, describeDb, newShop } from '../db/db-test-helpers.js';
-import { type Harness, newSession, newUser, SERVER_NOW, startHarness } from '../support/api-harness.js';
+import { type Harness, newSession, newUser, SERVER_NOW, sessionCookie, startHarness } from '../support/api-harness.js';
 
 describeDb('actor from the session, time from the server clock (EP-03-S3, S1 AC6)', () => {
   let h: Harness;
@@ -88,7 +87,7 @@ describeDb('actor from the session, time from the server clock (EP-03-S3, S1 AC6
   });
 
   it('S1 AC6: a signed-in caller can read the contract version; without a session it is refused', async () => {
-    const signedIn = await fetch(`${h.base}/api/contract-version`, { headers: { [DEV_SESSION_HEADER]: h.session } });
+    const signedIn = await fetch(`${h.base}/api/contract-version`, { headers: { cookie: sessionCookie(h.session) } });
     expect(signedIn.status).toBe(200);
     expect(await signedIn.json()).toEqual({ ok: true, version: CONTRACT_VERSION });
     const anonymous = await fetch(`${h.base}/api/contract-version`);

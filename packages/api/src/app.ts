@@ -1,6 +1,11 @@
 import { type Contract, computeCeiling, contract as sharedContract, type Scale } from '@goldsmith/shared';
 import express, { type ErrorRequestHandler, type Express } from 'express';
 import type pg from 'pg';
+import { createAccountMailer, StubMailer } from './auth/account-mail.js';
+import { type AuthDeps, createAuthRouter } from './auth/auth-router.js';
+import { createDevMailboxRouter } from './auth/dev-mailbox.js';
+import { installationShop } from './auth/installation-shop.js';
+import { passwordHasher } from './auth/password-hash.js';
 import type { Config } from './config.js';
 import { checkDatabase, withTimeout } from './health-check.js';
 import { ApiError, type ErrorLog, RateLimitedError, toErrorResponse } from './pipeline/api-errors.js';
@@ -32,6 +37,23 @@ export interface AppDeps {
   log: ErrorLog;
   /** How long Read Health waits for the database before reporting it down. */
   healthTimeoutMs: number;
+  /** Sign-in (EP-04); unset fields default from config. */
+  auth: Partial<AuthDeps>;
+}
+
+/** The sign-in dependencies from config, with `overrides` on top. */
+function authDepsFor(config: Config, overrides: Partial<AuthDeps> = {}): AuthDeps {
+  return {
+    installationShop,
+    passwords: passwordHasher,
+    mailer: overrides.mailer ?? createAccountMailer(config),
+    limits: config.authLimits,
+    idleMinutes: config.sessionIdleMinutes,
+    appUrl: config.appUrl,
+    secureCookies: config.appEnv !== 'development',
+    phoneSecret: config.sessionSecret,
+    ...overrides,
+  };
 }
 
 export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express {
@@ -46,6 +68,7 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     log = console.error,
     healthTimeoutMs = 2000,
   } = deps;
+  const auth = authDepsFor(config, deps.auth);
   // Throws at startup for a handler the contract does not declare (EP-03-S1).
   const registry = createOperationRegistry(contract, handlers);
 
@@ -78,6 +101,11 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     }
   });
 
+  // The account-email stub's mailbox (EP-04-S4), never in production.
+  if (auth.mailer instanceof StubMailer && config.appEnv !== 'production') {
+    app.use(createDevMailboxRouter(auth.mailer));
+  }
+  app.use(createAuthRouter({ pool, sessions, clock, rateLimiter, log, maxBodyBytes: config.maxBodyBytes, auth }));
   app.use(
     createOperationRouter({
       pool,

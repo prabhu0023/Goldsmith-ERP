@@ -4,7 +4,7 @@
  * other exception is logged on the server and answered with a generic sentence, so no stack
  * trace, file path or database text ever leaves the server.
  */
-import { type ApiErrorBody, DomainError, type ErrorCode } from '@goldsmith/shared';
+import { type ApiErrorBody, AUTH_MESSAGES, DomainError, type ErrorCode } from '@goldsmith/shared';
 import { RowNotFoundError, StaleWriteError } from '../db/versioned.js';
 
 /** One HTTP status per error code. */
@@ -69,6 +69,14 @@ export class RateLimitedError extends ApiError {
   constructor() {
     super('rate_limited', 'Too many requests. Please wait a minute and try again.');
     this.name = 'RateLimitedError';
+  }
+}
+
+/** Sign-in and reset requests over the per-phone or per-device limit (EP-04-S9). */
+export class AuthRateLimitedError extends ApiError {
+  constructor() {
+    super('rate_limited', AUTH_MESSAGES.rateLimited);
+    this.name = 'AuthRateLimitedError';
   }
 }
 
