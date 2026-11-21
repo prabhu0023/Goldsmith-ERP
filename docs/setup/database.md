@@ -34,6 +34,7 @@ Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 
 | `0009_audit_entries` | `audit_entries` (append-only: UPDATE, DELETE and TRUNCATE raise an error) |
 | `0010_broadcasts_wishes_settings` | `broadcasts`, `broadcast_recipients`, `broadcast_pieces`, `wishes`, `settings` (one per shop, created with the shop) |
 | `0011_shop_matched_references` | `unique (shop_id, id)` on every referenced table; every foreign key between shop-scoped tables becomes `(shop_id, x_id)` |
+| `0012_opted_in_personal_data` | `personal data (DPDP)` comment on `customers.opted_in` |
 
 Conventions every table follows:
 
