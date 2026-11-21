@@ -2,8 +2,8 @@
  * Forward-only SQL migrations (EP-02-S1). Files are `NNNN_name.sql` in one folder, applied in
  * number order. Each file and its `schema_migrations` row commit in one transaction, so a failed
  * file leaves neither schema changes nor a history row. An advisory lock keeps two runs from
- * applying at the same time. A file changed after it was applied stops the run before anything
- * is applied.
+ * applying at the same time. A file changed after it was applied, or an applied file that is no
+ * longer on disk, stops the run before anything is applied.
  */
 import { createHash } from 'node:crypto';
 import { readdirSync, readFileSync } from 'node:fs';
@@ -26,7 +26,8 @@ export interface MigrationStatusRow {
   /** ISO time in UTC, or null when not applied yet. */
   appliedAt: string | null;
   checksum: string;
-  state: 'applied' | 'pending' | 'changed';
+  /** `missing`: in the history table, but its file is no longer on disk. */
+  state: 'applied' | 'pending' | 'changed' | 'missing';
 }
 
 export class MigrationChecksumError extends Error {
@@ -42,6 +43,14 @@ export class MigrationChecksumError extends Error {
   }
 }
 
+export class MigrationMissingError extends Error {
+  constructor(public readonly files: string[]) {
+    super(
+      `Applied migration ${files.join(', ')} ${files.length === 1 ? 'is' : 'are'} missing from the migrations folder (restore the file; never delete or renumber an applied migration). Nothing was applied.`,
+    );
+    this.name = 'MigrationMissingError';
+  }
+}
 const FILE_PATTERN = /^(\d{4})_([a-z0-9_]+)\.sql$/;
 /** Arbitrary constant shared by every migration run on a database. */
 const ADVISORY_LOCK_KEY = 72020001;
@@ -89,6 +98,12 @@ const CREATE_HISTORY = `create table if not exists schema_migrations (
   applied_at timestamptz not null default now()
 )`;
 
+const historyFile = (h: HistoryRow): string => `${String(h.version).padStart(4, '0')}_${h.name}.sql`;
+/** History rows whose version has no file on disk, in number order. */
+function missingFiles(files: Migration[], history: Map<number, HistoryRow>): HistoryRow[] {
+  const onDisk = new Set(files.map((f) => f.version));
+  return [...history.values()].filter((h) => !onDisk.has(h.version)).sort((a, b) => a.version - b.version);
+}
 async function readHistory(client: pg.PoolClient | pg.Pool): Promise<Map<number, HistoryRow>> {
   const exists = await client.query<{ t: string | null }>(`select to_regclass('schema_migrations') as t`);
   if (!exists.rows[0].t) return new Map();
@@ -107,6 +122,8 @@ export async function migrate(pool: pg.Pool, dir: string | URL): Promise<{ appli
     try {
       await client.query(CREATE_HISTORY);
       const history = await readHistory(client);
+      const missing = missingFiles(files, history);
+      if (missing.length > 0) throw new MigrationMissingError(missing.map(historyFile));
       for (const f of files) {
         const row = history.get(f.version);
         if (row && row.checksum !== f.checksum) throw new MigrationChecksumError(f.file, row.checksum, f.checksum);
@@ -153,7 +170,16 @@ export async function migrationStatus(pool: pg.Pool, dir: string | URL): Promise
       state: h.checksum === f.checksum ? 'applied' : 'changed',
     };
   });
-  return rows;
+  for (const h of missingFiles(files, history)) {
+    rows.push({
+      version: h.version,
+      name: h.name,
+      appliedAt: h.applied_at.toISOString(),
+      checksum: h.checksum,
+      state: 'missing',
+    });
+  }
+  return rows.sort((a, b) => a.version - b.version);
 }
 
 /** Drop everything in schema public. Callers decide whether this is allowed (never production). */

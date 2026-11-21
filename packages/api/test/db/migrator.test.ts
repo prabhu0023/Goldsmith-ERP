@@ -7,7 +7,7 @@ import { promisify } from 'node:util';
 import type pg from 'pg';
 import { afterEach, beforeEach, expect, it } from 'vitest';
 import { createPool } from '../../src/db/connection.js';
-import { MigrationChecksumError, migrate, migrationStatus } from '../../src/db/migrator.js';
+import { MigrationChecksumError, MigrationMissingError, migrate, migrationStatus } from '../../src/db/migrator.js';
 import { createTempDatabase, describeDb } from './db-test-helpers.js';
 
 const run = promisify(execFile);
@@ -82,6 +82,33 @@ describeDb('migration runner (EP-02-S1)', () => {
     expect((await migrationStatus(pool, dir))[0].state).toBe('changed');
   });
 
+  it('reports an applied migration whose file was deleted as missing', async () => {
+    write('0001_a.sql', 'create table t1 (id integer primary key);');
+    write('0002_b.sql', 'create table t2 (id integer);');
+    await migrate(pool, dir);
+    rmSync(join(dir, '0001_a.sql'));
+    write('0003_c.sql', 'create table t3 (id integer);');
+    const rows = await migrationStatus(pool, dir);
+    expect(rows.map((r) => [r.version, r.name, r.state])).toEqual([
+      [1, 'a', 'missing'],
+      [2, 'b', 'applied'],
+      [3, 'c', 'pending'],
+    ]);
+    expect(rows[0].appliedAt).not.toBeNull();
+    expect(rows[0].checksum).toMatch(/^[0-9a-f]{64}$/);
+  });
+  it('stops migrate with an error naming a deleted applied file and applies nothing', async () => {
+    write('0001_a.sql', 'create table t1 (id integer primary key);');
+    await migrate(pool, dir);
+    rmSync(join(dir, '0001_a.sql'));
+    write('0002_b.sql', 'create table t2 (id integer);');
+    const err = await migrate(pool, dir).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(MigrationMissingError);
+    expect((err as Error).message).toContain('0001_a.sql');
+    expect((err as Error).message).toContain('Nothing was applied');
+    expect(await tableExists('t2')).toBe(false);
+    expect(await history()).toEqual([1]);
+  });
   it('leaves no partial schema and no history row when a file fails', async () => {
     write('0001_a.sql', 'create table t1 (id integer primary key);');
     write('0002_b.sql', 'create table t2(); select 1/0;');

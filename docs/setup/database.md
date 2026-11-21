@@ -70,6 +70,7 @@ Test files are in `packages/api/test/db/` unless noted. "Staging" items wait on 
 | S1 | AC2 re-run reports "up to date" | Pending list empty → `Database is up to date (N migrations applied).` | `migrator.test.ts` (CLI run); CI runs migrate twice |
 | S1 | AC3 status lists number, name, UTC time, checksum | `npm run db:status` from `schema_migrations` | `migrator.test.ts` |
 | S1 | AC4 changed applied file stops with an error naming it, applies nothing | `MigrationChecksumError` checked before any file runs | `migrator.test.ts` |
+| S1 | (review) applied file deleted from disk: `db:status` shows it as `missing`, `db:migrate` stops naming it and applies nothing | `MigrationMissingError` checked before any file runs | `migrator.test.ts` |
 | S1 | AC5 staging deploy applies migrations before the new build; failure stops the deploy | **Remains.** Needs the deploy job (EP-01-S12) and the private-network route (D1a). The CLI exits 1 on a failed migration, which the deploy step can gate on. | — |
 | S1 | AC6 first migration records D7 | Header comment of `0001_shops_users_sessions.sql` | `schema.test.ts` |
 | S1 | Rule: no half-applied migration | Each file and its history row in one transaction | `migrator.test.ts` (failing `0002` leaves no table, no row) |
