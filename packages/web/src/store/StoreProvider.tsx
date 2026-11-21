@@ -4,7 +4,7 @@ import { initialState } from '../data/seed';
 import { demoNow } from '@goldsmith/shared';
 import { landingRoute } from '../nav';
 import type { Route, RouteId } from '../nav';
-import type { Actor, AppState, Identity, RoleId, Settings } from '@goldsmith/shared';
+import type { Actor, AppState, ErrorCode, Identity, OperationInput, RoleId, Settings } from '@goldsmith/shared';
 import { actorOf, identities as identitiesOf } from './selectors';
 import * as T from './transitions';
 
@@ -12,6 +12,8 @@ export interface ActionResult {
   ok: boolean;
   /** A sentence fit to show a person when ok is false. */
   error?: string;
+  /** The contract error code when ok is false. */
+  code?: ErrorCode;
   /** The id of whatever the action created. */
   id?: string;
 }
@@ -30,7 +32,7 @@ function buildActions(run: (fn: (s: AppState) => Out) => ActionResult, ctx: () =
     createLead: act(T.createLead),
     confirmLead: act(T.confirmLead),
     startWorkingLead: act(T.startWorkingLead),
-    markLeadLost: act(T.markLeadLost),
+    markLeadLost: (a: OperationInput<'markLeadLost'>): ActionResult => run((s) => T.markLeadLost(s, { ...a, ...ctx() })),
     routeLeadItemToStock: act(T.routeLeadItemToStock),
     releaseHold: act(T.releaseHold),
     createOrderCopyAndJob: act(T.createOrderCopyAndJob),
@@ -128,7 +130,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setNow(demoNow());
         return { ok: true, id };
       } catch (e) {
-        if (e instanceof T.DomainError) return { ok: false, error: e.message };
+        if (e instanceof T.DomainError) return { ok: false, error: e.message, code: 'rule_refused' };
         throw e;
       }
     };

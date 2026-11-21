@@ -1,6 +1,7 @@
 /**
  * Versioned updates (EP-02-S14). A write names the version it read; if the row has moved on
- * (someone else saved first), nothing is written and StaleWriteError is thrown. The bump_version
+ * (someone else saved first), nothing is written and StaleWriteError is thrown; when the row does
+ * not exist in the caller's shop at all, RowNotFoundError is thrown instead. The bump_version
  * trigger raises the version, so callers never set it.
  */
 import type pg from 'pg';
@@ -28,6 +29,18 @@ export class StaleWriteError extends Error {
     public readonly expectedVersion: number,
   ) {
     super(`${entity} ${id} was changed by someone else (expected version ${expectedVersion}); reload and try again.`);
+  }
+}
+
+/** The row does not exist in the caller's shop (a missing id or another shop's row; FU-002). */
+export class RowNotFoundError extends Error {
+  override readonly name = 'RowNotFoundError';
+  readonly code = 'ROW_NOT_FOUND';
+  constructor(
+    public readonly entity: string,
+    public readonly id: string,
+  ) {
+    super(`${entity} ${id} was not found.`);
   }
 }
 
@@ -61,6 +74,11 @@ export async function updateVersioned<T extends pg.QueryResultRow = Record<strin
     `update ${table} set ${assignments.join(', ')} where id = $1 and shop_id = $2 and version = $3 returning *`,
     [id, ctx.shopId, expectedVersion, ...columns.map((c) => set[c])],
   );
-  if (res.rows.length === 0) throw new StaleWriteError(entity, id, expectedVersion);
+  if (res.rows.length === 0) {
+    // No row matched: tell a missing row (or another shop's) from a genuine version mismatch.
+    const exists = await client.query(`select 1 from ${table} where id = $1 and shop_id = $2`, [id, ctx.shopId]);
+    if (exists.rows.length === 0) throw new RowNotFoundError(entity, id);
+    throw new StaleWriteError(entity, id, expectedVersion);
+  }
   return res.rows[0];
 }

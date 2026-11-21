@@ -16,6 +16,37 @@ describe('loadConfig', () => {
     expect(c.databaseUrl).toBeUndefined();
   });
 
+  it('defaults the maximum request body to 102400 bytes and reads a set value', () => {
+    expect(loadConfig(valid).maxBodyBytes).toBe(102400);
+    expect(loadConfig({ ...valid, API_MAX_BODY_BYTES: '2048' }).maxBodyBytes).toBe(2048);
+  });
+
+  it.each(['0', '-5', '1.5', 'lots'])('names API_MAX_BODY_BYTES when it is %s', (bad) => {
+    expect(() => loadConfig({ ...valid, API_MAX_BODY_BYTES: bad })).toThrow(
+      'API_MAX_BODY_BYTES must be a positive integer',
+    );
+  });
+
+  it('defaults the idempotency retention to 24 hours and reads a set value', () => {
+    expect(loadConfig(valid).idempotencyRetentionHours).toBe(24);
+    expect(loadConfig({ ...valid, IDEMPOTENCY_RETENTION_HOURS: '72' }).idempotencyRetentionHours).toBe(72);
+  });
+  it.each(['0', '-1', '2.5', 'a day'])('names IDEMPOTENCY_RETENTION_HOURS when it is %s', (bad) => {
+    expect(() => loadConfig({ ...valid, IDEMPOTENCY_RETENTION_HOURS: bad })).toThrow(
+      'IDEMPOTENCY_RETENTION_HOURS must be a positive integer',
+    );
+  });
+  it('defaults the database pool timeouts to 5000 ms connect and 30000 ms query, and reads set values', () => {
+    expect(loadConfig(valid)).toMatchObject({ databaseConnectTimeoutMs: 5000, databaseQueryTimeoutMs: 30000 });
+    expect(
+      loadConfig({ ...valid, DATABASE_CONNECT_TIMEOUT_MS: '1500', DATABASE_QUERY_TIMEOUT_MS: '8000' }),
+    ).toMatchObject({ databaseConnectTimeoutMs: 1500, databaseQueryTimeoutMs: 8000 });
+  });
+  it.each(['DATABASE_CONNECT_TIMEOUT_MS', 'DATABASE_QUERY_TIMEOUT_MS'])('names %s when it is not a positive integer', (name) => {
+    for (const bad of ['0', '-1', '2.5', 'soon']) {
+      expect(() => loadConfig({ ...valid, [name]: bad })).toThrow(`${name} must be a positive integer (milliseconds)`);
+    }
+  });
   it('names every missing required variable', () => {
     const err = (() => {
       try {

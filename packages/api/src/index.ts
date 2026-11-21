@@ -1,5 +1,10 @@
+import type pg from 'pg';
 import { createApp } from './app.js';
 import { ConfigError, loadConfig } from './config.js';
+import { createPool } from './db/connection.js';
+import { systemClock } from './pipeline/server-clock.js';
+import { sessionResolverFor } from './pipeline/session-resolver.js';
+import { handlers } from './services/index.js';
 
 function start(): void {
   let config: ReturnType<typeof loadConfig>;
@@ -13,7 +18,18 @@ function start(): void {
     throw err;
   }
 
-  const server = createApp(config).listen(config.port, () => {
+  let pool: pg.Pool | undefined;
+  if (config.databaseUrl) {
+    pool = createPool(config.databaseUrl, 10, {
+      connectTimeoutMs: config.databaseConnectTimeoutMs,
+      queryTimeoutMs: config.databaseQueryTimeoutMs,
+    });
+    // An idle connection that drops is discarded by the pool; log it instead of crashing.
+    pool.on('error', (err) => console.error(`[api] database connection error: ${err.message}`));
+  }
+  const sessions = sessionResolverFor(config, pool, systemClock);
+
+  const server = createApp(config, { pool, sessions, handlers }).listen(config.port, () => {
     console.log(`[api] ready on http://localhost:${config.port} (APP_ENV=${config.appEnv})`);
   });
   server.on('error', (err) => {

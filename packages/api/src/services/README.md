@@ -1,5 +1,4 @@
 # api service layer
-
-One function per endpoint, each taking every domain rule from `@goldsmith/shared` (no rule is reimplemented here).
-
-The functions now in `packages/web/src/store/transitions.ts` move into this folder in EP-03; this story only reserves the place.
+One function per contract operation, each taking every domain rule from `@goldsmith/shared` (no rule is reimplemented here).
+`mark-lead-lost.ts` (EP-03-S12) is the reference: copy it for every new operation and register the function in `index.ts`. See docs/setup/api.md ("Adding an operation").
+The remaining functions in `packages/web/src/store/transitions.ts` move here in the feature epics.
