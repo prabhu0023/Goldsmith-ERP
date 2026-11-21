@@ -11,6 +11,8 @@ import {
   defineOperation,
   ERROR_CODES,
   okResult,
+  pageInput,
+  pageResult,
   weightG,
 } from '@goldsmith/shared';
 import { z } from 'zod';
@@ -19,6 +21,7 @@ import { insertScoped } from '../../src/db/shop-context.js';
 import { updateVersioned } from '../../src/db/versioned.js';
 import { NotFoundError } from '../../src/pipeline/api-errors.js';
 import type { Tx } from '../../src/pipeline/operation-transaction.js';
+import { clampPageSize, pageQuery } from '../../src/pipeline/paging.js';
 import type { Handlers, OperationCtx } from '../../src/pipeline/registry.js';
 
 const pieceRef = { pieceId: z.string().trim().min(1) };
@@ -107,6 +110,13 @@ export const testContract = {
     kind: 'command',
     input: z.object({ parcelId: z.string().trim().min(1) }),
     result: okResult,
+    errors: ERROR_CODES,
+  }),
+  listAuditEntries: defineOperation({
+    name: 'listAuditEntries',
+    kind: 'list',
+    input: z.object(pageInput),
+    result: pageResult(z.object({ at: z.string(), summary: z.string().nullable() })),
     errors: ERROR_CODES,
   }),
 } as const;
@@ -269,6 +279,23 @@ export function createFixtureHandlers(options: FixtureOptions = {}): Handlers<Te
       });
       tx.afterCommit(() => onCommit('parcelWithPoolEntry'));
       return { ok: true };
+    },
+    async listAuditEntries(tx, ctx, input) {
+      const pageSize = clampPageSize(input.pageSize);
+      const page = await pageQuery<{ at: Date; summary: string | null }>(tx.client, {
+        table: 'audit_entries',
+        shopId: ctx.shop.shopId,
+        columns: ['at', 'summary'],
+        sortColumn: 'at',
+        cursor: input.cursor,
+        pageSize,
+      });
+      return {
+        ok: true,
+        items: page.rows.map((row) => ({ at: row.at.toISOString(), summary: row.summary })),
+        nextCursor: page.nextCursor,
+        pageSize,
+      };
     },
   };
 }
