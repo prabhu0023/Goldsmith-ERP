@@ -36,7 +36,7 @@ Every error body is `{ code, message }`, plus `field` for `validation`. The mess
 | `unauthenticated` | 401 | No live session. |
 | `forbidden` | 403 | The permission hook refused. |
 | `not_found` | 404 | The record does not exist in the caller's shop, or the operation does not exist. |
-| `conflict` | 409 | Someone else changed the record first (version mismatch). |
+| `conflict` | 409 | Someone else changed the record first (version mismatch), or an `Idempotency-Key` is reused with a different input (see below). |
 | `rule_refused` | 422 | A shared domain rule refused (`DomainError`). |
 | `rate_limited` | 429 | The rate-limit hook refused. |
 | `internal` | 500 | Anything unexpected: "Something went wrong on the server. Please try again." |
@@ -59,7 +59,7 @@ Cursors are opaque base64url text holding the sort time and row id of the last r
 
 ## Idempotent creates
 
-Send `Idempotency-Key: <1 to 200 printable characters>` with a create. A repeat with the same key, operation and user returns the first result (`{ ok: true, id }`) without creating another record, also when both requests arrive at once. A refused first try leaves no record, so the retry runs again. Keys are kept `IDEMPOTENCY_RETENTION_HOURS` (default 24); `deleteExpiredIdempotencyRecords(pool, now)` removes expired keys (scheduling it is EP-10). Other operation kinds ignore the header.
+Send `Idempotency-Key: <1 to 200 printable characters>` with a create. A repeat with the same key, operation and user returns the first result (`{ ok: true, id }`) without creating another record, also when both requests arrive at once. A refused first try leaves no record, so the retry runs again. The record stores a SHA-256 hash of the validated input (canonical JSON, keys sorted; unknown fields are stripped before hashing). A repeat with the same key, operation and user but a different input is refused with `409 { code: 'conflict', message: 'This Idempotency-Key was already used for a different request. Send it again with a new key.' }` and creates nothing; the code is the existing `conflict`, so the contract's error list is unchanged. Keys are kept `IDEMPOTENCY_RETENTION_HOURS` (default 24); `deleteExpiredIdempotencyRecords(pool, now)` removes expired keys (scheduling it is EP-10). Other operation kinds ignore the header.
 
 ## Adding an operation
 

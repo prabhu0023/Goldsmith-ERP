@@ -10,7 +10,8 @@
  *       Idempotency-Key header too (-> validation, field Idempotency-Key)
  *   (f) one transaction (EP-03-S6): shop context, ctx { by, at, shop } from the session and the
  *       server clock, permission hook (-> forbidden), idempotency claim for a create with a key
- *       (EP-03-S8; a replay answers the stored id without running the service function),
+ *       (EP-03-S8; a replay answers the stored id without running the service function; the
+ *       same key with a different input answers conflict),
  *       service function, store the created id with the claim
  *   (g) answer the service function's result
  * Every error goes to the app's error middleware (toErrorResponse).
@@ -76,6 +77,7 @@ async function runOperation(
     operation: op.def.name,
     userId: ctx.by.id,
     shopId: ctx.shop.shopId,
+    input,
     now: ctx.at,
     retentionHours: idempotency.retentionHours,
   });

@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, expect, it } from 'vitest';
-import { deleteExpiredIdempotencyRecords } from '../../src/pipeline/idempotency.js';
+import { deleteExpiredIdempotencyRecords, IDEMPOTENCY_MISMATCH_MESSAGE } from '../../src/pipeline/idempotency.js';
 import { addKarigar, describeDb } from '../db/db-test-helpers.js';
 import { type Harness, newSession, newUser, SERVER_NOW, startHarness } from '../support/api-harness.js';
 
@@ -20,6 +20,7 @@ describeDb('idempotent creates (EP-03-S8)', () => {
 
   beforeEach(() => {
     h.captured.length = 0;
+    h.logged.length = 0;
   });
 
   const lead = (customerName: string) => ({ customerName, items: [{ name: 'Chain', qty: 1 }] });
@@ -67,6 +68,31 @@ describeDb('idempotent creates (EP-03-S8)', () => {
     const ids = new Set(results.map((r) => r.body.id));
     expect(ids.size).toBe(1);
     expect(await leadsNamed(name)).toEqual([...ids]);
+    expect((await recordsFor(key)).map((r) => r.result_id)).toEqual([...ids]);
+  });
+  it('replays the first id for the same input sent with keys in another order and an unknown field', async () => {
+    const first = await h.call('createLead', lead('Same body'), { session: h.session, idempotencyKey: 'k-same' });
+    const again = await h.call(
+      'createLead',
+      { items: [{ qty: 1, name: 'Chain' }], customerName: 'Same body', by: 'Sanjay Seth' },
+      { session: h.session, idempotencyKey: 'k-same' },
+    );
+    expect(first.status).toBe(200);
+    expect(again).toEqual(first);
+    expect(h.captured).toHaveLength(1);
+    expect(await leadsNamed('Same body')).toEqual([first.body.id]);
+  });
+  it('refuses the same key with a different input as conflict and creates nothing', async () => {
+    const first = await h.call('createLead', lead('First body'), { session: h.session, idempotencyKey: 'k-mismatch' });
+    const other = await h.call('createLead', lead('Other body'), { session: h.session, idempotencyKey: 'k-mismatch' });
+    expect(first.status).toBe(200);
+    expect(other).toEqual({ status: 409, body: { code: 'conflict', message: IDEMPOTENCY_MISMATCH_MESSAGE } });
+    expect(h.captured).toHaveLength(1);
+    expect(await leadsNamed('Other body')).toEqual([]);
+    expect((await recordsFor('k-mismatch')).map((r) => r.result_id)).toEqual([first.body.id]);
+    // The first input still replays.
+    expect(await h.call('createLead', lead('First body'), { session: h.session, idempotencyKey: 'k-mismatch' })).toEqual(first);
+    expect(h.logged).toEqual([]);
   });
 
   it('AC3: the key is scoped by caller and operation', async () => {
