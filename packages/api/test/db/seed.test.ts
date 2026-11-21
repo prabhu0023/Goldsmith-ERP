@@ -1,4 +1,4 @@
-import { type AppState, gramsToUnits, unitsToGrams } from '@goldsmith/shared';
+import { type AppState, DEMO_BASE, gramsToUnits, unitsToGrams } from '@goldsmith/shared';
 import type pg from 'pg';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { createPool } from '../../src/db/connection.js';
@@ -13,6 +13,8 @@ const display = (g: number): string => {
   return unitsToGrams(r.units);
 };
 
+/** Fixed load time, so the demo-time shift (S13 AC6) is checked exactly. */
+const NOW = new Date('2030-03-04T05:06:07.000Z');
 describeDb('prototype seed (EP-02-S13)', () => {
   let temp: Awaited<ReturnType<typeof createTempDatabase>>;
   let pool: pg.Pool;
@@ -24,7 +26,7 @@ describeDb('prototype seed (EP-02-S13)', () => {
     pool = createPool(temp.url, 2);
     await migrate(pool, new URL('../../migrations/', import.meta.url));
     state = await loadPrototypeState();
-    counts = await seedPrototype(pool, { appEnv: 'development' });
+    counts = await seedPrototype(pool, { appEnv: 'development', now: NOW });
   }, 60_000);
   afterAll(async () => {
     await pool?.end();
@@ -98,6 +100,23 @@ describeDb('prototype seed (EP-02-S13)', () => {
     expect(counts.karigar_jobs).toBe(state.jobs.length);
   });
 
+  it('moves demo times so the demo now is the load time, stored in UTC (AC6)', async () => {
+    const shift = NOW.getTime() - DEMO_BASE;
+    const rows = await codes(
+      `select tag_no, tagged_at, to_char(tagged_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"') as utc,
+              tagged_at::text as text from pieces`,
+    );
+    const byTag = new Map(rows.map((r) => [r.tag_no, r]));
+    for (const p of state.pieces) {
+      const row = byTag.get(p.id);
+      expect(row.tagged_at.getTime(), `${p.id} tagged_at`).toBe(p.taggedAt + shift);
+      expect(row.utc, `${p.id} tagged_at in UTC`).toBe(new Date(p.taggedAt + shift).toISOString());
+      expect(row.text).toMatch(/\+00$/);
+    }
+    const [latest] = await codes('select max(tagged_at) as at from pieces');
+    expect(latest.at.getTime()).toBeLessThanOrEqual(NOW.getTime());
+    expect(NOW.getTime() - latest.at.getTime()).toBeLessThan(366 * 24 * 3600 * 1000);
+  });
   it('reads every piece weight back as its four-decimal source value', async () => {
     const rows = await codes('select tag_no, gross_units, stone_units from pieces');
     const byTag = new Map(rows.map((r) => [r.tag_no, r]));
