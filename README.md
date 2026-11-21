@@ -66,7 +66,7 @@ npm run db:down     # stop the container (data stays in the pgdata volume; `dock
 
 To start over with demo data: `npm run db:reset && npm run db:seed`.
 
-The api database tests run against `TEST_DATABASE_URL` and wipe that database at the start of each run. Without it they are skipped locally (with a notice); CI always sets it.
+The api database tests run against `TEST_DATABASE_URL` and wipe that database at the start of each run, so they refuse any database whose name does not end in `_test`. Without it they are skipped locally (with a notice); CI always sets it.
 
 Weights are stored as integers of 0.0001 g (`48.65 g` is `486500`), converted only with `gramsToUnits` / `unitsToGrams` from `@goldsmith/shared`. Schema, tool choices and the EP-02 acceptance map: [docs/setup/database.md](docs/setup/database.md).
 
