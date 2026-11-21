@@ -98,16 +98,36 @@ describe('toErrorResponse (EP-03-S4, S5)', () => {
   });
 
   it('refuses an oversized or malformed body as validation on field body', () => {
-    expect(toErrorResponse(Object.assign(new Error('too big'), { type: 'entity.too.large' }), noLog)).toEqual({
+    expect(toErrorResponse(Object.assign(new Error('too big'), { type: 'entity.too.large', status: 413 }), noLog)).toEqual({
       status: 413,
       body: { code: 'validation', message: 'The request is too large.', field: 'body' },
     });
-    expect(toErrorResponse(Object.assign(new SyntaxError('Unexpected token'), { type: 'entity.parse.failed' }), noLog)).toEqual({
+    expect(
+      toErrorResponse(Object.assign(new SyntaxError('Unexpected token'), { type: 'entity.parse.failed', status: 400 }), noLog),
+    ).toEqual({
       status: 400,
       body: { code: 'validation', message: 'The request body is not valid JSON.', field: 'body' },
     });
   });
-
+  it.each([
+    ['charset.unsupported', 415, 'The request body must be JSON in UTF-8.'],
+    ['encoding.unsupported', 415, 'The request body uses a content encoding the server does not accept.'],
+    ['request.aborted', 400, 'The request body could not be read.'],
+    ['request.size.invalid', 400, 'The request body could not be read.'],
+  ])('answers the body-parser error %s (%i) as validation on field body, unlogged', (type, status, message) => {
+    const log = vi.fn();
+    expect(toErrorResponse(Object.assign(new Error('raw parser text'), { type, status }), log)).toEqual({
+      status,
+      body: { code: 'validation', message, field: 'body' },
+    });
+    expect(log).not.toHaveBeenCalled();
+  });
+  it('keeps a typed error with a 5xx status internal and logged', () => {
+    const log = vi.fn();
+    const r = toErrorResponse(Object.assign(new Error('stream encoding set'), { type: 'stream.encoding.set', status: 500 }), log);
+    expect(r).toEqual({ status: 500, body: { code: 'internal', message: INTERNAL_MESSAGE } });
+    expect(log).toHaveBeenCalledOnce();
+  });
   it('treats a thrown non-Error as internal', () => {
     expect(toErrorResponse('just a string', noLog).body.code).toBe('internal');
     expect(toErrorResponse(null, noLog).body.code).toBe('internal');

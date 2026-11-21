@@ -32,7 +32,7 @@ Every error body is `{ code, message }`, plus `field` for `validation`. The mess
 
 | Code | HTTP | When |
 | --- | --- | --- |
-| `validation` | 400 (413 for a too-large body) | Input does not match the contract; `field` names the input path (`body` for the whole body, `cursor`, `Idempotency-Key`). |
+| `validation` | 400 (413 for a too-large body, 415 for a body not in UTF-8 or in an unsupported content encoding) | Input does not match the contract; `field` names the input path (`body` for the whole body, `cursor`, `Idempotency-Key`). Every body-parser error with a 4xx status answers `validation` on `body` with that status and is not logged as unexpected. |
 | `unauthenticated` | 401 | No live session. |
 | `forbidden` | 403 | The permission hook refused. |
 | `not_found` | 404 | The record does not exist in the caller's shop, or the operation does not exist. |

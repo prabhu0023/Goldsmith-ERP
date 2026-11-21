@@ -12,6 +12,7 @@ describeDb('request validation at the trust boundary (EP-03-S2, S5 AC3)', () => 
   });
   beforeEach(() => {
     h.captured.length = 0;
+    h.logged.length = 0;
   });
 
   const leadCount = async () =>
@@ -102,6 +103,7 @@ describeDb('request validation at the trust boundary (EP-03-S2, S5 AC3)', () => 
     expect(res.status).toBe(413);
     expect(res.body).toEqual({ code: 'validation', field: 'body', message: 'The request is too large.' });
     expect(h.captured).toEqual([]);
+    expect(h.logged).toEqual([]);
   });
 
   it('refuses a body that is not valid JSON', async () => {
@@ -109,8 +111,37 @@ describeDb('request validation at the trust boundary (EP-03-S2, S5 AC3)', () => 
     expect(res.status).toBe(400);
     expect(res.body).toEqual({ code: 'validation', field: 'body', message: 'The request body is not valid JSON.' });
     expect(leaksIn(res.body)).toEqual([]);
+    expect(h.logged).toEqual([]);
   });
 
+  it('refuses a body in an unsupported charset as validation on field body (415), not internal', async () => {
+    const res = await h.call('createLead', { customerName: 'Latin', items: [{ name: 'Ring', qty: 1 }] }, {
+      session: h.session,
+      headers: { 'content-type': 'application/json; charset=latin1' },
+    });
+    expect(res).toEqual({
+      status: 415,
+      body: { code: 'validation', field: 'body', message: 'The request body must be JSON in UTF-8.' },
+    });
+    expect(h.captured).toEqual([]);
+    expect(h.logged).toEqual([]);
+  });
+  it('refuses a body with an unsupported content encoding as validation on field body (415), not internal', async () => {
+    const res = await h.call('createLead', { customerName: 'Packed', items: [{ name: 'Ring', qty: 1 }] }, {
+      session: h.session,
+      headers: { 'content-encoding': 'compress' },
+    });
+    expect(res).toEqual({
+      status: 415,
+      body: {
+        code: 'validation',
+        field: 'body',
+        message: 'The request body uses a content encoding the server does not accept.',
+      },
+    });
+    expect(h.captured).toEqual([]);
+    expect(h.logged).toEqual([]);
+  });
   it.each(['rememberScale', 'deleteEverything', 'toString', '__proto__'])(
     'AC5: operation %s is not in the contract: not_found, no code runs',
     async (name) => {

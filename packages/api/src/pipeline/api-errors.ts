@@ -92,6 +92,27 @@ export interface ErrorResponse {
 
 export type ErrorLog = (message: string, err: unknown) => void;
 
+/** Sentences for the body-parser error types a client can cause; any other 4xx type gets BODY_UNREADABLE. */
+const BODY_MESSAGES: Record<string, string> = {
+  'entity.too.large': 'The request is too large.',
+  'entity.parse.failed': 'The request body is not valid JSON.',
+  'charset.unsupported': 'The request body must be JSON in UTF-8.',
+  'encoding.unsupported': 'The request body uses a content encoding the server does not accept.',
+};
+const BODY_UNREADABLE = 'The request body could not be read.';
+
+/**
+ * A body-parser (express.json) error carries a string `type` and an HTTP `status`. Every one with
+ * a 4xx status is the caller's mistake: answer `validation` on field `body` with that status
+ * (400, 413, 415, ...) and do not log it. Anything else is not a body error.
+ */
+function bodyParserError(err: unknown): ErrorResponse | undefined {
+  if (err === null || typeof err !== 'object') return undefined;
+  const { type, status } = err as { type?: unknown; status?: unknown };
+  if (typeof type !== 'string' || typeof status !== 'number' || status < 400 || status > 499) return undefined;
+  return { status, body: { code: 'validation', message: BODY_MESSAGES[type] ?? BODY_UNREADABLE, field: 'body' } };
+}
+
 /** Map any thrown value to the status and body sent to the caller; unexpected errors go to `log`. */
 export function toErrorResponse(err: unknown, log: ErrorLog): ErrorResponse {
   if (err instanceof ApiError) {
@@ -114,16 +135,8 @@ export function toErrorResponse(err: unknown, log: ErrorLog): ErrorResponse {
       body: { code: 'not_found', message: `This ${nounOf(err.entity)} was not found.` },
     };
   }
-  const type = (err as { type?: unknown } | null)?.type;
-  if (type === 'entity.too.large') {
-    return { status: 413, body: { code: 'validation', message: 'The request is too large.', field: 'body' } };
-  }
-  if (type === 'entity.parse.failed') {
-    return {
-      status: HTTP_STATUS.validation,
-      body: { code: 'validation', message: 'The request body is not valid JSON.', field: 'body' },
-    };
-  }
+  const bodyError = bodyParserError(err);
+  if (bodyError) return bodyError;
   log('[api] unexpected error', err);
   return { status: HTTP_STATUS.internal, body: { code: 'internal', message: INTERNAL_MESSAGE } };
 }
