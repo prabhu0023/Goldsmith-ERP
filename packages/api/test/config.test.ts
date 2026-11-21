@@ -47,6 +47,25 @@ describe('loadConfig', () => {
       expect(() => loadConfig({ ...valid, [name]: bad })).toThrow(`${name} must be a positive integer (milliseconds)`);
     }
   });
+  it('runs the job scheduler every 15000 ms by default and reads set values (EP-10)', () => {
+    expect(loadConfig(valid)).toMatchObject({ jobsEnabled: true, jobsPollIntervalMs: 15000 });
+    expect(loadConfig({ ...valid, JOBS_ENABLED: 'false', JOBS_POLL_INTERVAL_MS: '1000' })).toMatchObject({
+      jobsEnabled: false,
+      jobsPollIntervalMs: 1000,
+    });
+    expect(loadConfig({ ...valid, JOBS_ENABLED: 'true', JOBS_POLL_INTERVAL_MS: '60000' })).toMatchObject({
+      jobsEnabled: true,
+      jobsPollIntervalMs: 60000,
+    });
+  });
+  it.each(['maybe', 'yes', '1', 'FALSE'])('names JOBS_ENABLED when it is %s', (bad) => {
+    expect(() => loadConfig({ ...valid, JOBS_ENABLED: bad })).toThrow('JOBS_ENABLED must be true or false');
+  });
+  it.each(['0', '500', '70000', '1500.5', 'abc'])('names JOBS_POLL_INTERVAL_MS when it is %s', (bad) => {
+    expect(() => loadConfig({ ...valid, JOBS_POLL_INTERVAL_MS: bad })).toThrow(
+      'JOBS_POLL_INTERVAL_MS must be an integer between 1000 and 60000 (milliseconds)',
+    );
+  });
   it('names every missing required variable', () => {
     const err = (() => {
       try {

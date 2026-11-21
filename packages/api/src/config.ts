@@ -39,6 +39,8 @@ export const ENV_VARS = [
   { name: 'EMAIL_IMAP_USER', required: false },
   { name: 'EMAIL_IMAP_PASSWORD', required: false },
   { name: 'GEMINI_API_KEY', required: false },
+  { name: 'JOBS_ENABLED', required: false },
+  { name: 'JOBS_POLL_INTERVAL_MS', required: false },
 ] as const satisfies readonly EnvVarSpec[];
 
 export type EnvVarName = (typeof ENV_VARS)[number]['name'];
@@ -52,6 +54,9 @@ export const DEFAULT_DATABASE_CONNECT_TIMEOUT_MS = 5000;
 /** Cancel a database statement after 30 s. */
 export const DEFAULT_DATABASE_QUERY_TIMEOUT_MS = 30000;
 const MIN_SESSION_SECRET_LENGTH = 32;
+/** The scheduler looks for due jobs every 15 s, so a due job starts within a minute (EP-10-S1). */
+export const DEFAULT_JOBS_POLL_INTERVAL_MS = 15000;
+const JOBS_POLL_INTERVAL_RANGE_MS = [1000, 60000] as const;
 
 export interface Config {
   appEnv: AppEnv;
@@ -81,6 +86,10 @@ export interface Config {
   emailImapUser?: string;
   emailImapPassword?: string;
   geminiApiKey?: string;
+  /** Run the background job scheduler in this process (EP-10). */
+  jobsEnabled: boolean;
+  /** How often the scheduler looks for due jobs, ms. */
+  jobsPollIntervalMs: number;
 }
 
 export class ConfigError extends Error {
@@ -154,6 +163,16 @@ export function loadConfig(env: Env = process.env): Config {
   const databaseConnectTimeoutMs = positiveMs('DATABASE_CONNECT_TIMEOUT_MS', DEFAULT_DATABASE_CONNECT_TIMEOUT_MS);
   const databaseQueryTimeoutMs = positiveMs('DATABASE_QUERY_TIMEOUT_MS', DEFAULT_DATABASE_QUERY_TIMEOUT_MS);
   const databaseUrl = read('DATABASE_URL');
+  const jobsEnabledText = read('JOBS_ENABLED');
+  if (jobsEnabledText !== undefined && jobsEnabledText !== 'true' && jobsEnabledText !== 'false') {
+    problems.push('JOBS_ENABLED must be true or false');
+  }
+  const pollText = read('JOBS_POLL_INTERVAL_MS');
+  const jobsPollIntervalMs = pollText === undefined ? DEFAULT_JOBS_POLL_INTERVAL_MS : Number(pollText);
+  const [minPoll, maxPoll] = JOBS_POLL_INTERVAL_RANGE_MS;
+  if (!Number.isSafeInteger(jobsPollIntervalMs) || jobsPollIntervalMs < minPoll || jobsPollIntervalMs > maxPoll) {
+    problems.push(`JOBS_POLL_INTERVAL_MS must be an integer between ${minPoll} and ${maxPoll} (milliseconds)`);
+  }
   if (problems.length > 0) throw new ConfigError(problems);
 
   return {
@@ -177,5 +196,7 @@ export function loadConfig(env: Env = process.env): Config {
     emailImapUser: read('EMAIL_IMAP_USER'),
     emailImapPassword: read('EMAIL_IMAP_PASSWORD'),
     geminiApiKey: read('GEMINI_API_KEY'),
+    jobsEnabled: jobsEnabledText !== 'false',
+    jobsPollIntervalMs,
   };
 }
