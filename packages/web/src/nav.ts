@@ -15,6 +15,7 @@ import {
   UserCog,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { LANDING_ROUTES } from '@goldsmith/shared';
 import type { RoleId } from '@goldsmith/shared';
 import type { BadgeKey } from './store/selectors';
 
@@ -126,7 +127,7 @@ export function navFor(role: RoleId): NavSection[] {
   return [];
 }
 
-export const landingRoute: Record<RoleId, RouteId> = { staff: 'today', owner: 'decisions', karigar: 'k-jobs' };
+export const landingRoute: Record<RoleId, RouteId> = LANDING_ROUTES;
 
 export const isActive = (item: NavItem, routeId: RouteId): boolean => item.id === routeId || (item.also?.includes(routeId) ?? false);
 
