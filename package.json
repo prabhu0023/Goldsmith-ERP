@@ -23,7 +23,8 @@
     "db:migrate": "npm run db:migrate -w @goldsmith/api",
     "db:status": "npm run db:status -w @goldsmith/api",
     "db:seed": "npm run db:seed -w @goldsmith/api",
-    "db:reset": "npm run db:reset -w @goldsmith/api"
+    "db:reset": "npm run db:reset -w @goldsmith/api",
+    "db:dev-session": "npm run db:dev-session -w @goldsmith/api --"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",
