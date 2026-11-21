@@ -1,10 +1,12 @@
 /**
- * Database commands: `migrate`, `status`, `reset` (run via `npm run db:<command>`).
+ * Database commands: `migrate`, `status`, `reset`, `seed` (run via `npm run db:<command>`).
  * Reads DATABASE_URL and APP_ENV. Exit code 0 on success, 1 with a one-line error otherwise.
  */
+import type { AppEnv } from '../config.js';
 import { createPool } from './connection.js';
 import { readDbEnv } from './db-env.js';
 import { migrate, migrationStatus, resetDatabase } from './migrator.js';
+import { seedPrototype } from './seed/seed-database.js';
 
 /** Works from src/db (tsx) and dist/db (built). */
 const MIGRATIONS_DIR = new URL('../../migrations/', import.meta.url);
@@ -39,9 +41,18 @@ async function runStatus(pool: ReturnType<typeof createPool>): Promise<void> {
   for (const row of table) console.log(row.map((cell, i) => cell.padEnd(widths[i])).join('  '));
 }
 
+async function runSeed(pool: ReturnType<typeof createPool>, appEnv: AppEnv): Promise<void> {
+  const counts = await seedPrototype(pool, { appEnv });
+  console.log('Seeded the prototype data:');
+  const width = Math.max(...Object.keys(counts).map((t) => t.length));
+  for (const [table, n] of Object.entries(counts)) console.log(`  ${table.padEnd(width)}  ${String(n).padStart(4)}`);
+}
+
+const COMMANDS = ['migrate', 'status', 'reset', 'seed'];
+
 async function main(command: string | undefined): Promise<void> {
-  if (command !== 'migrate' && command !== 'status' && command !== 'reset') {
-    throw new Error(`Unknown command ${command ?? '(none)'}; use migrate, status or reset`);
+  if (command === undefined || !COMMANDS.includes(command)) {
+    throw new Error(`Unknown command ${command ?? '(none)'}; use migrate, status, reset or seed`);
   }
   const { databaseUrl, appEnv } = readDbEnv();
   if (command === 'reset' && appEnv === 'production') {
@@ -51,6 +62,7 @@ async function main(command: string | undefined): Promise<void> {
   try {
     if (command === 'migrate') await runMigrate(pool);
     else if (command === 'status') await runStatus(pool);
+    else if (command === 'seed') await runSeed(pool, appEnv);
     else {
       await resetDatabase(pool);
       console.log('Database reset: schema public dropped and recreated.');
