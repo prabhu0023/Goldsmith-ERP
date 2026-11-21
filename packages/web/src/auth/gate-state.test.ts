@@ -1,7 +1,7 @@
 import { AUTH_MESSAGES } from '@goldsmith/shared';
 import { describe, expect, it } from 'vitest';
 import type { AuthAnswer } from './auth-api';
-import { gateAfterCheck, gateAfterRecheck, gateFromLocation } from './gate-state';
+import { gateAfterCheck, gateAfterRecheck, gateAfterSignOut, gateFromLocation } from './gate-state';
 const unauthenticated: AuthAnswer<'readCurrentSession'> = { ok: false, code: 'unauthenticated', message: 'Sign in to continue.' };
 const session = { ok: true, user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' }, landingRoute: 'today' } as const;
 describe('auth gate states (EP-04-S6, S11, S12)', () => {
@@ -22,6 +22,20 @@ describe('auth gate states (EP-04-S6, S11, S12)', () => {
   });
   it('S12 AC1, S13 AC2: a re-check answering unauthenticated shows sign-in with the session-ended sentence', () => {
     expect(gateAfterRecheck(unauthenticated)).toEqual({ kind: 'signed-out', view: 'sign-in', notice: AUTH_MESSAGES.sessionEnded });
+  });
+  it('S11 AC1: a sign-out the server answers ok shows the sign-in screen', () => {
+    expect(gateAfterSignOut({ ok: true, data: { ok: true } })).toEqual({ kind: 'signed-out', view: 'sign-in', notice: undefined });
+  });
+  it('S11: a sign-out answered unauthenticated (the session had already ended) shows the sign-in screen', () => {
+    expect(gateAfterSignOut({ ok: false, code: 'unauthenticated', message: 'Sign in to continue.' })).toEqual({
+      kind: 'signed-out',
+      view: 'sign-in',
+      notice: undefined,
+    });
+  });
+  it('S11: a sign-out that fails for another reason keeps the app open, so a reload cannot sign the same person back in', () => {
+    expect(gateAfterSignOut({ ok: false, code: 'internal', message: 'Cannot reach the server. Check the connection and try again.' })).toBeNull();
+    expect(gateAfterSignOut({ ok: false, code: 'rate_limited', message: 'Too many requests.' })).toBeNull();
   });
   it('a re-check that succeeds or fails for another reason keeps the app open', () => {
     expect(gateAfterRecheck({ ok: true, data: session })).toBeNull();

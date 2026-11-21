@@ -7,6 +7,7 @@ import { StoreProvider, useStore } from '../store/StoreProvider';
 import { ForgotPasswordPage } from './ForgotPasswordPage';
 import { SignInPage } from './SignInPage';
 const noop = () => {};
+const signOutOk = async () => null;
 /** Every `<input …>` and `<button …>` tag in rendered markup. */
 const targets = (html: string) => html.match(/<(input|button)\b[^>]*>/g) ?? [];
 function Probe() {
@@ -44,7 +45,7 @@ describe('after sign-in (EP-04-S6)', () => {
     ['Lakshmi Devi', 'karigar', 'k-jobs'],
   ] as Array<[string, RoleId, string]>)('S6 AC1-3: %s (%s) opens route %s as that person', (name, role, route) => {
     const html = renderToStaticMarkup(
-      <StoreProvider signedIn={{ name, role }} onSignOut={noop}>
+      <StoreProvider signedIn={{ name, role }} onSignOut={signOutOk}>
         <Probe />
       </StoreProvider>,
     );
@@ -52,7 +53,7 @@ describe('after sign-in (EP-04-S6)', () => {
   });
   it('S6: with a real session the account chip offers no identity switch', () => {
     const signedIn = renderToStaticMarkup(
-      <StoreProvider signedIn={{ name: 'Rajesh Verma', role: 'staff' }} onSignOut={noop}>
+      <StoreProvider signedIn={{ name: 'Rajesh Verma', role: 'staff' }} onSignOut={signOutOk}>
         <RoleChip />
       </StoreProvider>,
     );

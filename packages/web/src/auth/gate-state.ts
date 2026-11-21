@@ -26,3 +26,10 @@ export const gateAfterCheck = (answer: AuthAnswer<'readCurrentSession'>): GateSt
 /** After a re-check while signed in: the session-ended sentence on `unauthenticated`, else no change. */
 export const gateAfterRecheck = (answer: AuthAnswer<'readCurrentSession'>): GateState | null =>
   !answer.ok && answer.code === 'unauthenticated' ? signedOut(AUTH_MESSAGES.sessionEnded) : null;
+/**
+ * After Sign out (S11): the sign-in screen once the server ended the session, or when it had already
+ * ended (`unauthenticated`). Any other failure keeps the app open: the HttpOnly cookie cannot be
+ * cleared here, so showing sign-in would let a reload sign the same person back in.
+ */
+export const gateAfterSignOut = (answer: AuthAnswer<'signOut'>): GateState | null =>
+  answer.ok || answer.code === 'unauthenticated' ? signedOut() : null;

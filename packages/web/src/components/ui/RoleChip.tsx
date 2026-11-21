@@ -11,11 +11,13 @@ interface Props {
 
 /**
  * Avatar chip showing who is signed in. With a real session its menu holds only "Sign out" (EP-04-S6);
- * without one it switches between the staff, owner and karigar identities.
+ * if signing out fails the menu stays open with the error so the person can try again (S11).
+ * Without a session it switches between the staff, owner and karigar identities.
  */
 export function RoleChip({ placement = 'up', className }: Props) {
   const { identity, identities, switchIdentity, signOut } = useStore();
   const [open, setOpen] = useState(false);
+  const [signOutError, setSignOutError] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,7 +43,10 @@ export function RoleChip({ placement = 'up', className }: Props) {
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          setSignOutError(null);
+          setOpen(!open);
+        }}
         className="flex w-full min-h-14 items-center gap-3 rounded-xl border border-line bg-surface p-2.5 text-left hover:bg-paper"
       >
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-closed text-sm font-bold text-white">{identity.initials}</span>
@@ -60,18 +65,25 @@ export function RoleChip({ placement = 'up', className }: Props) {
           )}
         >
           {signOut ? (
-            <button
-              type="button"
-              role="menuitem"
-              onClick={() => {
-                setOpen(false);
-                signOut();
-              }}
-              className="flex min-h-14 w-full items-center gap-3 rounded-lg px-2 text-left text-sm font-semibold text-ink hover:bg-paper"
-            >
-              <LogOut size={16} className="shrink-0 text-ink-3" />
-              Sign out
-            </button>
+            <>
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setSignOutError(null);
+                  void signOut().then(setSignOutError);
+                }}
+                className="flex min-h-14 w-full items-center gap-3 rounded-lg px-2 text-left text-sm font-semibold text-ink hover:bg-paper"
+              >
+                <LogOut size={16} className="shrink-0 text-ink-3" />
+                Sign out
+              </button>
+              {signOutError && (
+                <p role="alert" className="px-2 py-1 text-sm font-semibold text-stop">
+                  {signOutError}
+                </p>
+              )}
+            </>
           ) : (
             groups.map((g) => (
               <div key={g.label} className="py-1">

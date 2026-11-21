@@ -91,8 +91,8 @@ export interface Store {
   actor: Actor;
   identities: Identity[];
   switchIdentity: (id: string) => void;
-  /** Set when a real session is signed in: ends it and returns to sign-in. */
-  signOut?: () => void;
+  /** Set when a real session is signed in: ends it and returns to sign-in, or resolves to the error sentence. */
+  signOut?: () => Promise<string | null>;
   /** Demo-clock time, refreshed every 30 seconds and after each action. */
   now: number;
 }
@@ -103,7 +103,7 @@ interface StoreProviderProps {
   children: ReactNode;
   /** The signed-in person; the prototype identity with the same name and role, else the first of that role. */
   signedIn?: { name: string; role: RoleId };
-  onSignOut?: () => void;
+  onSignOut?: () => Promise<string | null>;
 }
 /** The prototype identity a signed-in person acts as. */
 function identityFor(signedIn: { name: string; role: RoleId }): Identity | undefined {
