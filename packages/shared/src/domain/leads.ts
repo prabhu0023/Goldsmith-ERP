@@ -13,7 +13,7 @@ export interface SlaState {
 }
 
 /** A lead's clock runs from arrival until a person works it. */
-export const slaRunning = (lead: Lead): boolean => lead.state === 'needs_glance' || lead.state === 'opened';
+export const slaRunning = (lead: Pick<Lead, 'state'>): boolean => lead.state === 'needs_glance' || lead.state === 'opened';
 
 export function slaState(lead: Lead, now: number, slaHours: number): SlaState {
   const elapsedH = Math.max(0, (now - lead.arrivedAt) / HOUR);
