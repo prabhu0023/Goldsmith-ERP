@@ -2,6 +2,10 @@
 # Each check is its own job so a failure in one does not hide the others, and each job name is a
 # required status check on main (see docs/setup/branch-protection.md, EP-01-S11):
 #   Lint, Typecheck, Test, Build, Secret scan
+# The Test job runs a PostgreSQL 17 service container (EP-02-S1, S13, S14): it migrates an empty
+# database twice (the second run must apply nothing), seeds the prototype data, then runs the
+# database tests, whose global setup wipes and re-migrates the same database. The credentials
+# are the image defaults and exist only inside the job.
 # A deploy job (EP-01-S12, waiting on decision D1a) can later be added with `needs:` on these
 # jobs and `if: github.ref == 'refs/heads/main'`, consuming the release artefact from Build.
 name: CI
@@ -63,7 +67,24 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: goldsmith_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_ENV: development
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/goldsmith_test
+      TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/goldsmith_test
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -72,6 +93,10 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
+      - name: Migrate an empty database
+        run: npm run db:migrate && npm run db:migrate && npm run db:status
+      - name: Seed it
+        run: npm run db:seed
       - name: Test shared
         if: ${{ !cancelled() }}
         run: npm test -w @goldsmith/shared -- --reporter=default --reporter=github-actions
@@ -110,6 +135,7 @@ jobs:
             packages/shared/dist
             packages/web/dist
             packages/api/dist
+            packages/api/migrations
             packages/shared/package.json
             packages/api/package.json
             package.json

@@ -44,6 +44,32 @@ This starts web on http://localhost:3000 and the api on http://localhost:4000 (`
 
 One package only: `npm run dev -w @goldsmith/web` (needs no `.env`) or `npm run dev -w @goldsmith/api`.
 
+## Database (local)
+
+PostgreSQL 17 runs in Docker (`docker-compose.yml`; on macOS use Colima, `colima start`). Add these lines to `.env`:
+
+```sh
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/goldsmith_dev
+TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/goldsmith_test
+```
+
+The `postgres` / `postgres` credentials are local-only: the container listens on 127.0.0.1 and the same values never go to staging or production.
+
+```sh
+npm run db:up       # start PostgreSQL and wait until it is healthy (creates goldsmith_dev and goldsmith_test)
+npm run db:migrate  # apply pending migrations from packages/api/migrations; "up to date" when none
+npm run db:status   # each migration: number, name, applied time (UTC), checksum, state
+npm run db:seed     # load the web prototype's data into an empty database (refuses a non-empty one and production)
+npm run db:reset    # drop everything in goldsmith_dev and migrate again (refused unless APP_ENV=development)
+npm run db:down     # stop the container (data stays in the pgdata volume; `docker compose down -v` deletes it)
+```
+
+To start over with demo data: `npm run db:reset && npm run db:seed`.
+
+The api database tests run against `TEST_DATABASE_URL` and wipe that database at the start of each run, so they refuse any database whose name does not end in `_test`. Without it they are skipped locally (with a notice); CI always sets it.
+
+Weights are stored as integers of 0.0001 g (`48.65 g` is `486500`), converted only with `gramsToUnits` / `unitsToGrams` from `@goldsmith/shared`. Schema, tool choices and the EP-02 acceptance map: [docs/setup/database.md](docs/setup/database.md).
+
 ## Check and build
 
 ```sh
@@ -56,4 +82,4 @@ npm run clean      # remove every package's dist
 
 ## CI
 
-`.github/workflows/ci.yml` runs Lint, Typecheck, Test, Build and Secret scan (gitleaks) on every push and pull request. A green run on main stores the build as the `release-<commit sha>` artefact. Merges into main need all five checks green: see [docs/setup/branch-protection.md](docs/setup/branch-protection.md). Where the repository lives and who administers it: [docs/setup/repository.md](docs/setup/repository.md).
+`.github/workflows/ci.yml` runs Lint, Typecheck, Test, Build and Secret scan (gitleaks) on every push and pull request. The Test job starts a PostgreSQL 17 service, migrates and seeds it, then runs the database tests. A green run on main stores the build as the `release-<commit sha>` artefact. Merges into main need all five checks green: see [docs/setup/branch-protection.md](docs/setup/branch-protection.md). Where the repository lives and who administers it: [docs/setup/repository.md](docs/setup/repository.md).

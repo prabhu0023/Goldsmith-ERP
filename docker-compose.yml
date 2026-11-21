@@ -1,0 +1,25 @@
+# Local development database (EP-02-S1). Start with `npm run db:up`, stop with `npm run db:down`.
+# The credentials below (postgres / postgres) are local-only Docker image defaults, bound to
+# 127.0.0.1. Staging and production use their own databases and secrets (D1a), never these.
+name: goldsmith-erp
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: goldsmith_dev
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Runs once, on an empty volume: creates goldsmith_test next to goldsmith_dev.
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres", "-d", "goldsmith_dev"]
+      interval: 2s
+      retries: 30
+
+volumes:
+  pgdata:
