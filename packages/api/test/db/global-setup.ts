@@ -5,10 +5,12 @@
  */
 import { createPool } from '../../src/db/connection.js';
 import { migrate } from '../../src/db/migrator.js';
+import { testDatabaseUrl } from '../../src/lane.js';
 import { assertWipeableTestDatabase } from './test-db-guard.js';
 
 export async function setup(): Promise<void> {
-  const url = process.env.TEST_DATABASE_URL?.trim();
+  // With LANE set, the lane's test database (goldsmith_test → goldsmith_<lane>_test).
+  const url = testDatabaseUrl();
   if (!url) {
     if (process.env.CI) throw new Error('TEST_DATABASE_URL is required in CI');
     console.warn('database tests skipped: TEST_DATABASE_URL is not set');

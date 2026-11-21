@@ -5,7 +5,7 @@
   "description": "Browser app (React 19 + Vite 8 + Tailwind 4).",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev": "vite --host=0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",

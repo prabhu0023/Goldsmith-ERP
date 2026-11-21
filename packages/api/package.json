@@ -16,7 +16,9 @@
     "db:status": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts status",
     "db:reset": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts reset",
     "db:seed": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts seed",
-    "db:dev-session": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts dev-session"
+    "db:dev-session": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts dev-session",
+    "db:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts create",
+    "db:new": "node --conditions=@goldsmith/source --import tsx src/db/cli.ts new"
   },
   "dependencies": {
     "@goldsmith/shared": "0.0.0",

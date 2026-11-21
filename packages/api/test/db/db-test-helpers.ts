@@ -6,8 +6,10 @@ import { randomBytes } from 'node:crypto';
 import type pg from 'pg';
 import { describe, expect } from 'vitest';
 import { createPool } from '../../src/db/connection.js';
+import { testDatabaseUrl } from '../../src/lane.js';
 
-const testUrl = process.env.TEST_DATABASE_URL?.trim() ?? '';
+/** TEST_DATABASE_URL, or the lane's test database when LANE is set (src/lane.ts). */
+const testUrl = testDatabaseUrl() ?? '';
 
 export const dbEnabled = testUrl !== '';
 
