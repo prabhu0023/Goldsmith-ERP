@@ -44,6 +44,8 @@ This starts web on http://localhost:3000 and the api on http://localhost:4000 (`
 
 One package only: `npm run dev -w @goldsmith/web` (needs no `.env`) or `npm run dev -w @goldsmith/api`.
 
+The api's endpoints, error format and how to add an operation are in [docs/setup/api.md](docs/setup/api.md). To call it locally before sign-in exists (EP-04), open a development session for a seeded user with `npm run db:dev-session -- "Rajesh Verma"` and send the printed id as the `x-dev-session` header.
+
 ## Database (local)
 
 PostgreSQL 17 runs in Docker (`docker-compose.yml`; on macOS use Colima, `colima start`). Add these lines to `.env`:
