@@ -36,6 +36,17 @@ describe('loadConfig', () => {
       'IDEMPOTENCY_RETENTION_HOURS must be a positive integer',
     );
   });
+  it('defaults the database pool timeouts to 5000 ms connect and 30000 ms query, and reads set values', () => {
+    expect(loadConfig(valid)).toMatchObject({ databaseConnectTimeoutMs: 5000, databaseQueryTimeoutMs: 30000 });
+    expect(
+      loadConfig({ ...valid, DATABASE_CONNECT_TIMEOUT_MS: '1500', DATABASE_QUERY_TIMEOUT_MS: '8000' }),
+    ).toMatchObject({ databaseConnectTimeoutMs: 1500, databaseQueryTimeoutMs: 8000 });
+  });
+  it.each(['DATABASE_CONNECT_TIMEOUT_MS', 'DATABASE_QUERY_TIMEOUT_MS'])('names %s when it is not a positive integer', (name) => {
+    for (const bad of ['0', '-1', '2.5', 'soon']) {
+      expect(() => loadConfig({ ...valid, [name]: bad })).toThrow(`${name} must be a positive integer (milliseconds)`);
+    }
+  });
   it('names every missing required variable', () => {
     const err = (() => {
       try {

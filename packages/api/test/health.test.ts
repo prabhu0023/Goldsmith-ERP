@@ -32,6 +32,40 @@ function expectNoSecrets(body: unknown): void {
   for (const secret of ['postgres', 'localhost', '127.0.0.1', '5432', '://', 'goldsmith_']) expect(text).not.toContain(secret);
 }
 
+describe('createPool timeouts', () => {
+  it('sets connect, query and statement timeouts when given, and none otherwise', async () => {
+    const url = 'postgres://postgres:postgres@127.0.0.1:1/goldsmith_dev';
+    const timed = createPool(url, 3, { connectTimeoutMs: 1234, queryTimeoutMs: 5678 });
+    expect(timed.options).toMatchObject({ max: 3, connectionTimeoutMillis: 1234, query_timeout: 5678, statement_timeout: 5678 });
+    const plain = createPool(url, 1);
+    expect(plain.options.query_timeout).toBeUndefined();
+    expect(plain.options.statement_timeout).toBeUndefined();
+    await Promise.all([timed.end(), plain.end()]);
+  });
+  it('frees the slot when a hung database does not answer the connect in time', async () => {
+    const sockets: Socket[] = [];
+    const silent = createServer((socket) => {
+      sockets.push(socket);
+    });
+    await new Promise<void>((resolve) => silent.listen(0, '127.0.0.1', resolve));
+    const port = (silent.address() as AddressInfo).port;
+    const pool = createPool(`postgres://postgres:postgres@127.0.0.1:${port}/goldsmith_dev`, 1, {
+      connectTimeoutMs: 200,
+      queryTimeoutMs: 200,
+    });
+    pool.on('error', () => {});
+    try {
+      const started = Date.now();
+      await expect(pool.query('select 1')).rejects.toThrow();
+      expect(Date.now() - started).toBeLessThan(1500);
+      expect(pool.totalCount).toBe(0);
+    } finally {
+      for (const s of sockets) s.destroy();
+      await new Promise<void>((resolve) => silent.close(() => resolve()));
+      await pool.end().catch(() => {});
+    }
+  });
+});
 describeDb('GET /health with the database up (EP-03-S10 AC1, AC3, AC4)', () => {
   let pool: pg.Pool;
   let app: Awaited<ReturnType<typeof serve>>;
@@ -99,6 +133,46 @@ describe('GET /health with the database down (EP-03-S10 AC2, AC4, AC5)', () => {
     }
   });
 
+  it('holds no pool slot and leaves no socket open after repeated health checks against a hung database', async () => {
+    const sockets: Socket[] = [];
+    let closed = 0;
+    const silent = createServer((socket) => {
+      sockets.push(socket);
+      // Read and drop what the client sends, so its close is seen; never answer.
+      socket.resume();
+      socket.on('close', () => {
+        closed += 1;
+      });
+    });
+    await new Promise<void>((resolve) => silent.listen(0, '127.0.0.1', resolve));
+    const port = (silent.address() as AddressInfo).port;
+    const pool = createPool(`postgres://postgres:postgres@127.0.0.1:${port}/goldsmith_dev`, 1, {
+      connectTimeoutMs: 300,
+      queryTimeoutMs: 300,
+    });
+    pool.on('error', () => {});
+    const app = await serve({ pool, healthTimeoutMs: 200 });
+    try {
+      for (let i = 0; i < 3; i++) {
+        const started = Date.now();
+        const res = await fetch(`${app.base}/health`);
+        expect(res.status).toBe(503);
+        expect(((await res.json()) as { database: string }).database).toBe('down');
+        expect(Date.now() - started).toBeLessThan(1500);
+      }
+      // The probe never borrowed a pool slot, so the one slot is free for an operation.
+      expect(pool.totalCount).toBe(0);
+      expect(pool.waitingCount).toBe(0);
+      // Each probe connection is destroyed once its own timeout passes.
+      expect(sockets).toHaveLength(3);
+      await expect.poll(() => closed, { timeout: 2000 }).toBe(3);
+    } finally {
+      await app.close();
+      for (const s of sockets) s.destroy();
+      await new Promise<void>((resolve) => silent.close(() => resolve()));
+      await pool.end().catch(() => {});
+    }
+  });
   it('reports database down when no database is configured', async () => {
     const app = await serve({});
     try {

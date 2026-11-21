@@ -20,7 +20,10 @@ function start(): void {
 
   let pool: pg.Pool | undefined;
   if (config.databaseUrl) {
-    pool = createPool(config.databaseUrl);
+    pool = createPool(config.databaseUrl, 10, {
+      connectTimeoutMs: config.databaseConnectTimeoutMs,
+      queryTimeoutMs: config.databaseQueryTimeoutMs,
+    });
     // An idle connection that drops is discarded by the pool; log it instead of crashing.
     pool.on('error', (err) => console.error(`[api] database connection error: ${err.message}`));
   }

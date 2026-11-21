@@ -6,7 +6,7 @@ The api (`packages/api`) serves every operation of the shared contract (`package
 
 | Method and path | Session | Answer |
 | --- | --- | --- |
-| `GET /health` | not needed | `{ status, service, env, api, database, shared }`; 200 when the database is up and the shared rules load, else 503. The database check times out after 2 s. |
+| `GET /health` | not needed | `{ status, service, env, api, database, shared }`; 200 when the database is up and the shared rules load, else 503. The database check runs on its own probe connection (not a pool slot) and times out after 2 s. |
 | `GET /api/contract-version` | needed | `{ ok: true, version }` (`CONTRACT_VERSION`). |
 | `POST /api/ops/<operation>` | needed | The operation's result, e.g. `{ ok: true }`. JSON body = the operation's input. |
 
