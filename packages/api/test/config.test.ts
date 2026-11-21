@@ -16,6 +16,17 @@ describe('loadConfig', () => {
     expect(c.databaseUrl).toBeUndefined();
   });
 
+  it('defaults the maximum request body to 102400 bytes and reads a set value', () => {
+    expect(loadConfig(valid).maxBodyBytes).toBe(102400);
+    expect(loadConfig({ ...valid, API_MAX_BODY_BYTES: '2048' }).maxBodyBytes).toBe(2048);
+  });
+
+  it.each(['0', '-5', '1.5', 'lots'])('names API_MAX_BODY_BYTES when it is %s', (bad) => {
+    expect(() => loadConfig({ ...valid, API_MAX_BODY_BYTES: bad })).toThrow(
+      'API_MAX_BODY_BYTES must be a positive integer',
+    );
+  });
+
   it('names every missing required variable', () => {
     const err = (() => {
       try {

@@ -20,6 +20,7 @@ export const ENV_VARS = [
   { name: 'APP_URL', required: true },
   { name: 'SESSION_SECRET', required: true },
   { name: 'API_PORT', required: false },
+  { name: 'API_MAX_BODY_BYTES', required: false },
   { name: 'CLOUD_REGION', required: false },
   { name: 'DATABASE_URL', required: false },
   { name: 'STORAGE_BUCKET', required: false },
@@ -36,6 +37,8 @@ export const ENV_VARS = [
 export type EnvVarName = (typeof ENV_VARS)[number]['name'];
 
 export const DEFAULT_API_PORT = 4000;
+/** Largest request body the api parses (EP-03-S2): 100 kB. */
+export const DEFAULT_MAX_BODY_BYTES = 102400;
 const MIN_SESSION_SECRET_LENGTH = 32;
 
 export interface Config {
@@ -43,6 +46,8 @@ export interface Config {
   appUrl: string;
   sessionSecret: string;
   port: number;
+  /** Request bodies larger than this are refused before parsing. */
+  maxBodyBytes: number;
   /** Hosting region (D10: an India region; the exact name follows the D1a provider). */
   cloudRegion?: string;
   /** Optional until the epic that uses them (database EP-02, storage, WhatsApp, email, LLM). */
@@ -102,6 +107,12 @@ export function loadConfig(env: Env = process.env): Config {
     problems.push('API_PORT must be an integer between 0 and 65535');
   }
 
+  const maxBodyText = read('API_MAX_BODY_BYTES');
+  const maxBodyBytes = maxBodyText === undefined ? DEFAULT_MAX_BODY_BYTES : Number(maxBodyText);
+  if (!Number.isSafeInteger(maxBodyBytes) || maxBodyBytes < 1) {
+    problems.push('API_MAX_BODY_BYTES must be a positive integer (bytes)');
+  }
+
   if (problems.length > 0) throw new ConfigError(problems);
 
   return {
@@ -109,6 +120,7 @@ export function loadConfig(env: Env = process.env): Config {
     appUrl: appUrl as string,
     sessionSecret: sessionSecret as string,
     port,
+    maxBodyBytes,
     cloudRegion: read('CLOUD_REGION'),
     databaseUrl: read('DATABASE_URL'),
     storageBucket: read('STORAGE_BUCKET'),

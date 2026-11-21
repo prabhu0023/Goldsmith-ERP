@@ -35,6 +35,7 @@ Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 
 | `0010_broadcasts_wishes_settings` | `broadcasts`, `broadcast_recipients`, `broadcast_pieces`, `wishes`, `settings` (one per shop, created with the shop) |
 | `0011_shop_matched_references` | `unique (shop_id, id)` on every referenced table; every foreign key between shop-scoped tables becomes `(shop_id, x_id)` |
 | `0012_opted_in_personal_data` | `personal data (DPDP)` comment on `customers.opted_in` |
+| `0013_code_counters` | `code_counters (shop_id, prefix, last_value)`: per-shop counters behind `nextCode()` (EP-03-S7) |
 
 Conventions every table follows:
 
@@ -53,9 +54,10 @@ Conventions every table follows:
 ## Data-access layer (`packages/api/src/db/index.ts`)
 
 - `createPool(url, max)`: a `pg.Pool` in UTC with the BIGINT parser.
-- `withTransaction(pool, fn)`: begin, commit when `fn` resolves, roll back when it throws.
+- `withTransaction(pool, fn)`: begin, commit when `fn` resolves, roll back when it throws. A client whose connection broke is released with the error, so the pool discards it.
 - `loadShopContext(client, shopId)` → `{ shopId, locationId }`; `insertScoped(client, ctx, table, values)`: parameterised insert that sets `shop_id` (and `location_id` on the gold tables) from the context.
-- `updateVersioned(client, ctx, { table, id, expectedVersion, set })`: `update … where id = $1 and shop_id = $2 and version = $3`. No row matched → `StaleWriteError` (`code 'STALE_WRITE'`, `entity`, `id`, `expectedVersion`), the same type for all seven versioned tables, so EP-03 maps it to one conflict response.
+- `updateVersioned(client, ctx, { table, id, expectedVersion, set })`: `update … where id = $1 and shop_id = $2 and version = $3`. No row matched: if the id does not exist in the caller's shop (missing, or another shop's row) → `RowNotFoundError` (`code 'ROW_NOT_FOUND'`, `entity`, `id`), mapped by EP-03 to `not_found`; otherwise → `StaleWriteError` (`code 'STALE_WRITE'`, `entity`, `id`, `expectedVersion`), the same type for all seven versioned tables, mapped to `conflict`.
+- `nextCode(client, ctx, { table, prefix, pad = 3 })` → `<prefix>-<number>` (e.g. `LD-2026-214`): one atomic upsert on `code_counters` (`0013`), so parallel creates get distinct codes; a prefix used for the first time continues after the highest existing code in `table`. Primary keys stay internal uuids; the code is the record's id in the API.
 
 ## Seed
 
