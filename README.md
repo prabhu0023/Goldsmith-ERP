@@ -40,9 +40,11 @@ Fill in at least `APP_ENV=development`, `APP_URL=http://localhost:3000` and `SES
 npm run dev
 ```
 
-This starts web on http://localhost:3000 and the api on http://localhost:4000 (`API_PORT`); check http://localhost:4000/health. Editing `packages/shared` reloads web and restarts the api. If either process stops, the other is stopped too and the output names the one that failed. Press Ctrl+C to stop both.
+This starts web on http://localhost:3000 (`WEB_PORT`) and the api on http://localhost:4000 (`API_PORT`); check http://localhost:4000/health. Editing `packages/shared` reloads web and restarts the api. If either process stops, the other is stopped too and the output names the one that failed. Press Ctrl+C to stop both.
 
 One package only: `npm run dev -w @goldsmith/web` (needs no `.env`) or `npm run dev -w @goldsmith/api`.
+
+Two branches at once on one machine: give each worktree its own lane (`LANE=a`, `LANE=b`) for separate databases and ports. See [docs/setup/parallel-lanes.md](docs/setup/parallel-lanes.md).
 
 The api's endpoints, error format and how to add an operation are in [docs/setup/api.md](docs/setup/api.md). To call it locally before sign-in exists (EP-04), open a development session for a seeded user with `npm run db:dev-session -- "Rajesh Verma"` and send the printed id as the `x-dev-session` header.
 
@@ -59,14 +61,18 @@ The `postgres` / `postgres` credentials are local-only: the container listens on
 
 ```sh
 npm run db:up       # start PostgreSQL and wait until it is healthy (creates goldsmith_dev and goldsmith_test)
+npm run db:create   # create the databases DATABASE_URL and TEST_DATABASE_URL name if missing (e.g. a lane's); safe to repeat
 npm run db:migrate  # apply pending migrations from packages/api/migrations; "up to date" when none
-npm run db:status   # each migration: number, name, applied time (UTC), checksum, state
+npm run db:status   # each migration: version, name, applied time (UTC), checksum, state (applied, pending, changed, missing)
+npm run db:new -- <name>  # create an empty packages/api/migrations/YYYYMMDDTHHMM_<name>.sql (UTC time)
 npm run db:seed     # load the web prototype's data into an empty database (refuses a non-empty one and production)
 npm run db:reset    # drop everything in goldsmith_dev and migrate again (refused unless APP_ENV=development)
 npm run db:down     # stop the container (data stays in the pgdata volume; `docker compose down -v` deletes it)
 ```
 
 To start over with demo data: `npm run db:reset && npm run db:seed`.
+
+New migrations are named `YYYYMMDDTHHMM_<name>.sql` (UTC minute, e.g. `20261121T1030_metal_pool_ledger.sql`), so branches built in parallel never take the same number; `0001` to `0015` keep their names and run first. Rules: [docs/setup/parallel-lanes.md](docs/setup/parallel-lanes.md#migration-names).
 
 The api database tests run against `TEST_DATABASE_URL` and wipe that database at the start of each run, so they refuse any database whose name does not end in `_test`. Without it they are skipped locally (with a notice); CI always sets it.
 

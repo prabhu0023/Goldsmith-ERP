@@ -5,6 +5,9 @@
  *
  * Every variable listed here must also appear in the root `.env.example` (a test enforces it).
  */
+import { DEFAULT_API_PORT, laneApiPort, laneDatabaseUrl, readLane } from './lane.js';
+
+export { DEFAULT_API_PORT };
 
 export const APP_ENVS = ['development', 'staging', 'production'] as const;
 export type AppEnv = (typeof APP_ENVS)[number];
@@ -19,6 +22,7 @@ export const ENV_VARS = [
   { name: 'APP_ENV', required: true },
   { name: 'APP_URL', required: true },
   { name: 'SESSION_SECRET', required: true },
+  { name: 'LANE', required: false },
   { name: 'API_PORT', required: false },
   { name: 'API_MAX_BODY_BYTES', required: false },
   { name: 'IDEMPOTENCY_RETENTION_HOURS', required: false },
@@ -39,7 +43,6 @@ export const ENV_VARS = [
 
 export type EnvVarName = (typeof ENV_VARS)[number]['name'];
 
-export const DEFAULT_API_PORT = 4000;
 /** Largest request body the api parses (EP-03-S2): 100 kB. */
 export const DEFAULT_MAX_BODY_BYTES = 102400;
 /** How long a create's idempotency key is kept (EP-03-S8): 24 hours. */
@@ -54,6 +57,8 @@ export interface Config {
   appEnv: AppEnv;
   appUrl: string;
   sessionSecret: string;
+  /** Development lane (LANE), or undefined for the default single-developer setup. */
+  lane?: string;
   port: number;
   /** Request bodies larger than this are refused before parsing. */
   maxBodyBytes: number;
@@ -116,8 +121,14 @@ export function loadConfig(env: Env = process.env): Config {
     problems.push(`SESSION_SECRET must be at least ${MIN_SESSION_SECRET_LENGTH} characters`);
   }
 
+  let lane: string | undefined;
+  try {
+    lane = readLane(env);
+  } catch (e) {
+    problems.push((e as Error).message);
+  }
   const portText = read('API_PORT');
-  const port = portText === undefined ? DEFAULT_API_PORT : Number(portText);
+  const port = portText === undefined ? laneApiPort(lane) : Number(portText);
   if (!Number.isInteger(port) || port < 0 || port > 65535) {
     problems.push('API_PORT must be an integer between 0 and 65535');
   }
@@ -142,17 +153,19 @@ export function loadConfig(env: Env = process.env): Config {
   };
   const databaseConnectTimeoutMs = positiveMs('DATABASE_CONNECT_TIMEOUT_MS', DEFAULT_DATABASE_CONNECT_TIMEOUT_MS);
   const databaseQueryTimeoutMs = positiveMs('DATABASE_QUERY_TIMEOUT_MS', DEFAULT_DATABASE_QUERY_TIMEOUT_MS);
+  const databaseUrl = read('DATABASE_URL');
   if (problems.length > 0) throw new ConfigError(problems);
 
   return {
     appEnv: appEnv as AppEnv,
     appUrl: appUrl as string,
     sessionSecret: sessionSecret as string,
+    lane,
     port,
     maxBodyBytes,
     idempotencyRetentionHours,
     cloudRegion: read('CLOUD_REGION'),
-    databaseUrl: read('DATABASE_URL'),
+    databaseUrl: databaseUrl === undefined ? undefined : laneDatabaseUrl(databaseUrl, lane),
     databaseConnectTimeoutMs,
     databaseQueryTimeoutMs,
     storageBucket: read('STORAGE_BUCKET'),

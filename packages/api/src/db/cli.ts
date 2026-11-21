@@ -1,12 +1,15 @@
 /**
- * Database commands: `migrate`, `status`, `reset`, `seed`, `dev-session <user name>` (run via `npm run db:<command>`).
- * Reads DATABASE_URL and APP_ENV. Exit code 0 on success, 1 with a one-line error otherwise.
+ * Database commands: `migrate`, `status`, `reset`, `seed`, `dev-session <user name>`, `create`
+ * and `new <name>` (run via `npm run db:<command>`). Reads DATABASE_URL, APP_ENV and LANE
+ * (`create` also TEST_DATABASE_URL; `new` reads nothing). Exit code 0 on success, 1 with a
+ * one-line error otherwise.
  */
 import type { AppEnv } from '../config.js';
 import { createPool } from './connection.js';
+import { createDatabases } from './create-databases.js';
 import { readDbEnv } from './db-env.js';
 import { createDevSession } from './dev-session.js';
-import { migrate, migrationStatus, resetDatabase } from './migrator.js';
+import { migrate, migrationStatus, newMigrationFile, resetDatabase } from './migrator.js';
 import { seedPrototype } from './seed/seed-database.js';
 
 /** Works from src/db (tsx) and dist/db (built). */
@@ -29,9 +32,9 @@ async function runStatus(pool: ReturnType<typeof createPool>): Promise<void> {
     return;
   }
   const table = [
-    ['Number', 'Name', 'Applied at (UTC)', 'Checksum', 'State'],
+    ['Version', 'Name', 'Applied at (UTC)', 'Checksum', 'State'],
     ...rows.map((r) => [
-      String(r.version).padStart(4, '0'),
+      r.prefix,
       r.name,
       r.appliedAt ?? '-',
       r.checksum.slice(0, 12),
@@ -55,13 +58,29 @@ async function runDevSession(pool: ReturnType<typeof createPool>, appEnv: AppEnv
   console.log(s.sessionId);
   console.log(`Send it with every api call as the header  x-dev-session: ${s.sessionId}`);
 }
-const COMMANDS = ['migrate', 'status', 'reset', 'seed', 'dev-session'];
+const COMMANDS = ['migrate', 'status', 'reset', 'seed', 'dev-session', 'create', 'new'];
 
 async function main(command: string | undefined, arg: string | undefined): Promise<void> {
   if (command === undefined || !COMMANDS.includes(command)) {
-    throw new Error(`Unknown command ${command ?? '(none)'}; use migrate, status, reset, seed or dev-session`);
+    throw new Error(
+      `Unknown command ${command ?? '(none)'}; use migrate, status, reset, seed, dev-session, create or new`,
+    );
   }
-  const { databaseUrl, appEnv } = readDbEnv();
+  if (command === 'new') {
+    if (!arg?.trim()) throw new Error('Name the migration: npm run db:new -- metal_pool_ledger');
+    const file = newMigrationFile(MIGRATIONS_DIR, arg.trim());
+    console.log(`Created packages/api/migrations/${file}`);
+    return;
+  }
+  const { databaseUrl, appEnv, lane, testDatabaseUrl } = readDbEnv();
+  if (command === 'create') {
+    const urls = testDatabaseUrl ? [databaseUrl, testDatabaseUrl] : [databaseUrl];
+    for (const r of await createDatabases(urls)) {
+      console.log(`${r.created ? 'Created' : 'Exists '}  ${r.name}${lane ? ` (lane ${lane})` : ''}`);
+    }
+    return;
+  }
+  if (lane) console.log(`Lane ${lane}: database ${new URL(databaseUrl).pathname.slice(1)}`);
   // Developers reset only their own development database; staging and production are the deploy pipeline's (S1).
   if (command === 'reset' && appEnv !== 'development') {
     throw new Error(`db:reset is refused when APP_ENV=${appEnv}`);

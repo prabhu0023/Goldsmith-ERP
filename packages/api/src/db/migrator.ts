@@ -1,18 +1,25 @@
 /**
- * Forward-only SQL migrations (EP-02-S1). Files are `NNNN_name.sql` in one folder, applied in
- * number order. Each file and its `schema_migrations` row commit in one transaction, so a failed
+ * Forward-only SQL migrations (EP-02-S1). Files live in one folder and are applied in file-name
+ * order. Two name formats:
+ * - legacy `NNNN_name.sql` (0001 to 0015; never add another), version = NNNN;
+ * - `YYYYMMDDTHHMM_name.sql`, a UTC timestamp (`npm run db:new -- <name>`), version = YYYYMMDDHHMM.
+ * Legacy names sort before every timestamp name. A pending file is applied even when its name
+ * sorts before one already applied (two branches merged in either order). Each file and its `schema_migrations` row commit in one transaction, so a failed
  * file leaves neither schema changes nor a history row. An advisory lock keeps two runs from
  * applying at the same time. A file changed after it was applied, or an applied file that is no
  * longer on disk, stops the run before anything is applied.
  */
 import { createHash } from 'node:crypto';
-import { readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type pg from 'pg';
 
 export interface Migration {
+  /** NNNN for a legacy file, YYYYMMDDHHMM for a timestamp file. */
   version: number;
+  /** The file's version prefix as written: `0007` or `20261121T1030`. */
+  prefix: string;
   name: string;
   file: string;
   sql: string;
@@ -22,6 +29,8 @@ export interface Migration {
 
 export interface MigrationStatusRow {
   version: number;
+  /** `0007` or `20261121T1030`. */
+  prefix: string;
   name: string;
   /** ISO time in UTC, or null when not applied yet. */
   appliedAt: string | null;
@@ -51,13 +60,22 @@ export class MigrationMissingError extends Error {
     this.name = 'MigrationMissingError';
   }
 }
-const FILE_PATTERN = /^(\d{4})_([a-z0-9_]+)\.sql$/;
+const FILE_PATTERN = /^(\d{4}|\d{8}T\d{4})_([a-z0-9_]+)\.sql$/;
+const NAME_PATTERN = /^[a-z0-9_]+$/;
 /** Arbitrary constant shared by every migration run on a database. */
 const ADVISORY_LOCK_KEY = 72020001;
 
 const toPath = (dir: string | URL): string => (dir instanceof URL ? fileURLToPath(dir) : dir);
 
-/** Migration files in `dir`, sorted by number. Other files (e.g. .gitkeep) are ignored. */
+const versionOf = (prefix: string): number => Number(prefix.replace('T', ''));
+
+/** `7` → `0007`, `202611211030` → `20261121T1030`. */
+export function prefixOf(version: number): string {
+  const digits = String(version);
+  return digits.length <= 4 ? digits.padStart(4, '0') : `${digits.slice(0, 8)}T${digits.slice(8)}`;
+}
+
+/** Migration files in `dir`, sorted by file name. Other files (e.g. .gitkeep) are ignored. */
 export function listMigrationFiles(dir: string | URL): Migration[] {
   const path = toPath(dir);
   const migrations: Migration[] = [];
@@ -66,18 +84,19 @@ export function listMigrationFiles(dir: string | URL): Migration[] {
     if (!m) continue;
     const bytes = readFileSync(join(path, file));
     migrations.push({
-      version: Number(m[1]),
+      version: versionOf(m[1]),
+      prefix: m[1],
       name: m[2],
       file,
       sql: bytes.toString('utf8'),
       checksum: createHash('sha256').update(bytes).digest('hex'),
     });
   }
-  migrations.sort((a, b) => a.version - b.version);
+  migrations.sort((a, b) => (a.file < b.file ? -1 : a.file > b.file ? 1 : 0));
   for (let i = 1; i < migrations.length; i++) {
     if (migrations[i].version === migrations[i - 1].version) {
       throw new Error(
-        `Two migrations share number ${migrations[i].file.slice(0, 4)}: ${migrations[i - 1].file} and ${migrations[i].file}`,
+        `Two migrations share number ${migrations[i].prefix}: ${migrations[i - 1].file} and ${migrations[i].file} (rename the one not yet merged with npm run db:new)`,
       );
     }
   }
@@ -92,13 +111,21 @@ interface HistoryRow {
 }
 
 const CREATE_HISTORY = `create table if not exists schema_migrations (
-  version integer primary key,
+  version bigint primary key,
   name text not null,
   checksum text not null,
   applied_at timestamptz not null default now()
 )`;
 
-const historyFile = (h: HistoryRow): string => `${String(h.version).padStart(4, '0')}_${h.name}.sql`;
+/** A history table made before timestamp names holds `version integer`, too small for YYYYMMDDHHMM. */
+const WIDEN_HISTORY = `do $$ begin
+  if (select data_type from information_schema.columns
+      where table_schema = current_schema() and table_name = 'schema_migrations' and column_name = 'version') = 'integer'
+  then alter table schema_migrations alter column version type bigint;
+  end if;
+end $$`;
+
+const historyFile = (h: HistoryRow): string => `${prefixOf(h.version)}_${h.name}.sql`;
 /** History rows whose version has no file on disk, in number order. */
 function missingFiles(files: Migration[], history: Map<number, HistoryRow>): HistoryRow[] {
   const onDisk = new Set(files.map((f) => f.version));
@@ -121,6 +148,7 @@ export async function migrate(pool: pg.Pool, dir: string | URL): Promise<{ appli
     await client.query('select pg_advisory_lock($1)', [ADVISORY_LOCK_KEY]);
     try {
       await client.query(CREATE_HISTORY);
+      await client.query(WIDEN_HISTORY);
       const history = await readHistory(client);
       const missing = missingFiles(files, history);
       if (missing.length > 0) throw new MigrationMissingError(missing.map(historyFile));
@@ -129,6 +157,7 @@ export async function migrate(pool: pg.Pool, dir: string | URL): Promise<{ appli
         if (row && row.checksum !== f.checksum) throw new MigrationChecksumError(f.file, row.checksum, f.checksum);
       }
       const applied: Migration[] = [];
+      // Every file without a history row, in name order, including one that sorts before an applied file.
       for (const f of files) {
         if (history.has(f.version)) continue;
         await client.query('begin');
@@ -161,9 +190,12 @@ export async function migrationStatus(pool: pg.Pool, dir: string | URL): Promise
   const history = await readHistory(pool);
   const rows: MigrationStatusRow[] = files.map((f) => {
     const h = history.get(f.version);
-    if (!h) return { version: f.version, name: f.name, appliedAt: null, checksum: f.checksum, state: 'pending' };
+    if (!h) {
+      return { version: f.version, prefix: f.prefix, name: f.name, appliedAt: null, checksum: f.checksum, state: 'pending' };
+    }
     return {
       version: f.version,
+      prefix: f.prefix,
       name: f.name,
       appliedAt: h.applied_at.toISOString(),
       checksum: h.checksum,
@@ -173,6 +205,7 @@ export async function migrationStatus(pool: pg.Pool, dir: string | URL): Promise
   for (const h of missingFiles(files, history)) {
     rows.push({
       version: h.version,
+      prefix: prefixOf(h.version),
       name: h.name,
       appliedAt: h.applied_at.toISOString(),
       checksum: h.checksum,
@@ -180,6 +213,29 @@ export async function migrationStatus(pool: pg.Pool, dir: string | URL): Promise
     });
   }
   return rows.sort((a, b) => a.version - b.version);
+}
+
+/** `20261121T1030`: the current minute in UTC. */
+export function timestampPrefix(now: Date): string {
+  const iso = now.toISOString(); // 2026-11-21T10:30:15.000Z
+  return `${iso.slice(0, 4)}${iso.slice(5, 7)}${iso.slice(8, 10)}T${iso.slice(11, 13)}${iso.slice(14, 16)}`;
+}
+
+/**
+ * Create an empty migration `YYYYMMDDTHHMM_<name>.sql` (UTC) in `dir` and return its file name.
+ * Refuses a bad name and a timestamp another file in `dir` already uses.
+ */
+export function newMigrationFile(dir: string | URL, name: string, now: Date = new Date()): string {
+  if (!NAME_PATTERN.test(name)) {
+    throw new Error(`Migration name "${name}" must use only a-z, 0-9 and _ (e.g. metal_pool_ledger)`);
+  }
+  const prefix = timestampPrefix(now);
+  const path = toPath(dir);
+  const clash = readdirSync(path).find((f) => f.startsWith(`${prefix}_`));
+  if (clash) throw new Error(`${clash} already uses ${prefix}; wait a minute and run it again`);
+  const file = `${prefix}_${name}.sql`;
+  writeFileSync(join(path, file), `-- ${file}: forward-only migration; describe the change here.\n`, { flag: 'wx' });
+  return file;
 }
 
 /** Drop everything in schema public. Callers decide whether this is allowed (never production). */
