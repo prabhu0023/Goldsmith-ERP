@@ -25,6 +25,7 @@
     "db:seed": "npm run db:seed -w @goldsmith/api",
     "db:reset": "npm run db:reset -w @goldsmith/api",
     "db:dev-session": "npm run db:dev-session -w @goldsmith/api --",
+    "db:dev-password": "npm run db:dev-password -w @goldsmith/api --",
     "db:create": "npm run db:create -w @goldsmith/api",
     "db:new": "npm run db:new -w @goldsmith/api --"
   },

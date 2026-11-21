@@ -9,7 +9,8 @@
  *   (b) resolve the session (may be none)
  *   (c) rate-limit hook               -> rate_limited
  *   (d) validate the input            -> validation, field named
- *   (e) per phone and device limits for signIn (EP-04-S9) -> rate_limited, before any lookup
+ *   (e) per phone and device limits for signIn and requestPasswordReset (EP-04-S9)
+ *                                     -> rate_limited, before any lookup
  *   (f) the operation, in one transaction
  * The shop of a public call is the installation's shop, never the client's.
  */
@@ -24,11 +25,15 @@ import type { Clock } from '../pipeline/server-clock.js';
 import type { Session, SessionResolver } from '../pipeline/session-resolver.js';
 import { parseInput } from '../pipeline/validate-input.js';
 import type { AccountMailer } from './account-mail.js';
+import { activateAccount } from './activation.js';
 import { writeAuthAudit } from './auth-audit.js';
 import { type AuthLimits, checkAuthLimits, phoneKey } from './auth-rate-limits.js';
+import { createFirstOwner } from './first-owner.js';
 import { type InstallationShop, SHOP_NOT_SET_UP } from './installation-shop.js';
 import { kolkataTime } from './lockout.js';
 import type { PasswordHasher } from './password-hash.js';
+import { type LinkPurpose, linkState } from './password-links.js';
+import { requestPasswordReset, resetPassword } from './password-reset.js';
 import { signIn } from './sign-in.js';
 import { clearSessionCookie, setSessionCookie } from './session-cookie.js';
 import { endSession } from './session-store.js';
@@ -88,11 +93,15 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
     return session;
   };
 
+  const shopOf = async (pool: pg.Pool): Promise<string> => {
+    const shopId = await auth.installationShop(pool);
+    if (shopId === null) throw new DomainError(SHOP_NOT_SET_UP);
+    return shopId;
+  };
   const handlers: Partial<Record<AuthOperationName, (call: AuthCall) => Promise<void>>> = {
     async signIn({ req, res, pool, input, at }) {
       const { phone, password, deviceLabel } = input as { phone: string; password: string; deviceLabel?: string };
-      const shopId = await auth.installationShop(pool);
-      if (shopId === null) throw new DomainError(SHOP_NOT_SET_UP);
+      const shopId = await shopOf(pool);
       const phoneHash = phoneKey(auth.phoneSecret, phone);
       await checkAuthLimits(pool, {
         shopId,
@@ -153,6 +162,60 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
         log,
       );
       clearSessionCookie(res, { secure: auth.secureCookies });
+      res.json({ ok: true });
+    },
+    // The answer is `{ ok: true }` for known, unknown and deactivated phones alike (EP-04-S7).
+    async requestPasswordReset({ req, res, pool, input, at }) {
+      const { phone } = input as { phone: string };
+      const shopId = await shopOf(pool);
+      await checkAuthLimits(pool, {
+        shopId,
+        kind: 'reset',
+        phoneHash: phoneKey(auth.phoneSecret, phone),
+        deviceHash: phoneKey(auth.phoneSecret, clientAddressOf(req)),
+        now: at,
+        limits: auth.limits,
+      });
+      await runInTransaction(
+        pool,
+        (tx) => requestPasswordReset(tx, { mailer: auth.mailer, appUrl: auth.appUrl }, { shopId, phone, at }),
+        log,
+      );
+      res.json({ ok: true });
+    },
+    async checkPasswordLink({ res, pool, input, at }) {
+      const { token, purpose } = input as { token: string; purpose: LinkPurpose };
+      const shopId = await shopOf(pool);
+      res.json({ ok: true, state: await linkState(pool, { shopId, token, purpose, at }) });
+    },
+    async activateAccount({ res, pool, input, at }) {
+      const { token, password } = input as { token: string; password: string };
+      const shopId = await shopOf(pool);
+      await runInTransaction(
+        pool,
+        (tx) => activateAccount(tx, { passwords: auth.passwords }, { shopId, token, password, at }),
+        log,
+      );
+      res.json({ ok: true });
+    },
+    async resetPassword({ res, pool, input, at }) {
+      const { token, password } = input as { token: string; password: string };
+      const shopId = await shopOf(pool);
+      await runInTransaction(
+        pool,
+        (tx) => resetPassword(tx, { passwords: auth.passwords }, { shopId, token, password, at }),
+        log,
+      );
+      res.json({ ok: true });
+    },
+    async createFirstOwner({ res, pool, input, at }) {
+      const { name, phone, email } = input as { name: string; phone: string; email: string };
+      const shopId = await shopOf(pool);
+      await runInTransaction(
+        pool,
+        (tx) => createFirstOwner(tx, { mailer: auth.mailer, appUrl: auth.appUrl }, { shopId, name, phone, email, at }),
+        log,
+      );
       res.json({ ok: true });
     },
   };

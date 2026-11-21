@@ -9,6 +9,8 @@ The api (`packages/api`) serves every operation of the shared contract (`package
 | `GET /health` | not needed | `{ status, service, env, api, database, shared }`; 200 when the database is up and the shared rules load, else 503. The database check runs on its own probe connection (not a pool slot) and times out after 2 s. |
 | `GET /api/contract-version` | needed | `{ ok: true, version }` (`CONTRACT_VERSION`). |
 | `POST /api/ops/<operation>` | needed | The operation's result, e.g. `{ ok: true }`. JSON body = the operation's input. |
+| `POST /api/auth/<operation>` | depends on the operation | Sign-in operations (EP-04), see [Sign-in](#sign-in-ep-04). |
+| `GET /dev/mailbox`, `GET /dev/mailbox.json` | not needed | The account-email stub's mailbox; development and staging only. |
 
 Production registers one operation today: `markLeadLost` (`{ leadId, reason? }`).
 
@@ -18,7 +20,7 @@ Production registers one operation today: `markLeadLost` (`{ leadId, reason? }`)
 
 1. Body parsing: JSON only, at most `API_MAX_BODY_BYTES` (default 102400). Too large: 413; not JSON: 400.
 2. Look up the operation in the contract and the registered handlers. Unknown: `not_found`.
-3. Resolve the session (today the development stub, see below; EP-04 replaces it).
+3. Resolve the session from the `gs_session` cookie (EP-04). A session counts only when it has not ended or expired, its user is active and the user's role is still the role it was issued for.
 4. Rate-limit hook `{ operation, userId, clientAddress }`. Refused: `rate_limited`. The default allows everything; real limits are EP-39.
 5. No session: `unauthenticated`.
 6. Validate the body against the operation's input schema. Unknown fields are dropped, so a client-sent `by`, `actor`, `at` or `time` never reaches the handler.
@@ -72,21 +74,64 @@ Copy the reference service `packages/api/src/services/mark-lead-lost.ts`:
 
 Never name an api file after a shared module (`contract.ts`, `leads.ts`, `clock.ts`, ...): `npm run lint` refuses it.
 
+## Sign-in (EP-04)
+
+Sign-in has its own router, `POST /api/auth/<operation>` (`packages/api/src/auth/auth-router.ts`), because these calls may run without a session and set or clear the session cookie. The operations are declared in `packages/shared/src/contract/auth-contract.ts` (`authContract`); errors use the same `{ code, message, field? }` body. The shop of a public call is the installation's only shop, never the client's.
+
+| Operation | Session | Input | Answer |
+| --- | --- | --- | --- |
+| `signIn` | not needed | `{ phone, password, deviceLabel? }` | `{ ok, user: { userId, name, role }, landingRoute }` and sets the cookie. A wrong password, an unknown, pending or deactivated phone: 401 "Phone number or password is wrong.". |
+| `readCurrentSession` | needed | `{}` | The same as `signIn`; extends the session. |
+| `signOut` | needed | `{}` | `{ ok: true }`; ends the session and clears the cookie. |
+| `requestPasswordReset` | not needed | `{ phone }` | Always `{ ok: true }`; only an active user with that phone gets a reset email. |
+| `checkPasswordLink` | not needed | `{ token, purpose: 'activation' \| 'reset' }` | `{ ok: true, state: 'valid' \| 'used' \| 'expired' }`. Unknown and replaced links are `expired`. |
+| `activateAccount` | not needed | `{ token, password }` | `{ ok: true }`; sets the first password and makes the user active. |
+| `resetPassword` | not needed | `{ token, password }` | `{ ok: true }`; sets the new password and ends every open session of the user. |
+| `createFirstOwner` | not needed | `{ name, phone, email }` | `{ ok: true }`; only while the shop has no owner and setup is not complete (the setup wizard, EP-45). Then 422 "The first owner has already been created.". |
+
+`issueActivationLink`, `unlockAccount` and `revokeAllSessions` are server-only functions (EP-05, EP-45) with no route.
+
+- **Phone:** an Indian mobile number in any common form ("98410 11111", "+91 98410 11111", "09841011111"), normalised to E.164.
+- **Passwords:** at least 8 characters, stored as scrypt hashes (`$scrypt$ln=15,r=8,p=3$<salt>$<hash>`; N = 2^15, r = 8, p = 3). The plain password is never stored or logged.
+- **Cookie:** `gs_session=<token>; Path=/; HttpOnly; SameSite=Lax`, plus `Secure` outside development. The token is 32 random bytes; only its sha256 is stored (`sessions.token_hash`).
+- **Expiry:** sliding; a session ends `SESSION_IDLE_MINUTES` (default 720) after the last accepted operation.
+- **Lockout:** 5 wrong passwords in a row lock the account (or an unknown phone) for 15 minutes: 422 "Too many wrong passwords. Try again after HH:MM." (Asia/Kolkata).
+- **Rate limits:** per hashed phone and per client address, in fixed windows stored in `auth_rate_counters`, for `signIn` and `requestPasswordReset`. Over a limit: 429 "Too many requests. Wait a few minutes and try again.".
+- **Links:** activation links last 24 hours and reset links 1 hour; each works once, and a new link replaces the earlier unused one. The token is in the URL fragment (`<APP_URL>/activate#token=…`, `<APP_URL>/reset-password#token=…`) and is stored only as its sha256.
+- **Account email:** `ACCOUNT_EMAIL_MODE=stub` (the default outside production) keeps the last 50 emails in the api's memory, readable at `http://localhost:<API_PORT>/dev/mailbox` (and `/dev/mailbox.json`); the console line names the subject and the masked address, never the link. In production the mode defaults to disabled (sending fails) and `stub` stops the server at startup. A real sender is EP-11-S12.
+
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `ACCOUNT_EMAIL_MODE` | `stub`, or disabled in production | Account-email delivery; only `stub` today. |
+| `SESSION_IDLE_MINUTES` | 720 | Idle time after which a session ends. |
+| `AUTH_RATE_WINDOW_MINUTES` | 15 | Length of a rate-limit window. |
+| `AUTH_SIGN_IN_PER_PHONE` | 10 | Sign-in attempts per phone per window. |
+| `AUTH_SIGN_IN_PER_DEVICE` | 30 | Sign-in attempts per client address per window. |
+| `AUTH_RESET_PER_PHONE` | 3 | Reset requests per phone per window. |
+| `AUTH_RESET_PER_DEVICE` | 10 | Reset requests per client address per window. |
+
+`SESSION_SECRET` keys the HMAC of phones and client addresses in the rate-limit and lockout tables.
+
 ## Calling the api locally
 
-Sign-in is EP-04. Until then, in development only, a session comes from the database: `npm run db:dev-session -- "<user name>"` opens a 12 h session for a seeded user and prints its id; send it as the `x-dev-session` header. The stub is refused when `APP_ENV` is `staging` or `production`, where every operation answers `unauthenticated`.
+Every operation needs the `gs_session` cookie. Seeded users are `pending_activation` with no password, so give one a password first. Both commands below run in development only (`APP_ENV=development`). A lane uses its own api port (4001 for lane a, see `docs/setup/parallel-lanes.md`).
 
 ```sh
 npm run db:reset && npm run db:seed
-npm run db:dev-session -- "Rajesh Verma"     # prints the session id
+npm run db:dev-password -- "Rajesh Verma" "counter-2026"   # sets the password; the user becomes active
 npm run dev -w @goldsmith/api
 curl -s localhost:4000/health
-curl -s -X POST localhost:4000/api/ops/markLeadLost \
-  -H 'content-type: application/json' -H 'x-dev-session: <session id>' \
+curl -s -c /tmp/jar -X POST localhost:4000/api/auth/signIn \
+  -H 'content-type: application/json' -d '{"phone":"98410 11111","password":"counter-2026"}'
+curl -s -b /tmp/jar -X POST localhost:4000/api/ops/markLeadLost \
+  -H 'content-type: application/json' \
   -d '{"leadId":"LD-2026-213","reason":"Customer went elsewhere."}'
 # {"ok":true}
-curl -s -X POST localhost:4000/api/ops/markLeadLost \
-  -H 'content-type: application/json' -H 'x-dev-session: <session id>' \
-  -d '{"leadId":"LD-2026-201"}'
+curl -s -b /tmp/jar -X POST localhost:4000/api/ops/markLeadLost \
+  -H 'content-type: application/json' -d '{"leadId":"LD-2026-201"}'
 # {"code":"rule_refused","message":"A converted lead cannot be marked lost."}  (HTTP 422)
 ```
+
+Without signing in, `npm run db:dev-session -- "Rajesh Verma"` opens a 12 h session for an active user and prints its token; send it as `curl -b 'gs_session=<token>' …`.
+
+Activation and reset emails go to the stub mailbox: after `curl -s -X POST localhost:4000/api/auth/requestPasswordReset -H 'content-type: application/json' -d '{"phone":"98410 11111"}'`, open `http://localhost:4000/dev/mailbox` for the link.

@@ -14,7 +14,7 @@ import { StubMailer } from '../../src/auth/account-mail.js';
 import type { AuthDeps } from '../../src/auth/auth-router.js';
 import { createPasswordHasher } from '../../src/auth/password-hash.js';
 import { createSessionResolver, generateSecret, hashSecret, SESSION_COOKIE } from '../../src/auth/session-store.js';
-import { loadConfig } from '../../src/config.js';
+import { type AppEnv, loadConfig } from '../../src/config.js';
 import type { ErrorLog } from '../../src/pipeline/api-errors.js';
 import type { PermissionCheck, RateLimiter } from '../../src/pipeline/hooks.js';
 import type { Tx } from '../../src/pipeline/operation-transaction.js';
@@ -40,6 +40,8 @@ export interface HarnessOptions {
   clock?: Clock;
   /** Sign-in dependencies over the harness defaults. */
   auth?: Partial<AuthDeps>;
+  /** Defaults to development. */
+  appEnv?: AppEnv;
 }
 
 /** The fast hasher every harness uses (the S2 tests use the production parameters). */
@@ -201,7 +203,7 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
   const clock = options.clock ?? fixedClock(SERVER_NOW);
   const mailer = new StubMailer({ mailboxUrl: 'http://localhost/dev/mailbox', log: () => {} });
   const config = loadConfig({
-    APP_ENV: 'development',
+    APP_ENV: options.appEnv ?? 'development',
     APP_URL: 'http://localhost:3000',
     SESSION_SECRET: 'test-only-session-secret-0123456789abcdef',
     API_PORT: '0',

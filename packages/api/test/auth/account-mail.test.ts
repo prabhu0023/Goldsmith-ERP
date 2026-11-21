@@ -1,10 +1,15 @@
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import express from 'express';
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { type AccountEmail, createAccountMailer, disabledMailer, StubMailer } from '../../src/auth/account-mail.js';
+import { issueActivationLink } from '../../src/auth/activation.js';
 import { createDevMailboxRouter } from '../../src/auth/dev-mailbox.js';
-import { loadConfig } from '../../src/config.js';
+import { hashSecret } from '../../src/auth/session-store.js';
+import { ConfigError, loadConfig } from '../../src/config.js';
+import { runInTransaction } from '../../src/pipeline/operation-transaction.js';
+import { describeDb } from '../db/db-test-helpers.js';
+import { type Harness, newUser, SERVER_NOW, startHarness } from '../support/api-harness.js';
 const env = {
   APP_URL: 'http://localhost:3000',
   SESSION_SECRET: 'test-only-session-secret-0123456789abcdef',
@@ -72,6 +77,103 @@ describe('account email (EP-04-S4)', () => {
       expect(html).toContain('r•••@example.com');
     } finally {
       await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
+  });
+});
+
+describe('the delivery mode is chosen by ACCOUNT_EMAIL_MODE (EP-04-S4 AC2, AC4)', () => {
+  it('stub when set to stub outside production; disabled in production when unset; stub refused in production', () => {
+    expect(createAccountMailer(loadConfig({ ...env, APP_ENV: 'staging', ACCOUNT_EMAIL_MODE: 'stub' }))).toBeInstanceOf(
+      StubMailer,
+    );
+    expect(createAccountMailer(loadConfig({ ...env, APP_ENV: 'production' }))).toBe(disabledMailer);
+    expect(() => loadConfig({ ...env, APP_ENV: 'production', ACCOUNT_EMAIL_MODE: 'stub' })).toThrow(ConfigError);
+  });
+});
+
+describeDb('account email through the stub in staging (EP-04-S4 AC1, AC3)', () => {
+  const consoleLines: string[] = [];
+  const record = (...args: unknown[]) => {
+    consoleLines.push(args.map(String).join(' '));
+  };
+  let h: Harness;
+  let mailer: StubMailer;
+  let rajesh: string;
+  let token: string;
+
+  beforeAll(async () => {
+    for (const method of ['log', 'error', 'warn', 'info'] as const) vi.spyOn(console, method).mockImplementation(record);
+    // The stub's console line goes to console.log, as in a running api.
+    mailer = new StubMailer({ mailboxUrl: 'http://localhost:4001/dev/mailbox' });
+    h = await startHarness({ appEnv: 'staging', auth: { mailer } });
+    rajesh = await newUser(h.pool, h.shop, {
+      name: 'Rajesh Verma',
+      phone: '+91 98410 11111',
+      email: 'rajesh@example.com',
+      status: 'pending_activation',
+    });
+    await runInTransaction(
+      h.pool,
+      (tx) =>
+        issueActivationLink(tx, {
+          shopId: h.shop.shopId,
+          userId: rajesh,
+          actor: { kind: 'system' },
+          at: SERVER_NOW,
+          mailer,
+          appUrl: 'http://localhost:3000',
+        }),
+      (message, err) => h.logged.push({ message, err }),
+    );
+    token = (mailer.messages().at(-1)?.link ?? '').split('#token=')[1];
+  });
+
+  afterAll(async () => {
+    vi.restoreAllMocks();
+    await h.close();
+  });
+
+  it('AC1: the mailbox shows the email to his masked address with the subject and the link', async () => {
+    const res = await fetch(`${h.base}/dev/mailbox.json`);
+    expect(res.status).toBe(200);
+    const { messages } = (await res.json()) as { messages: Array<Record<string, string>> };
+    expect(messages.at(-1)).toMatchObject({
+      toMasked: 'r•••@example.com',
+      subject: 'Set your JGD password',
+      link: `http://localhost:3000/activate#token=${token}`,
+    });
+    const page = await (await fetch(`${h.base}/dev/mailbox`)).text();
+    expect(page).toContain('r•••@example.com');
+  });
+
+  it('AC3: the link is only in the mailbox, never in the database, the audit log or the server log', async () => {
+    expect(token).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    const links = await h.pool.query<{ token_hash: string; row: string }>(
+      'select token_hash, row_to_json(p)::text as row from password_links p where shop_id = $1',
+      [h.shop.shopId],
+    );
+    expect(links.rows.map((r) => r.token_hash)).toEqual([hashSecret(token)]);
+    for (const { row } of links.rows) expect(row).not.toContain(token);
+    const audit = await h.pool.query<{ row: string }>(
+      'select row_to_json(a)::text as row from audit_entries a where shop_id = $1',
+      [h.shop.shopId],
+    );
+    expect(audit.rows.length).toBeGreaterThan(0);
+    for (const { row } of audit.rows) expect(row).not.toContain(token);
+    expect(JSON.stringify(h.logged.map((l) => [l.message, String(l.err)]))).not.toContain(token);
+    expect(consoleLines).toContain(
+      '[mail stub] Set your JGD password to r•••@example.com — read it at http://localhost:4001/dev/mailbox',
+    );
+    for (const line of consoleLines) expect(line).not.toContain(token);
+  });
+
+  it('the mailbox is not served when the mailer is disabled', async () => {
+    const off = await startHarness({ appEnv: 'staging', auth: { mailer: disabledMailer } });
+    try {
+      expect((await fetch(`${off.base}/dev/mailbox`)).status).toBe(404);
+      expect((await fetch(`${off.base}/dev/mailbox.json`)).status).toBe(404);
+    } finally {
+      await off.close();
     }
   });
 });

@@ -86,6 +86,18 @@ describeDb('sign-in and reset rate limits per phone and device (EP-04-S9)', () =
     await expect(checkAuthLimits(h.pool, { ...args, now: new Date(args.now.getTime() + WINDOW_MS) })).resolves.toBeUndefined();
   });
 
+  it('AC1, AC3 over HTTP: the 3rd reset request for one phone (R=2) is refused and no email is sent', async () => {
+    const before = h.mailer.messages().length;
+    for (let i = 0; i < 2; i++) {
+      const res = await h.auth('requestPasswordReset', { phone: '+91 98410 11111' });
+      expect({ status: res.status, body: res.body }).toEqual({ status: 200, body: { ok: true } });
+    }
+    expect(h.mailer.messages().length).toBe(before + 2);
+    const refused = await h.auth('requestPasswordReset', { phone: '98410 11111' });
+    expect({ status: refused.status, body: refused.body }).toEqual(REFUSED);
+    expect(h.mailer.messages().length).toBe(before + 2);
+  });
+
   it('the generic rate-limit hook also applies to sign-in', async () => {
     const hooked = await startHarness({ rateLimiter: ({ operation }) => ({ allowed: operation !== 'signIn' }) });
     try {
