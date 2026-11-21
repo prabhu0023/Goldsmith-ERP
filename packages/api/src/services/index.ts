@@ -4,5 +4,6 @@
  */
 import type { contract } from '@goldsmith/shared';
 import type { Handlers } from '../pipeline/registry.js';
+import { markLeadLost } from './mark-lead-lost.js';
 
-export const handlers: Handlers<typeof contract> = {};
+export const handlers: Handlers<typeof contract> = { markLeadLost };
