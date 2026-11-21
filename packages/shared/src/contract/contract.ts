@@ -4,7 +4,7 @@
  * success body.
  */
 import { z } from 'zod';
-import { okResult } from './contract-fields.js';
+import { okResult, pageInput, pageResult } from './contract-fields.js';
 import { defineOperation } from './define-operation.js';
 import { ERROR_CODES } from './error-codes.js';
 
@@ -18,6 +18,39 @@ export const contract = {
     input: z.object({
       leadId: z.string().trim().min(1),
       reason: z.string().optional(),
+    }),
+    result: okResult,
+    errors: ERROR_CODES,
+  }),
+  listJobRuns: defineOperation({
+    name: 'listJobRuns',
+    kind: 'list',
+    input: z.object({
+      ...pageInput,
+      result: z.enum(['ok', 'retrying', 'failed']).optional(),
+    }),
+    result: pageResult(
+      z.object({
+        id: z.string(),
+        jobName: z.string(),
+        scheduledAt: z.string(),
+        scheduledAtLocal: z.string(),
+        startedAt: z.string(),
+        startedAtLocal: z.string(),
+        finishedAt: z.string().nullable(),
+        finishedAtLocal: z.string().nullable(),
+        attempts: z.number().int(),
+        result: z.enum(['ok', 'retrying', 'failed']).nullable(),
+        errorText: z.string().nullable(),
+      }),
+    ),
+    errors: ERROR_CODES,
+  }),
+  retryJobRun: defineOperation({
+    name: 'retryJobRun',
+    kind: 'command',
+    input: z.object({
+      runId: z.string().trim().min(1),
     }),
     result: okResult,
     errors: ERROR_CODES,

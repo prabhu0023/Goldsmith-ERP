@@ -47,6 +47,7 @@ One package only: `npm run dev -w @goldsmith/web` (needs no `.env`) or `npm run 
 Two branches at once on one machine: give each worktree its own lane (`LANE=a`, `LANE=b`) for separate databases and ports. See [docs/setup/parallel-lanes.md](docs/setup/parallel-lanes.md).
 
 The api's endpoints, error format and how to add an operation are in [docs/setup/api.md](docs/setup/api.md). To call it locally before sign-in exists (EP-04), open a development session for a seeded user with `npm run db:dev-session -- "Rajesh Verma"` and send the printed id as the `x-dev-session` header.
+Background jobs (scheduler, job list, configuration, open items) are described in [docs/setup/jobs.md](docs/setup/jobs.md).
 
 ## Database (local)
 
