@@ -7,10 +7,13 @@
  *   * issuing a link replaces the user's earlier unused link of the same purpose;
  *   * consuming a link locks its row and marks it used in the caller's transaction, so it
  *     succeeds at most once and only together with the password change.
- * The email is sent after the commit, so a rolled-back link is never mailed.
+ * The email is sent after the commit, so a rolled-back link is never mailed, and the operation
+ * does not wait for it: a reset for a registered phone answers as quickly as one for an unknown
+ * phone (S7 AC2), whatever the sender's delay. A failed send is logged, never reported.
  */
 import { AUTH_MESSAGES, DomainError } from '@goldsmith/shared';
 import type pg from 'pg';
+import type { ErrorLog } from '../pipeline/api-errors.js';
 import type { Tx } from '../pipeline/operation-transaction.js';
 import type { AccountMailer } from './account-mail.js';
 import { maskEmail } from './mask.js';
@@ -43,6 +46,8 @@ export interface IssueLinkRequest {
   appUrl: string;
   /** The address on the user record. */
   to: string;
+  /** Where a failed send is logged (default console.error). */
+  log?: ErrorLog;
 }
 
 export interface IssuedLink {
@@ -67,10 +72,13 @@ export async function issuePasswordLink(tx: Tx, req: IssueLinkRequest): Promise<
   );
   // The token travels in the fragment, which browsers never send to a server or proxy log.
   const link = `${req.appUrl.replace(/\/+$/, '')}${PATHS[purpose]}#token=${token}`;
-  const { mailer, to } = req;
-  tx.afterCommit(() =>
-    mailer.send({ to, toMasked: maskEmail(to), subject: SUBJECTS[purpose], text: TEXTS[purpose](link), link, at }),
-  );
+  const { mailer, to, log = console.error } = req;
+  tx.afterCommit(() => {
+    // Not awaited, so the response time does not depend on the sender.
+    mailer
+      .send({ to, toMasked: maskEmail(to), subject: SUBJECTS[purpose], text: TEXTS[purpose](link), link, at })
+      .catch((err: unknown) => log('[api] account email failed', err));
+  });
   return { linkId: rows[0].id, expiresAt };
 }
 

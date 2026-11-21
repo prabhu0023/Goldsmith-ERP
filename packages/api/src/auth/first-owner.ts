@@ -6,6 +6,7 @@
  * `pending_activation` with no password and gets an activation link (S10).
  */
 import { AUTH_MESSAGES, DomainError } from '@goldsmith/shared';
+import type { ErrorLog } from '../pipeline/api-errors.js';
 import type { Tx } from '../pipeline/operation-transaction.js';
 import type { AccountMailer } from './account-mail.js';
 import { issueActivationLink } from './activation.js';
@@ -22,7 +23,7 @@ export interface FirstOwnerRequest {
 
 export async function createFirstOwner(
   tx: Tx,
-  deps: { mailer: AccountMailer; appUrl: string },
+  deps: { mailer: AccountMailer; appUrl: string; log?: ErrorLog },
   { shopId, name, phone, email, at }: FirstOwnerRequest,
 ): Promise<void> {
   const { client } = tx;
@@ -60,5 +61,5 @@ export async function createFirstOwner(
     summary: `${name} was created as the first owner`,
     detail: { entity: 'user', entityId: userId, name, role: 'owner', phone, email },
   });
-  await issueActivationLink(tx, { shopId, userId, actor: { kind: 'setup' }, at, mailer: deps.mailer, appUrl: deps.appUrl });
+  await issueActivationLink(tx, { shopId, userId, actor: { kind: 'setup' }, at, mailer: deps.mailer, appUrl: deps.appUrl, log: deps.log });
 }

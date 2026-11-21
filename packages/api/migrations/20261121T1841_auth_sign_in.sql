@@ -71,18 +71,22 @@ create table auth_rate_counters (
   hits integer not null,
   primary key (shop_id, bucket, window_start)
 );
-alter table audit_entries drop constraint audit_entries_kind_check;
+-- Lane B's 20261121T1845_ep10_background_jobs.sql widens the same checks. The runner applies a
+-- file that sorts before an applied one, so every statement below is safe whether or not that
+-- file ran first, and the kind check is the same union of the base, EP-04 and EP-10 kinds.
+alter table audit_entries drop constraint if exists audit_entries_kind_check;
 alter table audit_entries add constraint audit_entries_kind_check check (kind in (
   'edit_applied', 'edit_refused', 'loss_accepted', 'parcel_sent_back', 'parcel_last_digit',
   'problem_cleared', 'scrap_marked', 'scrap_declined', 'stock_out', 'setting_changed',
   'first_owner_created', 'activation_link_sent', 'password_set', 'signed_in', 'sign_in_failed',
   'sign_in_locked', 'account_unlocked', 'signed_out', 'sessions_ended', 'password_reset_requested',
-  'password_reset'
-));
+  'password_reset',
+  'lead_marked_late', 'job_marked_overdue', 'job_reminder_sent', 'edit_token_expired', 'job_run_retried'));
 -- System and setup entries have no user behind them.
 alter table audit_entries alter column actor_id drop not null;
-alter table audit_entries drop constraint audit_entries_actor_role_check;
+alter table audit_entries drop constraint if exists audit_entries_actor_role_check;
 alter table audit_entries add constraint audit_entries_actor_role_check
   check (actor_role in ('owner', 'staff', 'karigar', 'system', 'setup'));
+alter table audit_entries drop constraint if exists audit_entries_actor_present;
 alter table audit_entries add constraint audit_entries_actor_present
   check ((actor_id is null) = (actor_role in ('system', 'setup')));

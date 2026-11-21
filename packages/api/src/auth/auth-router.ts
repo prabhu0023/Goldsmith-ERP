@@ -178,7 +178,7 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
       });
       await runInTransaction(
         pool,
-        (tx) => requestPasswordReset(tx, { mailer: auth.mailer, appUrl: auth.appUrl }, { shopId, phone, at }),
+        (tx) => requestPasswordReset(tx, { mailer: auth.mailer, appUrl: auth.appUrl, log }, { shopId, phone, at }),
         log,
       );
       res.json({ ok: true });
@@ -213,7 +213,7 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
       const shopId = await shopOf(pool);
       await runInTransaction(
         pool,
-        (tx) => createFirstOwner(tx, { mailer: auth.mailer, appUrl: auth.appUrl }, { shopId, name, phone, email, at }),
+        (tx) => createFirstOwner(tx, { mailer: auth.mailer, appUrl: auth.appUrl, log }, { shopId, name, phone, email, at }),
         log,
       );
       res.json({ ok: true });

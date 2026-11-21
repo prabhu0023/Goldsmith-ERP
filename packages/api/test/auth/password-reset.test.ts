@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, expect, it } from 'vitest';
+import { afterAll, beforeAll, expect, it, vi } from 'vitest';
+import { type AccountEmail, type AccountMailer, disabledMailer } from '../../src/auth/account-mail.js';
 import { hashSecret } from '../../src/auth/session-store.js';
 import { describeDb } from '../db/db-test-helpers.js';
 import { type Harness, newSession, newUser, newUserWithPassword, startHarness } from '../support/api-harness.js';
@@ -83,6 +84,40 @@ describeDb('reset a forgotten password from an emailed link (EP-04-S7)', () => {
     expect(await raw(LAKSHMI.phone)).toBe(await raw('+91 90000 00000'));
   });
 
+  it('AC2 similar response time: a registered phone is answered while its email is still sending', async () => {
+    const sent: AccountEmail[] = [];
+    let finish = () => {};
+    const slow: AccountMailer = {
+      send: (mail) => {
+        sent.push(mail);
+        return new Promise<void>((resolve) => {
+          finish = resolve;
+        });
+      },
+    };
+    const other = await startHarness({ clock, auth: { mailer: slow } });
+    try {
+      await newUserWithPassword(other.pool, other.shop, { ...LAKSHMI, role: 'karigar', password: OLD_PASSWORD });
+      const res = await other.auth('requestPasswordReset', { phone: LAKSHMI.phone });
+      expect({ status: res.status, body: res.body }).toEqual({ status: 200, body: { ok: true } });
+      expect(sent.map((m) => m.subject)).toEqual(['Reset your JGD password']);
+    } finally {
+      finish();
+      await other.close();
+    }
+  });
+  it('a failed send still answers { ok: true } and is logged without the link', async () => {
+    const other = await startHarness({ clock, auth: { mailer: disabledMailer } });
+    try {
+      await newUserWithPassword(other.pool, other.shop, { ...LAKSHMI, role: 'karigar', password: OLD_PASSWORD });
+      const res = await other.auth('requestPasswordReset', { phone: LAKSHMI.phone });
+      expect({ status: res.status, body: res.body }).toEqual({ status: 200, body: { ok: true } });
+      await vi.waitFor(() => expect(other.logged.map((l) => l.message)).toEqual(['[api] account email failed']));
+      expect(JSON.stringify(other.logged.map((l) => String(l.err)))).not.toContain('#token=');
+    } finally {
+      await other.close();
+    }
+  });
   it('AC3: a 50 min old link sets the new hash, is marked used and ends all her open sessions', async () => {
     clock.set(T0);
     const phone = await newSession(h.pool, h.shop, lakshmi);

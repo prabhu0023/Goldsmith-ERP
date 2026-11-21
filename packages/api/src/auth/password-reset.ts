@@ -10,6 +10,7 @@
  * A reset does not clear an active lockout (open question in the stories).
  */
 import { AUTH_MESSAGES, DomainError, type RoleId } from '@goldsmith/shared';
+import type { ErrorLog } from '../pipeline/api-errors.js';
 import type { Tx } from '../pipeline/operation-transaction.js';
 import type { AccountMailer } from './account-mail.js';
 import { writeAuthAudit } from './auth-audit.js';
@@ -27,7 +28,7 @@ interface UserRow {
 
 export async function requestPasswordReset(
   tx: Tx,
-  deps: { mailer: AccountMailer; appUrl: string },
+  deps: { mailer: AccountMailer; appUrl: string; log?: ErrorLog },
   { shopId, phone, at }: { shopId: string; /** E.164 */ phone: string; at: Date },
 ): Promise<void> {
   const { rows } = await tx.client.query<UserRow>(
@@ -45,6 +46,7 @@ export async function requestPasswordReset(
     mailer: deps.mailer,
     appUrl: deps.appUrl,
     to: user.email,
+    log: deps.log,
   });
   await writeAuthAudit(tx.client, {
     shopId,

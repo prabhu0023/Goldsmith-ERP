@@ -7,6 +7,7 @@
  *     active. Audits `password_set` with the user as actor.
  */
 import { AUTH_MESSAGES, DomainError, type RoleId } from '@goldsmith/shared';
+import type { ErrorLog } from '../pipeline/api-errors.js';
 import type { Tx } from '../pipeline/operation-transaction.js';
 import type { AccountMailer } from './account-mail.js';
 import { type AuditActor, writeAuthAudit } from './auth-audit.js';
@@ -21,6 +22,8 @@ export interface ActivationLinkRequest {
   at: Date;
   mailer: AccountMailer;
   appUrl: string;
+  /** Where a failed send is logged. */
+  log?: ErrorLog;
 }
 
 /** Issue (or reissue) a user's activation link and mail it to the address on the user record. */
@@ -40,6 +43,7 @@ export async function issueActivationLink(tx: Tx, req: ActivationLinkRequest): P
     mailer: req.mailer,
     appUrl: req.appUrl,
     to: user.email,
+    log: req.log,
   });
   await writeAuthAudit(tx.client, {
     shopId,

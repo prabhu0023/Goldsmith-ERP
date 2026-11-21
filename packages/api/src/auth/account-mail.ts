@@ -4,8 +4,11 @@
  *   * `stub` (development and staging) keeps the last 50 messages in this process's memory,
  *     readable at /dev/mailbox. They are never written to the database (S4 AC3) and the link is
  *     never logged: the console line names the subject and the masked address only.
- *   * `disabled` (production, until a real sender exists) refuses to send, so the operation
- *     answers `internal`. config.ts refuses ACCOUNT_EMAIL_MODE=stub in production.
+ *   * `disabled` (production, until a real sender exists) refuses to send. Mail goes out after
+ *     the commit without being awaited, so the operation still answers `{ ok: true }` and the
+ *     failure is only logged ("[api] account email failed"): until EP-11-S12 no activation or
+ *     reset email reaches anyone in production (docs/followups.md).
+ *     config.ts refuses ACCOUNT_EMAIL_MODE=stub in production.
  */
 import type { Config } from '../config.js';
 export interface AccountEmail {
