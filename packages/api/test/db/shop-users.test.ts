@@ -39,7 +39,19 @@ describeDb('shops, users and sessions (EP-02-S3)', () => {
     }
     expect(users.status.default).toContain('pending_activation');
     expect(Object.keys(await columnsOf(pool, 'sessions')).sort()).toEqual(
-      ['created_at', 'ended_at', 'expires_at', 'id', 'shop_id', 'user_id'].sort(),
+      [
+        'created_at',
+        'ended_at',
+        'expires_at',
+        'id',
+        'shop_id',
+        'user_id',
+        // EP-04 (20261121T1841_auth_sign_in.sql)
+        'token_hash',
+        'role_at_issue',
+        'end_reason',
+        'device_label',
+      ].sort(),
     );
     const links = await columnsOf(pool, 'password_links');
     for (const c of ['user_id', 'purpose', 'token_hash', 'expires_at', 'used_at']) expect(links).toHaveProperty(c);
