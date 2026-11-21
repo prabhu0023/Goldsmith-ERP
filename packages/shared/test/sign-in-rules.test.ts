@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { LANDING_ROUTES, normaliseIndianMobile, PASSWORD_MIN_LENGTH, passwordProblem } from '../src/index.js';
+import { AUTH_MESSAGES, LANDING_ROUTES, normaliseIndianMobile, PASSWORD_MIN_LENGTH, passwordProblem } from '../src/index.js';
 describe('normaliseIndianMobile (EP-04-S3, D4)', () => {
   it.each([
     ['+91 98410 11111', '+919841011111'],
@@ -32,5 +32,12 @@ describe('passwordProblem (EP-04-S2)', () => {
 describe('LANDING_ROUTES', () => {
   it('opens each role on its first screen', () => {
     expect(LANDING_ROUTES).toEqual({ staff: 'today', owner: 'decisions', karigar: 'k-jobs' });
+  });
+});
+describe('AUTH_MESSAGES', () => {
+  it('holds the screen-only sentences word for word from the stories', () => {
+    expect(AUTH_MESSAGES.resetRequested).toBe("If that number is registered, we've sent an email"); // S7 AC1
+    expect(AUTH_MESSAGES.passwordSet).toBe('Password set. Sign in with your phone number.'); // S10 AC1
+    expect(AUTH_MESSAGES.sessionEnded).toBe('Your session has ended. Sign in again.'); // S12 AC1
   });
 });
