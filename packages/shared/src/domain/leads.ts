@@ -1,5 +1,6 @@
-import type { Lead } from '../types/jewellery.js';
+import type { Lead, LeadState } from '../types/jewellery.js';
 import { HOUR } from './clock.js';
+import { DomainError } from './domain-error.js';
 
 export type SlaPhase = 'late' | 'running' | 'met';
 
@@ -28,3 +29,7 @@ export function slaState(lead: Lead, now: number, slaHours: number): SlaState {
 
 /** A lead converts only when it has lines and every line has been sent one way or the other. */
 export const isFullyRouted = (lead: Lead): boolean => lead.items.length > 0 && lead.items.every((i) => i.route !== null);
+/** A converted lead is closed as an order; it cannot be marked lost. */
+export function assertCanMarkLost(state: LeadState): void {
+  if (state === 'converted') throw new DomainError('A converted lead cannot be marked lost.');
+}
