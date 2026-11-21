@@ -61,15 +61,23 @@ create index piece_edits_token_sweep on piece_edits (shop_id, token_issued_at)
 -- A2 is open: the SLA counts clock hours. EP-13 widens this check to 'shop_hours' with its calendar.
 alter table settings add column lead_sla_counting text not null default 'clock_hours'
   check (lead_sla_counting in ('clock_hours'));
-alter table audit_entries add column if not exists actor_kind text not null default 'user'
-  check (actor_kind in ('user', 'system'));
-alter table audit_entries alter column actor_id drop not null, alter column actor_role drop not null;
-alter table audit_entries add constraint audit_entries_actor_shape check (
-  (actor_kind = 'user' and actor_id is not null and actor_role is not null)
-  or (actor_kind = 'system' and actor_id is null and actor_role is null));
+-- System actor (S12), one model shared with EP-04 (20261121T1841_auth_sign_in): a System entry has
+-- actor_role 'system', no actor_id, and the job label in actor_name ("System (SLA breach job)").
+-- Every statement below is safe whether or not EP-04's migration ran first, and the kind check is
+-- the union of the base kinds, EP-04's sign-in kinds and EP-10's job kinds.
+alter table audit_entries alter column actor_id drop not null;
+alter table audit_entries drop constraint if exists audit_entries_actor_role_check;
+alter table audit_entries add constraint audit_entries_actor_role_check
+  check (actor_role in ('owner', 'staff', 'karigar', 'system', 'setup'));
+alter table audit_entries drop constraint if exists audit_entries_actor_present;
+alter table audit_entries add constraint audit_entries_actor_present
+  check ((actor_id is null) = (actor_role in ('system', 'setup')));
 alter table audit_entries add column if not exists before_value jsonb, add column if not exists after_value jsonb;
 alter table audit_entries drop constraint audit_entries_kind_check;
 alter table audit_entries add constraint audit_entries_kind_check check (kind in (
   'edit_applied', 'edit_refused', 'loss_accepted', 'parcel_sent_back', 'parcel_last_digit',
   'problem_cleared', 'scrap_marked', 'scrap_declined', 'stock_out', 'setting_changed',
+  'first_owner_created', 'activation_link_sent', 'password_set', 'signed_in', 'sign_in_failed',
+  'sign_in_locked', 'account_unlocked', 'signed_out', 'sessions_ended', 'password_reset_requested',
+  'password_reset',
   'lead_marked_late', 'job_marked_overdue', 'job_reminder_sent', 'edit_token_expired', 'job_run_retried'));

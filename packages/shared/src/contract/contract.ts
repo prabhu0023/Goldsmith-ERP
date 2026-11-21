@@ -28,6 +28,7 @@ export const contract = {
     input: z.object({
       ...pageInput,
       result: z.enum(['ok', 'retrying', 'failed']).optional(),
+      jobName: z.string().trim().min(1).max(64).optional(),
     }),
     result: pageResult(
       z.object({

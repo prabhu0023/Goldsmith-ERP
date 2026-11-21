@@ -16,9 +16,9 @@ Requirements: survives restarts, no duplicate execution with two API processes, 
 
 - Tables (migration `20261121T1845_ep10_background_jobs.sql`): `job_definitions` (one row per shop and job), `pending_jobs` (one row per occurrence, unique `(shop_id, job_name, run_key)`), `job_runs` (run history, code `RUN-<year>-NNNNN`), `job_keys` (claimed idempotency keys), `outbox_events`.
 - Each tick: create the next occurrence of every recurring job, then claim due rows one at a time (`for update skip locked`, lease 2 minutes), run the handler in one transaction with its idempotency key claim, and mark the row done in that same transaction.
-- Failure: the handler transaction rolls back (no change, no audit, key not claimed). The row is retried after `min(30 s × 2^(attempt-1), 15 min)` and the run shows `retrying`; after the last attempt the run is `failed` with a redacted error text (max 500 characters) and the `onJobFailed` hook is called (EP-37 fills it; today it logs). The scheduler never picks up a failed row again; only the Owner's retry does.
-- Catch-up: a past-due row runs on the first tick after start. A daily occurrence left from an earlier Asia/Kolkata day is marked `skipped`, so old days are not replayed; today's occurrence still runs.
-- Audit: a job's change is written to `audit_entries` in its transaction with `actor_kind = 'system'`, no user id or role, and actor name `System (<job label>)`.
+- Failure: the handler transaction rolls back (no change, no audit, key not claimed). The row is retried after `min(30 s × 2^(attempt-1), 15 min)` and the run shows `retrying`; after the last attempt the run is `failed` with a redacted error text (max 500 characters) and the `onJobFailed` hook is called (EP-37 fills it; today it logs). The scheduler never picks up a failed row again; only the Owner's retry does. If a worker stops during a run's last attempt, the run is marked `failed` once its lease expires (no extra attempt) and handed to `onJobFailed`.
+- Catch-up: a past-due row runs on the first tick after start. A daily occurrence left from an earlier Asia/Kolkata day that never started is marked `skipped` (it has no JobRun), so old days are not replayed; today's occurrence still runs. An occurrence that already has a JobRun (a backoff retry or an Owner retry) is never skipped, so a failed 9 am run retried the next morning runs under its own date and key.
+- Audit: a job's change is written to `audit_entries` in its transaction with `actor_role = 'system'`, no user id, and actor name `System (<job label>)`. This is the same System model EP-04 uses for its sign-in entries (`audit_entries_actor_present`: no actor id exactly when the role is `system` or `setup`); the migration's kind check lists the base kinds, EP-04's sign-in kinds and the EP-10 kinds.
 
 ## Jobs
 
@@ -60,7 +60,7 @@ Schedule, Cancel and Run are TypeScript functions, never contract operations, so
 
 ## Owner view of runs (S13)
 
-- `listJobRuns` (list): `{ cursor?, pageSize?, result?: 'ok' | 'retrying' | 'failed' }` → newest 50 first with `id` (run code), `jobName`, `scheduledAt`/`startedAt`/`finishedAt` (UTC ISO) and `*Local` (Asia/Kolkata with `+05:30`), `attempts`, `result`, `errorText`, and `nextCursor`.
+- `listJobRuns` (list): `{ cursor?, pageSize?, result?: 'ok' | 'retrying' | 'failed', jobName? }` → newest 50 first with `id` (run code), `jobName`, `scheduledAt`/`startedAt`/`finishedAt` (UTC ISO) and `*Local` (Asia/Kolkata with `+05:30`), `attempts`, `result`, `errorText`, and `nextCursor`.
 - `retryJobRun` (command): `{ runId }` puts a failed run back for one more attempt under the same idempotency key; audited `job_run_retried` with the Owner as actor. A run that is not failed answers `rule_refused`.
 - Both are Owner only (`ctx.by.role === 'owner'`); Staff and Karigar get `forbidden`. API only: S13 has no mockup, so there is no screen yet.
 
@@ -72,7 +72,8 @@ Schedule, Cancel and Run are TypeScript functions, never contract operations, so
 - **Who may see and retry runs:** Owner only for now; the check reads `ctx.by.role`, so it keeps working when EP-04 sessions replace the EP-03 dev stub.
 - **G17 broadcasts:** scheduled broadcasts are not a job yet.
 - **G26 event name:** `lead.sla_passed` and `karigar_job.overdue` are working names until the EP-07 live events catalogue fixes them.
-- **EP-09 retention hook** and **EP-03 idempotency-record cleanup** are not scheduled yet.
+- **EP-09 retention hook** and **EP-03 idempotency-record cleanup** are not scheduled yet. Run history grows fast: `lead-sla-timers` and `edit-token-expiry` each write a JobRun every minute (about 2,880 rows a day), so the newest 50 cover about 25 minutes and `RUN-<year>` codes pass 99,999 after about 35 days (codes keep working, they get longer). Use `jobName` (e.g. `lead-sla-breach`, `wishes-9am`) to find the runs that matter; retention of sweep runs belongs with the EP-09 hook.
+- **29 February wishes:** the wishes queue matches birthday/anniversary month and day exactly, so a 29 February date is only queued in leap years. Whether to greet on 28 February or 1 March in common years is left to EP-33.
 - **Live delivery** of outbox events is EP-07 / EP-11 / EP-33; screen counts updating live (S5 AC4) waits on EP-07.
 
 ## Acceptance criteria map (S1–S13)
@@ -94,6 +95,7 @@ Test paths are under `packages/api/test/jobs/` unless they start with `shared/` 
 | S2 | 5 newest first, cursor paging | `run-history.ts listRuns` | `run-history.test.ts` "S2 AC5", `services/job-runs.test.ts` "S13 AC1 / S2 AC5" |
 | S3 | 1, 2, 4, 5 growing delay, failed after 3, left alone, EP-37 hook | `backoffDelayMs`, failure transaction, `onJobFailed` | `retry-backoff.test.ts` "S3 AC1, AC2, AC4, AC5" and "grows from 30 s, doubling, and stops at 15 minutes" |
 | S3 | 3 fail then ok: 2 attempts | | `retry-backoff.test.ts` "S3 AC3" |
+| S3 | no attempt past the maximum after a worker stops | `failExhaustedLeases` | `retry-backoff.test.ts` "S3: a worker that stops during the last attempt …" |
 | S4 | 1 two workers, one change | `skip locked` + `job_keys` claim | `idempotency.test.ts` "S4 AC1", "runs each pending row once when two runner instances tick together"; `lead-sla.test.ts` "S4 AC1" |
 | S4 | 2 committed then crashed | lease reclaim + claimed key | `idempotency.test.ts` "S4 AC2" |
 | S4 | 3 overdue twice on one day: one reminder | `<code>:overdue:<date>` | `karigar-overdue.test.ts` "S7 AC4 / S4 AC3" |
@@ -138,10 +140,10 @@ Test paths are under `packages/api/test/jobs/` unless they start with `shared/` 
 | S12 | 2 overdue entry as System (overdue job) | | `system-audit.test.ts` "S12 AC2" |
 | S12 | 3 token reference, never value | `detail` = `token ref <token_ref>` | `system-audit.test.ts` "S12 AC3" |
 | S12 | 4 rolled back: no entry | audit in the handler transaction | `system-audit.test.ts` "S12 AC4" |
-| S12 | 5 filter by System | `actor_kind = 'system'` | `system-audit.test.ts` "S12 AC5" (reader screens: EP-06) |
+| S12 | 5 filter by System | `actor_role = 'system'` | `system-audit.test.ts` "S12 AC5" (reader screens: EP-06) |
 | S13 | 1 Owner: newest 50 with IST times + cursor | `listJobRuns` | `services/job-runs.test.ts` "S13 AC1 / S2 AC5" |
-| S13 | 2 filter failed | `result` input | `services/job-runs.test.ts` "S13 AC2" |
-| S13 | 3 retry failed wishes run: same key, at most once | `retryJobRun` | `services/job-runs.test.ts` "S13 AC3 / AC5" |
+| S13 | 2 filter failed | `result` input | `services/job-runs.test.ts` "S13 AC2"; by job: "S13: filtering by job name …" |
+| S13 | 3 retry failed wishes run: same key, at most once | `retryJobRun` | `services/job-runs.test.ts` "S13 AC3 / AC5" and "S13 AC3: retrying a wishes run that failed on an earlier shop day …" |
 | S13 | 4 Staff/Karigar → forbidden | owner check | `services/job-runs.test.ts` "S13 AC4" |
 | S13 | 5 retry audited with the Owner | `writeUserAudit` | `services/job-runs.test.ts` "S13 AC3 / AC5" |
 

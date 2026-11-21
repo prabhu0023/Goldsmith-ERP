@@ -23,11 +23,11 @@ describeDb('EP-10 background jobs schema', () => {
        values ($1, $2, $3, $4, $5, 3, $4)`,
       [shop.shopId, values.jobName ?? 'test-job', values.runKey ?? randomUUID(), now, values.status ?? 'pending'],
     );
-  const addAudit = (values: { actorKind: string; actorId: string | null; actorRole: string | null; kind?: string }) =>
+  const addAudit = (values: { actorId: string | null; actorRole: string | null; kind?: string }) =>
     pool.query(
-      `insert into audit_entries (shop_id, actor_kind, actor_id, actor_name, actor_role, kind, summary, reference, at)
-       values ($1, $2, $3, 'System (SLA breach job)', $4, $5, 'Lead marked late', 'LD-2026-001', $6)`,
-      [shop.shopId, values.actorKind, values.actorId, values.actorRole, values.kind ?? 'lead_marked_late', now],
+      `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, reference, at)
+       values ($1, $2, 'System (SLA breach job)', $3, $4, 'Lead marked late', 'LD-2026-001', $5)`,
+      [shop.shopId, values.actorId, values.actorRole, values.kind ?? 'lead_marked_late', now],
     );
   const addOwner = () => newUser(pool, shop, { name: 'Sanjay Seth', role: 'owner' });
 
@@ -59,9 +59,8 @@ describeDb('EP-10 background jobs schema', () => {
     expect(await columnsOf(pool, 'piece_edits')).toMatchObject({ expired_at: tz });
     expect(await columnsOf(pool, 'settings')).toMatchObject({ lead_sla_counting: { type: 'text', nullable: false } });
     expect(await columnsOf(pool, 'audit_entries')).toMatchObject({
-      actor_kind: { type: 'text', nullable: false },
       actor_id: { nullable: true },
-      actor_role: { nullable: true },
+      actor_role: { type: 'text', nullable: false },
       before_value: { type: 'jsonb' },
       after_value: { type: 'jsonb' },
     });
@@ -87,28 +86,47 @@ describeDb('EP-10 background jobs schema', () => {
     await expectPgError(claim(), '23505');
   });
 
-  it('refuses a system audit entry with a user, and a user entry without one', async () => {
+  it('refuses a System entry with a user, a user entry without one, and an unknown role', async () => {
     const owner = await addOwner();
-    await expectPgError(addAudit({ actorKind: 'system', actorId: owner, actorRole: null }), '23514');
-    await expectPgError(addAudit({ actorKind: 'system', actorId: null, actorRole: 'owner' }), '23514');
-    await expectPgError(addAudit({ actorKind: 'user', actorId: null, actorRole: null }), '23514');
-    await expectPgError(addAudit({ actorKind: 'robot', actorId: null, actorRole: null }), '23514');
+    await expectPgError(addAudit({ actorId: owner, actorRole: 'system' }), '23514');
+    await expectPgError(addAudit({ actorId: null, actorRole: 'owner' }), '23514');
+    await expectPgError(addAudit({ actorId: null, actorRole: null }), '23502');
+    await expectPgError(addAudit({ actorId: null, actorRole: 'robot' }), '23514');
   });
 
-  it('accepts a System entry with no actor id or role, and the new job kinds', async () => {
+  it('accepts a System entry (role system, no actor id) and the new job kinds', async () => {
     for (const kind of ['lead_marked_late', 'job_marked_overdue', 'job_reminder_sent', 'edit_token_expired']) {
-      await addAudit({ actorKind: 'system', actorId: null, actorRole: null, kind });
+      await addAudit({ actorId: null, actorRole: 'system', kind });
     }
     const owner = await addOwner();
-    await addAudit({ actorKind: 'user', actorId: owner, actorRole: 'owner', kind: 'job_run_retried' });
+    await addAudit({ actorId: owner, actorRole: 'owner', kind: 'job_run_retried' });
     const rows = (
-      await pool.query<{ actor_kind: string; actor_id: string | null; actor_role: string | null }>(
-        `select actor_kind, actor_id, actor_role from audit_entries where shop_id = $1 and kind = 'lead_marked_late'`,
+      await pool.query<{ actor_id: string | null; actor_role: string | null }>(
+        `select actor_id, actor_role from audit_entries where shop_id = $1 and kind = 'lead_marked_late'`,
         [shop.shopId],
       )
     ).rows;
-    expect(rows).toEqual([{ actor_kind: 'system', actor_id: null, actor_role: null }]);
-    await expectPgError(addAudit({ actorKind: 'system', actorId: null, actorRole: null, kind: 'job_deleted' }), '23514');
+    expect(rows).toEqual([{ actor_id: null, actor_role: 'system' }]);
+    await expectPgError(addAudit({ actorId: null, actorRole: 'system', kind: 'job_deleted' }), '23514');
+  });
+
+  it('keeps the EP-04 sign-in kinds and setup actor valid next to the job kinds (one audit model)', async () => {
+    for (const kind of [
+      'first_owner_created',
+      'activation_link_sent',
+      'password_set',
+      'signed_in',
+      'sign_in_failed',
+      'sign_in_locked',
+      'account_unlocked',
+      'signed_out',
+      'sessions_ended',
+      'password_reset_requested',
+      'password_reset',
+    ]) {
+      await addAudit({ actorId: null, actorRole: 'system', kind });
+    }
+    await addAudit({ actorId: null, actorRole: 'setup', kind: 'first_owner_created' });
   });
 
   it('counts the lead SLA in clock hours only until A2 is decided', async () => {

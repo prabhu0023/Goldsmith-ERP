@@ -17,6 +17,8 @@ export interface ListRunsQuery {
   /** Already clamped (clampPageSize). */
   pageSize: number;
   result?: JobRunResult;
+  /** Only runs of this job (e.g. lead-sla-breach, wishes-9am). */
+  jobName?: string;
 }
 
 interface RunListRow {
@@ -49,13 +51,17 @@ const toItem = (row: RunListRow): JobRunItem => ({
 export async function listRuns(
   client: pg.Pool | pg.PoolClient,
   shop: ShopContext,
-  { cursor, pageSize, result }: ListRunsQuery,
+  { cursor, pageSize, result, jobName }: ListRunsQuery,
 ): Promise<{ items: JobRunItem[]; nextCursor: string | null }> {
   const params: unknown[] = [shop.shopId];
   let where = 'where shop_id = $1';
   if (result !== undefined) {
     params.push(result);
     where += ` and result = $${params.length}`;
+  }
+  if (jobName !== undefined) {
+    params.push(jobName);
+    where += ` and job_name = $${params.length}`;
   }
   if (cursor !== undefined) {
     const [sortText, id] = decodeCursor(cursor);

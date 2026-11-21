@@ -21,7 +21,6 @@ import {
 } from './job-test-helpers.js';
 
 interface AuditRow {
-  actor_kind: string;
   actor_id: string | null;
   actor_name: string;
   actor_role: string | null;
@@ -46,7 +45,7 @@ describeDb('System actor audit (EP-10-S12)', () => {
   const auditOf = async (shop: TestShop, where = 'true'): Promise<AuditRow[]> =>
     (
       await pool.query<AuditRow>(
-        `select actor_kind, actor_id, actor_name, actor_role, kind, summary, detail, reference, before_value, after_value
+        `select actor_id, actor_name, actor_role, kind, summary, detail, reference, before_value, after_value
            from audit_entries where shop_id = $1 and ${where} order by at, id`,
         [shop.shopId],
       )
@@ -62,9 +61,8 @@ describeDb('System actor audit (EP-10-S12)', () => {
     await scheduler.tick();
     expect(await auditOf(shop)).toEqual([
       expect.objectContaining({
-        actor_kind: 'system',
         actor_id: null,
-        actor_role: null,
+        actor_role: 'system',
         actor_name: 'System (SLA breach job)',
         kind: 'lead_marked_late',
         reference: 'LD-2026-931',
@@ -80,7 +78,7 @@ describeDb('System actor audit (EP-10-S12)', () => {
     await makeScheduler(pool, manualClock('2026-11-01T18:35:00Z'), shop, [karigarOverdueJob]).tick();
     expect(await auditOf(shop)).toEqual([
       expect.objectContaining({
-        actor_kind: 'system',
+        actor_role: 'system',
         actor_id: null,
         actor_name: 'System (overdue job)',
         kind: 'job_marked_overdue',
@@ -99,7 +97,7 @@ describeDb('System actor audit (EP-10-S12)', () => {
     const rows = await auditOf(shop);
     expect(rows).toEqual([
       expect.objectContaining({
-        actor_kind: 'system',
+        actor_role: 'system',
         actor_name: 'System (token sweep)',
         kind: 'edit_token_expired',
         reference: 'ED-101',
@@ -152,7 +150,7 @@ describeDb('System actor audit (EP-10-S12)', () => {
     clock.set('2026-11-01T18:35:00Z');
     await scheduler.tick();
     expect(await auditOf(shop)).toHaveLength(3);
-    const system = await auditOf(shop, `actor_kind = 'system'`);
+    const system = await auditOf(shop, `actor_role = 'system'`);
     expect(system.map((r) => [r.actor_name, r.kind])).toEqual([
       ['System (SLA breach job)', 'lead_marked_late'],
       ['System (overdue job)', 'job_marked_overdue'],

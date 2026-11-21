@@ -5,8 +5,10 @@
  * Each tick, per shop:
  *  1. ensureRecurring: record the job definitions; put the current occurrence of every
  *     `every`/`daily` job in pending_jobs when it has none open. A pending daily occurrence of an
- *     earlier Asia/Kolkata day is skipped, so after downtime today's runs once and old days are
- *     not replayed (S11).
+ *     earlier Asia/Kolkata day that never started is skipped, so after downtime today's runs once
+ *     and old days are not replayed (S11). An occurrence that already has a JobRun (a backoff
+ *     retry, or a failed run the Owner re-queued, S13) is never skipped: it runs to an outcome.
+ *     A run whose lease expired on its last attempt is marked failed, not attempted again (S3).
  *  2. Claim and run due rows one at a time. The claim transaction picks a row with
  *     `for update skip locked`, so two api processes never take the same row, sets a lease
  *     (locked_by, locked_until) and opens or updates the JobRun; it commits before the handler, so
@@ -153,10 +155,12 @@ export function createScheduler(options: SchedulerOptions): Scheduler {
       const schedule = job.schedule;
       if (schedule.kind === 'delay') continue;
       if (schedule.kind === 'daily') {
-        // Run keys of daily jobs are Asia/Kolkata dates (YYYY-MM-DD), which sort as text.
+        // Run keys of daily jobs are Asia/Kolkata dates (YYYY-MM-DD), which sort as text. Only
+        // occurrences that never started (no JobRun) are skipped, so no JobRun is left open.
         await client.query(
           `update pending_jobs set status = 'skipped'
-            where shop_id = $1 and job_name = $2 and status = 'pending' and run_key < $3`,
+            where shop_id = $1 and job_name = $2 and status = 'pending' and run_key < $3
+              and attempts = 0 and run_id is null`,
           [shop.shopId, job.name, today],
         );
       }
@@ -200,7 +204,7 @@ export function createScheduler(options: SchedulerOptions): Scheduler {
            from pending_jobs
           where shop_id = $1 and job_name = any($2::text[])
             and ((status = 'pending' and coalesce(next_attempt_at, due_at) <= $3)
-              or (status = 'running' and locked_until <= $3))
+              or (status = 'running' and locked_until <= $3 and attempts < max_attempts))
           order by coalesce(next_attempt_at, due_at), id
           limit 1
           for update skip locked`,
@@ -331,10 +335,43 @@ export function createScheduler(options: SchedulerOptions): Scheduler {
     }
   }
 
+  /**
+   * A worker that stopped during a run's last attempt leaves it `running` with an expired lease.
+   * It gets no extra attempt: the row and its JobRun are marked failed and handed to onJobFailed.
+   */
+  async function failExhaustedLeases(shop: ShopContext): Promise<void> {
+    const now = clock.now();
+    const errorText = 'The run stopped on its last attempt before finishing (lease expired).';
+    const failures = await withTransaction(pool, async (client) => {
+      const { rows } = await client.query<{ job_name: string; attempts: number; code: string }>(
+        `with exhausted as (
+           update pending_jobs set status = 'failed', locked_by = null, locked_until = null
+            where shop_id = $1 and job_name = any($2::text[]) and status = 'running'
+              and locked_until <= $3 and attempts >= max_attempts
+            returning run_id, job_name, attempts
+         )
+         update job_runs r set result = 'failed', finished_at = $3, error_text = $4
+           from exhausted e
+          where r.shop_id = $1 and r.id = e.run_id
+         returning e.job_name, e.attempts, r.code`,
+        [shop.shopId, jobNames, now, errorText],
+      );
+      return rows;
+    });
+    for (const f of failures) {
+      try {
+        await onJobFailed({ shopId: shop.shopId, jobName: f.job_name, runCode: f.code, attempts: f.attempts, errorText });
+      } catch (hookErr) {
+        log('[jobs] failure hook failed', hookErr);
+      }
+    }
+  }
+
   async function tick(): Promise<number> {
     let ran = 0;
     for (const shop of await listShops()) {
       await withTransaction(pool, (client) => ensureRecurring(client, shop, clock.now()));
+      await failExhaustedLeases(shop);
       while (ran < MAX_RUNS_PER_TICK) {
         const run = await claimNext(shop);
         if (!run) break;

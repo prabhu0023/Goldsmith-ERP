@@ -1,7 +1,8 @@
 /**
  * Audit entries for changes jobs make (EP-10-S12) and for job actions a person takes (S13).
- * A job's entry names the System actor, "System (<job label>)", with no user id or role; it is
- * written in the job's transaction, so a rolled-back run leaves no entry.
+ * A job's entry names the System actor: actor_role 'system', no user id, and actor name
+ * "System (<job label>)" (the same System model as EP-04's sign-in entries). It is written in the
+ * job's transaction, so a rolled-back run leaves no entry.
  */
 import type { Actor } from '@goldsmith/shared';
 import type pg from 'pg';
@@ -33,17 +34,16 @@ const json = (value: unknown): string | null => (value === undefined ? null : JS
 async function insertAudit(
   client: pg.PoolClient,
   shop: ShopContext,
-  actor: { kind: 'user' | 'system'; id: string | null; name: string; role: string | null },
+  actor: { id: string | null; name: string; role: string },
   entry: JobAuditEntry,
 ): Promise<void> {
   await client.query(
     `insert into audit_entries
-       (shop_id, at, actor_kind, actor_id, actor_name, actor_role, kind, summary, detail, reference, before_value, after_value)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+       (shop_id, at, actor_id, actor_name, actor_role, kind, summary, detail, reference, before_value, after_value)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
     [
       shop.shopId,
       entry.at,
-      actor.kind,
       actor.id,
       actor.name,
       actor.role,
@@ -59,10 +59,10 @@ async function insertAudit(
 
 /** An entry made by the job labelled `label`. */
 export function writeJobAudit(client: pg.PoolClient, shop: ShopContext, label: string, entry: JobAuditEntry): Promise<void> {
-  return insertAudit(client, shop, { kind: 'system', id: null, name: systemActorName(label), role: null }, entry);
+  return insertAudit(client, shop, { id: null, name: systemActorName(label), role: 'system' }, entry);
 }
 
 /** An entry made by a signed-in person (e.g. the Owner retrying a run). */
 export function writeUserAudit(client: pg.PoolClient, shop: ShopContext, actor: Actor, entry: JobAuditEntry): Promise<void> {
-  return insertAudit(client, shop, { kind: 'user', id: actor.id, name: actor.name, role: actor.role }, entry);
+  return insertAudit(client, shop, { id: actor.id, name: actor.name, role: actor.role }, entry);
 }

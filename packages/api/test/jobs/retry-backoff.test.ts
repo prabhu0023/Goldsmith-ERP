@@ -115,4 +115,55 @@ describeDb('retries with backoff (EP-10-S3)', () => {
     ]);
     expect(await pendingStatus(pool, shop, 'fails-once', 'a')).toBe('done');
   });
+
+  it('S3: a worker that stops during the last attempt gives no extra attempt; the run is marked failed', async () => {
+    const shop = await newJobsShop(pool);
+    const clock = manualClock('2026-11-01T10:00:00Z');
+    let calls = 0;
+    const onJobFailed = vi.fn();
+    const scheduler = makeScheduler(
+      pool,
+      clock,
+      shop,
+      [
+        testJob(
+          'crash-on-last',
+          async () => {
+            calls++;
+            throw new Error('boom');
+          },
+          { maxAttempts: 2 },
+        ),
+      ],
+      { onJobFailed },
+    );
+    await scheduleJob(pool, shop, { jobName: 'crash-on-last', runKey: 'a', dueAt: clock.now(), maxAttempts: 2, now: clock.now() });
+    await scheduler.tick();
+    expect(calls).toBe(1);
+    // Another worker claims attempt 2 (the last) at 10:00:30 and stops before finishing.
+    clock.set('2026-11-01T10:00:30Z');
+    await pool.query(
+      `update pending_jobs set status = 'running', attempts = 2, locked_by = 'stopped-worker', locked_until = $2
+        where shop_id = $1`,
+      [shop.shopId, new Date('2026-11-01T10:02:30Z')],
+    );
+    await pool.query('update job_runs set attempts = 2 where shop_id = $1', [shop.shopId]);
+    // Before the lease expires nothing happens; after it, the run fails without a third attempt.
+    clock.set('2026-11-01T10:02:29Z');
+    await scheduler.tick();
+    expect(await pendingStatus(pool, shop, 'crash-on-last', 'a')).toBe('running');
+    clock.set('2026-11-01T10:02:30Z');
+    await scheduler.tick();
+    expect(calls).toBe(1);
+    expect(await pendingStatus(pool, shop, 'crash-on-last', 'a')).toBe('failed');
+    const [run] = await runsOf(pool, shop);
+    expect(run).toMatchObject({ attempts: 2, result: 'failed', finished_at: new Date('2026-11-01T10:02:30Z') });
+    expect(run.error_text).toMatch(/last attempt/);
+    expect(onJobFailed).toHaveBeenCalledTimes(1);
+    expect(onJobFailed).toHaveBeenCalledWith(expect.objectContaining({ jobName: 'crash-on-last', runCode: run.code, attempts: 2 }));
+    clock.advance(DAY);
+    await scheduler.tick();
+    expect(calls).toBe(1);
+    expect(onJobFailed).toHaveBeenCalledTimes(1);
+  });
 });

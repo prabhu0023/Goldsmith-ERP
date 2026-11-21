@@ -21,7 +21,7 @@ import { newSession, newUser } from '../support/api-harness.js';
 
 /** 09:00 Asia/Kolkata on 21 November 2026. */
 const NINE_IST = '2026-11-21T03:30:00.000Z';
-const SESSION_EXPIRES = new Date('2026-11-22T00:00:00Z');
+const SESSION_EXPIRES = new Date('2026-11-30T00:00:00Z');
 
 interface ShopUsers {
   shop: TestShop;
@@ -215,13 +215,77 @@ describeDb('job runs for the Owner (EP-10-S13)', () => {
     });
 
     const audit = await pool.query(
-      `select actor_kind, actor_name, actor_role, reference from audit_entries
+      `select actor_id is not null as has_actor_id, actor_name, actor_role, reference from audit_entries
         where shop_id = $1 and kind = 'job_run_retried'`,
       [u.shop.shopId],
     );
     expect(audit.rows).toEqual([
-      { actor_kind: 'user', actor_name: 'Sanjay Seth', actor_role: 'owner', reference: failedRun.code },
+      { has_actor_id: true, actor_name: 'Sanjay Seth', actor_role: 'owner', reference: failedRun.code },
     ]);
+  });
+
+  it('S13: filtering by job name finds the 9 am wishes runs among the every-minute sweeps', async () => {
+    const u = await shopWithUsers();
+    await addRuns(u.shop);
+    await pool.query(
+      `insert into job_runs (shop_id, code, job_name, scheduled_at, started_at, finished_at, attempts, result)
+       values ($1, 'RUN-2026-00100', 'wishes-9am', $2, $2, $2, 1, 'ok')`,
+      [u.shop.shopId, new Date('2026-11-20T03:30:00Z')],
+    );
+    const res = await call('listJobRuns', { jobName: 'wishes-9am' }, u.owner);
+    expect(res.status).toBe(200);
+    expect((res.body.items as Item[]).map((r) => [r.id, r.jobName])).toEqual([['RUN-2026-00100', 'wishes-9am']]);
+    const failedSweeps = await call('listJobRuns', { jobName: 'lead-sla-timers', result: 'failed' }, u.owner);
+    expect((failedSweeps.body.items as Item[]).map((r) => r.jobName)).toEqual(Array(11).fill('lead-sla-timers'));
+    expect((await call('listJobRuns', { jobName: 'no-such-job' }, u.owner)).body.items).toEqual([]);
+  });
+
+  it('S13 AC3: retrying a wishes run that failed on an earlier shop day runs it the next day under its own date', async () => {
+    const u = await shopWithUsers();
+    await pool.query('update settings set auto_send_wishes = true where shop_id = $1', [u.shop.shopId]);
+    let failing = true;
+    const flakyWishes: JobDefinition = {
+      ...wishesJob,
+      async handler(tx, ctx) {
+        if (failing) throw new Error('Queue service unavailable');
+        return wishesJob.handler(tx, ctx);
+      },
+    };
+    clock.set(NINE_IST);
+    const scheduler = makeScheduler(pool, clock, u.shop, [flakyWishes]);
+    await scheduler.tick();
+    clock.advance(30_000);
+    await scheduler.tick();
+    clock.advance(60_000);
+    await scheduler.tick();
+    const [failedRun] = await runsOf(pool, u.shop, 'wishes-9am');
+    expect(failedRun).toMatchObject({ attempts: 3, result: 'failed' });
+
+    // The Owner sees it at 08:00 Asia/Kolkata the next day (22 Nov) and retries it.
+    clock.set('2026-11-22T02:30:00.000Z');
+    failing = false;
+    expect(await call('retryJobRun', { runId: failedRun.code }, u.owner)).toEqual({ status: 200, body: { ok: true } });
+    await scheduler.tick();
+    const retried = (await runsOf(pool, u.shop, 'wishes-9am')).find((r) => r.code === failedRun.code);
+    expect(retried).toMatchObject({ attempts: 4, result: 'ok', finished_at: new Date('2026-11-22T02:30:00.000Z') });
+    const keys = async () =>
+      (
+        await pool.query<{ date: string }>(
+          `select payload->>'date' as date from outbox_events
+            where shop_id = $1 and topic = 'wishes.run_requested' order by created_at`,
+          [u.shop.shopId],
+        )
+      ).rows.map((r) => r.date);
+    expect(await keys()).toEqual(['2026-11-21']);
+
+    // 22 Nov's own 9 am run still happens once.
+    clock.set('2026-11-22T03:30:00.000Z');
+    await scheduler.tick();
+    await scheduler.tick();
+    expect(await keys()).toEqual(['2026-11-21', '2026-11-22']);
+    const runs = await runsOf(pool, u.shop, 'wishes-9am');
+    expect(runs).toHaveLength(2);
+    expect(runs.every((r) => r.result === 'ok' && r.finished_at !== null)).toBe(true);
   });
 
   it('S13 AC4: Staff and Karigar get forbidden for both operations', async () => {
