@@ -11,3 +11,4 @@ coverage/
 docs.backup-*/
 .agents/
 .worktrees/
+docs/ux/stitch_ux_design_system_builder/
