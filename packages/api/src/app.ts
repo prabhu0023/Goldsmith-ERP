@@ -88,6 +88,7 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
       registry,
       log,
       maxBodyBytes: config.maxBodyBytes,
+      idempotencyRetentionHours: config.idempotencyRetentionHours,
     }),
   );
 

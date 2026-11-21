@@ -27,6 +27,15 @@ describe('loadConfig', () => {
     );
   });
 
+  it('defaults the idempotency retention to 24 hours and reads a set value', () => {
+    expect(loadConfig(valid).idempotencyRetentionHours).toBe(24);
+    expect(loadConfig({ ...valid, IDEMPOTENCY_RETENTION_HOURS: '72' }).idempotencyRetentionHours).toBe(72);
+  });
+  it.each(['0', '-1', '2.5', 'a day'])('names IDEMPOTENCY_RETENTION_HOURS when it is %s', (bad) => {
+    expect(() => loadConfig({ ...valid, IDEMPOTENCY_RETENTION_HOURS: bad })).toThrow(
+      'IDEMPOTENCY_RETENTION_HOURS must be a positive integer',
+    );
+  });
   it('names every missing required variable', () => {
     const err = (() => {
       try {

@@ -36,6 +36,7 @@ Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 
 | `0011_shop_matched_references` | `unique (shop_id, id)` on every referenced table; every foreign key between shop-scoped tables becomes `(shop_id, x_id)` |
 | `0012_opted_in_personal_data` | `personal data (DPDP)` comment on `customers.opted_in` |
 | `0013_code_counters` | `code_counters (shop_id, prefix, last_value)`: per-shop counters behind `nextCode()` (EP-03-S7) |
+| `0014_idempotency_records` | `idempotency_records (key, operation, user_id, result_id, created_at, expires_at)`, unique `(key, operation, user_id)`: the created id of each create sent with an `Idempotency-Key` (EP-03-S8); expires after `IDEMPOTENCY_RETENTION_HOURS` (default 24) |
 
 Conventions every table follows:
 

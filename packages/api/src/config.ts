@@ -21,6 +21,7 @@ export const ENV_VARS = [
   { name: 'SESSION_SECRET', required: true },
   { name: 'API_PORT', required: false },
   { name: 'API_MAX_BODY_BYTES', required: false },
+  { name: 'IDEMPOTENCY_RETENTION_HOURS', required: false },
   { name: 'CLOUD_REGION', required: false },
   { name: 'DATABASE_URL', required: false },
   { name: 'STORAGE_BUCKET', required: false },
@@ -39,6 +40,8 @@ export type EnvVarName = (typeof ENV_VARS)[number]['name'];
 export const DEFAULT_API_PORT = 4000;
 /** Largest request body the api parses (EP-03-S2): 100 kB. */
 export const DEFAULT_MAX_BODY_BYTES = 102400;
+/** How long a create's idempotency key is kept (EP-03-S8): 24 hours. */
+export const DEFAULT_IDEMPOTENCY_RETENTION_HOURS = 24;
 const MIN_SESSION_SECRET_LENGTH = 32;
 
 export interface Config {
@@ -48,6 +51,8 @@ export interface Config {
   port: number;
   /** Request bodies larger than this are refused before parsing. */
   maxBodyBytes: number;
+  /** Hours an idempotency key and its result id are kept before cleanup removes them. */
+  idempotencyRetentionHours: number;
   /** Hosting region (D10: an India region; the exact name follows the D1a provider). */
   cloudRegion?: string;
   /** Optional until the epic that uses them (database EP-02, storage, WhatsApp, email, LLM). */
@@ -113,6 +118,12 @@ export function loadConfig(env: Env = process.env): Config {
     problems.push('API_MAX_BODY_BYTES must be a positive integer (bytes)');
   }
 
+  const retentionText = read('IDEMPOTENCY_RETENTION_HOURS');
+  const idempotencyRetentionHours =
+    retentionText === undefined ? DEFAULT_IDEMPOTENCY_RETENTION_HOURS : Number(retentionText);
+  if (!Number.isSafeInteger(idempotencyRetentionHours) || idempotencyRetentionHours < 1) {
+    problems.push('IDEMPOTENCY_RETENTION_HOURS must be a positive integer (hours)');
+  }
   if (problems.length > 0) throw new ConfigError(problems);
 
   return {
@@ -121,6 +132,7 @@ export function loadConfig(env: Env = process.env): Config {
     sessionSecret: sessionSecret as string,
     port,
     maxBodyBytes,
+    idempotencyRetentionHours,
     cloudRegion: read('CLOUD_REGION'),
     databaseUrl: read('DATABASE_URL'),
     storageBucket: read('STORAGE_BUCKET'),
