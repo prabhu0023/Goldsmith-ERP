@@ -11,6 +11,7 @@
  */
 import { assertCanMarkLost, type contract, type LeadState } from '@goldsmith/shared';
 import { updateVersioned } from '../db/versioned.js';
+import { leadSlaTimerAfterTransition } from '../jobs/handlers/lead-sla.js';
 import { NotFoundError } from '../pipeline/api-errors.js';
 import type { Handler } from '../pipeline/registry.js';
 
@@ -28,5 +29,6 @@ export const markLeadLost: Handler<typeof contract.markLeadLost> = async (tx, ct
     expectedVersion: lead.version,
     set: { state: 'lost', note: input.reason ? input.reason : lead.note },
   });
+  await leadSlaTimerAfterTransition(tx.client, ctx.shop, { leadId: lead.id, state: 'lost' });
   return { ok: true };
 };
