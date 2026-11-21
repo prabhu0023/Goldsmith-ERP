@@ -19,7 +19,7 @@ New dependencies, all in `packages/api`: `pg` ^8.23.1 (runtime), `@types/pg` ^8.
 
 ## Schema overview
 
-Migrations `0001` to `0010`, one per story S3 to S12:
+Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 review:
 
 | Migration | Tables |
 | --- | --- |
@@ -33,6 +33,7 @@ Migrations `0001` to `0010`, one per story S3 to S12:
 | `0008_problems_scrap_stock_outs` | `problems`, `scrap_requests`, `stock_outs`, `stock_out_pieces` |
 | `0009_audit_entries` | `audit_entries` (append-only: UPDATE, DELETE and TRUNCATE raise an error) |
 | `0010_broadcasts_wishes_settings` | `broadcasts`, `broadcast_recipients`, `broadcast_pieces`, `wishes`, `settings` (one per shop, created with the shop) |
+| `0011_shop_matched_references` | `unique (shop_id, id)` on every referenced table; every foreign key between shop-scoped tables becomes `(shop_id, x_id)` |
 
 Conventions every table follows:
 
@@ -42,7 +43,7 @@ Conventions every table follows:
 - **Money sockets.** `value_inr`, `budget_inr`, `spent_inr`, `amount_inr`: `numeric(14,2)`, nullable, no default.
 - **Times.** `timestamptz` only, every connection runs with `TimeZone=UTC`. Calendar dates (`dob`, `anniversary`, `open_since`) are `date`.
 - **Enums.** `text` with a `check (... in (...))` constraint.
-- **Foreign keys.** All `deferrable initially immediate`: errors are immediate, and the seed defers them to load cyclic links (job ↔ order copy, job ↔ parcel).
+- **Foreign keys.** A reference between two shop-scoped tables is composite, `(shop_id, x_id) references parent (shop_id, id)`, so a row cannot point at another shop's parent, scale or location (`0011`, `cross-shop.test.ts`). All are `deferrable initially immediate`: errors are immediate, and the seed defers them to load cyclic links (job ↔ order copy, job ↔ parcel).
 - **Versions.** `pieces`, `piece_edits`, `parcels`, `leads`, `lead_items`, `karigar_jobs`, `metal_pools` have `version integer not null default 1`; the `bump_version` trigger raises it on every update, so only the database sets it.
 - **Ordered child rows.** `position integer not null`, unique per parent.
 - **People's names** from the prototype (`taggedBy`, `proposedBy`, `raisedBy`) stay `*_by_name text`, not foreign keys. Audit entries have a real `actor_id` foreign key to `users`.

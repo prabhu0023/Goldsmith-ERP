@@ -91,6 +91,19 @@ describeDb('schema conventions (EP-02-S3, D7)', () => {
     expect(fixed).toEqual([]);
   });
 
+  it('matches shop_id in every foreign key between shop-scoped tables', async () => {
+    const idOnly = (
+      await pool.query<{ conname: string }>(
+        `select c.conname from pg_constraint c
+          where c.contype = 'f' and c.connamespace = 'public'::regnamespace
+            and c.confrelid <> 'public.shops'::regclass
+            and not exists (
+              select 1 from pg_attribute a
+               where a.attrelid = c.conrelid and a.attnum = c.conkey[1] and a.attname = 'shop_id')`,
+      )
+    ).rows;
+    expect(idOnly).toEqual([]);
+  });
   it('records D7 in the first migration', () => {
     const [first] = listMigrationFiles(migrationsDir);
     expect(first.version).toBe(1);
