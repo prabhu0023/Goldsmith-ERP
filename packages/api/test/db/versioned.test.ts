@@ -2,7 +2,13 @@ import type pg from 'pg';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { insertScoped } from '../../src/db/shop-context.js';
 import { withTransaction } from '../../src/db/transaction.js';
-import { StaleWriteError, updateVersioned, VERSIONED_ENTITIES, type VersionedTable } from '../../src/db/versioned.js';
+import {
+  RowNotFoundError,
+  StaleWriteError,
+  updateVersioned,
+  VERSIONED_ENTITIES,
+  type VersionedTable,
+} from '../../src/db/versioned.js';
 import { addKarigar, addPiece, describeDb, newShop, type TestShop, testPool } from './db-test-helpers.js';
 
 /** Wait until the backend `pid` is blocked on a lock (its UPDATE is queued behind another writer). */
@@ -157,6 +163,33 @@ describeDb('versioned updates and stale-write conflicts (EP-02-S14)', () => {
     expect(parcelRow).toEqual({ version: 1, po_ref: null });
     const p1Row = (await pool.query('select version, note from pieces where id = $1', [p1])).rows[0];
     expect(p1Row).toEqual({ version: 1, note: null });
+  });
+
+  it('reports a nonexistent id as RowNotFoundError, not a conflict (FU-002)', async () => {
+    const shop = await newShop(pool);
+    const missing = '00000000-0000-4000-8000-000000000000';
+    const work = updateVersioned(pool, shop, { table: 'pieces', id: missing, expectedVersion: 1, set: { note: 'x' } });
+    await expect(work).rejects.toBeInstanceOf(RowNotFoundError);
+    await expect(work).rejects.toMatchObject({ entity: 'Piece', id: missing, code: 'ROW_NOT_FOUND' });
+  });
+
+  it("reports another shop's row as RowNotFoundError and leaves it unchanged (FU-002)", async () => {
+    const mine = await newShop(pool);
+    const theirs = await newShop(pool, 'Other shop');
+    const id = await addPiece(pool, theirs, 'TAG-8841');
+    const work = updateVersioned(pool, mine, { table: 'pieces', id, expectedVersion: 1, set: { note: 'taken over' } });
+    await expect(work).rejects.toBeInstanceOf(RowNotFoundError);
+    const { rows } = await pool.query('select version, note from pieces where id = $1', [id]);
+    expect(rows[0]).toEqual({ version: 1, note: null });
+  });
+
+  it('still reports a genuine version mismatch as StaleWriteError (FU-002)', async () => {
+    const shop = await newShop(pool);
+    const id = await addPiece(pool, shop, 'TAG-8841');
+    await pool.query(`update pieces set note = 'moved on' where id = $1`, [id]);
+    const work = updateVersioned(pool, shop, { table: 'pieces', id, expectedVersion: 1, set: { note: 'x' } });
+    await expect(work).rejects.toBeInstanceOf(StaleWriteError);
+    await expect(work).rejects.not.toBeInstanceOf(RowNotFoundError);
   });
 
   it('lets exactly one of 20 concurrent writers succeed', async () => {
