@@ -7,10 +7,11 @@
  * A broken rule throws a DomainError with a message that is fit to show a person.
  */
 import { checkToken, makeToken } from '@goldsmith/shared';
-import { isFullyRouted } from '@goldsmith/shared';
+import { assertCanMarkLost, DomainError, isFullyRouted } from '@goldsmith/shared';
 import { isMonthDayToday } from '@goldsmith/shared';
 import { evaluateParcel } from '@goldsmith/shared';
 import { fmtG, netOf, round4, toU, fromU } from '@goldsmith/shared';
+import type { OperationArgs } from '@goldsmith/shared';
 import type {
   Actor,
   AppState,
@@ -42,12 +43,7 @@ import type {
   Verdict,
 } from '@goldsmith/shared';
 
-export class DomainError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'DomainError';
-  }
-}
+export { DomainError };
 
 export interface Ctx {
   by: Actor;
@@ -170,9 +166,9 @@ export function startWorkingLead(s: AppState, a: Ctx & { leadId: string }): AppS
   return { ...s, leads: replace(s.leads, lead.id, { state: 'being_worked', takenBy: lead.takenBy ?? a.by.name }) };
 }
 
-export function markLeadLost(s: AppState, a: Ctx & { leadId: string; reason?: string }): AppState {
+export function markLeadLost(s: AppState, a: Ctx & OperationArgs<'markLeadLost'>): AppState {
   const lead = leadOf(s, a.leadId);
-  if (lead.state === 'converted') throw new DomainError('A converted lead cannot be marked lost.');
+  assertCanMarkLost(lead.state);
   // Pieces held for this lead go back to the showcase.
   const pieces = s.pieces.map((p) => (p.heldForLeadId === lead.id ? { ...p, heldForLeadId: null } : p));
   return { ...s, pieces, leads: replace(s.leads, lead.id, { state: 'lost', note: a.reason ? a.reason : lead.note }) };
