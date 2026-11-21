@@ -8,6 +8,7 @@ import {
   defineOperation,
   ERROR_CODES,
   okResult,
+  signedWeightG,
   weightG,
 } from '../src/index.js';
 import type { LeadState } from '../src/index.js';
@@ -48,10 +49,12 @@ describe('operation contract (EP-03-S1)', () => {
     }
   });
 
-  it('declares every weight field (…G) with the shared weightG schema', () => {
+  it('declares every weight field (…G) with weightG, or signedWeightG only for …DeltaG / …GapG', () => {
     for (const op of operations) {
       for (const [key, schema] of walk(op.input)) {
-        if (key.endsWith('G')) expect(unwrap(schema), `${op.name}.${key}`).toBe(weightG);
+        if (!key.endsWith('G')) continue;
+        const expected = /(DeltaG|GapG)$/.test(key) ? signedWeightG : weightG;
+        expect(unwrap(schema), `${op.name}.${key}`).toBe(expected);
       }
     }
   });
@@ -111,6 +114,38 @@ describe('weightG', () => {
 
   it('refuses a JSON number', () => {
     expect(weightG.safeParse(12.34).success).toBe(false);
+  });
+  it.each(['0', '0.0000'])('accepts zero (%s)', (text) => {
+    expect(weightG.parse(text)).toBe(0);
+  });
+  it.each(['-12.3456', '-0.0001', '-1'])('refuses the negative weight %s', (text) => {
+    const r = weightG.safeParse(text);
+    expect(r.success).toBe(false);
+    expect(r.error?.issues[0]?.message).toBe('Weight cannot be negative');
+  });
+  it('treats "-0" as zero, not as a negative weight', () => {
+    expect(weightG.parse('-0.0000')).toBe(0);
+  });
+  it('names the field when used in an object', () => {
+    const r = z.object({ grossG: weightG }).safeParse({ grossG: '-1.0000' });
+    expect(r.error?.issues[0]?.path).toEqual(['grossG']);
+  });
+});
+describe('signedWeightG', () => {
+  it.each([
+    ['-0.0400', -400],
+    ['12.3456', 123456],
+    ['0', 0],
+  ])('parses %s to %i units', (text, units) => {
+    expect(signedWeightG.parse(text)).toBe(units);
+  });
+  it.each(['-12.34567', '+1', '-', '1,2'])('refuses %s like weightG does', (text) => {
+    const r = signedWeightG.safeParse(text);
+    expect(r.success).toBe(false);
+    expect(r.error?.issues[0]?.message).toBe('Enter grams with up to four decimals, e.g. 12.3456');
+  });
+  it('refuses a JSON number', () => {
+    expect(signedWeightG.safeParse(-0.04).success).toBe(false);
   });
 });
 

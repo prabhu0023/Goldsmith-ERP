@@ -1,4 +1,4 @@
-import { contract, okResult, weightG } from '@goldsmith/shared';
+import { contract, okResult, signedWeightG, weightG } from '@goldsmith/shared';
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { createOperationRegistry } from '../../src/pipeline/registry.js';
@@ -46,11 +46,14 @@ describe('operation registry (EP-03-S1 rule)', () => {
     expect(registry.get('noSuchOperation')).toBeUndefined();
   });
 
-  it('keeps by / actor / at / time out of every test operation input, and weights on weightG', () => {
+  it('keeps by / actor / at / time out of every test operation input, and weights on weightG (signedWeightG only for …DeltaG / …GapG)', () => {
     for (const op of Object.values(testContract)) {
       for (const [key, schema] of walk(op.input)) {
         expect(['by', 'actor', 'at', 'time'], `${op.name}.${key}`).not.toContain(key);
-        if (key.endsWith('G')) expect(unwrap(schema), `${op.name}.${key}`).toBe(weightG);
+        if (key.endsWith('G')) {
+          const expected = /(DeltaG|GapG)$/.test(key) ? signedWeightG : weightG;
+          expect(unwrap(schema), `${op.name}.${key}`).toBe(expected);
+        }
       }
     }
   });

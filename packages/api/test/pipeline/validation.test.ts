@@ -53,6 +53,20 @@ describeDb('request validation at the trust boundary (EP-03-S2, S5 AC3)', () => 
     expect(await grossOf(`TAG-V-${grossG}`)).toEqual({ gross_units: 486500, version: 1 });
   });
 
+  it('AC2: a negative grossG is refused naming the field, and the piece is unchanged', async () => {
+    await addPiece(h.pool, h.shop, 'TAG-V-NEG', { grossUnits: 486500 });
+    const res = await h.call('setPieceGross', { pieceId: 'TAG-V-NEG', grossG: '-1.0000', version: 1 }, { session: h.session });
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({ code: 'validation', field: 'grossG', message: 'grossG is not valid: Weight cannot be negative' });
+    expect(h.captured).toEqual([]);
+    expect(await grossOf('TAG-V-NEG')).toEqual({ gross_units: 486500, version: 1 });
+  });
+  it('AC2: grossG "0" is accepted as zero units', async () => {
+    await addPiece(h.pool, h.shop, 'TAG-V-ZERO');
+    const res = await h.call('setPieceGross', { pieceId: 'TAG-V-ZERO', grossG: '0', version: 1 }, { session: h.session });
+    expect(res).toEqual({ status: 200, body: { ok: true } });
+    expect(await grossOf('TAG-V-ZERO')).toEqual({ gross_units: 0, version: 2 });
+  });
   it('AC2: grossG sent as a JSON number is refused', async () => {
     await addPiece(h.pool, h.shop, 'TAG-V-NUM');
     const res = await h.call('setPieceGross', { pieceId: 'TAG-V-NUM', grossG: 12.34, version: 1 }, { session: h.session });

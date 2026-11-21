@@ -65,7 +65,7 @@ Send `Idempotency-Key: <1 to 200 printable characters>` with a create. A repeat 
 
 Copy the reference service `packages/api/src/services/mark-lead-lost.ts`:
 
-1. Declare the operation in `packages/shared/src/contract/contract.ts` with `defineOperation({ name, kind, input, result, errors })`. Inputs never contain `by`, `actor`, `at` or `time`; weight fields end in `G` and use `weightG`.
+1. Declare the operation in `packages/shared/src/contract/contract.ts` with `defineOperation({ name, kind, input, result, errors })`. Inputs never contain `by`, `actor`, `at` or `time`; weight fields end in `G` and use `weightG` (non-negative; "-1.0000" is refused as `validation`). Only a signed difference, a field ending in `DeltaG` or `GapG` such as a ledger delta or the gap between two weighings, uses `signedWeightG`.
 2. Write `packages/api/src/services/<operation-name>.ts` exporting a `Handler<typeof contract.<name>>`. Take the actor, time and shop from `ctx`, query with `tx.client` scoped to `ctx.shop.shopId`, take rules from `@goldsmith/shared`, write with `insertScoped` / `updateVersioned`, throw `NotFoundError(entity, code)` for a missing record.
 3. Register it in `packages/api/src/services/index.ts`. A handler the contract does not declare stops the app at startup.
 4. Test it over HTTP like `packages/api/test/services/mark-lead-lost.test.ts`.
