@@ -125,4 +125,15 @@ describeDb('migration runner (EP-02-S1)', () => {
     const second = await run(process.execPath, args, { cwd: apiDir, env });
     expect(second.stdout).toContain('up to date');
   }, 30000);
+  it.each(['staging', 'production'])('CLI reset exits 1 with APP_ENV=%s and drops nothing', async (appEnv) => {
+    write('0001_a.sql', 'create table t1 (id integer primary key);');
+    await migrate(pool, dir);
+    const args = ['--conditions=@goldsmith/source', '--import', 'tsx', 'src/db/cli.ts', 'reset'];
+    const err = await run(process.execPath, args, { cwd: apiDir, env: { DATABASE_URL: db.url, APP_ENV: appEnv } }).catch(
+      (e: unknown) => e as { code: number; stderr: string },
+    );
+    expect(err).toMatchObject({ code: 1 });
+    expect((err as { stderr: string }).stderr).toContain(`db:reset is refused when APP_ENV=${appEnv}`);
+    expect(await tableExists('t1')).toBe(true);
+  }, 30000);
 });

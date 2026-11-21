@@ -55,8 +55,9 @@ async function main(command: string | undefined): Promise<void> {
     throw new Error(`Unknown command ${command ?? '(none)'}; use migrate, status, reset or seed`);
   }
   const { databaseUrl, appEnv } = readDbEnv();
-  if (command === 'reset' && appEnv === 'production') {
-    throw new Error('db:reset is refused when APP_ENV=production');
+  // Developers reset only their own development database; staging and production are the deploy pipeline's (S1).
+  if (command === 'reset' && appEnv !== 'development') {
+    throw new Error(`db:reset is refused when APP_ENV=${appEnv}`);
   }
   const pool = createPool(databaseUrl, 1);
   try {

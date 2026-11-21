@@ -60,7 +60,7 @@ npm run db:up       # start PostgreSQL and wait until it is healthy (creates gol
 npm run db:migrate  # apply pending migrations from packages/api/migrations; "up to date" when none
 npm run db:status   # each migration: number, name, applied time (UTC), checksum, state
 npm run db:seed     # load the web prototype's data into an empty database (refuses a non-empty one and production)
-npm run db:reset    # drop everything in goldsmith_dev and migrate again (refused when APP_ENV=production)
+npm run db:reset    # drop everything in goldsmith_dev and migrate again (refused unless APP_ENV=development)
 npm run db:down     # stop the container (data stays in the pgdata volume; `docker compose down -v` deletes it)
 ```
 
