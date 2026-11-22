@@ -6,9 +6,11 @@ import {
   LIVE_CATALOGUE,
   type LiveCatalogue,
   type LiveCatalogueEntry,
+  type LiveServerMessage,
   liveAudienceFor,
-  liveClientMessageSchema,
   liveEnvelopeSchema,
+  liveMessageSeq,
+  liveServerMessageSchema,
   OPERATION_RULES,
   parseChannel,
   roleChannel,
@@ -129,10 +131,16 @@ describe('live protocol channels and messages', () => {
     for (const bad of ['role:admin', 'piece:TAG-8841', 'user:', ':x', 'nochannel']) expect(parseChannel(bad)).toBeNull();
   });
 
-  it('accepts the client messages and refuses unknown ones or extra fields', () => {
-    expect(liveClientMessageSchema.safeParse({ type: 'subscribe', channel: 'parcel:BATCH-2026-044' }).success).toBe(true);
-    expect(liveClientMessageSchema.safeParse({ type: 'heartbeat' }).success).toBe(true);
-    expect(liveClientMessageSchema.safeParse({ type: 'publish', channel: 'role:staff' }).success).toBe(false);
-    expect(liveClientMessageSchema.safeParse({ type: 'heartbeat', seq: 1 }).success).toBe(false);
+  it('accepts the server messages, refuses extra fields, and gives the SSE id of each', () => {
+    const hello: LiveServerMessage = { type: 'hello', connectionId: 'c-1', userId: 'u-1', role: 'staff', channels: [STAFF], seq: 7 };
+    expect(liveServerMessageSchema.safeParse(hello).success).toBe(true);
+    expect(liveServerMessageSchema.safeParse({ ...hello, token: 'x' }).success).toBe(false);
+    expect(liveServerMessageSchema.safeParse({ type: 'closed', reason: 'access_changed' }).success).toBe(true);
+    expect(liveServerMessageSchema.safeParse({ type: 'closed', reason: 'bored' }).success).toBe(false);
+    expect(liveServerMessageSchema.safeParse({ type: 'subscribe', channel: 'role:staff' }).success).toBe(false);
+    expect(liveMessageSeq(hello)).toBe(7);
+    expect(liveMessageSeq({ type: 'refetch_all', seq: 9 })).toBe(9);
+    expect(liveMessageSeq({ type: 'presence', parcelId: 'BATCH-2026-044', others: [] })).toBeNull();
+    expect(liveMessageSeq({ type: 'closed', reason: 'going_away' })).toBeNull();
   });
 });

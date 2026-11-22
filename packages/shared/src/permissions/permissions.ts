@@ -106,6 +106,12 @@ export const OPERATION_RULES = {
   sendBroadcast: shopFloor,
   // The default sentence, as the file service answered before the matrix (EP-09 file-roles.ts).
   deleteAttachment: { roles: SHOP_FLOOR, refusal: DEFAULT_REFUSAL },
+  // The live channel (EP-07): entity channels and parcel presence are for the shop floor; a
+  // karigar's stream carries only their own user channel (EP-07-S6, S8 AC4).
+  subscribeLiveChannel: shopFloor,
+  unsubscribeLiveChannel: shopFloor,
+  joinParcelPresence: shopFloor,
+  leaveParcelPresence: shopFloor,
   // Everyone.
   raiseProblem: everyone,
   // Everyone here; a karigar only on own jobs, which the file service decides (EP-09

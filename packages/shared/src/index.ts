@@ -9,6 +9,7 @@ export * from './contract/contract-fields.js';
 export * from './contract/define-operation.js';
 export * from './contract/error-codes.js';
 export * from './contract/settings-contract.js';
+export * from './contract/live-contract.js';
 export * from './contract/users-contract.js';
 export * from './contract/files-contract.js';
 export * from './domain/audit-log.js';
