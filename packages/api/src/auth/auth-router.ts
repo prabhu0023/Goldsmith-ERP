@@ -14,7 +14,14 @@
  *   (f) the operation, in one transaction
  * The shop of a public call is the installation's shop, never the client's.
  */
-import { AUTH_MESSAGES, type AuthOperationName, authContract, DomainError, LANDING_ROUTES } from '@goldsmith/shared';
+import {
+  AUTH_MESSAGES,
+  type AuthOperationName,
+  authContract,
+  DomainError,
+  LANDING_ROUTES,
+  permissionsFor,
+} from '@goldsmith/shared';
 import express, { type Request, type Response, type Router } from 'express';
 import type pg from 'pg';
 import { ApiError, type ErrorLog, RateLimitedError, UnauthenticatedError } from '../pipeline/api-errors.js';
@@ -83,6 +90,7 @@ const sessionResultFor = (user: Pick<Session, 'userId' | 'name' | 'role'>) => ({
   ok: true as const,
   user: { userId: user.userId, name: user.name, role: user.role },
   landingRoute: LANDING_ROUTES[user.role],
+  permissions: [...permissionsFor(user.role)],
 });
 
 export function createAuthRouter(deps: AuthRouterDeps): Router {

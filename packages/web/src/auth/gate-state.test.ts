@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { AuthAnswer } from './auth-api';
 import { gateAfterCheck, gateAfterRecheck, gateAfterSignOut, gateFromLocation } from './gate-state';
 const unauthenticated: AuthAnswer<'readCurrentSession'> = { ok: false, code: 'unauthenticated', message: 'Sign in to continue.' };
-const session = { ok: true, user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' }, landingRoute: 'today' } as const;
+const session = { ok: true, user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' }, landingRoute: 'today', permissions: ['markLeadLost'] as string[] } as const;
 describe('auth gate states (EP-04-S6, S11, S12)', () => {
   it('S6 AC5, S11 AC4: any app address without a session, also after sign-out and Back, checks first and then shows sign-in', () => {
     for (const path of ['/', '/stock', '/today']) {

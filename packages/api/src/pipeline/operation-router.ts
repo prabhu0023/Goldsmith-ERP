@@ -6,11 +6,13 @@
  *   (b) resolve the session (may be none)
  *   (c) rate-limit hook             -> rate_limited (EP-03-S11; sees no body)
  *   (d) require a session           -> unauthenticated (EP-03-S3)
+ *   (d2) permission hook with the session actor -> forbidden (EP-05-S2); runs before input
+ *       validation and before the transaction, so a refused call reads and writes nothing
  *   (e) validate the input          -> validation, field named (EP-03-S2); for a create, the
  *       Idempotency-Key header too (-> validation, field Idempotency-Key)
  *   (f) one transaction (EP-03-S6): shop context, ctx { by, at, shop } from the session and the
  *       server clock, session confirm (extends and row-locks it; ended or expired since (b) ->
- *       unauthenticated, EP-04-S12, S13), permission hook (-> forbidden), idempotency claim for a create with a key
+ *       unauthenticated, EP-04-S12, S13), idempotency claim for a create with a key
  *       (EP-03-S8; a replay answers the stored id without running the service function; the
  *       same key with a different input answers conflict),
  *       service function, store the created id with the claim
@@ -111,6 +113,8 @@ export function createOperationRouter(deps: OperationRouterDeps): Router {
       if (!limit.allowed) throw new RateLimitedError();
       // (d)
       if (!session) throw new UnauthenticatedError();
+      // (d2)
+      await permissions(name, { id: session.userId, name: session.name, role: session.role });
       // (e)
       const input = parseInput(op.def.input, req.body);
       const key = idempotencyKeyOf(req, op);
@@ -129,7 +133,6 @@ export function createOperationRouter(deps: OperationRouterDeps): Router {
           if (sessions.confirm && !(await sessions.confirm(tx.client, session, ctx.at))) {
             throw new UnauthenticatedError();
           }
-          await permissions(name, ctx.by);
           return runOperation(tx, ctx, op, input, idempotency);
         },
         log,

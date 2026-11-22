@@ -6,10 +6,11 @@ import { type AuthDeps, createAuthRouter } from './auth/auth-router.js';
 import { createDevMailboxRouter } from './auth/dev-mailbox.js';
 import { installationShop } from './auth/installation-shop.js';
 import { passwordHasher } from './auth/password-hash.js';
+import { matrixPermissionCheck } from './auth/permission-check.js';
 import type { Config } from './config.js';
 import { checkDatabase, withTimeout } from './health-check.js';
 import { ApiError, type ErrorLog, RateLimitedError, toErrorResponse } from './pipeline/api-errors.js';
-import { allowAllPermissions, allowAllRateLimiter, type PermissionCheck, type RateLimiter } from './pipeline/hooks.js';
+import { allowAllRateLimiter, type PermissionCheck, type RateLimiter } from './pipeline/hooks.js';
 import { clientAddressOf, createOperationRouter } from './pipeline/operation-router.js';
 import { createOperationRegistry, type HandlerMap } from './pipeline/registry.js';
 import { type Clock, systemClock } from './pipeline/server-clock.js';
@@ -62,7 +63,7 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     sessions = noSessionResolver,
     clock = systemClock,
     rateLimiter = allowAllRateLimiter,
-    permissions = allowAllPermissions,
+    permissions = matrixPermissionCheck,
     contract = sharedContract,
     handlers = serviceHandlers,
     log = console.error,

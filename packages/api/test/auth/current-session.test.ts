@@ -1,4 +1,4 @@
-import type { RoleId } from '@goldsmith/shared';
+import { permissionsFor, type RoleId } from '@goldsmith/shared';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { hashSecret } from '../../src/auth/session-store.js';
 import { describeDb } from '../db/db-test-helpers.js';
@@ -55,7 +55,7 @@ describeDb('read current session and sign out (EP-04-S6 AC4, S11)', () => {
     ]) {
       expect(await current(await signIn(phone))).toEqual({
         status: 200,
-        body: { ok: true, user: { userId: ids[name], name, role }, landingRoute },
+        body: { ok: true, user: { userId: ids[name], name, role }, landingRoute, permissions: [...permissionsFor(role as RoleId)] },
       });
     }
   });

@@ -59,8 +59,8 @@ export class UnauthenticatedError extends ApiError {
 }
 
 export class ForbiddenError extends ApiError {
-  constructor() {
-    super('forbidden', 'You are not allowed to do this.');
+  constructor(message = 'You are not allowed to do this.') {
+    super('forbidden', message);
     this.name = 'ForbiddenError';
   }
 }

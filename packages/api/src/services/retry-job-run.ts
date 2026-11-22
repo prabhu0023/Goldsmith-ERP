@@ -5,11 +5,10 @@
  */
 import { type contract, DomainError } from '@goldsmith/shared';
 import { writeUserAudit } from '../jobs/job-audit.js';
-import { ForbiddenError, NotFoundError } from '../pipeline/api-errors.js';
+import { NotFoundError } from '../pipeline/api-errors.js';
 import type { Handler } from '../pipeline/registry.js';
 
 export const retryJobRun: Handler<typeof contract.retryJobRun> = async (tx, ctx, input) => {
-  if (ctx.by.role !== 'owner') throw new ForbiddenError();
   const { rows } = await tx.client.query<{ id: string; code: string; job_name: string; result: string | null }>(
     'select id, code, job_name, result from job_runs where shop_id = $1 and code = $2 for update',
     [ctx.shop.shopId, input.runId],
