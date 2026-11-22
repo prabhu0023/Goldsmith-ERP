@@ -223,12 +223,12 @@ for it. G1 to G9 come from `docs/MOCKUP-COVERAGE.md` §2; G10 to G26 were found 
 
 ## Open decisions
 
-Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. D1, D2, D4, D7 and D10 are decided; the rest are open.
+Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. D1, D1a, D2, D4, D7 and D10 are decided; the rest are open.
 
 | # | Decision | Listed in |
 | --- | --- | --- |
 | D1 | Backend approach. **Decided: Option C**, own Node + TypeScript API with managed PostgreSQL in an India region on the same cloud provider ([decision record](../decisions/D1-backend-approach.md)) | Decided; see decision record |
-| D1a | Cloud provider for the API, database and S3-compatible storage. **Open** | EP-01, EP-02, EP-03, EP-09, EP-37, EP-38 |
+| D1a | Cloud provider. **Decided: AWS, Mumbai (ap-south-1)**: S3 for files, RDS for PostgreSQL, API on an AWS compute service chosen at deployment | EP-01, EP-02, EP-03, EP-09, EP-37, EP-38 |
 | D2 | Database. **Decided: PostgreSQL** (managed, per D1) | EP-02 |
 | D3 | Live transport | EP-07, EP-08 |
 | D4 | Sign-in method. **Decided: phone number + password**; activation and reset links by email; no OTP sign-in in v1 ([decision record](../decisions/D4-sign-in.md)) | Decided; see decision record (noted in EP-04, EP-05, EP-16, EP-20, EP-25) |
@@ -238,7 +238,7 @@ Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. 
 | D7 | Branches. **Decided: one shop, no branches**; a shop ID on every business table; multi-shop deferred ([decision record](../decisions/tenancy-and-branches.md)) | Decided; see decision record (noted in EP-02, EP-05, EP-07, EP-08, EP-13, EP-17, EP-18, EP-19, EP-21, EP-22, EP-24, EP-26, EP-28, EP-31, EP-32, EP-33, EP-35, EP-41) |
 | D8 | WhatsApp provider and template approval | EP-11, EP-12, EP-24, EP-25, EP-29, EP-30, EP-33, EP-34 |
 | D9 | Scale integration: typed or read from the balance | EP-14, EP-21, EP-36 |
-| D10 | Hosting region. **Decided: India region**; the exact region follows D1a | EP-01, EP-02, EP-09, EP-12, EP-29, EP-37, EP-38, EP-39 |
+| D10 | Hosting region. **Decided: India region**: AWS Mumbai (ap-south-1) | EP-01, EP-02, EP-09, EP-12, EP-29, EP-37, EP-38, EP-39 |
 
 Other open items and where they are listed:
 

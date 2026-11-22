@@ -76,7 +76,7 @@ The prototype is the **UI contract**. Most screens survive; what changes underne
 
 The API is the team's own Node + TypeScript API (D1, Option C). The live channel, the job scheduler
 and the integrations run inside it. The database is managed PostgreSQL in an India region, and the
-object storage is S3-compatible, both from the same cloud provider as the API (D1a). The API reaches
+object storage is S3-compatible, both from the same cloud provider as the API: AWS in the Mumbai region (D1a). Locally, SeaweedFS stands in for S3. The API reaches
 them over the provider's private network. Browsers and the karigar phone talk only to the API on the
 shop's own domain.
 
@@ -85,12 +85,12 @@ shop's own domain.
 ## 4. Decisions to make before EP-01
 
 These shape the bottom layer. The recommended option is listed first; each is reversible only at cost.
-D1, D2, D4, D7 and D10 are decided. D1a, D3, D4a (email provider), D5, D6, D8 and D9 are open.
+D1, D1a, D2, D4, D7 and D10 are decided. D3, D4a (email provider), D5, D6, D8 and D9 are open.
 
 | # | Decision | Options | Recommendation and reason |
 | --- | --- | --- | --- |
 | D1 | Backend approach | **Decided: Option C**, own Node + TypeScript API | All server logic (rules, sign-in, sessions, live channel, jobs, notifications, WhatsApp) runs in the team's own Node API; `express` is already in `package.json`. Managed PostgreSQL in an India region on the same cloud provider, reached over its private network. Managed backend platforms are not used. See [decisions/D1-backend-approach.md](decisions/D1-backend-approach.md). |
-| D1a | Cloud provider | AWS / Google Cloud / Azure / other major cloud | **Open.** One provider hosts the Node API, the managed PostgreSQL database and the S3-compatible object storage, in an India region. |
+| D1a | Cloud provider | **Decided: AWS, Mumbai region (ap-south-1)** | Owner, 22 November 2026. Files in Amazon S3, the database in Amazon RDS for PostgreSQL, and the Node API on an AWS compute service chosen when deployment is built (EP-01-S12). All three in the same account and region, the API reaching RDS and S3 over the private network. Local development keeps SeaweedFS and Docker PostgreSQL. See [decisions/D1-backend-approach.md](decisions/D1-backend-approach.md). |
 | D2 | Database | Relational (PostgreSQL class) / document | **Decided: PostgreSQL** (managed, per D1). The domain is ledgers, foreign keys and transactions. |
 | D3 | Live transport | WebSocket / Server-Sent Events | WebSocket. Needs two-way for presence. Built in the Node API (D1). Still open. |
 | D4 | Sign-in method | **Decided: phone number + password** | Phone numbers are unique. No OTP sign-in in v1 (deferred). The owner adds a user with name, phone, email and role; a single-use activation link (24 hours, resendable) lets the user set their own password. Forgot password sends a single-use reset link (1 hour) to the account's email. 5 wrong passwords lock the account for 15 minutes. Every user has an email address. See [decisions/D4-sign-in.md](decisions/D4-sign-in.md). |
@@ -100,7 +100,7 @@ D1, D2, D4, D7 and D10 are decided. D1a, D3, D4a (email provider), D5, D6, D8 an
 | D7 | Branches | **Decided: one shop, no branches** | v1 is a single shop with one owner, its staff and karigars. Every business table still carries a shop ID from the first migration, uniqueness (tag number, HUID, phone) is scoped to the shop, and the server sets the shop from the signed-in user. Multi-shop is deferred. See [decisions/tenancy-and-branches.md](decisions/tenancy-and-branches.md). |
 | D8 | WhatsApp provider | Meta Cloud API directly / a Business Solution Provider | Either. Outbound messages outside a conversation need pre-approved templates, so wishes, broadcasts and the owner edit code need template approval lead time. Verify current Meta terms. |
 | D9 | Scale integration | Typed by hand / read directly from the balance | Read directly where the balance supports it (EP-36). It removes typing errors at the exact-match gate. |
-| D10 | Hosting region | India / elsewhere | **Decided: India region**, for latency and personal-data law. The exact region follows the D1a provider. |
+| D10 | Hosting region | India / elsewhere | **Decided: India region**, for latency and personal-data law: AWS Mumbai (ap-south-1), per D1a. |
 
 ---
 
