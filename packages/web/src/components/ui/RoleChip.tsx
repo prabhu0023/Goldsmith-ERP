@@ -1,25 +1,26 @@
-import { Check, ChevronsUpDown, LogOut } from 'lucide-react';
+import { ROLE_INFO } from '@goldsmith/shared';
+import { ChevronsUpDown, LogOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../store/StoreProvider';
 import { cn } from './cn';
-
 interface Props {
   /** Which way the menu opens. The rail foot opens upward. */
   placement?: 'up' | 'down';
   className?: string;
+  /** Start with the menu open (static renders in tests). */
+  defaultOpen?: boolean;
 }
-
 /**
- * Avatar chip showing who is signed in. With a real session its menu holds only "Sign out" (EP-04-S6);
- * if signing out fails the menu stays open with the error so the person can try again (S11).
- * Without a session it switches between the staff, owner and karigar identities.
+ * The account menu (EP-05-S12): the signed-in person's name and role label, and a menu holding
+ * only "Sign out" (EP-04-S6). If signing out fails the menu stays open with the error so the
+ * person can try again (EP-04-S11). Without a session (prototype renders) it shows the identity
+ * and offers nothing to pick.
  */
-export function RoleChip({ placement = 'up', className }: Props) {
-  const { identity, identities, switchIdentity, signOut } = useStore();
-  const [open, setOpen] = useState(false);
+export function RoleChip({ placement = 'up', className, defaultOpen = false }: Props) {
+  const { identity, signOut } = useStore();
+  const [open, setOpen] = useState(defaultOpen);
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
@@ -31,12 +32,7 @@ export function RoleChip({ placement = 'up', className }: Props) {
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);
-
-  const groups = [
-    { label: 'Showroom', people: identities.filter((i) => i.role !== 'karigar') },
-    { label: 'Karigars', people: identities.filter((i) => i.role === 'karigar') },
-  ];
-
+  const roleLabel = ROLE_INFO.find((r) => r.id === identity.role)?.label ?? identity.role;
   return (
     <div ref={ref} className={cn('relative', className)}>
       <button
@@ -52,7 +48,7 @@ export function RoleChip({ placement = 'up', className }: Props) {
         <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-closed text-sm font-bold text-white">{identity.initials}</span>
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm font-semibold text-ink">{identity.name}</span>
-          <span className="block truncate text-[13px] text-ink-3">{signOut ? identity.subtitle : `${identity.subtitle} · switch`}</span>
+          <span className="block truncate text-[13px] text-ink-3">{roleLabel}</span>
         </span>
         <ChevronsUpDown size={16} className="shrink-0 text-ink-4" />
       </button>
@@ -85,31 +81,7 @@ export function RoleChip({ placement = 'up', className }: Props) {
               )}
             </>
           ) : (
-            groups.map((g) => (
-              <div key={g.label} className="py-1">
-                <p className="px-2 py-1 text-xs font-bold uppercase tracking-[0.1em] text-ink-4">{g.label}</p>
-                {g.people.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    role="menuitemradio"
-                    aria-checked={p.id === identity.id}
-                    onClick={() => {
-                      switchIdentity(p.id);
-                      setOpen(false);
-                    }}
-                    className="flex min-h-11 w-full items-center gap-3 rounded-lg px-2 text-left hover:bg-paper"
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-closed-soft text-xs font-bold text-ink-2">{p.initials}</span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-ink">{p.name}</span>
-                      <span className="block truncate text-[13px] text-ink-3">{p.subtitle}</span>
-                    </span>
-                    {p.id === identity.id && <Check size={16} className="text-live" />}
-                  </button>
-                ))}
-              </div>
-            ))
+            <p className="px-2 py-1 text-sm text-ink-3">Not signed in.</p>
           )}
         </div>
       )}

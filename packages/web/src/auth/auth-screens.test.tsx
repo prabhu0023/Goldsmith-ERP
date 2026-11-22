@@ -64,6 +64,6 @@ describe('after sign-in (EP-04-S6)', () => {
         <RoleChip />
       </StoreProvider>,
     );
-    expect(prototype).toContain('· switch');
+    expect(prototype).not.toContain('switch');
   });
 });
