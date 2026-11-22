@@ -49,7 +49,7 @@ sign-out, and the one-time creation of the first owner that the setup wizard (EP
 - The owner edit code sent on WhatsApp for tag edits (EP-25). It is a separate control and is not used for sign-in.
 - OTP sign-in by WhatsApp or SMS: deferred, not in v1 (D4; PRODUCTION-SCOPE §6 Later notes).
 - Rate-limit values across the whole API and penetration testing (EP-39).
-- Offline sign-in for karigars (EP-20 under D6).
+- Offline sign-in for karigars: not in v1 (D6 decided, online only).
 
 ## 6. Current state in the prototype
 

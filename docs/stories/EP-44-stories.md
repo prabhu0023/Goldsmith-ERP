@@ -185,14 +185,14 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
   1. Given KG-04 Vijay Kumar on `k-jobs` in Hindi, when he taps the language chip and picks English, then every label on the open screen changes to English at once, without a reload (epic acceptance criterion 2).
   2. Given Vijay switched to English, when he signs out and signs in again, then the app opens in English, because Update My language saved `en` to his preference (epic acceptance criterion 2).
   3. Given the chip on the header, when it is measured, then it is a 56 px target and shows the current language in its own script.
-  4. Given Vijay is offline, when he picks a language, then the screen switches using the cached catalogue and the preference is saved when he is back online through the sync queue (EP-20-S12b).
+  4. Given Vijay's phone is disconnected, when he taps the language chip, then the EP-08-S11 state shows, the chip is disabled with the reason, the language does not change, and nothing is queued (D6 decided: online only).
   5. Given Vijay sends Update My language with a language that is not enabled, when the server validates it, then it is refused and his preference is unchanged.
 - **Rules enforced on the server:** Update My language changes only the caller's own preference; the user id comes from the session (EP-03-S3). The language must be enabled. Audited (EP-44-S12). Retries carry an idempotency key (EP-03-S8).
 - **Live events emitted / consumed:** None. The change refreshes only the karigar's own screens (epic section 11).
 - **Audit entry written:** Yes: actor, time, entity (user), entity id, action (`language_changed`), before, after.
 - **Data changes:** Writes `user_language` for the caller. Adds Update My language to the shared contract.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs` (हिन्दी chip in the header). The list of choices beyond हिन्दी is not yet designed.
-- **Non-functional checks:** Performance: switching takes effect at once on the open screen (epic section 13). Accessibility: the toggle is a 56 px target. Open question: is the language per user only, or also per device for shared shop devices.
+- **Non-functional checks:** Performance: switching takes effect at once on the open screen (epic section 13). Accessibility: the toggle is a 56 px target. Open question: is the language per user only, or also per device for shared shop devices. The dependencies on EP-20-S12a and EP-20-S12b are kept and are deferred (D6).
 - **Depends on:** EP-44-S7, EP-03-S3, EP-03-S8, EP-20-S12a, EP-20-S12b
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

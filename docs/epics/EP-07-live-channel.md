@@ -39,7 +39,7 @@ catch-up, and presence on shared parcels.
 - Deciding who gets a notification and on which channel (EP-11).
 - WhatsApp and email delivery (EP-12, EP-11).
 - The operations that emit each event; each emitting epic owns its event (EP-05, EP-18, EP-19, EP-20, EP-21, EP-23, EP-24, EP-25, EP-26, EP-28, EP-29, EP-30).
-- Offline queueing on the karigar phone (EP-20 under D6).
+- Offline queueing on the karigar phone: not in v1 (D6 decided, online only).
 - Front-end live-subscription hooks and the reconnecting and offline states in the shell. Owned by EP-08 Front-end production foundation (was gap G1).
 - Monitoring of connection counts and drop rates (EP-37).
 
@@ -151,14 +151,14 @@ on one parcel), `02-staff-home.svg` and `08-owner-home.svg` (live cards).
 
 - Risk: an event is published before commit and clients show a change that is then rolled back. Mitigation: publish from a post-commit hook or outbox only.
 - Risk: event payloads leak data to roles that may not read it. Mitigation: envelopes carry ids only; clients refetch through permission-checked reads.
-- Risk: karigar phones on weak signal drop often and miss events. Mitigation: catch-up by sequence number, and D6 offline queue in EP-20.
+- Risk: karigar phones on weak signal drop often and miss events. Mitigation: catch-up by sequence number, or a full refetch when the gap is past the retention window (D6 decided: online only, no offline queue).
 - Risk: presence shows stale users after a tab closes without a goodbye. Mitigation: presence entries expire after a short heartbeat timeout.
 - Risk: the front-end subscription hooks are rebuilt per screen. Mitigation: EP-08 builds one shared hook before any feature epic.
 
 ## 17. Open decisions and questions
 
 - D3: WebSocket or Server-Sent Events? Presence needs two-way. Either way it is built in the Node API (D1, Option C), not taken from a platform.
-- D6: how does the live channel behave for a karigar phone that is offline for hours?
+- D6 is decided: online only. A phone that was disconnected for hours reconnects, and the server answers catch-up by sequence number if the gap is inside the retention window; otherwise the client refetches everything (EP-07-S7). See the [decision record](../decisions/D5-D6-karigar-app.md).
 - D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); channels are scoped to the shop.
 - What does presence mean exactly: "has the parcel open", or "is tagging an item now"?
 - How long is the replay buffer kept before a client must refetch everything?

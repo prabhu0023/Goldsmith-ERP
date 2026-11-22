@@ -1,29 +1,28 @@
-# EP-20: Karigar portal (PWA)
+# EP-20: Karigar portal
 
 ## 1. Summary
 
 The karigar portal is the phone app the artisan uses at the bench. It shows only their own jobs, lets them accept a job
 and confirm a date, mark it as being worked on, ready, and handed over, add a photo and a note, raise a problem, and see
-how much gold they hold. Workshops often have weak signal, so status updates should queue offline and sync later
-(decision D6). The business needs it because the job states drive delivery tracking, and the hand-over creates the
-parcel that starts intake. It is an installable web app (D5), with large touch targets. v1 is English only; the हिन्दी toggle on mockup 09 is out of scope and owned by EP-44.
+how much gold they hold. The business needs it because the job states drive delivery tracking, and the hand-over creates the
+parcel that starts intake. v1 is a React web app opened in the phone browser (D5, decided), the same stack as the staff app, with large touch targets. It is online only (D6, decided): there is no offline mode in v1. When the signal drops the app shows the reconnecting state of EP-08, actions that need the server are disabled with a reason, and on reconnect the live channel catches up (EP-07-S7). v1 is English only; the हिन्दी toggle on mockup 09 is out of scope and owned by EP-44.
 
 ## 2. Layer, milestone, status
 
 - Layer: C · Core gold pipeline
 - Milestone: M3 Intake loop
-- Prototype status: Partial. `KarigarPhone.tsx` in `PhoneFrame` has the jobs, gold and me tabs, a job sheet, accept, start, ready, hand over and raise a problem; the language chip is static, and there is no photo upload, no voice note, no install and no offline queue.
+- Prototype status: Partial. `KarigarPhone.tsx` in `PhoneFrame` has the jobs, gold and me tabs, a job sheet, accept, start, ready, hand over and raise a problem; the language chip is static, and there is no photo upload, no voice note, and nothing for a dropped connection beyond the staff-app states.
 
 ## 3. Roles involved
 
 - Owner: not a user of the portal; sees job states on the tracker and Decisions.
 - Staff: not a user of the portal; sees job states and the arriving parcel.
 - Karigar: signs in, sees own jobs, accepts, updates status, adds photo and note, raises a problem, hands over.
-- System: filters data to the signed-in karigar, queues and syncs offline updates, creates the parcel on hand-over, emits events.
+- System: filters data to the signed-in karigar, creates the parcel on hand-over, emits events.
 
 ## 4. In scope
 
-- Karigar sign-in on the phone (EP-04) and install as a web app.
+- Karigar sign-in on the phone (EP-04), in the phone browser.
 - Jobs tab: own jobs only, with status, due date and reference image.
 - Job sheet: accept with a confirmed date, "Working on it", "Ready for checking", "Sent to the showroom".
 - Hand-over creates the arriving parcel; a sent-back parcel resets to weighing with tags cleared.
@@ -31,9 +30,9 @@ parcel that starts intake. It is an installable web app (D5), with large touch t
 - Raise a problem on own job (stop the line).
 - Gold tab: gold with me and the plus or minus 500 mg note.
 - Me tab: own profile.
-- Offline queue for status updates and sync status (D6).
 - Hand-over of several jobs in one go (G14).
 - Touch targets of 56 px and a 15 px text floor.
+- While the connection is down: the reconnecting state of EP-08-S11, server actions disabled with a reason, and catch-up on reconnect (EP-07-S7).
 
 ## 5. Out of scope
 
@@ -44,6 +43,8 @@ parcel that starts intake. It is an installable web app (D5), with large touch t
 - Live transport (EP-07) and notification delivery (EP-11).
 - Parcel weighing, tagging and matching (EP-21, EP-23).
 - Raised-problem rules and owner clearance (EP-24).
+- Offline queue for status updates, sync status, the on-device queue, the Sync operation and the service worker or cache: deferred, D6 decided that v1 is online only (EP-20-S12a and EP-20-S12b keep their IDs and are marked Deferred).
+- Installing the app to the home screen: not decided, see section 17.
 - v1 is English only: the language toggle (the हिन्दी chip on mockup 09), translated screens and any use of the karigar's stored language preference are out of scope, owned by EP-44 Localisation (gap G2 resolved).
 
 ## 6. Current state in the prototype
@@ -56,11 +57,11 @@ parcel that starts intake. It is an installable web app (D5), with large touch t
 - Seed: PR-101 stops Vijay's MO-2026-118.
 - `Identity.karigarId` links the demo identity to the karigar.
 - Reusable: the three-tab layout, job sheet, sentences, raise-problem modal, selectors.
-- Must be rebuilt server-side: the own-jobs filter, real sign-in, photo and voice upload, install and offline queue, sync, and the push of new jobs. The static `हिन्दी` chip is not carried over in v1.
+- Must be rebuilt server-side: the own-jobs filter, real sign-in, photo and voice upload, and the push of new jobs. The static `हिन्दी` chip is not carried over in v1.
 
 ## 7. Functional requirements
 
-- FR-20-1. A karigar can sign in on a phone and install the app to the home screen.
+- FR-20-1. A karigar can sign in on a phone in the phone browser. (The install-to-home-screen clause is Deferred, not decided, see section 17.)
 - FR-20-2. The server returns only jobs whose karigar is the signed-in user and returns not-found for any other job.
 - FR-20-3. A karigar can accept a job and confirm a date, which becomes the agreed date.
 - FR-20-4. A karigar can mark an accepted job as worked on, then ready, in that order only.
@@ -71,8 +72,8 @@ parcel that starts intake. It is an installable web app (D5), with large touch t
 - FR-20-9. A karigar can raise a problem on their own job.
 - FR-20-10. The Gold tab shows gold with the karigar from open jobs, in grams to four decimals.
 - FR-20-11. No karigar screen shows prices, margins, customers, leads, stock or another karigar's work.
-- FR-20-12. With no signal, status updates are queued on the device and sent in order when the connection returns (D6).
-- FR-20-13. The screen shows whether updates are waiting to sync.
+- FR-20-12. Deferred (D6): with no signal, status updates were to be queued on the device and sent in order. In v1 the app is online only: with no signal the buttons are disabled with a reason and nothing is queued.
+- FR-20-13. Deferred (D6): the screen was to show whether updates are waiting to sync. There is no queue in v1.
 - FR-20-14. A job newly sent to the karigar appears on the phone live.
 - FR-20-15. Every karigar screen is in English in v1.
 - FR-20-16. A deactivated karigar is signed out at once.
@@ -92,7 +93,7 @@ parcel that starts intake. It is an installable web app (D5), with large touch t
 ## 9. Data
 
 - No new master entities; this epic reads and writes KarigarJob (EP-19) and creates Parcel (EP-21).
-- JobUpdate (queued on device): job id, action, confirmed date or note, client time, client id for idempotency.
+- Deferred (D6): JobUpdate (queued on device: job id, action, confirmed date or note, client time, client id). Not built in v1.
 - JobMedia: job id, file id (EP-09), kind (`photo`, `voice`), at.
 - Device preference: language (stored only, unused until EP-44; v1 shows English).
 - Gold with me is derived from open jobs, integer, units of 0.0001 g.
@@ -112,7 +113,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 | Update | Job note | Bench note | Karigar (own) |
 | Read | Gold with me | Figure from open jobs | Karigar |
 | Create | Raised problem | Stop the line on own job | Karigar |
-| Sync | Queued updates | Replay offline updates idempotently | Karigar |
+| Sync | Queued updates | Deferred (D6): replay of offline updates; not built in v1 | Karigar |
 
 ## 11. Live events
 
@@ -127,13 +128,13 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 - Route id: `k-jobs` (KarigarPhone, no rail; landing for the karigar role).
 - Mockups: `09-karigar-phone.svg` ("GOLD WITH ME 186.400 g", four states, "Type or speak", हिन्दी toggle (out of scope for v1, owned by EP-44)), `11-roles-and-permissions.svg` (karigar CAN and NEVER SEES), `12-state-lifecycles.svg` (job and parcel rails).
-- Not yet designed (MOCKUP-COVERAGE §3): "Gold" and "Me" tabs; offline and sync status.
+- Not yet designed (MOCKUP-COVERAGE §3): "Gold" and "Me" tabs. The connection-lost state is the EP-08-S11 state; there is no offline or sync status screen in v1 (D6).
 
 ## 13. Non-functional requirements
 
 - Security: every request is filtered by the signed-in karigar on the server; other jobs return not-found.
-- Availability: the app opens from cache with no signal and shows queued updates.
-- Concurrency: replayed updates are idempotent; a state change that is no longer valid is refused with the reason.
+- Availability: online only (D6). With no signal the app shows the EP-08-S11 connection-lost state, disables server actions with a reason, and catches up on reconnect (EP-07-S7). Nothing is cached for use with no signal.
+- Concurrency: a retry after a dropped connection is idempotent (EP-03-S8); a state change that is no longer valid is refused with the reason.
 - Performance: the jobs tab loads under 2 seconds on a mobile connection; images are resized by EP-09.
 - Personal data: the phone holds only the karigar's own jobs.
 - Time: dates shown in Asia/Kolkata.
@@ -147,24 +148,24 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 
 1. Given KG-04 signed in, when he requests a job of KG-01, then the server returns not-found.
 2. Given a ready job, when the karigar hands it over, then a parcel at weigh stage exists and staff see it live.
-3. Given no signal, when the karigar marks a job ready, then the update waits on the device and applies in order when signal returns.
+3. Given no signal, when the karigar looks at the "Ready for checking" button, then the reconnecting state is shown, the button is disabled with a reason, nothing is queued, and when the signal returns the screen catches up (EP-07-S7).
 4. Given a stopped job, when the karigar taps the next state, then it is refused.
 5. Given the owner sends a job to him, when the phone is open, then the job appears without a refresh.
 6. Done when no field on any karigar screen shows money, customers or stock.
 
 ## 16. Risks
 
-- Risk: weak signal loses updates. Mitigation: queue with client ids and replay safely (D6).
+- Risk: weak signal means the phone shows the reconnecting state and cannot send updates until the signal returns (D6, online only). Mitigation: a clear message with the reason, no silent loss (nothing is accepted on the phone and held back), and catch-up on reconnect.
 - Risk: karigars share a phone, so own-jobs filtering fails. Mitigation: D4 decided that phone numbers are unique, so each karigar account has its own phone.
 - Risk: voice notes bring storage and language-recognition cost. Mitigation: treat G16 as a separate story after the core flow.
-- Risk: a queued "hand over" arrives after the owner stopped the job. Mitigation: the server re-checks state on replay.
+- Risk: a "hand over" arrives after the owner stopped the job. Mitigation: the server re-checks state on every request and refuses it with the stopped sentence.
 
 ## 17. Open decisions and questions
 
-- D5: installable web app or native app?
-- D6: no offline, read-only offline, or queued updates?
+- Should the karigar app be installable to the home screen? It needs only a web app manifest and icons, no offline support.
+- D5 is decided: a React web app opened in the phone browser ([decision record](../decisions/D5-D6-karigar-app.md)).
+- D6 is decided: online only, no offline mode in v1 ([decision record](../decisions/D5-D6-karigar-app.md)).
 - D4 is decided: phone and password, phone numbers unique, so a karigar cannot sign in on a shared phone number ([decision record](../decisions/D4-sign-in.md)).
-- D6 side question: what happens to a queued update that is no longer valid when it syncs?
 - G14: can one hand-over carry several jobs (mockup 12)?
 - G16: are bench voice notes ("Type or speak") in scope, and in which languages?
 - Should the karigar see the due date the desk asked for after confirming their own?
@@ -182,5 +183,5 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 9. EP-20-S9: Karigar can see gold with me
 10. EP-20-S10: Karigar can add a photo and a note
 11. EP-20-S11: Karigar can receive a new job live
-12. EP-20-S12: Karigar can install the app and use it offline with a sync queue
+12. EP-20-S12: Karigar can install the app and use it offline with a sync queue (Deferred: v1 is online only, D6; split into EP-20-S12a and EP-20-S12b)
 13. EP-20-S13: Karigar can hand over several jobs at once (G14)

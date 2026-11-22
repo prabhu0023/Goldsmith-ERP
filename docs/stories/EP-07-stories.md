@@ -143,7 +143,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. Receiving events changes no business record.
 - **Data changes:** None in the product database. Reads the user to karigar link from EP-05-S13.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`.
-- **Non-functional checks:** Security: a karigar receives only own-job and own-account events (FR-07-6). Performance: own-job events arrive within about 1 second on a normal connection. Open decision D6: behaviour for a phone offline for hours is not fixed; this story covers a connected phone, and catch-up after a long gap falls back to "refetch everything" (EP-07-S7). Open decision D5: the karigar client is a PWA by recommendation; the criteria hold for either client.
+- **Non-functional checks:** Security: a karigar receives only own-job and own-account events (FR-07-6). Performance: own-job events arrive within about 1 second on a normal connection. D6 is decided: online only, so there is no offline queue; this story covers a connected phone, and catch-up after a long gap falls back to "refetch everything" (EP-07-S7). D5 is decided: the karigar client is a React web app in the phone browser.
 - **Depends on:** EP-07-S4, EP-07-S5, EP-05-S3, EP-05-S13
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -167,7 +167,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 - **Audit entry written:** No. Reconnecting changes no business record.
 - **Data changes:** Replay buffer: recent events with sequence number, kept as sent rows in `event_outbox` for the retention window. A cleanup removes rows older than the window.
 - **UI reference:** No screen of its own. The "Reconnecting" state shown in the shell is built in EP-08.
-- **Non-functional checks:** Availability: reconnect is automatic and catches up without a full reload when the gap is short (epic section 13). Concurrency: replayed events arrive in sequence order. Security: replay is filtered by the current permissions. Open question: the replay buffer length is not decided; the criteria use "the retention window" and a test value of 5 minutes until it is. Open decision D6: a karigar phone offline for hours will always exceed the buffer and refetch.
+- **Non-functional checks:** Availability: reconnect is automatic and catches up without a full reload when the gap is short (epic section 13). Concurrency: replayed events arrive in sequence order. Security: replay is filtered by the current permissions. Open question: the replay buffer length is not decided; the criteria use "the retention window" and a test value of 5 minutes until it is. D6 is decided: online only. A karigar phone disconnected for hours reconnects and the server answers catch-up by sequence number if the gap is inside the retention window; otherwise the client refetches everything.
 - **Depends on:** EP-07-S2, EP-07-S3, EP-07-S5
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -297,7 +297,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 Copied from the epic's section 17. Not answered here.
 
 - D3: WebSocket or Server-Sent Events? Presence needs two-way. Either way it is built in the Node API (D1, Option C), not taken from a platform. (EP-07-S1, S3, S8)
-- D6: how does the live channel behave for a karigar phone that is offline for hours? (EP-07-S6, S7)
+- D6 is decided: online only. A phone disconnected for hours reconnects, and the server answers catch-up by sequence number if the gap is inside the retention window; otherwise the client refetches everything (EP-07-S6, S7).
 - D7 is decided: one shop, no branches; channels are scoped to the shop (EP-07-S2, S4, S8, S9, S11).
 - What does presence mean exactly: "has the parcel open", or "is tagging an item now"? (EP-07-S8)
 - How long is the replay buffer kept before a client must refetch everything? (EP-07-S7)
