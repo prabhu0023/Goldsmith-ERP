@@ -4,6 +4,7 @@ import { slaState } from '@goldsmith/shared';
 import { evaluateParcel } from '@goldsmith/shared';
 import type { ParcelEvaluation } from '@goldsmith/shared';
 import { netOf, sumG } from '@goldsmith/shared';
+import { type RailBadgeKey, railBadgeCounts } from '@goldsmith/shared';
 import type {
   AppState,
   Actor,
@@ -143,23 +144,23 @@ export function ownerQueues(s: AppState, now: number): OwnerQueues {
 }
 
 // ---------- rail badges ----------
-export type BadgeKey = 'decisions' | 'leads' | 'parcels' | 'stock';
+export type BadgeKey = RailBadgeKey;
 
+/** The in-memory tallies, counted by the shared rule the server's readRailBadges also uses (EP-07-S9). */
 export function railBadges(s: AppState, role: RoleId, now: number): Partial<Record<BadgeKey, number>> {
-  const out: Partial<Record<BadgeKey, number>> = {};
-  const parcels = openParcels(s).length;
-  const stock = inStockPieces(s).length;
-  if (role === 'owner') {
-    out.decisions = ownerQueues(s, now).total;
-    out.leads = lateLeads(s, now).length;
-    out.parcels = parcels;
-    out.stock = stock;
-  } else if (role === 'staff') {
-    out.leads = leadsNeedingGlance(s).length;
-    out.parcels = parcels;
-    out.stock = stock;
-  }
-  return out;
+  if (role === 'karigar') return {};
+  const q = ownerQueues(s, now);
+  return railBadgeCounts(role, {
+    openParcels: openParcels(s).length,
+    inStock: inStockPieces(s).length,
+    mismatchedParcels: q.mismatchedParcels.length,
+    openProblems: q.raisedProblems.length,
+    pendingEdits: q.pendingEdits.length,
+    pendingScrap: q.pendingScrap.length,
+    lateLeads: q.lateLeads.length,
+    overdueJobs: q.overdueJobs.length,
+    leadsNeedingGlance: leadsNeedingGlance(s).length,
+  });
 }
 
 // ---------- customers ----------

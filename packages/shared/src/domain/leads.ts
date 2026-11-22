@@ -15,7 +15,7 @@ export interface SlaState {
 /** A lead's clock runs from arrival until a person works it. */
 export const slaRunning = (lead: Pick<Lead, 'state'>): boolean => lead.state === 'needs_glance' || lead.state === 'opened';
 
-export function slaState(lead: Lead, now: number, slaHours: number): SlaState {
+export function slaState(lead: Pick<Lead, 'arrivedAt' | 'state'>, now: number, slaHours: number): SlaState {
   const elapsedH = Math.max(0, (now - lead.arrivedAt) / HOUR);
   if (!slaRunning(lead)) {
     return { phase: 'met', elapsedH, leftH: 0, label: lead.state === 'being_worked' ? 'being worked' : 'closed' };

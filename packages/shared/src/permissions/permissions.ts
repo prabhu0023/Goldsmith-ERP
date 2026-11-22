@@ -112,6 +112,8 @@ export const OPERATION_RULES = {
   unsubscribeLiveChannel: shopFloor,
   joinParcelPresence: shopFloor,
   leaveParcelPresence: shopFloor,
+  // Rail badge counts (EP-07-S9): the karigar app has no rail.
+  readRailBadges: shopFloor,
   // Everyone.
   raiseProblem: everyone,
   // Everyone here; a karigar only on own jobs, which the file service decides (EP-09

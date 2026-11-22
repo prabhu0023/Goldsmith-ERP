@@ -18,6 +18,7 @@ import { ERROR_CODES } from './error-codes.js';
 const connectionId = z.uuid();
 const channel = z.string().trim().min(1).max(200);
 const parcelId = z.string().trim().min(1).max(100);
+const badgeCount = z.number().int().min(0).optional();
 
 export const liveOperations = {
   subscribeLiveChannel: defineOperation({
@@ -50,6 +51,25 @@ export const liveOperations = {
     kind: 'command',
     input: z.object({ connectionId, parcelId }),
     result: okResult,
+    errors: ERROR_CODES,
+  }),
+  /**
+   * The rail badge counts for the caller's role (EP-07-S9), from server data by the shared
+   * railBadgeCounts rule. A live event with `refreshesBadges` only triggers this read.
+   */
+  readRailBadges: defineOperation({
+    name: 'readRailBadges',
+    kind: 'read',
+    input: z.object({}),
+    result: z.object({
+      ok: z.literal(true),
+      badges: z.object({
+        decisions: badgeCount,
+        leads: badgeCount,
+        parcels: badgeCount,
+        stock: badgeCount,
+      }),
+    }),
     errors: ERROR_CODES,
   }),
 } as const;

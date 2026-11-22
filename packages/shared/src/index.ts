@@ -19,6 +19,7 @@ export * from './domain/edits.js';
 export * from './domain/job-timers.js';
 export * from './domain/leads.js';
 export * from './domain/match.js';
+export * from './domain/rail-badge-rules.js';
 export * from './domain/shop-time.js';
 export * from './domain/sign-in-rules.js';
 export * from './domain/weights.js';
