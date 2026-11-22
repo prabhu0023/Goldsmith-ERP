@@ -1,6 +1,6 @@
 /**
  * listJobRuns and retryJobRun (EP-10-S13; S1 AC4; S2 AC5), served by the production app wiring
- * (shared contract + production handlers + dev session resolver) on the shared test database.
+ * (shared contract + production handlers + cookie session resolver) on the shared test database.
  * Each test uses its own shop with an Owner, a Staff member and a Karigar.
  */
 import { randomInt } from 'node:crypto';
@@ -9,15 +9,15 @@ import type { AddressInfo } from 'node:net';
 import { contract } from '@goldsmith/shared';
 import type pg from 'pg';
 import { afterAll, beforeAll, expect, it } from 'vitest';
+import { createSessionResolver } from '../../src/auth/session-store.js';
 import { createApp } from '../../src/app.js';
 import { loadConfig } from '../../src/config.js';
 import { wishesJob } from '../../src/jobs/handlers/wishes-9am.js';
 import type { JobDefinition } from '../../src/jobs/job-definition.js';
-import { DEV_SESSION_HEADER, createDevSessionResolver } from '../../src/pipeline/session-resolver.js';
 import { handlers } from '../../src/services/index.js';
 import { addKarigar, describeDb, type TestShop, testPool } from '../db/db-test-helpers.js';
 import { makeScheduler, manualClock, newJobsShop, runsOf } from '../jobs/job-test-helpers.js';
-import { newSession, newUser } from '../support/api-harness.js';
+import { newSession, newUser, sessionCookie } from '../support/api-harness.js';
 
 /** 09:00 Asia/Kolkata on 21 November 2026. */
 const NINE_IST = '2026-11-21T03:30:00.000Z';
@@ -47,7 +47,7 @@ describeDb('job runs for the Owner (EP-10-S13)', () => {
     });
     const app = createApp(config, {
       pool,
-      sessions: createDevSessionResolver({ appEnv: 'development', pool, clock }),
+      sessions: createSessionResolver({ pool, clock, idleMinutes: config.sessionIdleMinutes }),
       clock,
       contract,
       handlers,
@@ -72,8 +72,8 @@ describeDb('job runs for the Owner (EP-10-S13)', () => {
     const phone = `8${String(randomInt(0, 1_000_000_000)).padStart(9, '0')}`;
     const karigarId = (
       await pool.query<{ id: string }>(
-        `insert into users (shop_id, name, phone, email, role, karigar_id)
-         values ($1, 'Lakshmi Devi', $2, $3, 'karigar', $4) returning id`,
+        `insert into users (shop_id, name, phone, email, role, karigar_id, status)
+         values ($1, 'Lakshmi Devi', $2, $3, 'karigar', $4, 'active') returning id`,
         [shop.shopId, phone, `${phone}@example.test`, karigarRowId],
       )
     ).rows[0].id;
@@ -83,7 +83,7 @@ describeDb('job runs for the Owner (EP-10-S13)', () => {
   const call = async (op: string, body: unknown, session: string) => {
     const res = await fetch(`${base}/api/ops/${op}`, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', [DEV_SESSION_HEADER]: session },
+      headers: { 'content-type': 'application/json', cookie: sessionCookie(session) },
       body: JSON.stringify(body),
     });
     return { status: res.status, body: (await res.json()) as Record<string, unknown> };

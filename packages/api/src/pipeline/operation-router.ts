@@ -9,7 +9,8 @@
  *   (e) validate the input          -> validation, field named (EP-03-S2); for a create, the
  *       Idempotency-Key header too (-> validation, field Idempotency-Key)
  *   (f) one transaction (EP-03-S6): shop context, ctx { by, at, shop } from the session and the
- *       server clock, permission hook (-> forbidden), idempotency claim for a create with a key
+ *       server clock, session confirm (extends and row-locks it; ended or expired since (b) ->
+ *       unauthenticated, EP-04-S12, S13), permission hook (-> forbidden), idempotency claim for a create with a key
  *       (EP-03-S8; a replay answers the stored id without running the service function; the
  *       same key with a different input answers conflict),
  *       service function, store the created id with the claim
@@ -125,6 +126,9 @@ export function createOperationRouter(deps: OperationRouterDeps): Router {
             at: clock.now(),
             shop,
           };
+          if (sessions.confirm && !(await sessions.confirm(tx.client, session, ctx.at))) {
+            throw new UnauthenticatedError();
+          }
           await permissions(name, ctx.by);
           return runOperation(tx, ctx, op, input, idempotency);
         },

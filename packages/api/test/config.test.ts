@@ -66,6 +66,52 @@ describe('loadConfig', () => {
       'JOBS_POLL_INTERVAL_MS must be an integer between 1000 and 60000 (milliseconds)',
     );
   });
+  it('defaults the sign-in settings (EP-04) and reads set values', () => {
+    expect(loadConfig(valid)).toMatchObject({
+      accountEmailMode: 'stub',
+      sessionIdleMinutes: 720,
+      authLimits: { windowMinutes: 15, signInPerPhone: 10, signInPerDevice: 30, resetPerPhone: 3, resetPerDevice: 10 },
+    });
+    expect(loadConfig({ ...valid, APP_ENV: 'staging' }).accountEmailMode).toBe('stub');
+    expect(loadConfig({ ...valid, APP_ENV: 'production' }).accountEmailMode).toBe('disabled');
+    expect(
+      loadConfig({
+        ...valid,
+        ACCOUNT_EMAIL_MODE: 'stub',
+        SESSION_IDLE_MINUTES: '60',
+        AUTH_RATE_WINDOW_MINUTES: '5',
+        AUTH_SIGN_IN_PER_PHONE: '4',
+        AUTH_SIGN_IN_PER_DEVICE: '8',
+        AUTH_RESET_PER_PHONE: '1',
+        AUTH_RESET_PER_DEVICE: '2',
+      }),
+    ).toMatchObject({
+      accountEmailMode: 'stub',
+      sessionIdleMinutes: 60,
+      authLimits: { windowMinutes: 5, signInPerPhone: 4, signInPerDevice: 8, resetPerPhone: 1, resetPerDevice: 2 },
+    });
+  });
+  it.each([
+    'SESSION_IDLE_MINUTES',
+    'AUTH_RATE_WINDOW_MINUTES',
+    'AUTH_SIGN_IN_PER_PHONE',
+    'AUTH_SIGN_IN_PER_DEVICE',
+    'AUTH_RESET_PER_PHONE',
+    'AUTH_RESET_PER_DEVICE',
+  ])('names %s when it is not a positive integer', (name) => {
+    for (const bad of ['0', '-1', '2.5', 'often']) {
+      expect(() => loadConfig({ ...valid, [name]: bad })).toThrow(`${name} must be a positive integer`);
+    }
+  });
+  it('refuses an unknown ACCOUNT_EMAIL_MODE', () => {
+    expect(() => loadConfig({ ...valid, ACCOUNT_EMAIL_MODE: 'smtp' })).toThrow('ACCOUNT_EMAIL_MODE must be stub or unset');
+  });
+  it('S4 AC2: refuses ACCOUNT_EMAIL_MODE=stub in production', () => {
+    expect(() => loadConfig({ ...valid, APP_ENV: 'production', ACCOUNT_EMAIL_MODE: 'stub' })).toThrow(ConfigError);
+    expect(() => loadConfig({ ...valid, APP_ENV: 'production', ACCOUNT_EMAIL_MODE: 'stub' })).toThrow(
+      'ACCOUNT_EMAIL_MODE=stub is not allowed in production',
+    );
+  });
   it('names every missing required variable', () => {
     const err = (() => {
       try {

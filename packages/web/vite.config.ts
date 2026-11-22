@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defaultClientConditions, defineConfig} from 'vite';
+import {defaultClientConditions, defaultServerConditions, defineConfig} from 'vite';
 
 // The root .env (git-ignored) may set WEB_PORT or LANE; variables already set win. No .env is fine.
 try {
@@ -28,6 +28,21 @@ function webPort(env: NodeJS.ProcessEnv): number {
   if (!/^[a-z]$/.test(lane)) throw new Error('LANE must be one lower-case letter, a to z');
   return 3000 + lane.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
 }
+/** The api port the dev proxy targets: API_PORT, else 4000 + n in lane n, else 4000 (same rule as webPort). */
+function apiPort(env: NodeJS.ProcessEnv): number {
+  const set = env.API_PORT?.trim();
+  if (set) {
+    const port = Number(set);
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+      throw new Error('API_PORT must be an integer between 1 and 65535');
+    }
+    return port;
+  }
+  const lane = env.LANE?.trim();
+  if (!lane) return 4000;
+  if (!/^[a-z]$/.test(lane)) throw new Error('LANE must be one lower-case letter, a to z');
+  return 4000 + lane.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
+}
 
 export default defineConfig(() => {
   return {
@@ -40,8 +55,12 @@ export default defineConfig(() => {
       // without a separate shared build.
       conditions: ['@goldsmith/source', ...defaultClientConditions],
     },
+    // Vitest runs the web tests in node (SSR resolution): resolve shared to source there too.
+    ssr: { resolve: { conditions: ['@goldsmith/source', ...defaultServerConditions] } },
     server: {
       port: webPort(process.env),
+      // Web and api share one origin through this proxy, so the session cookie needs no CORS.
+      proxy: { '/api': { target: `http://localhost:${apiPort(process.env)}` } },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',

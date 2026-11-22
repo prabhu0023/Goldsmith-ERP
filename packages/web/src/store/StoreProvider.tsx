@@ -91,17 +91,30 @@ export interface Store {
   actor: Actor;
   identities: Identity[];
   switchIdentity: (id: string) => void;
+  /** Set when a real session is signed in: ends it and returns to sign-in, or resolves to the error sentence. */
+  signOut?: () => Promise<string | null>;
   /** Demo-clock time, refreshed every 30 seconds and after each action. */
   now: number;
 }
 
 const StoreContext = createContext<Store | null>(null);
 
-export function StoreProvider({ children }: { children: ReactNode }) {
+interface StoreProviderProps {
+  children: ReactNode;
+  /** The signed-in person; the prototype identity with the same name and role, else the first of that role. */
+  signedIn?: { name: string; role: RoleId };
+  onSignOut?: () => Promise<string | null>;
+}
+/** The prototype identity a signed-in person acts as. */
+function identityFor(signedIn: { name: string; role: RoleId }): Identity | undefined {
+  const all = identitiesOf(initialState());
+  return all.find((i) => i.name === signedIn.name && i.role === signedIn.role) ?? all.find((i) => i.role === signedIn.role);
+}
+export function StoreProvider({ children, signedIn, onSignOut }: StoreProviderProps) {
   const [state, setState] = useState<AppState>(initialState);
   const stateRef = useRef(state);
-  const [identityId, setIdentityId] = useState('ST-01');
-  const [route, setRoute] = useState<Route>({ id: 'today' });
+  const [identityId, setIdentityId] = useState(() => (signedIn && identityFor(signedIn)?.id) || 'ST-01');
+  const [route, setRoute] = useState<Route>(() => ({ id: signedIn ? landingRoute[signedIn.role] : 'today' }));
   const [now, setNow] = useState(demoNow);
 
   const allIdentities = useMemo(() => identitiesOf(state), [state]);
@@ -164,9 +177,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       actor: actorOf(identity),
       identities: allIdentities,
       switchIdentity,
+      signOut: onSignOut,
       now,
     }),
-    [state, actions, go, route, identity, allIdentities, switchIdentity, now],
+    [state, actions, go, route, identity, allIdentities, switchIdentity, onSignOut, now],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

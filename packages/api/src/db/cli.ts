@@ -1,6 +1,6 @@
 /**
- * Database commands: `migrate`, `status`, `reset`, `seed`, `dev-session <user name>`, `create`
- * and `new <name>` (run via `npm run db:<command>`). Reads DATABASE_URL, APP_ENV and LANE
+ * Database commands: `migrate`, `status`, `reset`, `seed`, `dev-session <user name>`,
+ * `dev-password <user name> <password>`, `create` and `new <name>` (run via `npm run db:<command>`). Reads DATABASE_URL, APP_ENV and LANE
  * (`create` also TEST_DATABASE_URL; `new` reads nothing). Exit code 0 on success, 1 with a
  * one-line error otherwise.
  */
@@ -8,6 +8,7 @@ import type { AppEnv } from '../config.js';
 import { createPool } from './connection.js';
 import { createDatabases } from './create-databases.js';
 import { readDbEnv } from './db-env.js';
+import { setDevPassword } from './dev-password.js';
 import { createDevSession } from './dev-session.js';
 import { migrate, migrationStatus, newMigrationFile, resetDatabase } from './migrator.js';
 import { seedPrototype } from './seed/seed-database.js';
@@ -55,15 +56,25 @@ async function runSeed(pool: ReturnType<typeof createPool>, appEnv: AppEnv): Pro
 async function runDevSession(pool: ReturnType<typeof createPool>, appEnv: AppEnv, userName: string): Promise<void> {
   const s = await createDevSession(pool, { appEnv, userName });
   console.log(`Session for ${s.name} (${s.role}), valid until ${s.expiresAt.toISOString()}:`);
-  console.log(s.sessionId);
-  console.log(`Send it with every api call as the header  x-dev-session: ${s.sessionId}`);
+  console.log(s.token);
+  console.log(`Send it with every api call as the gs_session cookie, e.g.  curl -b 'gs_session=${s.token}' ...`);
 }
-const COMMANDS = ['migrate', 'status', 'reset', 'seed', 'dev-session', 'create', 'new'];
+async function runDevPassword(
+  pool: ReturnType<typeof createPool>,
+  appEnv: AppEnv,
+  userName: string,
+  password: string,
+): Promise<void> {
+  const u = await setDevPassword(pool, { appEnv, userName, password });
+  console.log(`Password set for ${u.name} (${u.role}); the user is active and can sign in with phone ${u.phone}.`);
+}
 
-async function main(command: string | undefined, arg: string | undefined): Promise<void> {
+const COMMANDS = ['migrate', 'status', 'reset', 'seed', 'dev-session', 'dev-password', 'create', 'new'];
+
+async function main(command: string | undefined, arg: string | undefined, arg2: string | undefined): Promise<void> {
   if (command === undefined || !COMMANDS.includes(command)) {
     throw new Error(
-      `Unknown command ${command ?? '(none)'}; use migrate, status, reset, seed, dev-session, create or new`,
+      `Unknown command ${command ?? '(none)'}; use migrate, status, reset, seed, dev-session, dev-password, create or new`,
     );
   }
   if (command === 'new') {
@@ -88,12 +99,16 @@ async function main(command: string | undefined, arg: string | undefined): Promi
   if (command === 'dev-session' && !arg?.trim()) {
     throw new Error('Name the user: npm run db:dev-session -- "Rajesh Verma"');
   }
+  if (command === 'dev-password' && (!arg?.trim() || !arg2)) {
+    throw new Error('Name the user and the password: npm run db:dev-password -- "Rajesh Verma" "counter-2026"');
+  }
   const pool = createPool(databaseUrl, 1);
   try {
     if (command === 'migrate') await runMigrate(pool);
     else if (command === 'status') await runStatus(pool);
     else if (command === 'seed') await runSeed(pool, appEnv);
     else if (command === 'dev-session') await runDevSession(pool, appEnv, (arg ?? '').trim());
+    else if (command === 'dev-password') await runDevPassword(pool, appEnv, (arg ?? '').trim(), arg2 ?? '');
     else {
       await resetDatabase(pool);
       console.log('Database reset: schema public dropped and recreated.');
@@ -104,7 +119,7 @@ async function main(command: string | undefined, arg: string | undefined): Promi
   }
 }
 
-main(process.argv[2], process.argv[3]).then(
+main(process.argv[2], process.argv[3], process.argv[4]).then(
   () => process.exit(0),
   (e: unknown) => {
     console.error(`Error: ${e instanceof Error ? e.message : String(e)}`.split('\n')[0]);

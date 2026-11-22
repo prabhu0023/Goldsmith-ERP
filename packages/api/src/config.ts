@@ -41,6 +41,13 @@ export const ENV_VARS = [
   { name: 'GEMINI_API_KEY', required: false },
   { name: 'JOBS_ENABLED', required: false },
   { name: 'JOBS_POLL_INTERVAL_MS', required: false },
+  { name: 'ACCOUNT_EMAIL_MODE', required: false },
+  { name: 'SESSION_IDLE_MINUTES', required: false },
+  { name: 'AUTH_RATE_WINDOW_MINUTES', required: false },
+  { name: 'AUTH_SIGN_IN_PER_PHONE', required: false },
+  { name: 'AUTH_SIGN_IN_PER_DEVICE', required: false },
+  { name: 'AUTH_RESET_PER_PHONE', required: false },
+  { name: 'AUTH_RESET_PER_DEVICE', required: false },
 ] as const satisfies readonly EnvVarSpec[];
 
 export type EnvVarName = (typeof ENV_VARS)[number]['name'];
@@ -53,10 +60,29 @@ export const DEFAULT_IDEMPOTENCY_RETENTION_HOURS = 24;
 export const DEFAULT_DATABASE_CONNECT_TIMEOUT_MS = 5000;
 /** Cancel a database statement after 30 s. */
 export const DEFAULT_DATABASE_QUERY_TIMEOUT_MS = 30000;
+/** A session ends after 720 minutes (12 h) without an accepted operation (EP-04-S11). */
+export const DEFAULT_SESSION_IDLE_MINUTES = 720;
+/** Sign-in and reset request limits per window (EP-04-S9). */
+export const DEFAULT_AUTH_LIMITS: AuthLimitsConfig = {
+  windowMinutes: 15,
+  signInPerPhone: 10,
+  signInPerDevice: 30,
+  resetPerPhone: 3,
+  resetPerDevice: 10,
+};
 const MIN_SESSION_SECRET_LENGTH = 32;
 /** The scheduler looks for due jobs every 15 s, so a due job starts within a minute (EP-10-S1). */
 export const DEFAULT_JOBS_POLL_INTERVAL_MS = 15000;
 const JOBS_POLL_INTERVAL_RANGE_MS = [1000, 60000] as const;
+/** How account emails (activation, reset) are sent: the dev stub, or not at all (EP-04-S4). */
+export type AccountEmailMode = 'stub' | 'disabled';
+export interface AuthLimitsConfig {
+  windowMinutes: number;
+  signInPerPhone: number;
+  signInPerDevice: number;
+  resetPerPhone: number;
+  resetPerDevice: number;
+}
 
 export interface Config {
   appEnv: AppEnv;
@@ -90,6 +116,12 @@ export interface Config {
   jobsEnabled: boolean;
   /** How often the scheduler looks for due jobs, ms. */
   jobsPollIntervalMs: number;
+  /** `stub` keeps account emails in memory for the dev mailbox; `disabled` refuses to send. */
+  accountEmailMode: AccountEmailMode;
+  /** Minutes without an accepted operation after which a session ends. */
+  sessionIdleMinutes: number;
+  /** Fixed-window limits on sign-in and reset requests per phone and per device. */
+  authLimits: AuthLimitsConfig;
 }
 
 export class ConfigError extends Error {
@@ -173,6 +205,29 @@ export function loadConfig(env: Env = process.env): Config {
   if (!Number.isSafeInteger(jobsPollIntervalMs) || jobsPollIntervalMs < minPoll || jobsPollIntervalMs > maxPoll) {
     problems.push(`JOBS_POLL_INTERVAL_MS must be an integer between ${minPoll} and ${maxPoll} (milliseconds)`);
   }
+  const positive = (name: EnvVarName, fallback: number, unit: string): number => {
+    const text = read(name);
+    const n = text === undefined ? fallback : Number(text);
+    if (!Number.isSafeInteger(n) || n < 1) problems.push(`${name} must be a positive integer (${unit})`);
+    return n;
+  };
+  const sessionIdleMinutes = positive('SESSION_IDLE_MINUTES', DEFAULT_SESSION_IDLE_MINUTES, 'minutes');
+  const authLimits: AuthLimitsConfig = {
+    windowMinutes: positive('AUTH_RATE_WINDOW_MINUTES', DEFAULT_AUTH_LIMITS.windowMinutes, 'minutes'),
+    signInPerPhone: positive('AUTH_SIGN_IN_PER_PHONE', DEFAULT_AUTH_LIMITS.signInPerPhone, 'requests'),
+    signInPerDevice: positive('AUTH_SIGN_IN_PER_DEVICE', DEFAULT_AUTH_LIMITS.signInPerDevice, 'requests'),
+    resetPerPhone: positive('AUTH_RESET_PER_PHONE', DEFAULT_AUTH_LIMITS.resetPerPhone, 'requests'),
+    resetPerDevice: positive('AUTH_RESET_PER_DEVICE', DEFAULT_AUTH_LIMITS.resetPerDevice, 'requests'),
+  };
+  const emailModeText = read('ACCOUNT_EMAIL_MODE');
+  if (emailModeText !== undefined && emailModeText !== 'stub') {
+    problems.push('ACCOUNT_EMAIL_MODE must be stub or unset');
+  }
+  if (emailModeText === 'stub' && appEnv === 'production') {
+    problems.push('ACCOUNT_EMAIL_MODE=stub is not allowed in production');
+  }
+  const accountEmailMode: AccountEmailMode =
+    emailModeText === undefined && appEnv === 'production' ? 'disabled' : 'stub';
   if (problems.length > 0) throw new ConfigError(problems);
 
   return {
@@ -198,5 +253,8 @@ export function loadConfig(env: Env = process.env): Config {
     geminiApiKey: read('GEMINI_API_KEY'),
     jobsEnabled: jobsEnabledText !== 'false',
     jobsPollIntervalMs,
+    accountEmailMode,
+    sessionIdleMinutes,
+    authLimits,
   };
 }

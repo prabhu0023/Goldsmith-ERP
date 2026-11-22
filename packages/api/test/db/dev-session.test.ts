@@ -1,5 +1,6 @@
 import type pg from 'pg';
 import { afterAll, beforeAll, expect, it } from 'vitest';
+import { hashSecret } from '../../src/auth/session-store.js';
 import { createDevSession } from '../../src/db/dev-session.js';
 import { newUser } from '../support/api-harness.js';
 import { describeDb, newShop, type TestShop, testPool } from './db-test-helpers.js';
@@ -32,10 +33,21 @@ describeDb('db:dev-session (EP-03-S3)', () => {
   it('opens a 12 h session for the named user in development', async () => {
     const s = await createDevSession(pool, { appEnv: 'development', userName: name, now: NOW });
     expect(s).toMatchObject({ name, role: 'owner', expiresAt: new Date('2026-11-21T22:00:00.000Z') });
-    const { rows } = await pool.query('select shop_id, expires_at, ended_at from sessions where id = $1', [
-      s.sessionId,
+    const { rows } = await pool.query(
+      'select id, shop_id, expires_at, ended_at, role_at_issue from sessions where token_hash = $1',
+      [hashSecret(s.token)],
+    );
+    expect(rows).toEqual([
+      { id: s.sessionId, shop_id: shop.shopId, expires_at: s.expiresAt, ended_at: null, role_at_issue: 'owner' },
     ]);
-    expect(rows).toEqual([{ shop_id: shop.shopId, expires_at: s.expiresAt, ended_at: null }]);
+  });
+
+  it('refuses a user who is not active: their session would be refused', async () => {
+    const pending = `Pending Dev User ${shop.shopId}`;
+    await newUser(pool, shop, { name: pending, status: 'pending_activation' });
+    await expect(createDevSession(pool, { appEnv: 'development', userName: pending })).rejects.toThrow(
+      'is pending_activation, not active',
+    );
   });
 
   it('fails for a name no user has', async () => {
