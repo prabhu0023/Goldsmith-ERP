@@ -9,8 +9,9 @@ try {
 }
 
 // Test against the TypeScript source of @goldsmith/shared, so tests do not need a shared build.
-// The other entries are Vite's default server conditions.
-const conditions = ['@goldsmith/source', 'module', 'node', 'development|production'];
+// The other entries are Vite's default server conditions without `module`: that condition points
+// some packages (@aws-sdk/*) at bundler-only builds Node cannot load; Node itself ignores it.
+const conditions = ['@goldsmith/source', 'node', 'development|production'];
 
 export default defineConfig({
   resolve: { conditions },

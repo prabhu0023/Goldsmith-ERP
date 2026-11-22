@@ -21,5 +21,23 @@ services:
       interval: 2s
       retries: 30
 
+  # Local S3-compatible object store for photos and documents (EP-09, docs/setup/files.md).
+  # Start only this service with `npm run storage:up`. The access key and secret in
+  # docker/seaweedfs/s3.json (goldsmith-local / goldsmith-local-only) are local-only
+  # placeholders, bound to 127.0.0.1; staging and production use the D1a provider's own keys.
+  objectstore:
+    image: chrislusf/seaweedfs:4.48
+    command: server -dir=/data -ip.bind=0.0.0.0 -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.json
+    ports:
+      - "127.0.0.1:8333:8333"
+    volumes:
+      - objectdata:/data
+      - ./docker/seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8333/healthz"]
+      interval: 2s
+      retries: 30
+
 volumes:
   pgdata:
+  objectdata:

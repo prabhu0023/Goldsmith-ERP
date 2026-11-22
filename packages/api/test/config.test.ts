@@ -103,6 +103,47 @@ describe('loadConfig', () => {
       expect(() => loadConfig({ ...valid, [name]: bad })).toThrow(`${name} must be a positive integer`);
     }
   });
+  it('defaults the storage and file settings (EP-09) and reads set values', () => {
+    expect(loadConfig(valid)).toMatchObject({
+      storageEndpoint: undefined,
+      storageRegion: 'us-east-1',
+      fileMaxBytes: 10485760,
+      fileLinkTtlSeconds: 900,
+      fileRetentionPoDays: 365,
+      fileRetentionStandardDays: undefined,
+    });
+    expect(
+      loadConfig({
+        ...valid,
+        STORAGE_ENDPOINT: 'http://localhost:8333',
+        STORAGE_REGION: 'ap-south-1',
+        FILE_MAX_BYTES: '2048',
+        FILE_LINK_TTL_SECONDS: '5',
+        FILE_RETENTION_PO_DAYS: '30',
+        FILE_RETENTION_STANDARD_DAYS: '3650',
+      }),
+    ).toMatchObject({
+      storageEndpoint: 'http://localhost:8333',
+      storageRegion: 'ap-south-1',
+      fileMaxBytes: 2048,
+      fileLinkTtlSeconds: 5,
+      fileRetentionPoDays: 30,
+      fileRetentionStandardDays: 3650,
+    });
+  });
+  it.each(['FILE_MAX_BYTES', 'FILE_LINK_TTL_SECONDS', 'FILE_RETENTION_PO_DAYS', 'FILE_RETENTION_STANDARD_DAYS'])(
+    'names %s when it is not a positive integer',
+    (name) => {
+      for (const bad of ['0', '-1', '2.5', 'lots']) {
+        expect(() => loadConfig({ ...valid, [name]: bad })).toThrow(`${name} must be a positive integer`);
+      }
+    },
+  );
+  it('names STORAGE_ENDPOINT when it is not an absolute URL', () => {
+    expect(() => loadConfig({ ...valid, STORAGE_ENDPOINT: 'not a url' })).toThrow(
+      'STORAGE_ENDPOINT must be an absolute URL',
+    );
+  });
   it('refuses an unknown ACCOUNT_EMAIL_MODE', () => {
     expect(() => loadConfig({ ...valid, ACCOUNT_EMAIL_MODE: 'smtp' })).toThrow('ACCOUNT_EMAIL_MODE must be stub or unset');
   });

@@ -33,6 +33,12 @@ export const ENV_VARS = [
   { name: 'STORAGE_BUCKET', required: false },
   { name: 'STORAGE_ACCESS_KEY_ID', required: false },
   { name: 'STORAGE_SECRET_ACCESS_KEY', required: false },
+  { name: 'STORAGE_ENDPOINT', required: false },
+  { name: 'STORAGE_REGION', required: false },
+  { name: 'FILE_MAX_BYTES', required: false },
+  { name: 'FILE_LINK_TTL_SECONDS', required: false },
+  { name: 'FILE_RETENTION_PO_DAYS', required: false },
+  { name: 'FILE_RETENTION_STANDARD_DAYS', required: false },
   { name: 'WHATSAPP_PHONE_NUMBER_ID', required: false },
   { name: 'WHATSAPP_ACCESS_TOKEN', required: false },
   { name: 'EMAIL_IMAP_HOST', required: false },
@@ -70,6 +76,14 @@ export const DEFAULT_AUTH_LIMITS: AuthLimitsConfig = {
   resetPerPhone: 3,
   resetPerDevice: 10,
 };
+/** Object storage region when STORAGE_REGION is unset (S3-compatible stores accept any name). */
+export const DEFAULT_STORAGE_REGION = 'us-east-1';
+/** Largest uploaded file (EP-09, open item): 10 MB. */
+export const DEFAULT_FILE_MAX_BYTES = 10485760;
+/** Lifetime of a signed file link (EP-09-S5): 900 s (15 min). */
+export const DEFAULT_FILE_LINK_TTL_SECONDS = 900;
+/** Days a purchase-order file (retention class `po`) is kept (EP-09-S12): 365. */
+export const DEFAULT_FILE_RETENTION_PO_DAYS = 365;
 const MIN_SESSION_SECRET_LENGTH = 32;
 /** The scheduler looks for due jobs every 15 s, so a due job starts within a minute (EP-10-S1). */
 export const DEFAULT_JOBS_POLL_INTERVAL_MS = 15000;
@@ -106,6 +120,17 @@ export interface Config {
   storageBucket?: string;
   storageAccessKeyId?: string;
   storageSecretAccessKey?: string;
+  /** S3-compatible endpoint (local SeaweedFS: http://localhost:8333); unset = the provider's default. */
+  storageEndpoint?: string;
+  storageRegion: string;
+  /** Uploads larger than this many bytes are refused (EP-09). */
+  fileMaxBytes: number;
+  /** Seconds a signed file link stays valid. */
+  fileLinkTtlSeconds: number;
+  /** Days a purchase-order file is kept before the retention run removes it. */
+  fileRetentionPoDays: number;
+  /** Days a standard file (photos, references, bench) is kept; undefined = kept forever. */
+  fileRetentionStandardDays?: number;
   whatsappPhoneNumberId?: string;
   whatsappAccessToken?: string;
   emailImapHost?: string;
@@ -219,6 +244,17 @@ export function loadConfig(env: Env = process.env): Config {
     resetPerPhone: positive('AUTH_RESET_PER_PHONE', DEFAULT_AUTH_LIMITS.resetPerPhone, 'requests'),
     resetPerDevice: positive('AUTH_RESET_PER_DEVICE', DEFAULT_AUTH_LIMITS.resetPerDevice, 'requests'),
   };
+  const storageEndpoint = read('STORAGE_ENDPOINT');
+  if (storageEndpoint !== undefined && !URL.canParse(storageEndpoint)) {
+    problems.push('STORAGE_ENDPOINT must be an absolute URL, e.g. http://localhost:8333');
+  }
+  const fileMaxBytes = positive('FILE_MAX_BYTES', DEFAULT_FILE_MAX_BYTES, 'bytes');
+  const fileLinkTtlSeconds = positive('FILE_LINK_TTL_SECONDS', DEFAULT_FILE_LINK_TTL_SECONDS, 'seconds');
+  const fileRetentionPoDays = positive('FILE_RETENTION_PO_DAYS', DEFAULT_FILE_RETENTION_PO_DAYS, 'days');
+  const fileRetentionStandardDays =
+    read('FILE_RETENTION_STANDARD_DAYS') === undefined
+      ? undefined
+      : positive('FILE_RETENTION_STANDARD_DAYS', 0, 'days');
   const emailModeText = read('ACCOUNT_EMAIL_MODE');
   if (emailModeText !== undefined && emailModeText !== 'stub') {
     problems.push('ACCOUNT_EMAIL_MODE must be stub or unset');
@@ -245,6 +281,12 @@ export function loadConfig(env: Env = process.env): Config {
     storageBucket: read('STORAGE_BUCKET'),
     storageAccessKeyId: read('STORAGE_ACCESS_KEY_ID'),
     storageSecretAccessKey: read('STORAGE_SECRET_ACCESS_KEY'),
+    storageEndpoint,
+    storageRegion: read('STORAGE_REGION') ?? DEFAULT_STORAGE_REGION,
+    fileMaxBytes,
+    fileLinkTtlSeconds,
+    fileRetentionPoDays,
+    fileRetentionStandardDays,
     whatsappPhoneNumberId: read('WHATSAPP_PHONE_NUMBER_ID'),
     whatsappAccessToken: read('WHATSAPP_ACCESS_TOKEN'),
     emailImapHost: read('EMAIL_IMAP_HOST'),

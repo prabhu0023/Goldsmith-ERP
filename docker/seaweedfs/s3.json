@@ -1,0 +1,14 @@
+{
+  "identities": [
+    {
+      "name": "goldsmith-local",
+      "credentials": [
+        {
+          "accessKey": "goldsmith-local",
+          "secretKey": "goldsmith-local-only"
+        }
+      ],
+      "actions": ["Admin", "Read", "Write", "List", "Tagging"]
+    }
+  ]
+}

@@ -27,7 +27,9 @@
     "db:dev-session": "npm run db:dev-session -w @goldsmith/api --",
     "db:dev-password": "npm run db:dev-password -w @goldsmith/api --",
     "db:create": "npm run db:create -w @goldsmith/api",
-    "db:new": "npm run db:new -w @goldsmith/api --"
+    "db:new": "npm run db:new -w @goldsmith/api --",
+    "storage:up": "docker compose up -d --wait objectstore",
+    "storage:create": "npm run storage:create -w @goldsmith/api"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

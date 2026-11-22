@@ -6,6 +6,9 @@
 # database twice (the second run must apply nothing), seeds the prototype data, then runs the
 # database tests, whose global setup wipes and re-migrates the same database. The credentials
 # are the image defaults and exist only inside the job.
+# It also starts the SeaweedFS object store (EP-09, docs/setup/files.md) with `docker run`, since a
+# service container cannot pass its `server -s3 …` command; its keys are the local-only
+# placeholders in docker/seaweedfs/s3.json and exist only inside the job.
 # A deploy job (EP-01-S12, waiting on decision D1a) can later be added with `needs:` on these
 # jobs and `if: github.ref == 'refs/heads/main'`, consuming the release artefact from Build.
 name: CI
@@ -85,6 +88,11 @@ jobs:
       APP_ENV: development
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/goldsmith_test
       TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/goldsmith_test
+      # Local-only object store keys (docker/seaweedfs/s3.json), never a real provider's.
+      STORAGE_ENDPOINT: http://localhost:8333
+      STORAGE_BUCKET: goldsmith-files
+      STORAGE_ACCESS_KEY_ID: goldsmith-local
+      STORAGE_SECRET_ACCESS_KEY: goldsmith-local-only
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -93,6 +101,18 @@ jobs:
           cache: npm
       - name: Install
         run: npm ci
+      - name: Start the object store
+        run: |
+          docker run -d --name objectstore -p 8333:8333 \
+            -v "$PWD/docker/seaweedfs/s3.json:/etc/seaweedfs/s3.json:ro" \
+            chrislusf/seaweedfs:4.48 \
+            server -dir=/data -ip.bind=0.0.0.0 -s3 -s3.port=8333 -s3.config=/etc/seaweedfs/s3.json
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:8333/healthz > /dev/null && break
+            if [ "$i" = 60 ]; then docker logs objectstore; exit 1; fi
+            sleep 1
+          done
+          npm run storage:create
       - name: Migrate an empty database
         run: npm run db:migrate && npm run db:migrate && npm run db:status
       - name: Seed it
