@@ -15,7 +15,7 @@ import { clientAddressOf, createOperationRouter } from './pipeline/operation-rou
 import { createOperationRegistry, type HandlerMap } from './pipeline/registry.js';
 import { type Clock, systemClock } from './pipeline/server-clock.js';
 import { noSessionResolver, type SessionResolver } from './pipeline/session-resolver.js';
-import { handlers as serviceHandlers } from './services/index.js';
+import { createServiceHandlers } from './services/index.js';
 
 /** One 0.0001 g scale; one weighing on it has a ceiling of half a step = 5 units. */
 const PROBE_SCALE: Scale = { id: 'probe', name: 'Probe scale', readabilityG: 0.0001, capacityG: 1 };
@@ -65,11 +65,11 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     rateLimiter = allowAllRateLimiter,
     permissions = matrixPermissionCheck,
     contract = sharedContract,
-    handlers = serviceHandlers,
     log = console.error,
     healthTimeoutMs = 2000,
   } = deps;
   const auth = authDepsFor(config, deps.auth);
+  const handlers = deps.handlers ?? createServiceHandlers({ mailer: auth.mailer, appUrl: auth.appUrl, log });
   // Throws at startup for a handler the contract does not declare (EP-03-S1).
   const registry = createOperationRegistry(contract, handlers);
 

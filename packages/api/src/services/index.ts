@@ -4,6 +4,7 @@
  */
 import type { contract } from '@goldsmith/shared';
 import type { Handlers } from '../pipeline/registry.js';
+import { createUserHandlers, type UserHandlerDeps } from '../users/index.js';
 import { listJobRuns } from './list-job-runs.js';
 import { listMyJobs } from './list-my-jobs.js';
 import { markLeadLost } from './mark-lead-lost.js';
@@ -17,3 +18,8 @@ export const handlers: Handlers<typeof contract> = {
   listMyJobs,
   readMyJob,
 };
+
+/** Every production handler, including the user operations, which need the account mailer (EP-05). */
+export function createServiceHandlers(deps: UserHandlerDeps): Handlers<typeof contract> {
+  return { ...handlers, ...createUserHandlers(deps) };
+}
