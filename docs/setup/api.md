@@ -11,8 +11,11 @@ The api (`packages/api`) serves every operation of the shared contract (`package
 | `POST /api/ops/<operation>` | needed | The operation's result, e.g. `{ ok: true }`. JSON body = the operation's input. |
 | `POST /api/auth/<operation>` | depends on the operation | Sign-in operations (EP-04), see [Sign-in](#sign-in-ep-04). |
 | `GET /dev/mailbox`, `GET /dev/mailbox.json` | not needed | The account-email stub's mailbox; development and staging only. |
+| `POST /api/files?…`, `GET /api/files/<FILE-code>/<size>?exp=…&sig=…` | upload needed, download not (signed link) | File upload and download (EP-09), see [files.md](files.md). |
 
 Production registers one operation today: `markLeadLost` (`{ leadId, reason? }`).
+
+With file storage configured (EP-09) the api also registers `readFileLinks`, `createAttachment`, `deleteAttachment` and `listAttachments`; without it they answer `not_found`. Inputs, answers and refusal codes: [files.md](files.md).
 
 ## What happens to a request
 

@@ -5,7 +5,7 @@
 import { PLANNED_OPERATIONS, refusalFor, roleMay } from '@goldsmith/shared';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { insertScoped } from '../../src/db/shop-context.js';
-import { addKarigar, describeDb } from '../db/db-test-helpers.js';
+import { addKarigar, addStoredFile, describeDb } from '../db/db-test-helpers.js';
 import { type Harness, newSession, newUser, startHarness } from '../support/api-harness.js';
 
 const JOB_KEYS = [
@@ -43,6 +43,15 @@ describeDb('karigar scope (EP-05-S3)', () => {
     });
   }
 
+  /** Attach a new stored file to the job as its reference image (EP-09 attachments). */
+  async function addReference(jobCode: string, fileCode: string, attachmentCode: string): Promise<void> {
+    const fileId = await addStoredFile(h.pool, h.shop, fileCode);
+    await h.pool.query(
+      `insert into attachments (shop_id, code, file_id, owner_type, job_id, role, position, attached_by_name, attached_at)
+       select $1, $2, $3, 'job', id, 'reference', 1, 'Test', now() from karigar_jobs where shop_id = $1 and code = $4`,
+      [h.shop.shopId, attachmentCode, fileId, jobCode],
+    );
+  }
   beforeAll(async () => {
     h = await startHarness({ production: true });
     const kg04 = await addKarigar(h.pool, h.shop, 'KG-04');
@@ -51,10 +60,12 @@ describeDb('karigar scope (EP-05-S3)', () => {
     const otherId = await newUser(h.pool, h.shop, { name: 'Murugan K', role: 'karigar', karigarId: kg01 });
     lakshmi = await newSession(h.pool, h.shop, lakshmiId);
     other = await newSession(h.pool, h.shop, otherId);
-    await addJob('MO-2026-101', kg04, { ref_image_key: 'jobs/MO-2026-101/ref.jpg', due_date: '2026-11-28T00:00:00Z' });
+    await addJob('MO-2026-101', kg04, { due_date: '2026-11-28T00:00:00Z' });
+    await addReference('MO-2026-101', 'FILE-2026-00101', 'AT-2026-00101');
     await addJob('MO-2026-102', kg04);
     await addJob('MO-2026-103', kg04, { status: 'accepted', confirmed_date: '2026-11-27T00:00:00Z' });
-    await addJob('MO-2026-201', kg01, { ref_image_key: 'jobs/MO-2026-201/ref.jpg' });
+    await addJob('MO-2026-201', kg01);
+    await addReference('MO-2026-201', 'FILE-2026-00201', 'AT-2026-00201');
   });
 
   afterAll(async () => {
@@ -111,12 +122,12 @@ describeDb('karigar scope (EP-05-S3)', () => {
         dueDate: '2026-11-28T00:00:00.000Z',
         confirmedDate: null,
         stopped: false,
-        referenceImageKey: 'jobs/MO-2026-101/ref.jpg',
+        referenceImageKey: 'FILE-2026-00101',
       },
     });
     const theirs = await h.call('readMyJob', { jobId: 'MO-2026-201' }, { session: lakshmi });
     expect(theirs.status).toBe(404);
-    expect(JSON.stringify(theirs.body)).not.toContain('ref.jpg');
+    expect(JSON.stringify(theirs.body)).not.toContain('FILE-2026-00201');
   });
 
   it('AC4: a karigar is refused shop-floor and owner operations by the central check', async () => {

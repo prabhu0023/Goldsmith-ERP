@@ -79,6 +79,7 @@ const USERS_REFUSED = 'Only the owner can add staff or change a role.';
 const RULES_REFUSED = 'Only the owner can change the rules.';
 const JOB_RUNS_REFUSED = 'Only the owner can see and retry job runs.';
 
+const everyone = { roles: ['staff', 'owner', 'karigar'], refusal: DEFAULT_REFUSAL } as const;
 const shopFloor = { roles: SHOP_FLOOR, refusal: KARIGAR_REFUSED } as const;
 const karigarOnly = { roles: KARIGAR, refusal: KARIGAR_ONLY } as const;
 const ownerOnly = <const S extends string>(refusal: S) => ({ roles: OWNER, refusal }) as const;
@@ -103,8 +104,15 @@ export const OPERATION_RULES = {
   onboardCustomer: shopFloor,
   sendWishes: shopFloor,
   sendBroadcast: shopFloor,
+  // The default sentence, as the file service answered before the matrix (EP-09 file-roles.ts).
+  deleteAttachment: { roles: SHOP_FLOOR, refusal: DEFAULT_REFUSAL },
   // Everyone.
-  raiseProblem: { roles: ['staff', 'owner', 'karigar'], refusal: DEFAULT_REFUSAL },
+  raiseProblem: everyone,
+  // Everyone here; a karigar only on own jobs, which the file service decides (EP-09
+  // file-roles.ts), so it can answer not_found or forbidden as S6, S7, S9 and S10 require.
+  readFileLinks: everyone,
+  createAttachment: everyone,
+  listAttachments: everyone,
   // Karigar only, on their own jobs.
   listMyJobs: karigarOnly,
   readMyJob: karigarOnly,

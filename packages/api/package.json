@@ -19,12 +19,15 @@
     "db:dev-session": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts dev-session",
     "db:dev-password": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts dev-password",
     "db:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts create",
-    "db:new": "node --conditions=@goldsmith/source --import tsx src/db/cli.ts new"
+    "db:new": "node --conditions=@goldsmith/source --import tsx src/db/cli.ts new",
+    "storage:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/files/storage-cli.ts create"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1175.0",
     "@goldsmith/shared": "0.0.0",
     "express": "^4.21.2",
-    "pg": "^8.23.1"
+    "pg": "^8.23.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

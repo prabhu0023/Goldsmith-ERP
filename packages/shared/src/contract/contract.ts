@@ -8,6 +8,7 @@ import { okResult, pageInput, pageResult } from './contract-fields.js';
 import { defineOperation } from './define-operation.js';
 import { ERROR_CODES } from './error-codes.js';
 import { userOperations } from './users-contract.js';
+import { filesContract } from './files-contract.js';
 
 /** Bumped when an operation's input or result changes shape. */
 export const CONTRACT_VERSION = '1.0.0';
@@ -58,6 +59,7 @@ export const contract = {
     errors: ERROR_CODES,
   }),
   ...userOperations,
+  ...filesContract,
 } as const;
 
 export type OperationName = keyof typeof contract;

@@ -1,10 +1,12 @@
 /**
  * Database commands: `migrate`, `status`, `reset`, `seed`, `dev-session <user name>`,
  * `dev-password <user name> <password>`, `create` and `new <name>` (run via `npm run db:<command>`). Reads DATABASE_URL, APP_ENV and LANE
- * (`create` also TEST_DATABASE_URL; `new` reads nothing). Exit code 0 on success, 1 with a
+ * (`create` also TEST_DATABASE_URL; `seed` also STORAGE_* for the seed images; `new` reads nothing). Exit code 0 on success, 1 with a
  * one-line error otherwise.
  */
 import type { AppEnv } from '../config.js';
+import { S3Storage } from '../files/s3-storage.js';
+import { readStorageEnv } from '../files/storage-config.js';
 import { createPool } from './connection.js';
 import { createDatabases } from './create-databases.js';
 import { readDbEnv } from './db-env.js';
@@ -47,10 +49,22 @@ async function runStatus(pool: ReturnType<typeof createPool>): Promise<void> {
 }
 
 async function runSeed(pool: ReturnType<typeof createPool>, appEnv: AppEnv): Promise<void> {
-  const counts = await seedPrototype(pool, { appEnv });
-  console.log('Seeded the prototype data:');
-  const width = Math.max(...Object.keys(counts).map((t) => t.length));
-  for (const [table, n] of Object.entries(counts)) console.log(`  ${table.padEnd(width)}  ${String(n).padStart(4)}`);
+  // The seed images (EP-09-S13) go to the lane's bucket when STORAGE_* is set; else they are skipped.
+  const settings = appEnv === 'production' ? undefined : readStorageEnv();
+  const storage = settings ? new S3Storage(settings) : undefined;
+  try {
+    await storage?.ensureBucket();
+    const counts = await seedPrototype(pool, { appEnv, storage, log: console.log });
+    console.log('Seeded the prototype data:');
+    const width = Math.max(...Object.keys(counts).map((t) => t.length));
+    for (const [table, n] of Object.entries(counts)) console.log(`  ${table.padEnd(width)}  ${String(n).padStart(4)}`);
+    if (storage) {
+      const objects = (await storage.listKeys()).filter((k) => k.startsWith('seed/')).length;
+      console.log(`Bucket ${storage.bucket} holds ${objects} seed objects.`);
+    }
+  } finally {
+    storage?.close();
+  }
 }
 
 async function runDevSession(pool: ReturnType<typeof createPool>, appEnv: AppEnv, userName: string): Promise<void> {

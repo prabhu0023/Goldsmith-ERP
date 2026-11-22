@@ -8,6 +8,8 @@ import { installationShop } from './auth/installation-shop.js';
 import { passwordHasher } from './auth/password-hash.js';
 import { matrixPermissionCheck } from './auth/permission-check.js';
 import type { Config } from './config.js';
+import { createFileHandlers } from './files/file-handlers.js';
+import { createFilesRouter, type FilesDeps } from './files/files-router.js';
 import { checkDatabase, withTimeout } from './health-check.js';
 import { ApiError, type ErrorLog, RateLimitedError, toErrorResponse } from './pipeline/api-errors.js';
 import { allowAllRateLimiter, type PermissionCheck, type RateLimiter } from './pipeline/hooks.js';
@@ -40,6 +42,8 @@ export interface AppDeps {
   healthTimeoutMs: number;
   /** Sign-in (EP-04); unset fields default from config. */
   auth: Partial<AuthDeps>;
+  /** File upload and signed links (EP-09); unset when object storage is not configured. */
+  files?: FilesDeps;
 }
 
 /** The sign-in dependencies from config, with `overrides` on top. */
@@ -69,7 +73,11 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     healthTimeoutMs = 2000,
   } = deps;
   const auth = authDepsFor(config, deps.auth);
-  const handlers = deps.handlers ?? createServiceHandlers({ mailer: auth.mailer, appUrl: auth.appUrl, log });
+  const handlers = deps.handlers ?? {
+    ...createServiceHandlers({ mailer: auth.mailer, appUrl: auth.appUrl, log }),
+    // The file operations (EP-09) are served only when object storage is configured.
+    ...(deps.files ? createFileHandlers(deps.files) : {}),
+  };
   // Throws at startup for a handler the contract does not declare (EP-03-S1).
   const registry = createOperationRegistry(contract, handlers);
 
@@ -121,6 +129,20 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     }),
   );
 
+  if (deps.files) {
+    app.use(
+      createFilesRouter({
+        pool,
+        sessions,
+        clock,
+        rateLimiter,
+        errorLog: log,
+        files: deps.files,
+        idempotencyRetentionHours: config.idempotencyRetentionHours,
+        installationShop: auth.installationShop,
+      }),
+    );
+  }
   app.use((_req, _res, next) => next(new ApiError('not_found', 'Nothing is here.')));
 
   const sendError: ErrorRequestHandler = (err, _req, res, _next) => {

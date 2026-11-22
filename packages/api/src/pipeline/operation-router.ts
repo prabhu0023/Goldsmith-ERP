@@ -48,7 +48,7 @@ export interface OperationRouterDeps {
 export const clientAddressOf = (req: Request): string => req.ip ?? req.socket.remoteAddress ?? '';
 
 export const IDEMPOTENCY_HEADER = 'idempotency-key';
-const IDEMPOTENCY_KEY = /^[\x20-\x7e]{1,200}$/;
+export const IDEMPOTENCY_KEY = /^[\x20-\x7e]{1,200}$/;
 /**
  * The Idempotency-Key of a create request (EP-03-S8): 1 to 200 printable ASCII characters.
  * Undefined when the header is absent or the operation is not a create (the header is ignored).
