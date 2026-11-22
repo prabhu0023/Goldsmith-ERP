@@ -6812,6 +6812,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 ---
 
 ## EP-20-S12a: Karigar can install the app and use it offline with a sync queue (part 1: install and open from cache) (Deferred: v1 is online only, D6)
+
 Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only, so v1 has no offline cache, no service worker and no opening the app with no signal. Owner decision D5 is that the karigar app is a React web app opened in the phone browser. Installing it to the home screen is not decided (epic section 17). The story ID, title and history are kept so the story graph stays valid. What is deferred: the web app manifest and icons, the service worker that cached the app shell and the karigar's own reads, and the cached "last updated" view of jobs. The connection-lost state of EP-08-S11 stays in v1.
 
 - **Story ID:** EP-20-S12a
@@ -6829,8 +6830,11 @@ Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026
 - **Non-functional checks:** Availability: with no signal the app shows the EP-08-S11 state and does not open from cache (D6). Personal data: the phone keeps no copy of the karigar's jobs beyond the open page. Decided: D5 (React web app in the phone browser) and D6 (online only). Open question: whether the app should be installable to the home screen (epic section 17).
 - **Depends on:** EP-20-S2, EP-20-S3, EP-20-S9, EP-08-S2, EP-08-S11, EP-08-S15, EP-01-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
+
 ---
+
 ## EP-20-S12b: Karigar can install the app and use it offline with a sync queue (part 2: offline queue and sync) (Deferred: v1 is online only, D6)
+
 Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only. There is no offline queue, no on-device queue of updates, no "Sync Queued updates" operation and no replay of queued updates. The story ID, title and history are kept so the story graph stays valid, and its dependency on EP-20-S12a is kept (deferred too). What is deferred: the Sync Queued updates operation, the on-device queue (JobUpdate), idempotent replay in client order, and the refusal handling after sync (the old D6 side question). In v1 a karigar update is sent when it is tapped. With no signal the EP-08-S11 state shows and the buttons are disabled with a reason.
 
 - **Story ID:** EP-20-S12b
@@ -6848,7 +6852,9 @@ Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026
 - **Non-functional checks:** Concurrency: a state change that is no longer valid is refused with the reason (epic section 13). Deferred: queue survival across restarts, replay order and the refused-update-after-sync question no longer apply. Decided: D6 (online only).
 - **Depends on:** EP-20-S12a, EP-20-S4, EP-20-S5, EP-20-S6, EP-20-S10a, EP-03-S8, EP-04-S12, EP-08-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
+
 ---
+
 ## EP-20-S13: Karigar can hand over several jobs at once (G14)
 
 - **Story ID:** EP-20-S13
@@ -13736,7 +13742,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **Audit entry written:** No. Training is recorded as checklist ticks; sign-in is audited by EP-04-S14.
 - **Data changes:** None in the product database. Adds karigar training material under the project docs.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`.
-- **Non-functional checks:** Security: each karigar signs in on their own phone; no shared account. D4 is decided: phone and password, set from the activation email. Open question: in which spoken language each karigar is trained; the app stays English only in v1 (EP-44). D5 is decided: the portal is a React web app opened in the phone browser, so there is nothing to install; the dependency on EP-20-S12a is kept and is deferred (D6).
+- **Non-functional checks:** Security: each karigar signs in on their own phone; no shared account. D4 is decided: phone and password, set from the activation email. Open question: in which spoken language each karigar is trained; the app stays English only in v1 (EP-44). D5 is decided: the portal is a React web app opened in the phone browser, so there is no install step in v1; the dependency on EP-20-S12a is kept and is deferred (D6).
 - **Depends on:** EP-41-S7, EP-41-S8, EP-20-S1, EP-20-S2, EP-20-S3, EP-20-S4, EP-20-S5, EP-20-S6, EP-20-S9, EP-20-S12a
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

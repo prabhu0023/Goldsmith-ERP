@@ -18,7 +18,7 @@ When the connection drops:
 | Offline: none (**chosen**) | Simple. The server is always the single source of truth. No stale or conflicting updates. | A karigar with no signal cannot send an update until the signal returns. |
 | Offline: read-only | Karigars could read cached jobs with no signal. | Needs an on-device cache of jobs and a service worker. The cache needs rules for clearing it when a session ends. |
 | Offline: queued updates | Weak signal never loses an update. | Large and risky. It needs an on-device queue, a Sync operation, idempotent replay in order, rules for an update that is no longer valid when it syncs, and queue survival across restarts and expired sessions. |
-**Why a React web app.** One codebase with the staff app, no app store, and nothing for the karigar to install. It works on any phone.
+**Why a React web app.** One codebase with the staff app, no app store, and no install step in v1. It works on any phone.
 **Why online only.** The offline queue is large and risky. A queued update can arrive after the owner stopped the job or after the session ended, and each case needs its own rule. The owner chose to ship v1 without it. The reconnecting state and the catch-up on reconnect already make a dropped signal visible and safe.
 ## What is deferred
 - **Offline mode.** EP-20-S12a (install and open from cache) and EP-20-S12b (offline queue and sync) keep their story IDs and titles and are marked "Deferred: v1 is online only, D6". FR-20-12 and FR-20-13 are marked Deferred. The "Sync Queued updates" operation, the on-device queue (JobUpdate) and the service worker and cache are not built.
@@ -32,6 +32,6 @@ When the connection drops:
 - **EP-08 Front-end production foundation:** the offline state stays. The D6 question is answered: no offline queue anywhere, and the web app is read-only while disconnected.
 - **EP-07 Live channel:** the D6 question is answered by catch-up by sequence number or a full refetch. No offline queue assumption.
 - **EP-04 Authentication:** offline sign-in for karigars is not in v1. Karigars are online only, so D6 puts no extra session-lifetime need on EP-04.
-- **EP-24, EP-41, EP-44 and EP-40:** wording that assumed an offline queue, an install step or a PWA now says online only or web app.
+- **EP-24, EP-38, EP-40, EP-41, EP-44 and MOCKUP-COVERAGE:** wording that assumed an offline queue, an install step or a PWA now says online only or web app.
 ## Still open
 - Should the karigar app be installable to the home screen? It needs only a web app manifest and icons, no offline support (EP-20 section 17).

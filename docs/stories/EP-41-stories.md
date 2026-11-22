@@ -266,7 +266,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 - **Audit entry written:** No. Training is recorded as checklist ticks; sign-in is audited by EP-04-S14.
 - **Data changes:** None in the product database. Adds karigar training material under the project docs.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`.
-- **Non-functional checks:** Security: each karigar signs in on their own phone; no shared account. D4 is decided: phone and password, set from the activation email. Open question: in which spoken language each karigar is trained; the app stays English only in v1 (EP-44). D5 is decided: the portal is a React web app opened in the phone browser, so there is nothing to install; the dependency on EP-20-S12a is kept and is deferred (D6).
+- **Non-functional checks:** Security: each karigar signs in on their own phone; no shared account. D4 is decided: phone and password, set from the activation email. Open question: in which spoken language each karigar is trained; the app stays English only in v1 (EP-44). D5 is decided: the portal is a React web app opened in the phone browser, so there is no install step in v1; the dependency on EP-20-S12a is kept and is deferred (D6).
 - **Depends on:** EP-41-S7, EP-41-S8, EP-20-S1, EP-20-S2, EP-20-S3, EP-20-S4, EP-20-S5, EP-20-S6, EP-20-S9, EP-20-S12a
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
