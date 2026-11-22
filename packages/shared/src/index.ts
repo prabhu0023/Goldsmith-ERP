@@ -21,5 +21,8 @@ export * from './domain/match.js';
 export * from './domain/shop-time.js';
 export * from './domain/sign-in-rules.js';
 export * from './domain/weights.js';
+export * from './live/live-catalogue.js';
+export * from './live/live-envelope.js';
+export * from './live/live-protocol.js';
 export * from './permissions/permissions.js';
 export * from './types/jewellery.js';
