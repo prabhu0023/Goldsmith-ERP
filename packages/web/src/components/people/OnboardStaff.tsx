@@ -1,10 +1,10 @@
+import { ROLE_INFO } from '@goldsmith/shared';
 import { Check, X } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useStore } from '../../store/StoreProvider';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, cn } from '../ui';
 import { firstName } from '../home/util';
-import { ROLES } from './permissions';
 import { phoneLooksValid } from './util';
 
 const loginFrom = (name: string): string => name.trim().toLowerCase().split(/\s+/)[0]?.replace(/[^a-z0-9]/g, '') ?? '';
@@ -28,7 +28,7 @@ export function OnboardStaff() {
     );
   }
 
-  const info = ROLES.find((r) => r.id === staffRole) ?? ROLES[0];
+  const info = ROLE_INFO.find((r) => r.id === staffRole) ?? ROLE_INFO[0];
   const who = name.trim() ? firstName(name.trim()) : 'They';
 
   const submit = (e: FormEvent) => {
@@ -64,7 +64,7 @@ export function OnboardStaff() {
       <Card className="mb-4 space-y-3">
         <SectionLabel>What role · this sets everything else</SectionLabel>
         <div role="radiogroup" className="grid gap-3 sm:grid-cols-2">
-          {ROLES.filter((r) => r.id !== 'karigar').map((r) => (
+          {ROLE_INFO.filter((r) => r.id !== 'karigar').map((r) => (
             <button
               key={r.id}
               type="button"

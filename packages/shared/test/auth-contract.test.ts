@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { z } from 'zod';
-import { authContract, SERVER_SET_KEYS } from '../src/index.js';
+import { authContract, SERVER_SET_KEYS, sessionResult } from '../src/index.js';
 /** Every key of an input, recursing into nested objects. */
 function keysOf(schema: z.ZodType): string[] {
   if (!(schema instanceof z.ZodObject)) return [];
@@ -30,6 +30,17 @@ describe('auth contract (EP-04)', () => {
     const issues = result.error?.issues ?? [];
     expect(issues.map((i) => i.path[0]).sort()).toEqual(['email', 'phone']);
     expect(issues.find((i) => i.path[0] === 'phone')?.message).toBe('Enter a 10-digit mobile number.');
+  });
+  it('carries the permission list in the session result (EP-05-S12 AC5)', () => {
+    const body = {
+      ok: true,
+      user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' },
+      landingRoute: 'today',
+      permissions: ['markLeadLost', 'raiseProblem'],
+    };
+    expect(sessionResult.parse(body)).toEqual(body);
+    const { permissions: _dropped, ...withoutPermissions } = body;
+    expect(sessionResult.safeParse(withoutPermissions).success).toBe(false);
   });
   it('accepts a valid first owner', () => {
     const parsed = authContract.createFirstOwner.input.parse({
