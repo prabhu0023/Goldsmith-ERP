@@ -3,15 +3,18 @@
  * and AUTH_OPERATION_AUDIT_KINDS has a case here that runs it through the production app and
  * checks it wrote at least one audit entry, all of declared kinds. A new state-changing operation
  * fails typecheck (AUDIT_CASES is typed over both maps) and "<op> has no audit case" below.
- * Every production job is audited or exempt with a reason.
+ * Every production job (and the file-retention job the api adds when storage is on, EP-09) is
+ * audited or exempt with a reason.
  */
 import { AUTH_OPERATION_AUDIT_KINDS, MIN, OPERATION_AUDIT_KINDS, type StateChangingOperation } from '@goldsmith/shared';
 import { afterAll, beforeAll, expect, it } from 'vitest';
+import { fileRetentionJob } from '../../src/files/file-retention.js';
+import { MemoryStorage } from '../../src/files/memory-storage.js';
 import { editTokenExpiryJob } from '../../src/jobs/handlers/edit-token-expiry.js';
 import { karigarOverdueJob } from '../../src/jobs/handlers/karigar-overdue.js';
 import { leadSlaBreachJob, leadSlaTimersJob } from '../../src/jobs/handlers/lead-sla.js';
 import { productionJobs } from '../../src/jobs/production-jobs.js';
-import { addKarigar, describeDb, newShop, testPool } from '../db/db-test-helpers.js';
+import { addKarigar, addPiece, addStoredFile, describeDb, newShop, testPool } from '../db/db-test-helpers.js';
 import {
   addKarigarJob,
   addLead,
@@ -43,6 +46,12 @@ const phone = () => `+91 97${String(31_000_000 + ++phoneSeq).padStart(8, '0')}`;
 const userWith = async (h: Ctx, options: Parameters<typeof newUser>[2]) => {
   const id = await newUser(h.pool, h.shop, options);
   return { id, version: (await userRow(h, id)).version };
+};
+
+/** A stored file the owner uploaded (so the owner may read it before it is attached). */
+const ownersFile = async (h: Ctx, code: string) => {
+  const id = await addStoredFile(h.pool, h.shop, code);
+  await h.pool.query('update stored_files set uploaded_by = $2 where id = $1', [id, h.ownerId]);
 };
 
 const AUDIT_CASES: Record<StateChangingOperation, AuditCase> = {
@@ -94,6 +103,30 @@ const AUDIT_CASES: Record<StateChangingOperation, AuditCase> = {
   },
   async setSetting(h) {
     return () => h.asOwner('setSetting', { key: 'autoSendWishes', value: true });
+  },
+  async createAttachment(h) {
+    const jobId = await addKarigarJob(h.pool, h.shop, { code: 'MO-2026-601', dueDate: '2026-11-30T12:00:00+05:30' });
+    await h.pool.query(
+      `insert into order_copies (shop_id, code, job_id, karigar_id, target_gross_units, target_net_units,
+                                 tolerance_units, gold_issued_units)
+       select shop_id, 'OC-2026-601', id, karigar_id, 100000, 90000, 1000, 95000 from karigar_jobs where id = $1`,
+      [jobId],
+    );
+    await ownersFile(h, 'FILE-2026-00601');
+    return () =>
+      h.asOwner('createAttachment', { fileId: 'FILE-2026-00601', ownerType: 'order_copy', ownerId: 'OC-2026-601', role: 'reference' });
+  },
+  async deleteAttachment(h) {
+    await addPiece(h.pool, h.shop, 'TAG-9602');
+    await ownersFile(h, 'FILE-2026-00602');
+    const attached = await h.asOwner('createAttachment', {
+      fileId: 'FILE-2026-00602',
+      ownerType: 'piece',
+      ownerId: 'TAG-9602',
+      role: 'photo',
+    });
+    expect(attached.status, JSON.stringify(attached.body)).toBe(200);
+    return () => h.asOwner('deleteAttachment', { attachmentId: attached.body.id });
   },
   async signIn(h) {
     const number = phone();
@@ -182,6 +215,19 @@ describeDb('every state-changing operation audits (EP-06-S7 AC6)', () => {
     expect(written.length, `${op} wrote no audit entry`).toBeGreaterThan(0);
     for (const kind of written) expect(declared[op], `${op} wrote ${kind}`).toContain(kind);
   });
+
+  it("file entries name the file's owner as their entity (EP-09 under EP-06-S2)", async () => {
+    const { rows } = await h.pool.query(
+      `select kind, entity_type, entity_id, reference from audit_entries
+        where shop_id = $1 and kind in ('file_attached', 'file_detached') order by kind, entity_id`,
+      [h.shop.shopId],
+    );
+    expect(rows).toEqual([
+      { kind: 'file_attached', entity_type: 'order_copy', entity_id: 'OC-2026-601', reference: 'OC-2026-601' },
+      { kind: 'file_attached', entity_type: 'piece', entity_id: 'TAG-9602', reference: 'TAG-9602' },
+      { kind: 'file_detached', entity_type: 'piece', entity_id: 'TAG-9602', reference: 'TAG-9602' },
+    ]);
+  });
 });
 
 /** Each production job: the kinds it writes, or why it changes no audited record. */
@@ -191,10 +237,15 @@ const JOB_AUDIT: Record<string, { kinds: readonly string[] } | { exempt: string 
   'karigar-overdue': { kinds: ['job_marked_overdue', 'job_reminder_sent'] },
   'edit-token-expiry': { kinds: ['edit_token_expired'] },
   'wishes-9am': { exempt: 'emits an outbox event only; no record changes' },
+  'file-retention': { kinds: ['file_removed_by_retention'] },
 };
 
+/** The retention job as src/index.ts adds it when object storage is configured. */
+const retentionJob = () => fileRetentionJob({ storage: new MemoryStorage(), retention: { poDays: 30 }, log: () => {} });
+
 it('every production job is audited or exempt with a reason', () => {
-  expect(productionJobs.map((j) => j.name).sort()).toEqual(Object.keys(JOB_AUDIT).sort());
+  const jobs = [...productionJobs, retentionJob()];
+  expect(jobs.map((j) => j.name).sort()).toEqual(Object.keys(JOB_AUDIT).sort());
 });
 
 describeDb('production jobs audit their changes (EP-06-S6, EP-10-S12)', () => {
@@ -243,5 +294,27 @@ describeDb('production jobs audit their changes (EP-06-S6, EP-10-S12)', () => {
     const kinds = await kindsIn(shop.shopId);
     expect(kinds.length).toBeGreaterThan(0);
     for (const kind of kinds) expect(declaredKinds('edit-token-expiry')).toContain(kind);
+  });
+
+  it('file-retention', async () => {
+    const shop = await newJobsShop(pool);
+    const leadId = await addLead(pool, shop, { code: 'LD-2026-603', arrivedAt: '2026-11-01T09:00:00Z' });
+    const fileId = await addStoredFile(pool, shop, 'FILE-2026-00603', { retentionClass: 'po' });
+    await pool.query(
+      `insert into attachments (shop_id, code, file_id, owner_type, lead_id, role, position, attached_by_name, attached_at)
+       values ($1, 'AT-2026-00603', $2, 'lead', $3, 'po', 1, 'Test', now())`,
+      [shop.shopId, fileId, leadId],
+    );
+    // A year after the file was stored, past the 30-day PO period; 10:00 UTC is after the 03:00 IST run.
+    const later = new Date(Date.now() + 365 * 24 * 60 * MIN);
+    later.setUTCHours(10, 0, 0, 0);
+    await makeScheduler(pool, manualClock(later), shop, [retentionJob()]).tick();
+    const { rows } = await pool.query<{ kind: string; entity_type: string; entity_id: string }>(
+      'select kind, entity_type, entity_id from audit_entries where shop_id = $1',
+      [shop.shopId],
+    );
+    expect(rows.length).toBeGreaterThan(0);
+    for (const row of rows) expect(declaredKinds('file-retention')).toContain(row.kind);
+    expect(rows).toEqual([{ kind: 'file_removed_by_retention', entity_type: 'lead', entity_id: 'LD-2026-603' }]);
   });
 });

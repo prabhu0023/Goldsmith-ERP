@@ -24,7 +24,7 @@ Weights in before and after are integers of 0.0001 g (`grossG: 486500` is 48.650
 
 ## Kinds and groups
 
-`packages/shared/src/domain/audit-log.ts` holds the one list `AUDIT_ACTIONS`: the 10 prototype kinds, EP-04's sign-in kinds, EP-10's job kinds, EP-05's user kinds and the 25 EP-06-S7 kinds for transitions that arrive in later epics. `AUDIT_ACTION_LABELS` names each on the screen, `AUDIT_ACTION_ENTITY` gives its default entity type. The database check `audit_entries_kind_check` holds exactly this list (`audit-store.test.ts` compares them). A migration that adds kinds widens the check with the order-safe DO block ([parallel-lanes.md](parallel-lanes.md)); kinds and entity types use only `a-z` and `_`.
+`packages/shared/src/domain/audit-log.ts` holds the one list `AUDIT_ACTIONS`: the 10 prototype kinds, EP-04's sign-in kinds, EP-10's job kinds, EP-05's user kinds, EP-09's four file kinds and the 25 EP-06-S7 kinds for transitions that arrive in later epics. `AUDIT_ACTION_LABELS` names each on the screen, `AUDIT_ACTION_ENTITY` gives its default entity type. The database check `audit_entries_kind_check` holds exactly this list (`audit-store.test.ts` compares them). A migration that adds kinds widens the check with the order-safe DO block ([parallel-lanes.md](parallel-lanes.md)); kinds and entity types use only `a-z` and `_`.
 
 `AUDIT_GROUPS` are the screen's filter buttons, as in the prototype: Everything, Tag edits (`edit_applied`, `edit_refused`), Parcels and losses (`loss_accepted`, `parcel_sent_back`, `parcel_last_digit`), Problems (`problem_cleared`), Scrap (`scrap_marked`, `scrap_declined`), Stock-out (`stock_out`), Rules (`setting_changed`). A kind is in at most one group; every newer kind is under Everything only.
 
@@ -32,7 +32,7 @@ Weights in before and after are integers of 0.0001 g (`grossG: 486500` is 48.650
 
 `appendAudit(client, entry)` in `packages/api/src/audit/audit-writer.ts` is the only code that inserts into `audit_entries`. It runs on the operation's transaction client, so a rolled-back operation leaves no entry and a failed insert rolls the operation back. It refuses an entry before the insert when the kind or entity type is unknown, the entity id is empty, the token reference looks like a token (4 to 8 digits) or a weight key holds anything but an integer.
 
-The older writers keep their signatures and call it: `writeAuthAudit` (sign-in), `writeUserLifecycleAudit` (users), `writeJobAudit` and `writeUserAudit` (jobs and `retryJobRun`). A service function uses `auditChange(tx, ctx, change)`, which stores only the changed fields of `before` and `after`, with the session user as actor and `ctx.at` as time:
+The older writers keep their signatures and call it: `writeAuthAudit` (sign-in), `writeUserLifecycleAudit` (users), `writeJobAudit` and `writeUserAudit` (jobs and `retryJobRun`), `writeFileAudit` (EP-09 attach, detach, intake and retention). A file entry's entity is the file's owner (piece, order copy, job or lead, by its code), and `before`/`after` hold the owner's file ids in that role under the role's name, e.g. `{ "photo": ["FILE-2026-00012"] }`. An unattached upload (`POST /api/files` without a target) changes no business record and writes no entry (EP-09-S2); the attach step writes it. A service function uses `auditChange(tx, ctx, change)`, which stores only the changed fields of `before` and `after`, with the session user as actor and `ctx.at` as time:
 
 ```ts
 await auditChange(tx, ctx, {
@@ -77,6 +77,10 @@ The api connects as `goldsmith_app` (`APP_DATABASE_URL`), which has only `SELECT
 | `unlockUser` | `/api/ops` | `account_unlocked` |
 | `linkKarigar` | `/api/ops` | `karigar_linked` |
 | `setSetting` | `/api/ops` | `setting_changed` |
+| `createAttachment` | `/api/ops` | `file_attached` |
+| `deleteAttachment` | `/api/ops` | `file_detached` |
+| upload with a target | `POST /api/files` | `file_attached` (not wrapped; `attachments.test.ts` checks the entry) |
+| inbound PO file | server only (intake) | `po_attachment_stored`, actor `System (WhatsApp intake)` or `System (email intake)` |
 | `signIn` | `/api/auth` | `signed_in`, `sign_in_failed`, `sign_in_locked` |
 | `signOut` | `/api/auth` | `signed_out` |
 | `requestPasswordReset` | `/api/auth` | `password_reset_requested` (an unknown phone writes nothing) |
@@ -86,10 +90,11 @@ The api connects as `goldsmith_app` (`APP_DATABASE_URL`), which has only `SELECT
 | job `lead-sla-breach` | scheduler | `lead_marked_late` |
 | job `karigar-overdue` | scheduler | `job_marked_overdue`, `job_reminder_sent` |
 | job `edit-token-expiry` | scheduler | `edit_token_expired` (with the token reference) |
+| job `file-retention` | scheduler (added when storage is on) | `file_removed_by_retention`, one per owner of the removed file |
 | job `lead-sla-timers` | scheduler | exempt: reschedules job-internal timer rows only |
 | job `wishes-9am` | scheduler | exempt: emits an outbox event only, no record changes |
 
-Reads write nothing: `listJobRuns`, `listMyJobs`, `readMyJob`, `listUsers`, `listAuditEntries`, `readAuditEntry`, `readCurrentSession`, `checkPasswordLink`. Which operations write a second entry, and whether that is right, is FU-009.
+Reads write nothing: `listJobRuns`, `listMyJobs`, `readMyJob`, `listUsers`, `listAuditEntries`, `readAuditEntry`, `readFileLinks`, `listAttachments`, `readCurrentSession`, `checkPasswordLink`. Which operations write a second entry, and whether that is right, is FU-009.
 
 **Covered by rule.** These operations arrive in EP-18 onward. Each has its kind in `TRANSITION_AUDIT_KINDS` and must be added to `OPERATION_AUDIT_KINDS` and `AUDIT_CASES` when it is ported, or typecheck and the guard fail: `createLead`, `confirmLead`, `startWorkingLead`, `routeLeadItemToStock`, `createOrderCopyAndJob`, `acceptJob`, `startJob`, `markJobReady`, `handOver`, `recordParcelArrival`, `saveTag`, `qcTick`, `releaseParcel`, `ownerRecheckTag`, `raiseProblem`, `proposeEdit`, `ownerAgreeEdit`, `requestScrap`, `onboardCustomer`, `onboardKarigar`, `onboardStaff`, `sendWishes`, `sendBroadcast`, `upsertScale`, plus the prototype-audited `applyEdit`, `refuseEdit`, `ownerSendBack`, `ownerAcceptLoss`, `clearProblem`, `stockOut`, `ownerScrap`, `ownerDeclineScrap` (the 10 prototype kinds). `releaseHold` has no kind: v1 has no holds.
 

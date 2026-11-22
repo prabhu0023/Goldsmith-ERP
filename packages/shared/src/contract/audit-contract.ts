@@ -94,6 +94,10 @@ export const OPERATION_AUDIT_KINDS = {
   setSetting: ['setting_changed'],
   listAuditEntries: null,
   readAuditEntry: null,
+  readFileLinks: null,
+  createAttachment: ['file_attached'],
+  deleteAttachment: ['file_detached'],
+  listAttachments: null,
 } as const satisfies Readonly<Record<OperationName, readonly AuditAction[] | null>>;
 
 /**

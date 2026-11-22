@@ -85,8 +85,8 @@ describeDb('Attachments (EP-09-S7 to S10)', () => {
         actor_role: 'staff',
         at: SERVER_NOW,
         summary: `Photo ${photo1} attached to piece TAG-9108`,
-        before_value: [],
-        after_value: [photo1],
+        before_value: { photo: [] },
+        after_value: { photo: [photo1] },
       },
       {
         kind: 'file_attached',
@@ -95,8 +95,8 @@ describeDb('Attachments (EP-09-S7 to S10)', () => {
         actor_role: 'staff',
         at: SERVER_NOW,
         summary: `Photo ${photo2} attached to piece TAG-9108`,
-        before_value: [photo1],
-        after_value: [photo1, photo2],
+        before_value: { photo: [photo1] },
+        after_value: { photo: [photo1, photo2] },
       },
     ]);
   });
@@ -130,8 +130,8 @@ describeDb('Attachments (EP-09-S7 to S10)', () => {
       expect.objectContaining({
         actor_name: 'Deepak Rao',
         summary: `Photo ${photo2} detached from piece TAG-9108`,
-        before_value: [photo1, photo2],
-        after_value: [photo1],
+        before_value: { photo: [photo1, photo2] },
+        after_value: { photo: [photo1] },
       }),
     ]);
     // The file itself stays; a detach of a gone attachment is not found.
@@ -252,8 +252,8 @@ describeDb('Attachments (EP-09-S7 to S10)', () => {
         actor_id: h.staff.id,
         actor_name: 'Rajesh Verma',
         summary: `Reference image ${refs[1]} detached from order copy OC-2026-118`,
-        before_value: refs,
-        after_value: [refs[0], refs[2]],
+        before_value: { reference: refs },
+        after_value: { reference: [refs[0], refs[2]] },
       }),
     ]);
     expect((await listed(h.staff.session, 'job', 'MO-2026-118')).map((i) => i.fileId)).toEqual([refs[0], refs[2]]);
@@ -339,8 +339,8 @@ describeDb('Attachments (EP-09-S7 to S10)', () => {
         actor_id: h.karigar.id,
         actor_role: 'karigar',
         summary: `Bench photo ${bench} attached to job MO-2026-118`,
-        before_value: [],
-        after_value: [bench],
+        before_value: { bench: [] },
+        after_value: { bench: [bench] },
       }),
     ]);
     expect(await listed(h.karigar.session, 'job', 'MO-2026-118')).toContainEqual(

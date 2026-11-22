@@ -77,8 +77,8 @@ describeDb('Create Inbound file (EP-09-S11)', () => {
         actor_name: 'System (WhatsApp intake)',
         actor_role: 'system',
         summary: `PO attachment ${photoFile} attached to lead LD-2026-301`,
-        before_value: [],
-        after_value: [photoFile],
+        before_value: { po: [] },
+        after_value: { po: [photoFile] },
       },
     ]);
   });

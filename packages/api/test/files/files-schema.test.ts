@@ -100,8 +100,8 @@ describeDb('EP-09 file storage schema', () => {
       'job_run_retried',
     ]) {
       await pool.query(
-        `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, reference, at)
-         values ($1, null, 'System (retention run)', 'system', $2, 'File test', 'TAG-1', $3)`,
+        `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, reference, at, entity_type, entity_id)
+         values ($1, null, 'System (retention run)', 'system', $2, 'File test', 'TAG-1', $3, 'piece', 'TAG-1')`,
         [shop.shopId, kind, now],
       );
     }

@@ -46,6 +46,11 @@ export const AUDIT_ACTIONS = [
   'user_deactivated',
   'user_reactivated',
   'karigar_linked',
+  // EP-09 files: attach and detach on a piece, order copy, job or lead, intake, retention.
+  'file_attached',
+  'file_detached',
+  'po_attachment_stored',
+  'file_removed_by_retention',
   // EP-06-S7: transitions the prototype does not audit (working names).
   'lead_created',
   'lead_confirmed',
@@ -117,6 +122,10 @@ export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = {
   user_deactivated: 'User deactivated',
   user_reactivated: 'User reactivated',
   karigar_linked: 'Karigar linked',
+  file_attached: 'File attached',
+  file_detached: 'File detached',
+  po_attachment_stored: 'PO attachment stored',
+  file_removed_by_retention: 'File removed by retention',
   lead_created: 'Lead created',
   lead_confirmed: 'Lead confirmed',
   lead_work_started: 'Lead being worked',
@@ -163,6 +172,7 @@ export const AUDIT_ENTITY_TYPES = [
   'wish',
   'session',
   'job_run',
+  'order_copy',
 ] as const;
 
 export type AuditEntityType = (typeof AUDIT_ENTITY_TYPES)[number];
@@ -201,6 +211,11 @@ export const AUDIT_ACTION_ENTITY: Record<AuditAction, AuditEntityType> = {
   user_deactivated: 'user',
   user_reactivated: 'user',
   karigar_linked: 'user',
+  // A file entry is about the file's owner; the writer passes the owner's type.
+  file_attached: 'piece',
+  file_detached: 'piece',
+  po_attachment_stored: 'lead',
+  file_removed_by_retention: 'piece',
   lead_created: 'lead',
   lead_confirmed: 'lead',
   lead_work_started: 'lead',
