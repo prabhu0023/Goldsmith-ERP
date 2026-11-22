@@ -203,6 +203,7 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         phone: st.phone,
         email: `${(st.login || st.id).toLowerCase()}@example.com`,
         role: st.role,
+        code: st.id,
       });
     }
     for (const k of state.karigars) {
@@ -212,6 +213,7 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         email: `${k.id.toLowerCase()}@example.com`,
         role: 'karigar',
         karigar_id: ref('karigar', k.id),
+        code: k.id,
       });
     }
 

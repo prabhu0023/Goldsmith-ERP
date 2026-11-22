@@ -89,6 +89,7 @@ const NOUNS: Record<string, string> = {
   KarigarJob: 'job',
   PieceEdit: 'edit',
   MetalPool: 'metal pool',
+  User: 'user',
 };
 
 const nounOf = (entity: string): string => NOUNS[entity] ?? 'record';
