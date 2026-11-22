@@ -3,7 +3,11 @@
  * the real app with in-memory storage.
  */
 import { connect } from 'node:net';
-import { afterAll, beforeAll, expect, it } from 'vitest';
+import { Readable } from 'node:stream';
+import type { Request } from 'express';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { CUT_OFF_MESSAGE, FileCutOffError } from '../../src/files/file-limits.js';
+import { readBody } from '../../src/files/files-router.js';
 import { addPiece, describeDb } from '../db/db-test-helpers.js';
 import { leaksIn, SERVER_NOW } from '../support/api-harness.js';
 import { type FilesHarness, otherKarigar, startFilesHarness } from './files-harness.js';
@@ -229,5 +233,28 @@ describeDb('Create File upload (EP-09-S2, S3)', () => {
 
   it('logged no unexpected error', () => {
     expect(h.logged).toEqual([]);
+  });
+});
+
+/** A request body stream that sends `sent` bytes of a declared `declared`, then ends or aborts. */
+function partialRequest(declared: number, sent: number, ends: 'abort' | 'end'): Request {
+  const body = new Readable({ read() {} });
+  body.push(Buffer.alloc(sent, 0xff));
+  setImmediate(() => (ends === 'abort' ? body.destroy(new Error('aborted')) : body.push(null)));
+  return Object.assign(body, {
+    complete: false,
+    get: (name: string) => (name.toLowerCase() === 'content-length' ? String(declared) : undefined),
+  }) as unknown as Request;
+}
+
+describe('readBody (EP-09-S3 AC5, the route side of a cut-off upload)', () => {
+  it('refuses a body whose stream aborts before the declared size as cut off', async () => {
+    const read = readBody(partialRequest(1000, 400, 'abort'), { maxBytes: 10 * MB });
+    await expect(read).rejects.toBeInstanceOf(FileCutOffError);
+    await expect(read).rejects.toMatchObject({ code: 'validation', field: 'file', message: CUT_OFF_MESSAGE });
+  });
+
+  it('refuses a body that ends short of the declared size as cut off', async () => {
+    await expect(readBody(partialRequest(1000, 400, 'end'), { maxBytes: 10 * MB })).rejects.toBeInstanceOf(FileCutOffError);
   });
 });

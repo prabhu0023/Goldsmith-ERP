@@ -52,7 +52,7 @@ Owners and roles: piece → `photo`; order copy → `reference`; job → `bench`
 
 - Types come from the bytes, never the name: JPEG, PNG and WebP for every upload; PDF only with `purpose=po`. Anything else → 415 `validation` on `file`.
 - Over the limit → 413 with "The file is larger than 10 MB, the largest allowed.", decided on `Content-Length` before the body is read. No `Content-Length` → 411. A body cut off before its declared size → 400. Nothing is stored in any of these cases.
-- Images get a thumbnail (longest side 320 px) and a display copy (1600 px), JPEG quality 80, turned upright from the EXIF orientation, with no EXIF, GPS or camera metadata. A file the resizer cannot read keeps only its original (`resize_failed`) and every size serves the original. PDFs get no copies.
+- Images get a thumbnail (longest side 320 px) and a display copy (1600 px), JPEG quality 80, turned upright from the EXIF orientation, with no EXIF, GPS or camera metadata. A file the resizer cannot read, or one over 100 million pixels (`MAX_IMAGE_PIXELS`, refused before it is decoded), keeps only its original (`resize_failed`) and every size serves the original. PDFs get no copies.
 - Keys are `files/<32 random hex>` (+ `-thumb.jpg`, `-display.jpg`): never the file name or the uploader. Seed files use `seed/<sha256>`.
 
 ## Who may do what
@@ -66,7 +66,9 @@ Role checks live in `packages/api/src/files/file-roles.ts` (to swap for EP-05's 
 
 ## Retention (S12)
 
-The `file-retention` job (`file-retention.ts`, daily 03:00 Asia/Kolkata, see [jobs.md](jobs.md)) removes files past their class's keep period: it deletes the original, thumbnail and display objects, sets `stored_files.removed_at` (the row stays, so links answer `not_found`), deletes the attachments and writes one `file_removed_by_retention` audit entry per owner by `System (retention run)`. A file whose object delete fails is left as it is and tried again next run. Each run logs `[jobs] file-retention removed po=N standard=N failed=N`. Only the scheduler runs it; tests use the manual trigger `runFileRetention(pool, shop, deps, now)`.
+The `file-retention` job (`file-retention.ts`, daily 03:00 Asia/Kolkata, see [jobs.md](jobs.md)) removes files past their class's keep period: it deletes the original, thumbnail and display objects, sets `stored_files.removed_at` (the row stays, so links answer `not_found`), deletes the attachments and writes one `file_removed_by_retention` audit entry per owner by `System (retention run)`. A file whose object delete fails is left as it is and tried again next run. Each run logs `[jobs] file-retention removed po=N standard=N failed=N`. Only the scheduler runs it; tests use the manual trigger `runFileRetention(pool, shop, deps, now)`. One run removes at most 500 files (`RETENTION_BATCH`, oldest first); the next run continues.
+
+A file is class `po` when it is uploaded with `purpose=po`, uploaded onto a lead with `role=po`, or attached in role `po` later (`createAttachment`, intake); otherwise it is `standard`. A lead's PO image reused as an order copy reference (S8 AC3) is still a PO file, so it leaves the karigar's job when the lead's PO period ends.
 
 ## Dev seed (S13)
 
@@ -94,7 +96,7 @@ Tests are in `packages/api/test/files/` unless named otherwise.
 | S11 inbound PO file | AC1–AC5 | `inbound-file.test.ts` "S11 AC1" … "S11 AC5" |
 | S12 retention | AC1–AC5 | `retention.test.ts` "AC1, AC2, AC5", "AC3", "AC4", plus the scheduler run and "is not an operation any session can call" |
 | S13 dev seed | AC1, AC2, AC3, AC5 | `test/db/seed.test.ts` "EP-09-S13 AC1", "AC2", "AC3", "refuses a second run", "refuses to run in production" |
-| | AC4 bundle check | `npm run lint` (`scripts/check-bundled-images.mjs`; self check in its header) |
+| | AC4 bundle check | `test/scripts/check-bundled-images.test.ts` (runs the script on a temp tree: static, dynamic, alias, `import.meta.glob`, `new URL(…, import.meta.url)`, CSS `url()`); `npm run lint` runs the check on the repo |
 
 Schema rules (tenant keys, owner and role pairs, audit kinds): `files-schema.test.ts`.
 

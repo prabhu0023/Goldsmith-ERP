@@ -6,6 +6,7 @@
 import { contract, ROLE_IDS, refusalFor, roleMay } from '@goldsmith/shared';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { StubMailer } from '../../src/auth/account-mail.js';
+import { createFileHandlers } from '../../src/files/file-handlers.js';
 import { createOperationRegistry } from '../../src/pipeline/registry.js';
 import { createServiceHandlers } from '../../src/services/index.js';
 import { describeDb } from '../db/db-test-helpers.js';
@@ -14,11 +15,14 @@ import { type Harness, newSession, newUser, startHarness } from '../support/api-
 const OPERATIONS = Object.keys(contract);
 const CASES = OPERATIONS.flatMap((op) => ROLE_IDS.map((role) => [op, role] as const));
 
-it('registers every contract operation in production', () => {
-  const handlers = createServiceHandlers({
-    mailer: new StubMailer({ mailboxUrl: 'http://localhost/dev/mailbox', log: () => {} }),
-    appUrl: 'http://localhost:3000',
-  });
+it('registers every contract operation in production (with file storage configured)', () => {
+  const handlers = {
+    ...createServiceHandlers({
+      mailer: new StubMailer({ mailboxUrl: 'http://localhost/dev/mailbox', log: () => {} }),
+      appUrl: 'http://localhost:3000',
+    }),
+    ...createFileHandlers({ linkSecret: 'test-only-session-secret-0123456789abcdef', ttlSeconds: 300, log: () => {} }),
+  };
   const registry = createOperationRegistry(contract, handlers);
   expect(OPERATIONS.filter((op) => registry.get(op) === undefined)).toEqual([]);
 });

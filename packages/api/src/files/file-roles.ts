@@ -1,6 +1,7 @@
 /**
  * Who may do what with files (EP-09 plan decision 8). This is the only file that reads roles for
- * files, so it can be swapped for EP-05's permission list in one place.
+ * files, and it holds the karigar own-job scope (`checkOwnJob`, `attachmentsOfFile`), so both can
+ * be swapped for EP-05's permission list and karigar scope (EP-05-S3) in one place.
  *
  *   Staff, Owner: upload with or without a target; read any attached file.
  *   Karigar: upload only as a bench photo on an own job (no target -> forbidden, S2 AC4; another
@@ -47,6 +48,27 @@ export async function karigarIdOf(client: Queryable, shop: ShopContext, actor: A
   return rows[0]?.karigar_id ?? null;
 }
 
+/**
+ * One row per attachment of the file, with whether it is on an own job of karigar `karigarId`
+ * (the job itself, or the order copy of that job, S9); `own_job` is false when `karigarId` is null.
+ */
+export async function attachmentsOfFile(
+  client: Queryable,
+  shop: ShopContext,
+  fileId: string,
+  karigarId: string | null,
+): Promise<{ own_job: boolean }[]> {
+  const { rows } = await client.query<{ own_job: boolean }>(
+    `select coalesce(j.karigar_id = $3 or cj.karigar_id = $3, false) as own_job
+       from attachments a
+       left join karigar_jobs j on j.shop_id = a.shop_id and j.id = a.job_id
+       left join order_copies oc on oc.shop_id = a.shop_id and oc.id = a.order_copy_id
+       left join karigar_jobs cj on cj.shop_id = oc.shop_id and cj.id = oc.job_id
+      where a.shop_id = $1 and a.file_id = $2`,
+    [shop.shopId, fileId, karigarId],
+  );
+  return rows;
+}
 /** Not found unless job `jobCode` is assigned to the karigar `actor`. */
 async function checkOwnJob(client: Queryable, shop: ShopContext, actor: Actor, jobCode: string): Promise<void> {
   const karigarId = await karigarIdOf(client, shop, actor);

@@ -94,7 +94,7 @@ function idempotencyKeyOf(req: Request): string | undefined {
  * byte is read), more bytes than the limit (413, reading stops), or a body that ends before the
  * declared size (cut off).
  */
-async function readBody(req: Request, limits: FileLimits): Promise<Buffer> {
+export async function readBody(req: Request, limits: FileLimits): Promise<Buffer> {
   const header = req.get('content-length');
   if (header === undefined || !/^[0-9]+$/.test(header)) {
     throw new ValidationError('Content-Length', 'Send the file size in the Content-Length header.', 411);
@@ -184,7 +184,8 @@ export function createFilesRouter(deps: FilesRouterDeps): Router {
               prepared,
               {
                 originalName: query.name,
-                retentionClass: query.purpose === 'po' ? 'po' : 'standard',
+                // A file uploaded as a PO, or straight onto a lead as one, is a PO file (BR-09-3).
+                retentionClass: query.purpose === 'po' || target?.role === 'po' ? 'po' : 'standard',
                 uploadedBy: { id: actor.id, name: actor.name },
                 at,
               },

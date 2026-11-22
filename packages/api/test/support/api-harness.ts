@@ -20,6 +20,7 @@ import { allowAllPermissions, type PermissionCheck, type RateLimiter } from '../
 import type { Tx } from '../../src/pipeline/operation-transaction.js';
 import type { AnyHandler, HandlerMap, OperationCtx } from '../../src/pipeline/registry.js';
 import { type Clock, fixedClock } from '../../src/pipeline/server-clock.js';
+import { MemoryStorage } from '../../src/files/memory-storage.js';
 import { addKarigar, newShop, type TestShop, testPool } from '../db/db-test-helpers.js';
 import { createFixtureHandlers, testContract } from './fixture-operations.js';
 
@@ -44,7 +45,7 @@ export interface HarnessOptions {
   appEnv?: AppEnv;
   /**
    * Use the production contract, handlers and permission check instead of the fixture
-   * operations and allow-all permissions (EP-05).
+   * operations and allow-all permissions (EP-05), with file storage on (in memory, EP-09).
    */
   production?: boolean;
 }
@@ -219,7 +220,17 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
     sessions: createSessionResolver({ pool, clock, idleMinutes: config.sessionIdleMinutes }),
     clock,
     rateLimiter: options.rateLimiter,
-    ...(options.production ? {} : { permissions: options.permissions ?? allowAllPermissions, contract: testContract, handlers }),
+    ...(options.production
+      ? {
+          files: {
+            storage: new MemoryStorage(),
+            limits: { maxBytes: config.fileMaxBytes },
+            linkSecret: config.sessionSecret,
+            ttlSeconds: config.fileLinkTtlSeconds,
+            log: () => {},
+          },
+        }
+      : { permissions: options.permissions ?? allowAllPermissions, contract: testContract, handlers }),
     log: options.log ?? ((message, err) => logged.push({ message, err })),
     auth: {
       installationShop: async () => shop.shopId,

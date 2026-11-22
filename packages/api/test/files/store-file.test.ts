@@ -43,6 +43,14 @@ describe('image copies (EP-09-S4)', () => {
     const copies = await makeCopies(brokenJpeg());
     expect(copies.failed).toBe(true);
   });
+
+  it('answers failed, without decoding, for an image over the pixel limit', async () => {
+    const photo = await jpeg(400, 300);
+    expect((await makeCopies(photo, 400 * 300)).failed).toBe(false);
+    const copies = await makeCopies(photo, 400 * 300 - 1);
+    expect(copies).toMatchObject({ failed: true });
+    expect(copies.failed && copies.reason).toMatch(/pixel limit/i);
+  });
 });
 
 describeDb('storeFile (EP-09-S1, S4)', () => {

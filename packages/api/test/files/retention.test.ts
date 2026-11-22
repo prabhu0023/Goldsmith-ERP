@@ -164,6 +164,44 @@ describeDb('Run Retention (EP-09-S12)', () => {
     expect((await runsOf(h.pool, h.shop, 'file-retention')).map((r) => r.result)).toEqual(['ok']);
   });
 
+  const classOf = async (code: string): Promise<string> =>
+    (
+      await h.pool.query<{ retention_class: string }>(
+        'select retention_class from stored_files where shop_id = $1 and code = $2',
+        [h.shop.shopId, code],
+      )
+    ).rows[0].retention_class;
+
+  it('BR-09-3: a file uploaded onto a lead as a PO, or attached later as one, is a PO file without purpose=po', async () => {
+    const direct = await upload('PO-Rao.jpg', { ownerType: 'lead', ownerId: 'LD-2026-401', role: 'po' });
+    const later = await upload('PO-Das.jpg', {});
+    expect(await classOf(direct)).toBe('po');
+    expect(await classOf(later)).toBe('standard');
+    const res = await h.call(
+      'createAttachment',
+      { fileId: later, ownerType: 'lead', ownerId: 'LD-2026-401', role: 'po' },
+      h.staff.session,
+    );
+    expect(res.status).toBe(200);
+    expect(await classOf(later)).toBe('po');
+
+    expect(await runFileRetention(h.pool, h.shop, deps, after(41))).toEqual({ po: 2, standard: 0, failed: 0 });
+    expect((await fileRow(direct)).removed_at).toEqual(after(41));
+    expect((await fileRow(later)).removed_at).toEqual(after(41));
+  });
+
+  it('removes at most batchSize files in one run; the next run removes the rest', async () => {
+    const first = await uploadPo('PO-Batch-1.jpg');
+    const second = await uploadPo('PO-Batch-2.jpg');
+    const batched: FileRetentionDeps = { ...deps, batchSize: 1 };
+    expect(await runFileRetention(h.pool, h.shop, batched, after(42))).toEqual({ po: 1, standard: 0, failed: 0 });
+    expect((await fileRow(first)).removed_at).toEqual(after(42));
+    expect((await fileRow(second)).removed_at).toBeNull();
+    expect(await runFileRetention(h.pool, h.shop, batched, after(43))).toEqual({ po: 1, standard: 0, failed: 0 });
+    expect((await fileRow(second)).removed_at).toEqual(after(43));
+    expect(await runFileRetention(h.pool, h.shop, batched, after(44))).toEqual({ po: 0, standard: 0, failed: 0 });
+  });
+
   it('is not an operation any session can call', async () => {
     for (const user of [h.owner, h.staff]) {
       const res = await h.call('runFileRetention', {}, user.session);

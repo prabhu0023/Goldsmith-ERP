@@ -16,6 +16,11 @@ export interface FileLimits {
 export const THUMB_PX = 320;
 /** Longest side of the display copy, in pixels. */
 export const DISPLAY_PX = 1600;
+/**
+ * Largest image, in pixels, that copies are made from. A larger one (a small, highly compressed
+ * PNG can declare a huge size) is not decoded; it keeps only its original, as when resizing fails.
+ */
+export const MAX_IMAGE_PIXELS = 100_000_000;
 /** JPEG quality of both copies. */
 export const COPY_QUALITY = 80;
 

@@ -4,7 +4,8 @@
  * not_found). Attach and detach lock the owner row (`for update`), so two people attaching to the
  * same owner at once get distinct positions, and write their audit entry in the same transaction.
  * Positions count per owner and role (photo 1, 2, …); a detach leaves the others where they are.
- * Who may attach is decided in file-roles.ts, not here.
+ * Who may attach is decided in file-roles.ts, not here. Attaching a file in role `po` gives it
+ * retention class `po` (EP-09-S12).
  */
 import type { FileOwnerType, FileRole } from '@goldsmith/shared';
 import type pg from 'pg';
@@ -110,6 +111,13 @@ export async function attach(
        from attachments where shop_id = $1 and ${column} = $5 and role = $6`,
     [shop.shopId, code, input.file.id, owner.type, owner.id, input.role, by.id, by.name, at],
   );
+  // A file attached as a PO is kept only as long as PO files are (BR-09-3, EP-09-S12).
+  if (input.role === 'po') {
+    await tx.client.query(
+      `update stored_files set retention_class = 'po' where shop_id = $1 and id = $2 and retention_class <> 'po'`,
+      [shop.shopId, input.file.id],
+    );
+  }
   await writeFileAudit(tx.client, shop, by, {
     kind,
     at,

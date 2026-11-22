@@ -15,7 +15,7 @@ import type { Actor } from '@goldsmith/shared';
 import type pg from 'pg';
 import type { ShopContext } from '../db/shop-context.js';
 import { NotFoundError } from '../pipeline/api-errors.js';
-import { isKarigar, karigarIdOf, readsAllAttachedFiles } from './file-roles.js';
+import { attachmentsOfFile, isKarigar, karigarIdOf, readsAllAttachedFiles } from './file-roles.js';
 import type { FileLog } from './store-file.js';
 
 type Queryable = pg.Pool | pg.PoolClient;
@@ -56,15 +56,7 @@ export async function readableFile(
   const file = await fileByCode(client, shop.shopId, fileCode);
   if (!file || file.removed_at !== null) return refuse();
   const karigarId = isKarigar(actor) ? await karigarIdOf(client, shop, actor) : null;
-  const { rows } = await client.query<{ own_job: boolean }>(
-    `select coalesce(j.karigar_id = $3 or cj.karigar_id = $3, false) as own_job
-       from attachments a
-       left join karigar_jobs j on j.shop_id = a.shop_id and j.id = a.job_id
-       left join order_copies oc on oc.shop_id = a.shop_id and oc.id = a.order_copy_id
-       left join karigar_jobs cj on cj.shop_id = oc.shop_id and cj.id = oc.job_id
-      where a.shop_id = $1 and a.file_id = $2`,
-    [shop.shopId, file.id, karigarId],
-  );
+  const rows = await attachmentsOfFile(client, shop, file.id, karigarId);
   if (rows.length === 0) return file.uploaded_by === actor.id ? file : refuse();
   if (readsAllAttachedFiles(actor)) return file;
   if (karigarId !== null && rows.some((r) => r.own_job)) return file;

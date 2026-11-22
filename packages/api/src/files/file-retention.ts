@@ -9,6 +9,9 @@
  * attachments are deleted, and one `file_removed_by_retention` entry is written per owner by the
  * system actor "System (retention run)". The run ends with one log line of counts per class (AC5).
  *
+ * One run removes at most `batchSize` files (default RETENTION_BATCH, oldest first), so a run after
+ * a long gap does not hold locks and a connection for every due file; the next run continues.
+ *
  * Only the scheduler runs it (daily 03:00 Asia/Kolkata); there is no contract operation, so no
  * user session can call it. `runFileRetention` is the manual trigger for tests.
  */
@@ -34,10 +37,14 @@ export interface RetentionPeriods {
   standardDays?: number;
 }
 
+/** Most files one retention run removes. */
+export const RETENTION_BATCH = 500;
 export interface FileRetentionDeps {
   storage: ObjectStorage;
   retention: RetentionPeriods;
   log: FileLog;
+  /** Most files one run removes; default RETENTION_BATCH. */
+  batchSize?: number;
 }
 
 export interface RetentionCounts {
@@ -74,8 +81,14 @@ export async function applyRetention(
         and ((retention_class = 'po' and uploaded_at < $2)
           or (retention_class = 'standard' and $3::timestamptz is not null and uploaded_at < $3))
       order by uploaded_at, code
+      limit $4
       for update skip locked`,
-    [shop.shopId, cutoff(now, deps.retention.poDays), cutoff(now, deps.retention.standardDays)],
+    [
+      shop.shopId,
+      cutoff(now, deps.retention.poDays),
+      cutoff(now, deps.retention.standardDays),
+      deps.batchSize ?? RETENTION_BATCH,
+    ],
   );
   const actor: FileActor = { id: null, name: systemActorName(LABEL), role: 'system' };
   for (const file of due) {

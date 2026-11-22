@@ -40,6 +40,8 @@ const KARIGAR_OWN_JOB_OPS = [
   'handOver',
 ];
 
+/** File operations a karigar may call; the file service limits them to own jobs (EP-09). */
+const KARIGAR_OWN_JOB_FILE_OPS = ['readFileLinks', 'createAttachment', 'listAttachments'];
 describe('permission list (EP-05-S1)', () => {
   it('AC1: has exactly the three roles', () => {
     expect([...ROLE_IDS].sort()).toEqual(['karigar', 'owner', 'staff']);
@@ -63,6 +65,7 @@ describe('permission list (EP-05-S1)', () => {
     }
     for (const op of OWNER_EXTRAS) expect(staff, op).not.toContain(op);
     for (const op of KARIGAR_OWN_JOB_OPS) expect(staff, op).not.toContain(op);
+    for (const op of [...KARIGAR_OWN_JOB_FILE_OPS, 'deleteAttachment']) expect(staff, op).toContain(op);
   });
 
   it('AC3: owner may do everything staff may, plus the owner extras', () => {
@@ -72,9 +75,11 @@ describe('permission list (EP-05-S1)', () => {
   });
 
   it('AC4: karigar may only work their own jobs and raise a problem', () => {
-    expect([...ROLE_PERMISSIONS.karigar].sort()).toEqual([...KARIGAR_OWN_JOB_OPS, 'raiseProblem'].sort());
+    expect([...ROLE_PERMISSIONS.karigar].sort()).toEqual(
+      [...KARIGAR_OWN_JOB_OPS, ...KARIGAR_OWN_JOB_FILE_OPS, 'raiseProblem'].sort(),
+    );
     const reads = ROLE_PERMISSIONS.karigar.filter((op) => /^(list|read)/.test(op));
-    expect(reads.sort()).toEqual(['listMyJobs', 'readMyJob']);
+    expect(reads.sort()).toEqual(['listAttachments', 'listMyJobs', 'readFileLinks', 'readMyJob']);
   });
 
   it('AC5: every contract operation has a rule', () => {
