@@ -288,7 +288,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 - **Audit entry written:** No. Expiry is a passive end; the `end reason` on the session row records it.
 - **Data changes:** Updates `sessions.ended at` and `sessions.end reason` on first refusal. Optional cleanup of old ended sessions moves to EP-10 when it exists.
 - **UI reference:** Not yet designed (signed-out state).
-- **Non-functional checks:** Security: sessions expire (PRODUCTION-SCOPE §5). Time: expiry computed in UTC on the server clock. Open question: how long a session lasts, and whether it differs for the shop device, the owner and karigar phones (section 17). D6 is decided: karigars are online only, so offline use puts no longer-lifetime need on sessions.
+- **Non-functional checks:** Security: sessions expire (PRODUCTION-SCOPE §5). Time: expiry computed in UTC on the server clock. Open question: how long a session lasts, and whether it differs for the shop device, the owner and karigar phones (section 17). D6 is decided: karigars are online only, so D6 puts no extra session-lifetime need on EP-04.
 - **Depends on:** EP-04-S5, EP-03-S3
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 

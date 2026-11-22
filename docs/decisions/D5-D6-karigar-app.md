@@ -5,7 +5,7 @@ The owner decided two things for the karigar phone app (EP-20).
 - **D5, karigar app: a React web app.** It uses the same stack as the staff app (React) and is opened in the phone's browser. It is not a native app. The owner did not ask for a PWA, and did not ask for installing it to the home screen.
 - **D6, offline for karigars: online only.** v1 has no offline mode. There is no offline queue, no offline cache of jobs, no sync operation and no replay of queued updates.
 When the connection drops:
-- The app shows the connection-lost, reconnecting state (EP-08-S10, EP-08-S11). The owner required this: "show reconnecting if the internet drops".
+- The app shows the connection-lost, reconnecting state (EP-08-S10, EP-08-S11). The connection-lost state stays in v1.
 - Actions that need the server are disabled with a reason until the connection returns. Staff and karigar actions are refused with a reason. Nothing is queued.
 - What is already on screen stays visible and read-only, marked as possibly out of date.
 - When the connection returns, the live channel catches up (EP-07-S7). The server answers by sequence number if the gap is inside the retention window. Otherwise the client refetches everything.
@@ -31,7 +31,7 @@ When the connection drops:
 - **EP-20 Karigar portal:** title no longer says PWA; the file name and number are unchanged. Offline queue, sync status and install are out of scope. FR-20-12 and FR-20-13 are Deferred. EP-20-S12a and EP-20-S12b are Deferred. Epic acceptance criterion 3 and the weak-signal risk describe the online-only behaviour.
 - **EP-08 Front-end production foundation:** the offline state stays. The D6 question is answered: no offline queue anywhere, and the web app is read-only while disconnected.
 - **EP-07 Live channel:** the D6 question is answered by catch-up by sequence number or a full refetch. No offline queue assumption.
-- **EP-04 Authentication:** offline sign-in for karigars is not in v1. Offline use puts no longer-lifetime need on sessions.
+- **EP-04 Authentication:** offline sign-in for karigars is not in v1. Karigars are online only, so D6 puts no extra session-lifetime need on EP-04.
 - **EP-24, EP-41, EP-44 and EP-40:** wording that assumed an offline queue, an install step or a PWA now says online only or web app.
 ## Still open
 - Should the karigar app be installable to the home screen? It needs only a web app manifest and icons, no offline support (EP-20 section 17).
