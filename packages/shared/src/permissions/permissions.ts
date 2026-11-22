@@ -77,6 +77,7 @@ const KARIGAR_ONLY = 'Only a karigar can do this, on their own job.';
 const USERS_REFUSED = 'Only the owner can add staff or change a role.';
 const RULES_REFUSED = 'Only the owner can change the rules.';
 const JOB_RUNS_REFUSED = 'Only the owner can see and retry job runs.';
+const AUDIT_REFUSED = 'Only the owner can read the security log.';
 
 const everyone = { roles: ['staff', 'owner', 'karigar'], refusal: DEFAULT_REFUSAL } as const;
 const shopFloor = { roles: SHOP_FLOOR, refusal: KARIGAR_REFUSED } as const;
@@ -140,6 +141,8 @@ export const OPERATION_RULES = {
   readReports: ownerOnly('Only the owner can read the reports.'),
   listJobRuns: ownerOnly(JOB_RUNS_REFUSED),
   retryJobRun: ownerOnly(JOB_RUNS_REFUSED),
+  listAuditEntries: ownerOnly(AUDIT_REFUSED),
+  readAuditEntry: ownerOnly(AUDIT_REFUSED),
   createUser: usersRule,
   resendActivation: usersRule,
   updateUserProfile: usersRule,

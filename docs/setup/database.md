@@ -38,6 +38,7 @@ Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 
 | `0013_code_counters` | `code_counters (shop_id, prefix, last_value)`: per-shop counters behind `nextCode()` (EP-03-S7) |
 | `0014_idempotency_records` | `idempotency_records (key, operation, user_id, result_id, created_at, expires_at)`, unique `(key, operation, user_id)`: the created id of each create sent with an `Idempotency-Key` (EP-03-S8); expires after `IDEMPOTENCY_RETENTION_HOURS` (default 24) |
 | `0015_idempotency_input_hash` | `idempotency_records.input_hash`: SHA-256 of the validated input; a repeat with the same key and a different hash is refused as `conflict` (EP-03-S8, PR #3 review) |
+| `20261122T1732_ep06_audit_log` | `audit_entries` gains `entity_type`, `entity_id`, `reason`, `token_reference`; checks on entity type and the widened kind list; entity present on every new row (`not valid`, older rows keep nulls); indexes by entity, actor and kind; role `goldsmith_app` with only `SELECT, INSERT` on `audit_entries` (EP-06, [audit.md](audit.md)) |
 
 Conventions every table follows:
 

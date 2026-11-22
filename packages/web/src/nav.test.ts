@@ -10,4 +10,9 @@ describe('navFor (EP-05-S11 AC2)', () => {
   it("the owner's rail has it", () => {
     expect(ids('owner')).toContain('staff-directory');
   });
+  it('EP-06-S12 AC3: the staff rail has no Security log; the owner rail has it', () => {
+    expect(ids('staff')).not.toContain('security');
+    expect(ids('karigar')).not.toContain('security');
+    expect(ids('owner')).toContain('security');
+  });
 });
