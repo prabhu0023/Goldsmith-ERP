@@ -12,7 +12,7 @@ import { describe, expect, it } from 'vitest';
 
 const API_ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
-const LIVE_INTERNALS = /(?:^|\/)live\/(hub|publisher|ws-transport)(?:\.js)?$/;
+const LIVE_INTERNALS = /(?:^|\/)live\/(hub|publisher|sse-transport)(?:\.js)?$/;
 const OUTBOX_WRITERS = new Set(['src/jobs/outbox.ts', 'src/live/emit-live-event.ts']);
 const OUTBOX_INSERT = /\binto\s+outbox_events\b/i;
 const IMPORT = /^\s*import\s+(?:type\s+)?(.*?)\s+from\s+['"]([^'"]+)['"]/;

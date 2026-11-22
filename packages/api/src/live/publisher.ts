@@ -46,7 +46,7 @@ export interface LivePublisherOptions {
   log: ErrorLog;
   /** Rows stamped per transaction. */
   batchSize?: number;
-  /** Stamp only these shops' rows (tests share one database); every shop when unset. */
+  /** Stamp and prune only these shops' rows (tests share one database); every shop when unset. */
   shopIds?: readonly string[];
 }
 
@@ -182,6 +182,7 @@ export function createLivePublisher({
       `with gone as (
          delete from outbox_events
           where live_seq is not null and published_at < $1
+            and ($2::uuid[] is null or shop_id = any($2::uuid[]))
           returning shop_id, live_seq
        ), highest as (
          select shop_id, max(live_seq) as seq, count(*) as n from gone group by shop_id
@@ -190,7 +191,7 @@ export function createLivePublisher({
            from highest h where s.shop_id = h.shop_id
        )
        select coalesce(sum(n), 0) as deleted from highest`,
-      [cutoff],
+      [cutoff, shopIds ?? null],
     );
     return Number(rows[0].deleted);
   }
