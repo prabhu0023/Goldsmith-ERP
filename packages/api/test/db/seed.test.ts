@@ -73,7 +73,6 @@ describeDb('prototype seed (EP-02-S13)', () => {
       customers: 8,
       customer_history: childCount(state.customers, (c) => c.history),
       pieces: 92,
-      piece_photos: childCount(state.pieces, (p) => p.photos),
       piece_edits: state.edits.length,
       parcels: 5,
       parcel_weighings: childCount(state.parcels, (p) => p.weighings),
@@ -84,7 +83,9 @@ describeDb('prototype seed (EP-02-S13)', () => {
       lead_fields: childCount(state.leads, (l) => l.fields),
       karigar_jobs: 9,
       order_copies: state.orderCopies.length,
-      order_copy_images: childCount(state.orderCopies, (o) => o.refImages),
+      // EP-09: the seed images become stored files with attachments in a later step (S13).
+      stored_files: 0,
+      attachments: 0,
       metal_pools: 1,
       pool_entries: state.pool.ledger.length,
       problems: state.problems.length,

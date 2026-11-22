@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { gramsToUnits, unitsToGrams } from '@goldsmith/shared';
 import type pg from 'pg';
 import { afterAll, beforeAll, expect, it } from 'vitest';
-import { addPiece, columnsOf, describeDb, expectPgError, newShop, testPool } from './db-test-helpers.js';
+import { addPiece, addStoredFile, columnsOf, describeDb, expectPgError, newShop, testPool } from './db-test-helpers.js';
 
 const units = (g: string) => {
   const r = gramsToUnits(g);
@@ -96,18 +96,31 @@ describeDb('pieces, photos and edits (EP-02-S5)', () => {
     await expectPgError(addEdit(shop.shopId, id, { field: 'huid', beforeUnits: 1, afterUnits: 2 }), '23514');
   });
 
-  it('reads photos back in position order', async () => {
+  it('reads photo attachments back in position order (EP-09)', async () => {
     const shop = await newShop(pool);
     const id = await addPiece(pool, shop, 'TAG-5');
-    await pool.query(
-      `insert into piece_photos (shop_id, piece_id, position, storage_key)
-       values ($1, $2, 2, 'c.jpg'), ($1, $2, 0, 'a.jpg'), ($1, $2, 1, 'b.jpg')`,
-      [shop.shopId, id],
+    const [a, b, c] = [
+      await addStoredFile(pool, shop, 'FILE-2026-00001'),
+      await addStoredFile(pool, shop, 'FILE-2026-00002'),
+      await addStoredFile(pool, shop, 'FILE-2026-00003'),
+    ];
+    const attach = (code: string, fileId: string, position: number) =>
+      pool.query(
+        `insert into attachments (shop_id, code, file_id, owner_type, piece_id, role, position, attached_by_name, attached_at)
+         values ($1, $2, $3, 'piece', $4, 'photo', $5, 'Test', now())`,
+        [shop.shopId, code, fileId, id, position],
+      );
+    await attach('AT-2026-00001', c, 3);
+    await attach('AT-2026-00002', a, 1);
+    await attach('AT-2026-00003', b, 2);
+    await expectPgError(attach('AT-2026-00004', a, 4), '23505'); // same file twice as a photo
+    await expectPgError(attach('AT-2026-00005', await addStoredFile(pool, shop, 'FILE-2026-00004'), 2), '23505');
+    const { rows } = await pool.query(
+      `select f.code from attachments a join stored_files f on f.id = a.file_id
+        where a.piece_id = $1 order by a.position`,
+      [id],
     );
-    const { rows } = await pool.query('select storage_key from piece_photos where piece_id = $1 order by position', [
-      id,
-    ]);
-    expect(rows.map((r) => r.storage_key)).toEqual(['a.jpg', 'b.jpg', 'c.jpg']);
+    expect(rows.map((r) => r.code)).toEqual(['FILE-2026-00001', 'FILE-2026-00002', 'FILE-2026-00003']);
   });
 
   it('keeps tag numbers and HUIDs unique per shop', async () => {

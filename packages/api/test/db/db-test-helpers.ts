@@ -105,6 +105,21 @@ export async function addKarigar(client: Queryable, shop: TestShop, code = 'KG-0
   return res.rows[0].id;
 }
 
+/** Insert a stored file (EP-09; a JPEG uploaded by the system unless overridden); returns its id. */
+export async function addStoredFile(
+  client: Queryable,
+  shop: TestShop,
+  code = 'FILE-2026-00001',
+  values: { contentType?: string; retentionClass?: string } = {},
+): Promise<string> {
+  const res = await client.query<{ id: string }>(
+    `insert into stored_files (shop_id, code, storage_key, original_name, content_type, size_bytes,
+       uploaded_by_name, uploaded_at, retention_class)
+     values ($1, $2, $3, 'photo.jpg', $4, 1024, 'Test', now(), $5) returning id`,
+    [shop.shopId, code, `files/${randomBytes(16).toString('hex')}`, values.contentType ?? 'image/jpeg', values.retentionClass ?? 'standard'],
+  );
+  return res.rows[0].id;
+}
 /**
  * Expect the promise to fail with the given PostgreSQL error code: 23514 check, 23503 foreign
  * key, 23505 unique, 23502 not null, P0001 raised exception.

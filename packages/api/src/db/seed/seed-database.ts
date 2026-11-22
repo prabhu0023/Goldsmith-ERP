@@ -29,7 +29,6 @@ export const SEEDED_TABLES = [
   'customer_history',
   'stock_outs',
   'pieces',
-  'piece_photos',
   'piece_edits',
   'parcels',
   'parcel_weighings',
@@ -40,7 +39,8 @@ export const SEEDED_TABLES = [
   'lead_fields',
   'karigar_jobs',
   'order_copies',
-  'order_copy_images',
+  'stored_files',
+  'attachments',
   'metal_pools',
   'pool_entries',
   'problems',
@@ -288,9 +288,6 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         note: p.note,
         value_inr: p.valueINR,
       });
-      for (const [position, photo] of p.photos.entries()) {
-        await ins('piece_photos', { piece_id: pieceId, position, storage_key: photo });
-      }
     }
 
     for (const e of state.edits) {
@@ -415,7 +412,6 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         tolerance_units: units(j.toleranceG, `job ${j.id} tolerance`),
         gold_issued_units: units(j.goldIssuedG, `job ${j.id} gold issued`),
         note: j.note,
-        ref_image_key: j.refImage,
         stopped: j.stopped,
         parcel_id: refOrNull('parcel', j.parcelId),
         bench_note: j.benchNote,
@@ -443,9 +439,6 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         created_by_name: o.createdBy,
         created_at: time(o.createdAt),
       });
-      for (const [position, image] of o.refImages.entries()) {
-        await ins('order_copy_images', { order_copy_id: orderCopyId, position, storage_key: image });
-      }
     }
 
     // The balance is the integer sum of the ledger, so the two always agree.
