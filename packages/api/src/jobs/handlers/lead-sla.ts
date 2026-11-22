@@ -10,6 +10,7 @@
 import { type LeadSlaCounting, type LeadState, leadSlaDueAt, slaRunning } from '@goldsmith/shared';
 import type pg from 'pg';
 import type { ShopContext } from '../../db/shop-context.js';
+import { emitLiveEvent } from '../../live/emit-live-event.js';
 import { writeJobAudit } from '../job-audit.js';
 import type { JobDefinition } from '../job-definition.js';
 import { cancelJob } from '../job-store.js';
@@ -174,11 +175,10 @@ export const leadSlaBreachJob: JobDefinition = {
     // The setting may have changed since the timer was set: the current one decides.
     const due = new Date(leadSlaDueAt(lead.arrived_at.getTime(), await slaSettings(tx.client, ctx.shop)));
     if (ctx.now < due) return;
-    await tx.client.query('update leads set sla_breached_at = $3, sla_breach_notified = true where shop_id = $1 and id = $2', [
-      ctx.shop.shopId,
-      lead.id,
-      due,
-    ]);
+    const updated = await tx.client.query<{ version: number }>(
+      'update leads set sla_breached_at = $3, sla_breach_notified = true where shop_id = $1 and id = $2 returning version',
+      [ctx.shop.shopId, lead.id, due],
+    );
     const slaBreachedAt = due.toISOString();
     await writeJobAudit(tx.client, ctx.shop, BREACH_LABEL, {
       kind: 'lead_marked_late',
@@ -189,5 +189,11 @@ export const leadSlaBreachJob: JobDefinition = {
       after: { slaBreachedAt },
     });
     await emitOutboxEvent(tx.client, ctx.shop, 'lead.sla_passed', { leadId: lead.code, slaBreachedAt }, ctx.now);
+    // "Lead arrived / passed its SLA" to staff and owner screens (EP-07-S11).
+    await emitLiveEvent(tx, ctx.shop, 'lead.alert', {
+      entityId: lead.code,
+      entityVersion: updated.rows[0].version,
+      at: ctx.now,
+    });
   },
 };
