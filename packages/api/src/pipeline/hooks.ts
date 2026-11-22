@@ -1,6 +1,8 @@
 /**
  * Pipeline hooks later epics fill in: the rate limiter (EP-03-S11, values in EP-39) and the
- * permission check (EP-03-S3 rule, rules in EP-05). The defaults allow everything.
+ * permission check (EP-03-S3 rule, rules in EP-05). The rate limiter default allows everything.
+ * The app's permission default is matrixPermissionCheck (auth/permission-check.ts), driven by the
+ * shared permission list; allowAllPermissions is kept for tests that exercise the pipeline alone.
  */
 import type { Actor } from '@goldsmith/shared';
 
