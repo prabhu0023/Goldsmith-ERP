@@ -30,8 +30,8 @@ describeDb('users and roles schema (EP-05-S4 to S14)', () => {
 
   const addAudit = (shopId: string, actorId: string, kind: string) =>
     pool.query(
-      `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary)
-       values ($1, $2, 'Sanjay Seth', 'owner', $3, 'User change')`,
+      `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, entity_type, entity_id)
+       values ($1, $2, 'Sanjay Seth', 'owner', $3, 'User change', 'user', gen_random_uuid()::text)`,
       [shopId, actorId, kind],
     );
 

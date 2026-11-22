@@ -28,6 +28,7 @@ export const ENV_VARS = [
   { name: 'IDEMPOTENCY_RETENTION_HOURS', required: false },
   { name: 'CLOUD_REGION', required: false },
   { name: 'DATABASE_URL', required: false },
+  { name: 'APP_DATABASE_URL', required: false },
   { name: 'DATABASE_CONNECT_TIMEOUT_MS', required: false },
   { name: 'DATABASE_QUERY_TIMEOUT_MS', required: false },
   { name: 'STORAGE_BUCKET', required: false },
@@ -113,6 +114,11 @@ export interface Config {
   cloudRegion?: string;
   /** Optional until the epic that uses them (database EP-02, storage, WhatsApp, email, LLM). */
   databaseUrl?: string;
+  /**
+   * The api's own connection as role goldsmith_app (FU-001, EP-06-S1), lane applied. Migrations,
+   * seed and reset keep databaseUrl. Unset: the api uses databaseUrl (refused outside development).
+   */
+  appDatabaseUrl?: string;
   /** Connect / slot-wait timeout of the api's database pool, ms. */
   databaseConnectTimeoutMs: number;
   /** Statement and query timeout of the api's database pool, ms. */
@@ -220,6 +226,7 @@ export function loadConfig(env: Env = process.env): Config {
   const databaseConnectTimeoutMs = positiveMs('DATABASE_CONNECT_TIMEOUT_MS', DEFAULT_DATABASE_CONNECT_TIMEOUT_MS);
   const databaseQueryTimeoutMs = positiveMs('DATABASE_QUERY_TIMEOUT_MS', DEFAULT_DATABASE_QUERY_TIMEOUT_MS);
   const databaseUrl = read('DATABASE_URL');
+  const appDatabaseUrl = read('APP_DATABASE_URL');
   const jobsEnabledText = read('JOBS_ENABLED');
   if (jobsEnabledText !== undefined && jobsEnabledText !== 'true' && jobsEnabledText !== 'false') {
     problems.push('JOBS_ENABLED must be true or false');
@@ -276,6 +283,7 @@ export function loadConfig(env: Env = process.env): Config {
     idempotencyRetentionHours,
     cloudRegion: read('CLOUD_REGION'),
     databaseUrl: databaseUrl === undefined ? undefined : laneDatabaseUrl(databaseUrl, lane),
+    appDatabaseUrl: appDatabaseUrl === undefined ? undefined : laneDatabaseUrl(appDatabaseUrl, lane),
     databaseConnectTimeoutMs,
     databaseQueryTimeoutMs,
     storageBucket: read('STORAGE_BUCKET'),

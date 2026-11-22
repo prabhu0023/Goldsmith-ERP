@@ -137,7 +137,12 @@ describeDb('System actor audit (EP-10-S12)', () => {
         client,
         shop,
         { id: ownerId, name: 'Sanjay Seth', role: 'owner' },
-        { kind: 'job_run_retried', at: new Date('2026-11-01T08:00:00Z'), summary: 'Retried run RUN-2026-00001' },
+        {
+          kind: 'job_run_retried',
+          at: new Date('2026-11-01T08:00:00Z'),
+          summary: 'Retried run RUN-2026-00001',
+          reference: 'RUN-2026-00001',
+        },
       ),
     );
     await addLead(pool, shop, { code: 'LD-2026-933', arrivedAt: '2026-11-01T09:00:00Z' });

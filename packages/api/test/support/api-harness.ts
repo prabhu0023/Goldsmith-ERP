@@ -21,7 +21,7 @@ import type { Tx } from '../../src/pipeline/operation-transaction.js';
 import type { AnyHandler, HandlerMap, OperationCtx } from '../../src/pipeline/registry.js';
 import { type Clock, fixedClock } from '../../src/pipeline/server-clock.js';
 import { MemoryStorage } from '../../src/files/memory-storage.js';
-import { addKarigar, newShop, type TestShop, testPool } from '../db/db-test-helpers.js';
+import { addKarigar, appRolePool, newShop, type TestShop, testPool } from '../db/db-test-helpers.js';
 import { createFixtureHandlers, testContract } from './fixture-operations.js';
 
 /** The fixed server time every harness app uses. */
@@ -45,7 +45,8 @@ export interface HarnessOptions {
   appEnv?: AppEnv;
   /**
    * Use the production contract, handlers and permission check instead of the fixture
-   * operations and allow-all permissions (EP-05), with file storage on (in memory, EP-09).
+   * operations and allow-all permissions (EP-05), with file storage on (in memory, EP-09). The app then connects as goldsmith_app, the
+   * role the api runs as (EP-06, FU-001); `pool` (setup and checks) stays the owner.
    */
   production?: boolean;
 }
@@ -215,9 +216,10 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
     API_PORT: '0',
     ...(options.maxBodyBytes === undefined ? {} : { API_MAX_BODY_BYTES: String(options.maxBodyBytes) }),
   });
+  const appPool = options.production ? appRolePool(options.poolSize ?? 10) : pool;
   const app = createApp(config, {
-    pool,
-    sessions: createSessionResolver({ pool, clock, idleMinutes: config.sessionIdleMinutes }),
+    pool: appPool,
+    sessions: createSessionResolver({ pool: appPool, clock, idleMinutes: config.sessionIdleMinutes }),
     clock,
     rateLimiter: options.rateLimiter,
     ...(options.production
@@ -281,6 +283,7 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
     },
     async close() {
       await new Promise<void>((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
+      if (appPool !== pool) await appPool.end();
       await pool.end();
     },
   };

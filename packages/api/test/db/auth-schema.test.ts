@@ -53,14 +53,14 @@ describeDb('sign-in schema (EP-04-S1, S3, S5, S7, S8, S9, S13, S14)', () => {
   it('accepts a system actor with no user for an auth kind, and refuses a staff actor with no user', async () => {
     const { shopId } = await newShop(pool);
     await pool.query(
-      `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, detail)
-       values ($1, null, 'System', 'system', 'sessions_ended', 'Sessions ended', '{}')`,
+      `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, detail, entity_type, entity_id)
+       values ($1, null, 'System', 'system', 'sessions_ended', 'Sessions ended', '{}', 'user', gen_random_uuid()::text)`,
       [shopId],
     );
     await expectPgError(
       pool.query(
-        `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, detail)
-         values ($1, null, 'Rajesh Verma', 'staff', 'signed_in', 'Rajesh Verma signed in', '{}')`,
+        `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, detail, entity_type, entity_id)
+         values ($1, null, 'Rajesh Verma', 'staff', 'signed_in', 'Rajesh Verma signed in', '{}', 'session', gen_random_uuid()::text)`,
         [shopId],
       ),
       '23514',

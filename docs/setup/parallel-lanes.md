@@ -32,6 +32,8 @@ APP_URL=http://localhost:3001
 
 Leave `DATABASE_URL`, `TEST_DATABASE_URL`, `API_PORT` and `WEB_PORT` as they are in the main checkout's `.env` (local docker-compose values: `DATABASE_URL=postgres://postgres:postgres@localhost:5432/goldsmith_dev`, `TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5432/goldsmith_test`, ports empty). Lane b is the same with `.worktrees/lane-b`, `LANE=b` and port 3002.
 
+`APP_DATABASE_URL` (the api's `goldsmith_app` connection, docs/setup/database.md) takes the lane like `DATABASE_URL`: keep the main checkout's value, `postgres://goldsmith_app:localapp@localhost:5432/goldsmith_dev`.
+
 Create the lane's databases, then load them:
 
 ```sh

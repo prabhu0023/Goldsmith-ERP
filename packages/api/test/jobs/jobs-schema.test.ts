@@ -25,8 +25,8 @@ describeDb('EP-10 background jobs schema', () => {
     );
   const addAudit = (values: { actorId: string | null; actorRole: string | null; kind?: string }) =>
     pool.query(
-      `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, reference, at)
-       values ($1, $2, 'System (SLA breach job)', $3, $4, 'Lead marked late', 'LD-2026-001', $5)`,
+      `insert into audit_entries (shop_id, actor_id, actor_name, actor_role, kind, summary, reference, at, entity_type, entity_id)
+       values ($1, $2, 'System (SLA breach job)', $3, $4, 'Lead marked late', 'LD-2026-001', $5, 'lead', 'LD-2026-001')`,
       [shop.shopId, values.actorId, values.actorRole, values.kind ?? 'lead_marked_late', now],
     );
   // One shop has one live owner (EP-05-S9), so the owner is created once and reused.

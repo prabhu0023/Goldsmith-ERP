@@ -6,7 +6,10 @@
  */
 import type { RoleId } from '@goldsmith/shared';
 import type pg from 'pg';
-import { maskEmail, maskPhone } from './mask.js';
+import { appendAudit } from '../audit/audit-writer.js';
+import { redactSecrets } from '../audit/redact.js';
+/** Moved to audit/redact.ts (EP-06); re-exported so existing imports keep working. */
+export { redactSecrets } from '../audit/redact.js';
 type Queryable = pg.Pool | pg.PoolClient;
 /** Who acted: a signed-in user, the system (expiry, server-only calls) or first-time setup. */
 export type AuditActor = { kind: 'user'; id: string; name: string; role: RoleId } | { kind: 'system' } | { kind: 'setup' };
@@ -39,40 +42,19 @@ export interface AuthAuditEntry {
   summary: string;
   detail: AuthAuditDetail;
 }
-const SECRET_KEY = /password|token|link|secret|code/i;
-const PHONE_KEY = /phone/i;
-const EMAIL_KEY = /email/i;
-/** A copy of `value` without secret-like keys at any depth, with phones and emails masked. */
-export function redactSecrets(value: unknown): unknown {
-  if (Array.isArray(value)) return value.map(redactSecrets);
-  if (value === null || typeof value !== 'object' || value instanceof Date) return value;
-  const out: Record<string, unknown> = {};
-  for (const [key, child] of Object.entries(value)) {
-    if (SECRET_KEY.test(key)) continue;
-    if (typeof child === 'string' && PHONE_KEY.test(key)) out[key] = maskPhone(child);
-    else if (typeof child === 'string' && EMAIL_KEY.test(key)) out[key] = maskEmail(child);
-    else out[key] = redactSecrets(child);
-  }
-  return out;
-}
-const ACTOR_COLUMNS = {
-  system: { id: null, name: 'System', role: 'system' },
-  setup: { id: null, name: 'Setup', role: 'setup' },
+const WRITER_ACTORS = {
+  system: { kind: 'system', name: 'System' },
+  setup: { kind: 'setup' },
 } as const;
 export async function writeAuthAudit(client: Queryable, entry: AuthAuditEntry): Promise<void> {
-  const actor = entry.actor.kind === 'user' ? entry.actor : ACTOR_COLUMNS[entry.actor.kind];
-  await client.query(
-    `insert into audit_entries (shop_id, at, actor_id, actor_name, actor_role, kind, summary, detail)
-     values ($1, $2, $3, $4, $5, $6, $7, $8)`,
-    [
-      entry.shopId,
-      entry.at,
-      actor.id,
-      actor.name,
-      actor.role,
-      entry.action,
-      entry.summary,
-      JSON.stringify(redactSecrets(entry.detail)),
-    ],
-  );
+  await appendAudit(client, {
+    shopId: entry.shopId,
+    at: entry.at,
+    actor: entry.actor.kind === 'user' ? entry.actor : WRITER_ACTORS[entry.actor.kind],
+    kind: entry.action,
+    entityType: entry.detail.entity,
+    entityId: entry.detail.entityId,
+    summary: entry.summary,
+    detail: JSON.stringify(redactSecrets(entry.detail)),
+  });
 }

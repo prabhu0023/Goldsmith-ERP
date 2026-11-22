@@ -21,8 +21,10 @@ describeDb('audit entries (EP-02-S11)', () => {
     ).rows[0].id;
   const addEntry = (shopId: string, actorId: string, values: { kind?: string; role?: string } = {}) =>
     pool.query<{ id: string }>(
-      `insert into audit_entries (shop_id, code, actor_id, actor_name, actor_role, kind, summary, detail, reference)
-       values ($1, 'AU-001', $2, 'Sanjay Seth', $3, $4, 'Edit applied', 'Gross 48.61 to 48.65', 'TAG-8841') returning id`,
+      `insert into audit_entries (shop_id, code, actor_id, actor_name, actor_role, kind, summary, detail, reference,
+                                  entity_type, entity_id)
+       values ($1, 'AU-001', $2, 'Sanjay Seth', $3, $4, 'Edit applied', 'Gross 48.61 to 48.65', 'TAG-8841', 'edit', 'ED-001')
+       returning id`,
       [shopId, actorId, values.role ?? 'owner', values.kind ?? 'edit_applied'],
     );
 

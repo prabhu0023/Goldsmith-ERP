@@ -14,7 +14,7 @@
  */
 import { createHash, randomUUID } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
-import { DEMO_BASE, type FileOwnerType, type FileRole, gramsToUnits } from '@goldsmith/shared';
+import { AUDIT_ACTION_ENTITY, DEMO_BASE, type FileOwnerType, type FileRole, gramsToUnits } from '@goldsmith/shared';
 import type pg from 'pg';
 import type { AppEnv } from '../../config.js';
 import type { ObjectStorage } from '../../files/object-storage.js';
@@ -588,6 +588,8 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         actor_name: a.actorName,
         actor_role: a.actorRole,
         kind: a.kind,
+        entity_type: AUDIT_ACTION_ENTITY[a.kind],
+        entity_id: a.ref,
         summary: a.summary,
         detail: a.detail,
         reference: a.ref,

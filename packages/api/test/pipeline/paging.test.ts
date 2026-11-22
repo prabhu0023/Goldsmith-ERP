@@ -16,8 +16,9 @@ describeDb('cursor paging (EP-03-S9)', () => {
   /** Insert audit entries `entry-<from>`..`entry-<to - 1>`; every 5 share one `at`, with microseconds. */
   const addEntries = (from: number, to: number, base = '2026-11-20 09:00:00+00') =>
     h.pool.query(
-      `insert into audit_entries (shop_id, at, actor_id, actor_name, actor_role, kind, summary)
-       select $1, $2::timestamptz + (i / 5) * interval '1.000001 second', $3, 'Rajesh Verma', 'staff', 'stock_out', 'entry-' || i
+      `insert into audit_entries (shop_id, at, actor_id, actor_name, actor_role, kind, summary, entity_type, entity_id)
+       select $1, $2::timestamptz + (i / 5) * interval '1.000001 second', $3, 'Rajesh Verma', 'staff', 'stock_out', 'entry-' || i,
+              'stock_out', 'SO-' || i
          from generate_series($4::int, $5::int - 1) as i`,
       [h.shop.shopId, base, h.userId, from, to],
     );
@@ -113,8 +114,8 @@ describeDb('cursor paging (EP-03-S9)', () => {
     await addEntries(500, 505, '2026-11-21 09:00:00+00');
     const lastAt = first.body.items.at(-1)?.at as string;
     await h.pool.query(
-      `insert into audit_entries (shop_id, at, actor_id, actor_name, actor_role, kind, summary)
-       values ($1, $2, $3, 'Rajesh Verma', 'staff', 'stock_out', 'entry-tie')`,
+      `insert into audit_entries (shop_id, at, actor_id, actor_name, actor_role, kind, summary, entity_type, entity_id)
+       values ($1, $2, $3, 'Rajesh Verma', 'staff', 'stock_out', 'entry-tie', 'stock_out', 'SO-tie')`,
       [h.shop.shopId, lastAt, h.userId],
     );
     const second = await list({ pageSize: 20, cursor: first.body.nextCursor });

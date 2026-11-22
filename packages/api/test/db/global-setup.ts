@@ -4,7 +4,10 @@
  * The database name must end in `_test` (test-db-guard.ts), or the run stops before touching it.
  * With STORAGE_ENDPOINT set it also ensures the test bucket (<bucket>-test, storage-config.ts) and
  * empties it; without it the S3 storage tests are skipped locally, and CI must set it.
+ * The api's role goldsmith_app (FU-001) gets LOGIN first, with APP_DATABASE_URL's credentials or
+ * the local defaults, so tests can connect as it (db-test-helpers.ts appRolePool).
  */
+import { credentialsOf, ensureAppLoginRole } from '../../src/db/app-role.js';
 import { createPool } from '../../src/db/connection.js';
 import { migrate } from '../../src/db/migrator.js';
 import { testDatabaseUrl } from '../../src/lane.js';
@@ -23,6 +26,7 @@ export async function setup(): Promise<void> {
   assertWipeableTestDatabase(url);
   const pool = createPool(url, 1);
   try {
+    await ensureAppLoginRole(pool, credentialsOf(process.env.APP_DATABASE_URL));
     await pool.query('drop schema if exists public cascade; create schema public;');
     await migrate(pool, new URL('../../migrations/', import.meta.url));
   } finally {

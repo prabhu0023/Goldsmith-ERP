@@ -72,13 +72,14 @@ describeDb('schema conventions (EP-02-S3, D7)', () => {
     expect(times.filter((c) => c.data_type !== 'timestamp with time zone')).toEqual([]);
   });
 
-  it('keeps no plain-text secret: text columns named like password/token/secret end _hash or _ref', async () => {
+  it('keeps no plain-text secret: text columns named like password/token/secret end _hash, _ref or _reference', async () => {
     // Timestamps and flags (token_issued_at, require_edit_token) cannot hold a secret value.
+    // audit_entries.token_reference holds a token's record id, never the token (EP-06-S4).
     const textual = new Set(['text', 'character varying', 'character', 'bytea']);
     const secretLike = (await columns()).filter(
       (c) => /password|token|secret/.test(c.column_name) && textual.has(c.data_type),
     );
-    expect(secretLike.filter((c) => !/_(hash|ref)$/.test(c.column_name))).toEqual([]);
+    expect(secretLike.filter((c) => !/_(hash|ref|reference)$/.test(c.column_name))).toEqual([]);
   });
 
   it('makes every foreign key deferrable', async () => {
