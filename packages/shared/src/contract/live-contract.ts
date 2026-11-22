@@ -9,6 +9,10 @@
  * seconds as its heartbeat; an entry whose heartbeats stop expires on the server. leaveParcelPresence
  * on leaving the screen. Joining also subscribes the stream to `parcel:<code>`, where the presence
  * lists travel.
+ *
+ * The browser makes these calls on its own (heartbeats, badge reads after an event, re-subscribing
+ * after a reconnect), so none of them extends the session's idle expiry (`extendsSession: false`,
+ * EP-04-S12); the session is still checked on each.
  */
 import { z } from 'zod';
 import { okResult } from './contract-fields.js';
@@ -27,6 +31,7 @@ export const liveOperations = {
     input: z.object({ connectionId, channel }),
     result: okResult,
     errors: ERROR_CODES,
+    extendsSession: false,
   }),
   unsubscribeLiveChannel: defineOperation({
     name: 'unsubscribeLiveChannel',
@@ -34,6 +39,7 @@ export const liveOperations = {
     input: z.object({ connectionId, channel }),
     result: okResult,
     errors: ERROR_CODES,
+    extendsSession: false,
   }),
   joinParcelPresence: defineOperation({
     name: 'joinParcelPresence',
@@ -45,6 +51,7 @@ export const liveOperations = {
       others: z.array(z.object({ userId: z.string(), name: z.string() })),
     }),
     errors: ERROR_CODES,
+    extendsSession: false,
   }),
   leaveParcelPresence: defineOperation({
     name: 'leaveParcelPresence',
@@ -52,6 +59,7 @@ export const liveOperations = {
     input: z.object({ connectionId, parcelId }),
     result: okResult,
     errors: ERROR_CODES,
+    extendsSession: false,
   }),
   /**
    * The rail badge counts for the caller's role (EP-07-S9), from server data by the shared
@@ -71,5 +79,6 @@ export const liveOperations = {
       }),
     }),
     errors: ERROR_CODES,
+    extendsSession: false,
   }),
 } as const;

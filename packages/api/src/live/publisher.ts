@@ -6,7 +6,8 @@
  *     and only raised, so sequence numbers never go backwards or repeat, even with two publishers
  *     (two API processes) stamping at once. A stamped row is never stamped again after a restart.
  *   - tail(): the stamped rows of a shop after a sequence number, for delivery and replay.
- *   - prune(): forget rows older than the replay window; a resume from before it gets refetch_all.
+ *   - prune(): clear the live columns of rows older than the replay window (the outbox row and its
+ *     payload stay for other consumers); a resume from before it gets refetch_all.
  * Rows whose topic is not in the catalogue are never stamped (S11 AC3).
  */
 import { LIVE_CATALOGUE, type LiveCatalogue, type LiveEnvelope, liveEntryFor, liveEnvelopeSchema } from '@goldsmith/shared';
@@ -55,7 +56,10 @@ export interface LivePublisher {
   tail(shopId: string, afterSeq: number, limit?: number): Promise<LiveRow[]>;
   /** The envelope a client gets, or null (logged) when the row does not make a valid one. */
   toEnvelope(row: LiveRow): LiveEnvelope | null;
-  /** Delete live rows published more than `windowMs` ago; returns how many went. */
+  /**
+   * Take live rows published more than `windowMs` ago out of replay by clearing their live
+   * columns (the outbox row and payload stay); returns how many went.
+   */
   prune(windowMs: number): Promise<number>;
   streamState(shopId: string): Promise<StreamState>;
 }
@@ -178,12 +182,20 @@ export function createLivePublisher({
 
   async function prune(windowMs: number): Promise<number> {
     const cutoff = new Date(clock.now().getTime() - windowMs);
+    // Only the live columns are cleared: the row, its topic and payload stay for the outbox's
+    // other consumers (EP-11, audit), and a cleared row is never stamped again (entity_type null).
     const { rows } = await pool.query<{ deleted: string }>(
-      `with gone as (
-         delete from outbox_events
+      `with picked as (
+         select id, shop_id, live_seq from outbox_events
           where live_seq is not null and published_at < $1
             and ($2::uuid[] is null or shop_id = any($2::uuid[]))
-          returning shop_id, live_seq
+          for update
+       ), gone as (
+         update outbox_events o
+            set live_seq = null, entity_type = null, entity_id = null, entity_version = null, audience = null
+           from picked p
+          where o.id = p.id
+          returning p.shop_id, p.live_seq
        ), highest as (
          select shop_id, max(live_seq) as seq, count(*) as n from gone group by shop_id
        ), raised as (

@@ -13,6 +13,9 @@
  * - A refused open, or `closed` with session_ended / access_changed, asks checkSession(); when the
  *   session is gone the status becomes signed_out and the client stops (S7 AC5).
  * - While a parcel is joined, joinParcelPresence repeats every presenceHeartbeatMs (S8).
+ * - A join (not a heartbeat) reports the answer's `others` through onPresence, so a user's second
+ *   tab, whose join changes nobody's list and so is not broadcast, still shows who is there. A
+ *   presence message that arrived while the join was on its way is newer and wins.
  *
  * D6 (offline karigar phone) stays open: there is no offline queue; a long gap ends in refetch_all.
  */
@@ -37,7 +40,7 @@ export interface LiveOpsCaller {
   call(
     op: LiveClientOperation,
     input: { connectionId: string; channel: string } | { connectionId: string; parcelId: string },
-  ): Promise<{ ok: boolean }>;
+  ): Promise<{ ok: boolean; others?: LivePresenceOther[] }>;
 }
 
 export interface LiveTimers {
@@ -131,6 +134,20 @@ export function createLiveClient(opts: LiveClientOptions): LiveClient {
   const call = (op: LiveClientOperation, input: Parameters<LiveOpsCaller['call']>[1]) => {
     void ops.call(op, input).catch(() => {});
   };
+  /** Presence messages received per parcel, so a join answer older than one of them is dropped. */
+  const presenceSeen = new Map<string, number>();
+  /** Join a parcel's presence and show the answer's list, unless something newer came meanwhile. */
+  const join = (connectionId: string, parcelId: string) => {
+    const seen = presenceSeen.get(parcelId) ?? 0;
+    void ops
+      .call('joinParcelPresence', { connectionId, parcelId })
+      .then((answer) => {
+        if (!answer.ok || !answer.others || connId !== connectionId || !parcels.has(parcelId)) return;
+        if ((presenceSeen.get(parcelId) ?? 0) !== seen) return;
+        presences.emit(parcelId, answer.others);
+      })
+      .catch(() => {});
+  };
 
   const closeStream = () => {
     generation += 1;
@@ -196,7 +213,7 @@ export function createLiveClient(opts: LiveClientOptions): LiveClient {
         attempt = 0;
         setStatus('open');
         for (const channel of channels) call('subscribeLiveChannel', { connectionId: msg.connectionId, channel });
-        for (const parcelId of parcels) call('joinParcelPresence', { connectionId: msg.connectionId, parcelId });
+        for (const parcelId of parcels) join(msg.connectionId, parcelId);
         return;
       }
       case 'event': {
@@ -213,6 +230,7 @@ export function createLiveClient(opts: LiveClientOptions): LiveClient {
         if (seq === null || msg.seq > seq) seq = msg.seq;
         return;
       case 'presence':
+        presenceSeen.set(msg.parcelId, (presenceSeen.get(msg.parcelId) ?? 0) + 1);
         presences.emit(msg.parcelId, msg.others);
         return;
       case 'closed':
@@ -274,7 +292,7 @@ export function createLiveClient(opts: LiveClientOptions): LiveClient {
     joinPresence(parcelId) {
       if (parcels.has(parcelId)) return;
       parcels.add(parcelId);
-      if (connId !== null) call('joinParcelPresence', { connectionId: connId, parcelId });
+      if (connId !== null) join(connId, parcelId);
       syncHeartbeat();
     },
     leavePresence(parcelId) {

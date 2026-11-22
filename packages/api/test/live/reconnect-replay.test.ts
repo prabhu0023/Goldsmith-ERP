@@ -73,10 +73,20 @@ describeDb('EP-07-S7 reconnect and catch up', () => {
     const c = await h.connect(rajesh.token);
     const old = c.hello?.seq as number;
     c.close();
-    await h.emit('lead.alert', { entityId: 'LD-2026-730', entityVersion: 1 });
+    await h.emit('lead.alert', { entityId: 'LD-2026-730', entityVersion: 1, payload: { leadId: 'LD-2026-730' } });
     await waitEntity(watcher, 'LD-2026-730');
     h.clock.advance(6 * 60_000); // past the 5-minute test window
     expect(await h.live.prune()).toBeGreaterThan(0);
+    // Pruning takes the row out of replay only: the outbox row and its payload stay for other consumers.
+    const kept = await h.pool.query(
+      `select topic, payload, live_seq, entity_type, published_at is not null as published
+         from outbox_events where shop_id = $1 and payload->>'leadId' = 'LD-2026-730'`,
+      [h.shop.shopId],
+    );
+    expect(kept.rows).toEqual([
+      { topic: 'lead.alert', payload: { leadId: 'LD-2026-730' }, live_seq: null, entity_type: null, published: true },
+    ]);
+    expect(await h.live.prune()).toBe(0);
     const back = await h.connect(rajesh.token, { lastEventId: old });
     await back.waitFor((m) => m.type === 'refetch_all');
     await sleep(100);

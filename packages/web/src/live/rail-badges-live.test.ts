@@ -138,14 +138,20 @@ describe('EP-07-S9 live rail badges (web)', () => {
     expect(fetches).toBe(1);
   });
 
-  it('merge keeps the in-memory value for every badge that is not server-backed', () => {
-    expect(SERVER_BACKED_BADGES).toEqual(['leads']);
+  it('no badge is server-backed until its screen reads server data (EP-08): every badge keeps its in-memory value', () => {
+    expect(SERVER_BACKED_BADGES).toEqual([]);
     const memory = { decisions: 3, leads: 0, parcels: 2, stock: 42 };
     const server = { decisions: 9, leads: 2, parcels: 7, stock: 1 };
-    expect(mergeRailBadges(memory, server)).toEqual({ decisions: 3, leads: 2, parcels: 2, stock: 42 });
+    expect(mergeRailBadges(memory, server)).toEqual(memory);
+  });
+
+  it('merge takes the server count only for a server-backed badge the role shows', () => {
+    const memory = { decisions: 3, leads: 0, parcels: 2, stock: 42 };
+    const server = { decisions: 9, leads: 2, parcels: 7, stock: 1 };
+    expect(mergeRailBadges(memory, server, ['leads'])).toEqual({ decisions: 3, leads: 2, parcels: 2, stock: 42 });
     // No server answer yet: the in-memory counts as they are.
-    expect(mergeRailBadges(memory, {})).toEqual(memory);
+    expect(mergeRailBadges(memory, {}, ['leads'])).toEqual(memory);
     // A role without the badge does not gain it.
-    expect(mergeRailBadges({}, server)).toEqual({});
+    expect(mergeRailBadges({}, server, ['leads'])).toEqual({});
   });
 });

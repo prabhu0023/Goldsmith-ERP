@@ -37,7 +37,7 @@ The transport sits behind one interface on each side, so it can change without t
 
 ## Live operations
 
-All have the rule `shopFloor` (staff and owner), so a karigar is refused `forbidden`. A `connectionId` of another user's stream, or of a stream not open on this server, answers `not_found`.
+All have the rule `shopFloor` (staff and owner), so a karigar is refused `forbidden`. A `connectionId` of another user's stream, or of a stream not open on this server, answers `not_found`. The browser makes these calls on its own, so all of them are declared `extendsSession: false`: the router checks and row-locks the session but does not extend its idle expiry, and an unattended tab still signs out after the idle time (EP-04-S12). The stream itself never extends the session either.
 
 | Operation | Input | Effect |
 | --- | --- | --- |
@@ -83,25 +83,26 @@ Holds were removed from v1, so there is no "piece held" event. A G26 event is on
 - **Source:** EP-10's `outbox_events` table. A live row is an outbox row with `entity_type` set (migration `20261122T1710_ep07_live_channel.sql` adds `insert_order`, `entity_type`, `entity_id`, `entity_version`, `audience`, `live_seq` and table `live_streams`). A rolled-back operation leaves no row, so nothing is ever published for it (S1).
 - **Stamp:** the publisher selects unsent rows of known topics in commit order (`for update skip locked`), raises the shop's `live_streams.last_seq` and gives each row its `live_seq`, and sets `published_at`. The counter never goes backwards, so sequences are strictly increasing per shop (S2). A receiver sees gaps where the filter dropped events.
 - **Wake-up:** a commit that recorded a live event wakes the loop at once; a 500 ms poll covers commits made by other processes.
-- **Replay window:** sent rows are kept 5 minutes (the story's test value; the real length is an open question). A resume whose `since` is older than `live_streams.pruned_through`, newer than `last_seq`, or more than 1000 events behind gets one `refetch_all` instead.
+- **Replay window:** sent rows can be replayed for 5 minutes (the story's test value; the real length is an open question). Pruning then clears the row's live columns (`live_seq`, entity columns, `audience`) and raises `pruned_through`; the outbox row, its topic and payload stay for the outbox's other consumers (EP-11, audit). A resume whose `since` is older than `live_streams.pruned_through`, newer than `last_seq`, or more than 1000 events behind gets one `refetch_all` instead.
 - **Closing (S3 AC4, S10):** a session sweep every 1 s closes streams whose session was signed out or expired (`closed session_ended`). Deactivating or re-roling a user delivers `user.access_changed` to that user's streams and then closes them (`closed access_changed`), so the event always arrives first.
 
 ## Presence (S8)
 
-Presence lives in memory in the api process, keyed by stream and parcel. Joining shows the user to everyone else on the parcel; an entry without a heartbeat for 30 s expires; closing the stream removes it at once; a user's own entry is never shown to them. A presence heartbeat is an API call, so it extends the session like any other call.
+Presence lives in memory in the api process, keyed by stream and parcel. Joining shows the user to everyone else on the parcel; an entry without a heartbeat for 30 s expires; closing the stream removes it at once; a user's own entry is never shown to them. A heartbeat does not extend the session (`extendsSession: false`). A join is broadcast only when it changes someone's list, so the client also shows the `others` of its own join answer: a user's second tab on a parcel sees who is there at once.
 
 ## The client
 
 `createLiveClient` (`packages/shared/src/live/live-client.ts`) is shared by the web app and the api tests:
 
 - exactly one stream at a time; `hello` records the `connectionId`, re-sends the entity subscriptions and parcel joins for the new stream;
+- a join (not a heartbeat) reports the answer's `others` through `onPresence`, unless a `presence` message for that parcel arrived while the join was on its way;
 - an event whose `seq` is not above the last one received is dropped, so a resumed stream never delivers an event twice;
 - a dropped stream reopens with `since` = the last seq after 0.5, 1, 2, 4, 8, then 15 s (capped) for as long as the screen is open;
 - a refused open, or `closed` with `session_ended` / `access_changed`, asks the server for the session (`readCurrentSession`); when it is gone the status becomes `signed_out` and the web goes to sign-in (`AuthGate`'s recheck). An unreachable server keeps the client retrying.
 
 `createLiveEntityCache` (`live-entity-cache.ts`) keeps records current: an event for a version the client already holds, or an older one, does nothing; a newer one refetches the record once and stores what the read returned, never a value from the event.
 
-**Rail badges (S9).** `useLiveRailBadges(role)` (`packages/web/src/live/rail-badges-live.ts`) reads `readRailBadges` on mount, after `refetch_all`, and once 300 ms after the last event of a burst whose catalogue entry has `refreshesBadges`. A karigar has no rail: nothing is fetched. Only `SERVER_BACKED_BADGES = ['leads']` is shown from the server, because leads are the only rail data the server writes today (EP-03 `markLeadLost`, the EP-10 SLA job). Decisions, Parcels in and Showroom stock stay on the in-memory store until EP-08: pieces, parcels, edits, problems and scrap have no server write path yet, and server counts would freeze badges the prototype's actions change. The web selector `railBadges` and the server use the same `railBadgeCounts` rule (`packages/shared/src/domain/rail-badge-rules.ts`).
+**Rail badges (S9).** `useLiveRailBadges(role)` (`packages/web/src/live/rail-badges-live.ts`) reads `readRailBadges` on mount, after `refetch_all`, and once 300 ms after the last event of a burst whose catalogue entry has `refreshesBadges`. A karigar has no rail: nothing is fetched. A badge is shown from the server only once its web screen reads server data, and none does yet, so `SERVER_BACKED_BADGES` is empty and every badge keeps its in-memory value until EP-08 (FU-012); while it is empty the hook reads nothing. Leads is not server-backed either: the web Leads screen and its actions (`LeadReview`, `ConvertLead`) still run on the in-memory store and judge lateness by the demo clock, so a server Leads count would disagree with the screen. Pieces, parcels, edits, problems and scrap have no server write path yet. The server read (`readRailBadges`), the debounce and the karigar rule are in place and tested; a screen epic adds its badge key to the list. The web selector `railBadges` and the server use the same `railBadgeCounts` rule (`packages/shared/src/domain/rail-badge-rules.ts`).
 
 ## Timings
 
@@ -144,6 +145,7 @@ Client 1 (Deepak) triggers "Piece billed" for TAG-8841; client 2 (Rajesh, the sh
 - **Replay window** length is not decided (5 minutes until it is).
 - **Screens:** `stock` and the other screens still read the in-memory store, so they do not consume live events yet (EP-08); no piece read operation exists for the refetch (EP-22). The tests drive the entity cache with a stand-in read.
 - **Multi-process:** presence per process; an optional LISTEN/NOTIFY wake-up would cut cross-process latency below the 500 ms poll.
+- **Stream admission:** `GET /api/live` and the dev emit stub do not go through the rate limiter, and there is no cap on streams per session (FU-016).
 
 ## Acceptance criteria map (S1–S12)
 

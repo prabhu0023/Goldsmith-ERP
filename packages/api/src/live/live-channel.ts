@@ -6,7 +6,8 @@
  *   A commit that recorded a live event wakes the loop at once (onLiveCommit); the poll covers
  *   commits made by other processes.
  *   sweep: close streams whose session ended or expired; expire presence without heartbeats.
- *   prune: forget sent rows older than the replay window.
+ *   prune: take sent rows older than the replay window out of replay (live columns cleared; the
+ *         outbox row and payload stay).
  * Events fan out to every API process, because each one tails the table. Presence is per process.
  */
 import { LIVE_CATALOGUE, type LiveCatalogue } from '@goldsmith/shared';

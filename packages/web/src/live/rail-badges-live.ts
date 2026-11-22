@@ -2,10 +2,13 @@
  * Live rail badges (EP-07-S9). A catalogue event with `refreshesBadges` triggers one
  * readRailBadges call after the burst it belongs to; the counts themselves come from the server.
  *
- * Only the badges whose data the server already writes are shown from the server: Leads (EP-03
- * markLeadLost, EP-10 SLA job). Decisions, Parcels in and Showroom stock stay on the in-memory
- * prototype store until EP-08, because pieces, parcels, edits, problems and scrap have no server
- * write path yet; server counts for them would freeze badges that the prototype's actions change.
+ * A badge is shown from the server only once its web screen reads server data. None does yet, so
+ * SERVER_BACKED_BADGES is empty and every badge keeps its in-memory value until EP-08 (FU-012):
+ * the Leads screen and its actions (LeadReview, ConvertLead) still run on the in-memory store and
+ * judge lateness by the demo clock, so a server Leads count would disagree with the screen; pieces,
+ * parcels, edits, problems and scrap have no server write path at all. While the list is empty
+ * useLiveRailBadges reads nothing. The server read, the debounce and the karigar rule are in place
+ * and tested, so a screen epic only adds its badge key here.
  */
 import { LIVE_CATALOGUE, type LiveClient, type LiveEnvelope, type LiveTimers, type RailBadges, type RoleId } from '@goldsmith/shared';
 import { useContext, useEffect, useState } from 'react';
@@ -14,8 +17,8 @@ import type { BadgeKey } from '../store/selectors';
 import { browserTimers } from './browser-stream';
 import { LiveContext } from './use-live';
 
-/** The badges shown from server counts; the rest keep the in-memory value. */
-export const SERVER_BACKED_BADGES: readonly BadgeKey[] = ['leads'];
+/** The badges shown from server counts; the rest keep the in-memory value. Empty until EP-08. */
+export const SERVER_BACKED_BADGES: readonly BadgeKey[] = [];
 
 const BADGE_EVENT_NAMES: ReadonlySet<string> = new Set(
   Object.values(LIVE_CATALOGUE)
@@ -27,9 +30,13 @@ const BADGE_EVENT_NAMES: ReadonlySet<string> = new Set(
 export const refreshesBadges = (event: Pick<LiveEnvelope, 'name'>): boolean => BADGE_EVENT_NAMES.has(event.name);
 
 /** The in-memory badges with the server's count for each server-backed badge the role shows. */
-export function mergeRailBadges(memory: RailBadges, server: RailBadges): RailBadges {
+export function mergeRailBadges(
+  memory: RailBadges,
+  server: RailBadges,
+  serverBacked: readonly BadgeKey[] = SERVER_BACKED_BADGES,
+): RailBadges {
   const out: RailBadges = { ...memory };
-  for (const key of SERVER_BACKED_BADGES) {
+  for (const key of serverBacked) {
     const value = server[key];
     if (key in memory && value !== undefined) out[key] = value;
   }
@@ -133,6 +140,8 @@ export function useLiveRailBadges(role: RoleId): RailBadges {
   const [server, setServer] = useState<RailBadges>({});
   useEffect(() => {
     setServer({});
+    // No badge is server-backed yet: nothing to read.
+    if (SERVER_BACKED_BADGES.length === 0) return;
     return startLiveRailBadges({ role, live, fetchCounts: readRailBadges, onCounts: setServer, timers: browserTimers });
   }, [role, live]);
   return role === 'karigar' ? {} : server;

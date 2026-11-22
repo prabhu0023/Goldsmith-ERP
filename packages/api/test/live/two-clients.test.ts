@@ -81,7 +81,14 @@ describeDb('EP-07-S12 two browsers receive each other\'s events', () => {
     const client = createLiveClient({
       source: stream.source,
       timers,
-      ops: { call: async (op, input) => ({ ok: (await h.call(op, input, token)).status === 200 }) },
+      ops: {
+        call: async (op, input) => {
+          const res = await h.call(op, input, token);
+          if (res.status !== 200) return { ok: false };
+          const others = res.body.others as LivePresenceOther[] | undefined;
+          return others ? { ok: true, others } : { ok: true };
+        },
+      },
       checkSession: async () => {
         if (stream.isCut()) throw new Error('network is cut');
         const res = await fetch(`${h.base}/api/auth/readCurrentSession`, {

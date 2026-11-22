@@ -292,4 +292,46 @@ describe('EP-07 shared live client', () => {
     await t.advance(60_000);
     expect(joins()).toHaveLength(count);
   });
+
+  it("S8: a second tab shows the join answer's list, though its join changes nobody's list and is not broadcast", async () => {
+    const t = fakeTimers();
+    const src = fakeSource(t.now);
+    const answers: Array<(others: Array<{ userId: string; name: string }>) => void> = [];
+    const client = createLiveClient({
+      source: src.source,
+      timers: t.timers,
+      checkSession: async () => true,
+      ops: {
+        call: (op) =>
+          op === 'joinParcelPresence'
+            ? new Promise((resolve) => answers.push((others) => resolve({ ok: true, others })))
+            : Promise.resolve({ ok: true }),
+      },
+    });
+    const presence: Array<[string, string[]]> = [];
+    client.onPresence((p, others) => presence.push([p, others.map((x) => x.name)]));
+    client.start();
+    src.last().send(hello('c-tab2', 1));
+    client.joinPresence('BATCH-2026-044');
+    answers.shift()?.([{ userId: 'u-d', name: 'Deepak Rao' }]);
+    await flush();
+    expect(presence).toEqual([['BATCH-2026-044', ['Deepak Rao']]]);
+    // Heartbeat answers do not report: the broadcasts carry later changes.
+    await t.advance(10_000);
+    answers.shift()?.([{ userId: 'u-x', name: 'Stale Answer' }]);
+    await flush();
+    expect(presence).toHaveLength(1);
+    // A rejoin after a reconnect reports, unless a presence message arrived while it was on its way.
+    src.last().h.onError('dropped');
+    await t.advance(500);
+    src.last().send(hello('c-tab2b', 1));
+    src.last().send({ type: 'presence', parcelId: 'BATCH-2026-044', others: [] });
+    answers.shift()?.([{ userId: 'u-d', name: 'Deepak Rao' }]);
+    await flush();
+    expect(presence).toEqual([
+      ['BATCH-2026-044', ['Deepak Rao']],
+      ['BATCH-2026-044', []],
+    ]);
+    client.stop();
+  });
 });

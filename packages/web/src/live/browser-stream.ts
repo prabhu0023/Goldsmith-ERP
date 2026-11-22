@@ -11,6 +11,7 @@
 import {
   LIVE_STREAM_PATH,
   type LiveOpsCaller,
+  type LivePresenceOther,
   type LiveServerMessageType,
   type LiveStreamSource,
   type LiveTimers,
@@ -67,7 +68,13 @@ export function browserStreamSource(
 
 /** The live operations through the ordinary `POST /api/ops` pipeline. */
 export const browserLiveOps: LiveOpsCaller = {
-  call: async (op, input) => ({ ok: (await opsCall(op, input as never)).ok }),
+  call: async (op, input) => {
+    const answer = await opsCall(op, input as never);
+    if (!answer.ok) return { ok: false };
+    // A join answers who else is on the parcel; the shared client shows it (S8).
+    const others = (answer.data as { others?: LivePresenceOther[] }).others;
+    return others ? { ok: true, others } : { ok: true };
+  },
 };
 
 export const browserTimers: LiveTimers = {

@@ -23,6 +23,13 @@ export interface OperationDef<
   input: z.ZodObject<Shape>;
   result: R;
   errors: readonly ErrorCode[];
+  /**
+   * False for a call the browser makes on its own, not on a user action (the live channel's
+   * operations, EP-07: badge reads, presence heartbeats, re-subscribing after a reconnect): the
+   * server still checks and row-locks the session but does not extend its idle expiry, so an
+   * unattended tab still times out (EP-04-S12). Unset: the call extends the session.
+   */
+  extendsSession?: false;
 }
 
 export type Contract = Record<string, OperationDef>;
