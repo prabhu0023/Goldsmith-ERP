@@ -24,6 +24,8 @@ export * from './domain/shop-time.js';
 export * from './domain/sign-in-rules.js';
 export * from './domain/weights.js';
 export * from './live/live-catalogue.js';
+export * from './live/live-client.js';
+export * from './live/live-entity-cache.js';
 export * from './live/live-envelope.js';
 export * from './live/live-protocol.js';
 export * from './permissions/permissions.js';
