@@ -18,7 +18,7 @@ Restores must keep the append-only audit log whole.
 
 - Owner: approves the recovery targets and the backup region; is told when a restore is needed and what window of work was lost.
 - Staff: not involved, except re-entering work done after the restore point if a restore happens.
-- Karigar: not involved, except resending status updates queued after the restore point.
+- Karigar: not involved, except resending status updates sent after the restore point.
 - System: runs scheduled backups, keeps the continuous log for point-in-time restore, copies file storage, checks backups, and alerts on a failed backup.
 
 ## 4. In scope

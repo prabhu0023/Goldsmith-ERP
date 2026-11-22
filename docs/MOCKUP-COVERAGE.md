@@ -66,7 +66,7 @@ features no epic owns, and several epics need screens that were never drawn.
 | EP-17 Customer master | Customer directory and customer detail |
 | EP-18 Metal pool | Pool balance and ledger page |
 | EP-19 Karigar jobs | Job tracker board with overdue lane ("See tracker" on 13) |
-| EP-20 Karigar portal | "Gold" and "Me" tabs; offline / sync status |
+| EP-20 Karigar portal | "Gold" and "Me" tabs (no offline or sync status screen in v1, D6) |
 | EP-21 Parcel intake | Parcels-in list; tray entry |
 | EP-35 Reports | Everything (never designed) |
 | EP-45 Shop setup wizard | Everything (never designed): setup key, shop details, owner account and "check your email", scales, basic settings, invite, finish |

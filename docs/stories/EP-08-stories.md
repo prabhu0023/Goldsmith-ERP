@@ -258,13 +258,13 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
   2. Given he is offline, when he reads the screen, then the data already shown stays visible and is marked as possibly out of date.
   3. Given he is offline, when he tries any staff or owner action, then nothing is queued to send later.
   4. Given the network returns, when the connection is back, then the actions are enabled again and the reconnect catch-up of EP-08-S10 runs.
-  5. Given Lakshmi Devi on the karigar app `k-jobs`, when she is offline, then the same offline state shows; any karigar queueing is left to EP-20.
+  5. Given Lakshmi Devi on the karigar app `k-jobs`, when she is offline, then the same offline state shows, her step buttons are disabled with the reason, and nothing is queued (D6 decided: online only).
 - **Rules enforced on the server:** None new. With no network nothing reaches the server; every action is still checked there once online.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** No. Nothing is saved while offline.
 - **Data changes:** None in the product database. Uses live client status `offline`.
 - **UI reference:** Not yet designed (offline state, epic section 12).
-- **Non-functional checks:** Availability: offline is always shown, never a silent failure. Accessibility: the disabled reason is readable at 14 px or more and announced. Open decision D6: whether any karigar offline behaviour reaches the web app; this story makes the web read-only offline. Open question: whether staff actions should ever be queued offline; this story refuses them with a reason.
+- **Non-functional checks:** Availability: offline is always shown, never a silent failure. Accessibility: the disabled reason is readable at 14 px or more and announced. D6 is decided: online only, with no offline queue anywhere. The web app, staff and karigar alike, is read-only while disconnected, and actions are refused with a reason, not queued.
 - **Depends on:** EP-08-S10
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -465,9 +465,9 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 Copied from the epic's section 17. Not answered here.
 
 - D3: WebSocket or Server-Sent Events from the Node API? It decides how the live hooks connect and how "reconnecting" is detected. (EP-08-S8, S10)
-- D6: does any of the karigar offline behaviour reach the web app, or is offline on the web read-only as proposed here? (EP-08-S11)
+- D6 is decided: online only, no offline queue anywhere. The web app, including the karigar app, is read-only while disconnected. (EP-08-S11)
 - D7 is decided: one shop, no branches; the shell shows the shop name and has no branch switch (EP-08-S12, S14, S16).
 - How long may cached data be shown while reconnecting before the screen hides it? (EP-08-S10)
 - After how long without a response does a loading state turn into a read error? (EP-08-S3, S4)
-- Should staff actions ever be queued offline, or always refused with a reason as proposed here? (EP-08-S11)
+- Staff and karigar actions are never queued offline; they are refused with a reason (answered by D6). (EP-08-S11)
 - How does an old browser tab learn that the contract changed (EP-03 open question), and is it forced to reload? (EP-08-S1)

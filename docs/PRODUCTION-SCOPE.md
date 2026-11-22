@@ -62,7 +62,7 @@ The prototype is the **UI contract**. Most screens survive; what changes underne
 
 ```
  Staff & Owner web app ─┐                     ┌─► Database (managed PostgreSQL)
- Karigar phone (PWA) ───┼─► API  ◄──────────► │
+ Karigar phone (web) ───┼─► API  ◄──────────► │
  Scale / label printer ─┘    │                ├─► Object storage (photos)
                              │                └─► Audit log (append-only)
                              ├─► Live channel ──► pushes events to all open clients
@@ -85,7 +85,7 @@ shop's own domain.
 ## 4. Decisions to make before EP-01
 
 These shape the bottom layer. The recommended option is listed first; each is reversible only at cost.
-D1, D1a, D2, D4, D7 and D10 are decided. D3, D4a (email provider), D5, D6, D8 and D9 are open.
+D1, D1a, D2, D4, D5, D6, D7 and D10 are decided. D3, D4a (email provider), D8 and D9 are open.
 
 | # | Decision | Options | Recommendation and reason |
 | --- | --- | --- | --- |
@@ -95,8 +95,8 @@ D1, D1a, D2, D4, D7 and D10 are decided. D3, D4a (email provider), D5, D6, D8 an
 | D3 | Live transport | WebSocket / Server-Sent Events | WebSocket. Needs two-way for presence. Built in the Node API (D1). Still open. |
 | D4 | Sign-in method | **Decided: phone number + password** | Phone numbers are unique. No OTP sign-in in v1 (deferred). The owner adds a user with name, phone, email and role; a single-use activation link (24 hours, resendable) lets the user set their own password. Forgot password sends a single-use reset link (1 hour) to the account's email. 5 wrong passwords lock the account for 15 minutes. Every user has an email address. See [decisions/D4-sign-in.md](decisions/D4-sign-in.md). |
 | D4a | Email provider | Any transactional email service | **Open.** Sends the activation and password-reset emails (now a required channel) and email alerts (EP-11). The sender sits behind one interface. |
-| D5 | Karigar app | Installable web app (PWA) / native app | PWA. One codebase, no app store, works on any phone. |
-| D6 | Offline for karigars | None / read-only offline / queue updates offline | Queue status updates offline. Workshops often have weak signal. |
+| D5 | Karigar app | Installable web app (PWA) / native app | **Decided: a React web app**, used in the phone's browser. Owner, 22 November 2026. One codebase with the staff app (React) and no app store. It is not a native app. Installing it to the home screen is not decided (EP-20 section 17). See [decisions/D5-D6-karigar-app.md](decisions/D5-D6-karigar-app.md). |
+| D6 | Offline for karigars | None / read-only offline / queue updates offline | **Decided: online only**. Owner, 22 November 2026. v1 has no offline mode: no offline queue, no offline cache of jobs, no sync operation and no replay of queued updates. When the connection drops the app shows the reconnecting state (EP-08-S11), actions that need the server are disabled with a reason, and on reconnect the live channel catches up (EP-07-S7). EP-20-S12a and EP-20-S12b are deferred. See [decisions/D5-D6-karigar-app.md](decisions/D5-D6-karigar-app.md). |
 | D7 | Branches | **Decided: one shop, no branches** | v1 is a single shop with one owner, its staff and karigars. Every business table still carries a shop ID from the first migration, uniqueness (tag number, HUID, phone) is scoped to the shop, and the server sets the shop from the signed-in user. Multi-shop is deferred. See [decisions/tenancy-and-branches.md](decisions/tenancy-and-branches.md). |
 | D8 | WhatsApp provider | Meta Cloud API directly / a Business Solution Provider | Either. Outbound messages outside a conversation need pre-approved templates, so wishes, broadcasts and the owner edit code need template approval lead time. Verify current Meta terms. |
 | D9 | Scale integration | Typed by hand / read directly from the balance | Read directly where the balance supports it (EP-36). It removes typing errors at the exact-match gate. |
@@ -175,7 +175,7 @@ directly by staff before any lead exists.
 | --- | --- | --- | --- |
 | EP-18 | Metal pool ledger | Balance and ledger of gold issued, returned and recovered from scrap; transactional | EP-02, EP-06, EP-08 |
 | EP-19 | Order copy and karigar jobs | Build an order copy (from a lead later, or directly now), assign karigar, due date, issue gold from the pool, job states, overdue tracking | EP-16, EP-18, EP-08 |
-| EP-20 | Karigar portal (PWA) | Phone app: own jobs only, accept, status updates, photos, raise a problem, hand over; offline queue per D6 | EP-19, EP-07, EP-08 |
+| EP-20 | Karigar portal | Phone web app (React, in the phone browser, online only per D5 and D6): own jobs only, accept, status updates, photos, raise a problem, hand over | EP-19, EP-07, EP-08 |
 | EP-21 | Parcel intake and tagging | Arrival, bulk weights on a named scale, trays, manifest, tag each item, QC checks, multiple staff tagging one parcel live | EP-20, EP-14, EP-15, EP-09, EP-08 |
 | EP-22 | Stock and piece lifecycle | In-stock list, piece detail, state machine enforced on the server (in stock goes to billed or scrapped; no holds in v1), double-sell prevention | EP-21, EP-08 |
 | EP-23 | Exact-match gate and owner clearance | Server-side match verdict, staff release, owner send-back / re-check / accept-loss with reason | EP-21, EP-18, EP-08 |

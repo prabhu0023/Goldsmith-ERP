@@ -48,7 +48,7 @@ as gap G10. Money appears only in EP-42; other epics mention the nullable value 
 | EP-17 | [Customer master](EP-17-customer-master.md) | B | M2 Masters | EP-05, EP-08 | Partial |
 | EP-18 | [Metal pool ledger](EP-18-metal-pool-ledger.md) | C | M3 Intake loop | EP-02, EP-06, EP-08 | Partial |
 | EP-19 | [Order copy and karigar jobs](EP-19-order-copy-and-karigar-jobs.md) | C | M3 Intake loop | EP-16, EP-18, EP-08 | Partial |
-| EP-20 | [Karigar portal (PWA)](EP-20-karigar-portal-pwa.md) | C | M3 Intake loop | EP-19, EP-07, EP-08 | Partial |
+| EP-20 | [Karigar portal](EP-20-karigar-portal-pwa.md) | C | M3 Intake loop | EP-19, EP-07, EP-08 | Partial |
 | EP-21 | [Parcel intake and tagging](EP-21-parcel-intake-and-tagging.md) | C | M3 Intake loop | EP-20, EP-14, EP-15, EP-09, EP-08 | Partial |
 | EP-22 | [Stock and piece lifecycle](EP-22-stock-and-piece-lifecycle.md) | C | M3 Intake loop | EP-21, EP-08 | Partial |
 | EP-23 | [Exact-match gate and owner clearance](EP-23-exact-match-gate-and-owner-clearance.md) | C | M3 Intake loop | EP-21, EP-18, EP-08 | Partial |
@@ -223,7 +223,7 @@ for it. G1 to G9 come from `docs/MOCKUP-COVERAGE.md` §2; G10 to G26 were found 
 
 ## Open decisions
 
-Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. D1, D1a, D2, D4, D7 and D10 are decided; the rest are open.
+Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. D1, D1a, D2, D4, D5, D6, D7 and D10 are decided; the rest are open.
 
 | # | Decision | Listed in |
 | --- | --- | --- |
@@ -233,8 +233,8 @@ Decisions from PRODUCTION-SCOPE §4 and the epics that list them in section 17. 
 | D3 | Live transport | EP-07, EP-08 |
 | D4 | Sign-in method. **Decided: phone number + password**; activation and reset links by email; no OTP sign-in in v1 ([decision record](../decisions/D4-sign-in.md)) | Decided; see decision record (noted in EP-04, EP-05, EP-16, EP-20, EP-25) |
 | D4a | Email provider for activation and reset emails. **Open** | EP-04, EP-11, EP-45 |
-| D5 | Karigar app: PWA or native | EP-20 |
-| D6 | Offline for karigars | EP-07, EP-08, EP-20 |
+| D5 | Karigar app. **Decided: a React web app**, used in the phone's browser (same codebase and stack as the staff app, no app store); not a native app ([decision record](../decisions/D5-D6-karigar-app.md)) | Decided; see decision record (noted in EP-07, EP-20, EP-41) |
+| D6 | Offline for karigars. **Decided: online only**; no offline queue, cache or sync in v1; the connection-lost state and catch-up on reconnect stay; EP-20-S12a and EP-20-S12b are deferred ([decision record](../decisions/D5-D6-karigar-app.md)) | Decided; see decision record (noted in EP-04, EP-07, EP-08, EP-20, EP-24, EP-41, EP-44) |
 | D7 | Branches. **Decided: one shop, no branches**; a shop ID on every business table; multi-shop deferred ([decision record](../decisions/tenancy-and-branches.md)) | Decided; see decision record (noted in EP-02, EP-05, EP-07, EP-08, EP-13, EP-17, EP-18, EP-19, EP-21, EP-22, EP-24, EP-26, EP-28, EP-31, EP-32, EP-33, EP-35, EP-41) |
 | D8 | WhatsApp provider and template approval | EP-11, EP-12, EP-24, EP-25, EP-29, EP-30, EP-33, EP-34 |
 | D9 | Scale integration: typed or read from the balance | EP-14, EP-21, EP-36 |

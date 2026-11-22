@@ -172,7 +172,7 @@ Per D1 (decided: Option C), each operation is an endpoint on the team's own Node
 - G24: does "EP-03 onwards" include EP-41 to EP-43?
 - Which end-to-end flows are required before launch, and which can follow?
 - Q5d: what is the expected outcome for the last-digit middle case, so it can be tested?
-- What test tooling is used for the web app and the karigar PWA?
+- What test tooling is used for the web app and the karigar web app?
 
 ## 18. Candidate stories
 

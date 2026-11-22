@@ -18,7 +18,7 @@ Still open:
 
 - ~~D1a: which cloud provider~~ **Decided 22 November 2026: AWS, Mumbai region (ap-south-1).** Files in Amazon S3, the database in Amazon RDS for PostgreSQL, and the Node API on an AWS compute service picked when deployment is built (EP-01-S12), all in one account and region. Locally, SeaweedFS stands in for S3 and Docker runs PostgreSQL; the S3 adapter (`@aws-sdk/client-s3`) needs only configuration to point at real S3.
 - D3 (WebSocket or Server-Sent Events) stays open. Under Option C it is built in the Node API, not taken from a platform.
-- D4 (sign-in) and D7 (branches) were decided later: see [D4-sign-in.md](D4-sign-in.md) and [tenancy-and-branches.md](tenancy-and-branches.md). D5, D6, D8 and D9 are still open.
+- D4 (sign-in) and D7 (branches) were decided later: see [D4-sign-in.md](D4-sign-in.md) and [tenancy-and-branches.md](tenancy-and-branches.md). D5 and D6 were decided later: see [D5-D6-karigar-app.md](D5-D6-karigar-app.md). D8 and D9 are still open.
 
 The comparison below is kept as the record of why.
 

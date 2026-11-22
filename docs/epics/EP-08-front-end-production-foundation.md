@@ -22,7 +22,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 
 - Owner: sees every owner screen load, fail and recover the same way; uses the signed-in shell and account menu.
 - Staff: same as the owner for staff screens; sees another staff member's change appear without a refresh.
-- Karigar: sees the phone app (`k-jobs`) load and recover the same way on weak signal; the offline queue itself is EP-20 under D6.
+- Karigar: sees the phone app (`k-jobs`) load and recover the same way on weak signal. There is no offline queue: D6 is decided, online only.
 - System: keeps one live connection per signed-in client, maps each live event to the cached reads it affects, refetches them, and ends the signed-in shell when the session ends.
 
 ## 4. In scope
@@ -34,7 +34,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 - Error pattern for reads: a failed read shows what could not be loaded and a "Try again" action; the rest of the screen keeps working.
 - Error pattern for actions: a refused action shows the server's sentence (the `DomainError` sentences the prototype already shows), at the place the action was taken; a network failure says the action may not have been saved and lets the user retry with the same idempotency key.
 - Reconnecting pattern: when the live connection or the network drops, every open screen shows a "Reconnecting…" state; data on screen is marked as possibly out of date; after reconnect the client catches up by sequence number (EP-07) or refetches everything, and the banner clears.
-- Offline pattern for the web app: with no network the shell says so and actions that need the server are disabled with a reason; staff and owner actions are not queued. The karigar offline queue is EP-20.
+- Offline pattern for the web app: with no network the shell says so and actions that need the server are disabled with a reason; staff, owner and karigar actions are refused with a reason, not queued (D6 decided: online only). The web app is read-only while disconnected.
 - Signed-in app shell: the app opens on sign-in (EP-04) when there is no session, routes a signed-in user to their role's landing route (`today`, `decisions`, `k-jobs`), refuses routes their role may not open, and returns to sign-in when the session ends or is ended ("User deactivated or role changed").
 - The shell hosts the EP-05 account menu in the rail foot and the karigar shell in place of the `RoleChip` identity switcher; the demo `PricingToggle` is removed from the shell (the pricing switch belongs to EP-13 and EP-42).
 - Rail badge counts (`railBadges` today) read from the server and kept current by live events.
@@ -50,7 +50,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 - Users, roles, permissions and the account menu's rules and contents (EP-05).
 - The live connection, subscriptions, sequence numbers and catch-up on the server (EP-07).
 - Wiring each feature screen to its reads, actions and events: each feature epic does that for its own routes (EP-11 to EP-44), using this epic's patterns.
-- The karigar phone's offline queue and sync status (EP-20 under D6).
+- An offline queue and sync status for the karigar phone: not in v1 (D6 decided, online only).
 - New screens with no route id today, such as the notification centre (EP-11, G21) and the report hub (EP-35).
 - Redesigning the UI library or the screens; `src/components/ui/**` is kept as it is apart from the `RoleChip` swap.
 - Front-end monitoring of errors and load times (EP-37).
@@ -82,7 +82,7 @@ after EP-03, EP-04, EP-05 and EP-07 and before every feature epic, which then on
 - FR-08-8. When a live event arrives, the affected reads are refetched and open screens update within about 1 second, without a reload.
 - FR-08-9. When the live connection or the network drops, every open screen shows "Reconnecting…" within a few seconds and marks its data as possibly out of date.
 - FR-08-10. On reconnect, the client catches up from its last sequence number, or refetches every open read when EP-07 signals the gap is too old, and the reconnecting state clears.
-- FR-08-11. With no network, the web app shows an offline state and disables actions that need the server, each with a reason; nothing is queued for staff or owner.
+- FR-08-11. With no network, the web app shows an offline state and disables actions that need the server, each with a reason; nothing is queued for staff, owner or karigar.
 - FR-08-12. With no session, the app shows sign-in (EP-04); after sign-in the user lands on `today`, `decisions` or `k-jobs` by role.
 - FR-08-13. A route the user's role may not open is refused by the shell and the server; the shell shows the user's landing route instead.
 - FR-08-14. When the session expires or "User deactivated or role changed" arrives for the user, the shell clears cached data and returns to sign-in.
@@ -191,11 +191,11 @@ to the reads it affects, and refetches them.
 ## 17. Open decisions and questions
 
 - D3: WebSocket or Server-Sent Events from the Node API? It decides how the live hooks connect and how "reconnecting" is detected.
-- D6: does any of the karigar offline behaviour reach the web app, or is offline on the web read-only as proposed here?
+- D6 is decided: online only, no offline queue anywhere. The web app, including the karigar app, is read-only while disconnected ([decision record](../decisions/D5-D6-karigar-app.md)).
 - D7 is decided: one shop, no branches ([decision record](../decisions/tenancy-and-branches.md)); the shell shows the shop name where the mockups say "All branches" or "Main showroom", and there is no branch switch.
 - How long may cached data be shown while reconnecting before the screen hides it?
 - After how long without a response does a loading state turn into a read error?
-- Should staff actions ever be queued offline, or always refused with a reason as proposed here?
+- Staff and karigar actions are never queued offline; they are refused with a reason (answered by D6).
 - How does an old browser tab learn that the contract changed (EP-03 open question), and is it forced to reload?
 
 ## 18. Candidate stories

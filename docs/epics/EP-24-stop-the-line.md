@@ -42,7 +42,7 @@ about it, and the owner must hear about it within seconds.
 - Delivery of the alert by WhatsApp, in-app or email, and the escalation rules (EP-11, EP-12, settings in EP-13).
 - The Decisions screen layout and card ranking (EP-32).
 - The Today screen card for a stopped parcel or piece (EP-31).
-- The karigar phone shell, install and offline queue (EP-20).
+- The karigar phone shell (EP-20). An install flow and an offline queue are not in v1 (D6 decided: online only).
 - The append-only audit store itself (EP-06).
 - Reports of problems over time (EP-35).
 

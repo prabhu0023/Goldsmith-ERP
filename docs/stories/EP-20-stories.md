@@ -1,6 +1,6 @@
-# EP-20: Karigar portal (PWA) · stories
+# EP-20: Karigar portal · stories
 
-Epic document: [EP-20 Karigar portal (PWA)](../epics/EP-20-karigar-portal-pwa.md)
+Epic document: [EP-20 Karigar portal](../epics/EP-20-karigar-portal-pwa.md)
 
 Role note: stories where the server filters, creates, replays or pushes on its own use "System". The job state rules and the job payload come from EP-19; this epic builds the karigar's phone on `k-jobs` and the karigar-side operations. Parcel weighing and tagging are EP-21, send-back is EP-23, and clearing a raised problem is EP-24. Where those epics are not built yet, the stories here are tested with seeded parcels, jobs and problems. v1 is English only, so the "हिन्दी" chip on mockup 09 is not built in any story here (EP-44).
 
@@ -11,7 +11,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 - **Story ID:** EP-20-S1
 - **Title:** System can limit every karigar read to the signed-in karigar's jobs
 - **As a:** System
-- **I want:** every karigar-callable operation in this epic (List My jobs, Read My job, the state changes, Create Hand-over, Create Job media, Update Job note, Read Gold with me, Create Raised problem, Sync Queued updates) to filter by the karigar record linked to the session user, and to return a fixed allow-list of fields
+- **I want:** every karigar-callable operation in this epic (List My jobs, Read My job, the state changes, Create Hand-over, Create Job media, Update Job note, Read Gold with me, Create Raised problem) to filter by the karigar record linked to the session user, and to return a fixed allow-list of fields
 - **So that:** a karigar sees only the jobs issued to him and never sees prices, margins, invoices, customers, leads, stock or another karigar's work (FR-20-2, FR-20-11, BR-20-1, BR-20-2)
 - **Acceptance criteria (Given / When / Then):**
   1. Given Vijay Kumar · KG-04 is signed in, when he calls Read My job for MO-2026-119, a job of Lakshmi Devi · KG-01, then the server returns `not_found`, the same response as for a job id that does not exist (epic acceptance criterion 1).
@@ -48,7 +48,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 - **Audit entry written:** Yes, through EP-04-S14: actor, time, action (sign-in, failure, lockout, sign-out), with no code value.
 - **Data changes:** None beyond EP-04 sessions. Moves `KarigarPhone.tsx` off the demo identity (`Identity.karigarId` and "Sign in as a karigar from the switcher") onto the real session.
 - **UI reference:** Not yet designed for the phone sign-in. Landing is `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs` ("Vijay Kumar · KG-04", "My jobs").
-- **Non-functional checks:** Security: no demo role switcher in the build (EP-08-S19); deactivation ends sessions at once (BR-20-8). D4 is decided: phone and password, phone numbers unique, so a karigar cannot sign in on a shared phone number. Open decision D5: installable web app or native app; this story assumes the browser on the phone.
+- **Non-functional checks:** Security: no demo role switcher in the build (EP-08-S19); deactivation ends sessions at once (BR-20-8). D4 is decided: phone and password, phone numbers unique, so a karigar cannot sign in on a shared phone number. D5 is decided: the karigar app is a React web app opened in the phone browser. D6 is decided: online only.
 - **Depends on:** EP-04-S3, EP-04-S5, EP-04-S6, EP-04-S7, EP-04-S11, EP-04-S12, EP-04-S13, EP-04-S14, EP-05-S10, EP-05-S13, EP-07-S10, EP-08-S12, EP-08-S15, EP-08-S19
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -120,7 +120,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 - **Audit entry written:** Yes, through EP-19-S6: actor, time, entity (job id), action (`job_started` or `job_ready`), before and after status, bench note.
 - **Data changes:** Updates `karigar_jobs.status`, `benchNote` and `version`. No new tables.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs` ("Where is it now?", "Tap one. The desk sees it at once.", "Gold received", "Working on it", "Ready for checking", "Sent to the showroom", "Anything to tell the desk?", "Send the update").
-- **Non-functional checks:** Concurrency: version check; a state that is no longer valid is refused with the reason (epic section 13). Availability: offline taps are queued by EP-20-S12b; until then, server actions are disabled offline (EP-08-S11).
+- **Non-functional checks:** Concurrency: version check; a state that is no longer valid is refused with the reason (epic section 13). Availability: while the phone is disconnected the step buttons are disabled with the EP-08-S11 state and nothing is queued (D6 decided: online only).
 - **Depends on:** EP-20-S3, EP-20-S4, EP-19-S6, EP-19-S7, EP-08-S5, EP-08-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -144,7 +144,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 - **Audit entry written:** Yes: actor, time, entity (job id and parcel id), action (`job_handed_over`, `parcel_created`), before (`ready`), after (`handed_over`, parcel id).
 - **Data changes:** Inserts one row into `parcels` (EP-02-S6) and sets `karigar_jobs.parcelId`, `status` and `version`. Adds Create Hand-over to the shared contract and ports `handOver` from `src/store/transitions.ts` as a server service function.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs` ("Sent to the showroom"); the parcel appears on route `parcels` (built in EP-21). The rule is drawn on `docs/ux/mockups/12-state-lifecycles.svg` ("Handing over creates the arriving parcel.").
-- **Non-functional checks:** Concurrency: version check and idempotency key stop a double parcel; a queued hand-over that arrives after the owner stopped the job is refused on replay (epic section 16). Audit: the parcel creation is audited (EP-06-S7). Open question G14: one hand-over carrying several jobs is EP-20-S13; this story creates one parcel per job.
+- **Non-functional checks:** Concurrency: version check and idempotency key stop a double parcel; a hand-over sent after the owner stopped the job is refused with the stopped sentence (criterion 4). Audit: the parcel creation is audited (EP-06-S7). Open question G14: one hand-over carrying several jobs is EP-20-S13; this story creates one parcel per job.
 - **Depends on:** EP-20-S5, EP-19-S6, EP-19-S7, EP-02-S6, EP-02-S14, EP-03-S3, EP-03-S6, EP-03-S7, EP-03-S8, EP-06-S2, EP-06-S7, EP-07-S1, EP-07-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -192,7 +192,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 - **Audit entry written:** Yes: actor, time, entity (problem id and job id), action (`problem_raised`), after (target kind, target id, text, stopped true).
 - **Data changes:** Inserts into `problems` (EP-02-S10) and sets `karigar_jobs.stopped`. Moves `RaiseProblem.tsx` with `target {kind: 'job', id}` onto the EP-08 data layer for the phone, in its large layout.
 - **UI reference:** Not yet designed for the phone. The permission is drawn on `docs/ux/mockups/11-roles-and-permissions.svg` ("Raise a problem on his own job", "Anyone can stop the line. Only the owner can start it again."); the stopped colour on `docs/ux/mockups/12-state-lifecycles.svg`.
-- **Non-functional checks:** Concurrency: the stop and a state change on the same job are ordered by the job version; a hand-over committed first is not undone. Audit: raised problem audited (EP-06-S7). Availability: whether a problem can be raised offline and queued is not decided; this story needs a connection. Until EP-24 ships, the owner-side clear is tested with a seeded clear.
+- **Non-functional checks:** Concurrency: the stop and a state change on the same job are ordered by the job version; a hand-over committed first is not undone. Audit: raised problem audited (EP-06-S7). Availability: this story needs a connection; while disconnected the button is disabled with the EP-08-S11 state and nothing is queued (D6 decided: online only). Until EP-24 ships, the owner-side clear is tested with a seeded clear.
 - **Depends on:** EP-20-S3, EP-19-S6, EP-19-S7, EP-02-S10, EP-06-S2, EP-06-S7, EP-11-S4, EP-08-S5, EP-08-S17
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -242,7 +242,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 - **Audit entry written:** Yes: actor, time, entity (job id), action (`job_photo_added`, `job_note_updated`), after (file id, or note text).
 - **Data changes:** Migration creates `job_media` (job id, file id, kind `photo` or `voice`, created at, created by). Updates `karigar_jobs.benchNote`. Adds Create Job media and Update Job note to the shared contract.
 - **UI reference:** `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs` ("Add a photo (optional)", "Take a photo of the bench", "Anything to tell the desk?", "Send the update").
-- **Non-functional checks:** Performance: the photo is resized by EP-09-S4 before the desk loads it. Personal data: photos are of the bench and the piece; they are served only to Owner, Staff and the job's karigar (EP-09-S6). Availability: photos are not queued offline; the photo button is disabled offline with the EP-08-S11 state (assumption, to confirm under D6).
+- **Non-functional checks:** Performance: the photo is resized by EP-09-S4 before the desk loads it. Personal data: photos are of the bench and the piece; they are served only to Owner, Staff and the job's karigar (EP-09-S6). Availability: photos are not queued; while disconnected the photo button is disabled with the EP-08-S11 state (D6 decided: online only).
 - **Depends on:** EP-20-S3, EP-09-S1, EP-09-S3, EP-09-S4, EP-09-S6, EP-09-S10, EP-06-S2, EP-08-S11
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -297,58 +297,44 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 
 ---
 
-## EP-20-S12a: Karigar can install the app and use it offline with a sync queue (part 1: install and open from cache)
-
-Split note: EP-20-S12 was split into S12a and S12b because installing the app and opening it from cache is a front-end packaging task that can ship alone, while the offline queue needs a server Sync operation, idempotent replay and refusal handling, and depends on decision D6.
+## EP-20-S12a: Karigar can install the app and use it offline with a sync queue (part 1: install and open from cache) (Deferred: v1 is online only, D6)
+Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only, so v1 has no offline cache, no service worker and no opening the app with no signal. Owner decision D5 is that the karigar app is a React web app opened in the phone browser. Installing it to the home screen is not decided (epic section 17). The story ID, title and history are kept so the story graph stays valid. What is deferred: the web app manifest and icons, the service worker that cached the app shell and the karigar's own reads, and the cached "last updated" view of jobs. The connection-lost state of EP-08-S11 stays in v1.
 
 - **Story ID:** EP-20-S12a
-- **Title:** Karigar can install the app and use it offline with a sync queue (part 1: install and open from cache)
+- **Title:** Karigar can install the app and use it offline with a sync queue (part 1: install and open from cache) (Deferred: v1 is online only, D6)
 - **As a:** Karigar
-- **I want:** to add the app to my phone's home screen and open it with no signal, seeing my jobs as they were last loaded and when they were last updated
-- **So that:** I can check a job's weights at the bench even when the workshop has no signal (FR-20-1, FR-20-13)
+- **I want:** Deferred: no home-screen install and no use of cached jobs with no signal in v1; the app is a React web app used online in the phone browser (D5, D6)
+- **So that:** Deferred: the original purpose was checking a job's weights with no signal; v1 shows the connection-lost state instead (FR-20-1 install clause and FR-20-13, both Deferred, D6)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given Vijay Kumar opens the app in the phone browser, when he chooses to add it to the home screen, then an icon is installed and the app opens full screen on `k-jobs`.
-  2. Given Vijay loaded his jobs once and then lost signal, when he opens the app from the icon, then "My jobs", each job sheet and "GOLD WITH ME" show from cache, with a line saying when they were last updated, in Asia/Kolkata time.
-  3. Given the app is offline, when it is open, then it shows the EP-08-S11 offline state, and any action that is not queued (photo, raise a problem) is disabled.
-  4. Given Vijay signs out or is deactivated, when the session ends, then the cached jobs are removed from the phone.
-  5. Given a new version is deployed, when Vijay next opens the app with signal, then it loads the new version without a manual cache clear.
-- **Rules enforced on the server:** None new. The cache holds only data returned by the EP-20-S1 filtered reads. The app shell is served over HTTPS only.
+  1. Given Vijay Kumar has the app open in the phone browser, when the phone loses signal, then the EP-08-S11 connection-lost state is shown, what is already on screen stays visible and read-only, and every action that needs the server is disabled with a reason until the connection returns.
+- **Rules enforced on the server:** None new. Deferred: the cache of the karigar's own reads is not built; every read is the EP-20-S1 filtered read, made online.
 - **Live events emitted / consumed:** None of its own. On reconnect, catch-up runs as in EP-20-S11.
-- **Audit entry written:** No. Installing and reading from cache change nothing on the server.
-- **Data changes:** None in the product database. Adds a web app manifest, icons and a service worker that caches the app shell and the karigar's own reads.
-- **UI reference:** Not yet designed (MOCKUP-COVERAGE §3: offline and sync status). Base screen is `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`.
-- **Non-functional checks:** Availability: opens from cache with no signal (epic section 13). Personal data: the phone holds only the karigar's own jobs, cleared on sign-out. Security: cached data never includes desk shapes. Open decision D5: installable web app or native app; this story assumes the installable web app. Open decision D6: if D6 picks no offline, criteria 2 and 3 reduce to the offline state only.
+- **Audit entry written:** No. Nothing changes on the server.
+- **Data changes:** None. Deferred: the web app manifest, icons and service worker are not built in v1; nothing about the jobs is stored on the phone.
+- **UI reference:** Deferred: no install or cached-jobs screen in v1. Base screen is `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`; the connection-lost state is EP-08-S11.
+- **Non-functional checks:** Availability: with no signal the app shows the EP-08-S11 state and does not open from cache (D6). Personal data: the phone keeps no copy of the karigar's jobs beyond the open page. Decided: D5 (React web app in the phone browser) and D6 (online only). Open question: whether the app should be installable to the home screen (epic section 17).
 - **Depends on:** EP-20-S2, EP-20-S3, EP-20-S9, EP-08-S2, EP-08-S11, EP-08-S15, EP-01-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
-
 ---
-
-## EP-20-S12b: Karigar can install the app and use it offline with a sync queue (part 2: offline queue and sync)
-
-Split note: EP-20-S12 was split into S12a and S12b because installing the app and opening it from cache is a front-end packaging task that can ship alone, while the offline queue needs a server Sync operation, idempotent replay and refusal handling, and depends on decision D6.
+## EP-20-S12b: Karigar can install the app and use it offline with a sync queue (part 2: offline queue and sync) (Deferred: v1 is online only, D6)
+Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only. There is no offline queue, no on-device queue of updates, no "Sync Queued updates" operation and no replay of queued updates. The story ID, title and history are kept so the story graph stays valid, and its dependency on EP-20-S12a is kept (deferred too). What is deferred: the Sync Queued updates operation, the on-device queue (JobUpdate), idempotent replay in client order, and the refusal handling after sync (the old D6 side question). In v1 a karigar update is sent when it is tapped. With no signal the EP-08-S11 state shows and the buttons are disabled with a reason.
 
 - **Story ID:** EP-20-S12b
-- **Title:** Karigar can install the app and use it offline with a sync queue (part 2: offline queue and sync)
+- **Title:** Karigar can install the app and use it offline with a sync queue (part 2: offline queue and sync) (Deferred: v1 is online only, D6)
 - **As a:** Karigar
-- **I want:** to accept, start, mark ready, hand over and add a typed note with no signal, have each update wait on the phone, and see it sent in order when signal returns
-- **So that:** weak signal in the workshop never loses an update (FR-20-12, FR-20-13)
+- **I want:** Deferred: no offline queue in v1; each update is sent when I tap it, and with no signal the buttons are disabled with a reason (D6)
+- **So that:** Deferred: the original purpose was that weak signal never loses an update; in v1 an update that cannot be sent is refused with a reason and is never held back or lost silently (FR-20-12 and FR-20-13, both Deferred, D6)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given MO-2026-118 is `on_bench` and the phone has no signal, when Vijay Kumar taps "Ready for checking", then the step shows as waiting and the screen says "1 update waiting to send" (epic acceptance criterion 3).
-  2. Given two queued updates, "Ready for checking" then "Sent to the showroom", when signal returns, then Sync sends them in that order, the job ends `handed_over`, one parcel is created, and the waiting line goes away.
-  3. Given a queued update is sent twice after a drop, when the server receives the second copy with the same client id, then it applies once and returns the first result.
-  4. Given the owner stopped the job while Vijay was offline, when the queued "Ready for checking" syncs, then the server refuses it with "This job is stopped. Only the owner can start it again.", the job does not move, later queued updates for that job are not applied, and the phone shows the refusal on the job.
-  5. Given the session expired while offline, when signal returns, then the queue is kept, Vijay is asked to sign in, and the queue syncs after sign-in as the same karigar only.
-- **Rules enforced on the server:** Sync Queued updates replays each JobUpdate (job id, action, confirmed date or note, client time, client id) through the same operations and checks as EP-20-S4 to EP-20-S6, in client order per job. The client id is the idempotency key (EP-03-S8). Each update is re-checked against the current state on replay; an update no longer valid is refused with its reason. The server records its own time; client time is kept for information only. Updates are accepted only for the karigar of the current session (EP-20-S1).
-- **Live events emitted / consumed:** Emitted after each applied update: "Karigar job status changed", and "Parcel handed over by karigar" for a hand-over.
-- **Audit entry written:** Yes, through each replayed operation: actor, time (server), entity, action, before, after, plus the client time and client id of the queued update.
-- **Data changes:** None new in the product database beyond the replayed operations; the idempotency store from EP-03-S8 holds the client ids. Adds Sync Queued updates to the shared contract and an on-device queue (JobUpdate) to the karigar app.
-- **UI reference:** Not yet designed (MOCKUP-COVERAGE §3: offline and sync status). Buttons are on `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`.
-- **Non-functional checks:** Concurrency: replays are idempotent; a state change no longer valid is refused with the reason (epic section 13). Availability: queued updates survive closing the app and restarting the phone. Time: the screen shows queued times in Asia/Kolkata. Open decision D6: no offline, read-only offline or queued updates; this story is built only if D6 picks queued updates. Open decision D6 side question: what the phone does with a refused update after sync; criterion 4 shows the refusal and stops later updates for that job until decided.
+  1. Given MO-2026-118 is `on_bench` and the phone has no signal, when Vijay Kumar looks at "Ready for checking", then the EP-08-S11 connection-lost state is shown, the button is disabled with a reason, nothing is queued on the phone, and when the connection returns the live channel catches up (EP-07-S7).
+- **Rules enforced on the server:** Deferred: no Sync operation in v1. Each update goes through the same operations and checks as EP-20-S4 to EP-20-S6, one call at a time, with the version check on the job.
+- **Live events emitted / consumed:** None of its own. Events come from the operations of EP-20-S4 to EP-20-S6.
+- **Audit entry written:** None of its own. Each operation of EP-20-S4 to EP-20-S6 is audited by its own story.
+- **Data changes:** None. Deferred: the Sync Queued updates operation, the on-device queue (JobUpdate) and the service worker cache are not built in v1; nothing is stored on the device.
+- **UI reference:** Deferred: no sync status screen in v1. Buttons are on `docs/ux/mockups/09-karigar-phone.svg`, route `k-jobs`; the connection-lost state is EP-08-S11.
+- **Non-functional checks:** Concurrency: a state change that is no longer valid is refused with the reason (epic section 13). Deferred: queue survival across restarts, replay order and the refused-update-after-sync question no longer apply. Decided: D6 (online only).
 - **Depends on:** EP-20-S12a, EP-20-S4, EP-20-S5, EP-20-S6, EP-20-S10a, EP-03-S8, EP-04-S12, EP-08-S6
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
-
 ---
-
 ## EP-20-S13: Karigar can hand over several jobs at once (G14)
 
 - **Story ID:** EP-20-S13
@@ -376,10 +362,10 @@ Split note: EP-20-S12 was split into S12a and S12b because installing the app an
 
 Copied from the epic's section 17. Not answered here.
 
-- D5: installable web app or native app? (EP-20-S2, S12a)
-- D6: no offline, read-only offline, or queued updates? (EP-20-S10a, S12a, S12b)
+- D5 is decided: the karigar app is a React web app opened in the phone browser ([decision record](../decisions/D5-D6-karigar-app.md)). (EP-20-S2)
+- D6 is decided: online only, with no offline mode in v1 ([decision record](../decisions/D5-D6-karigar-app.md)). EP-20-S12a and EP-20-S12b are deferred. (EP-20-S10a, S12a, S12b)
+- Should the karigar app be installable to the home screen? It needs only a web app manifest and icons, no offline support. (EP-20-S12a)
 - D4 is decided: phone and password; phone numbers are unique, so a karigar cannot sign in on a shared phone number (EP-20-S1, S2).
-- D6 side question: what happens to a queued update that is no longer valid when it syncs? (EP-20-S12b)
 - G14: can one hand-over carry several jobs (mockup 12)? (EP-20-S6, S13)
 - G16: are bench voice notes ("Type or speak") in scope, and in which languages? (EP-20-S10b)
 - Should the karigar see the due date the desk asked for after confirming their own? (EP-20-S3, S4)

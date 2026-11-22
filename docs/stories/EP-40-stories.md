@@ -24,7 +24,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 - **Audit entry written:** No. Test results are kept by the CI service as the test run record (epic section 9).
 - **Data changes:** None in the product database. Adds the unit test configuration to the shared package and `api`, and the test run record to CI output.
 - **UI reference:** No screen
-- **Non-functional checks:** Performance: the unit suite finishes inside the time limit the team agrees, so it runs on every push (epic section 13). Open question: which test tooling is used for the web app and the karigar PWA.
+- **Non-functional checks:** Performance: the unit suite finishes inside the time limit the team agrees, so it runs on every push (epic section 13). Open question: which test tooling is used for the web app and the karigar web app.
 - **Depends on:** EP-01-S2, EP-01-S3, EP-01-S8, EP-03-S12
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -246,7 +246,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 - **Audit entry written:** No. Rendering tests change no state.
 - **Data changes:** None in the product database. Adds the rendering test and the sample-parameter list per route.
 - **UI reference:** All routes. Reference: `docs/ux/mockups/06-stock-out.svg`, route `stock-out` ("No prices here").
-- **Non-functional checks:** Performance: run on deploy if too slow for every push. Pricing on is not tested here; price logic tests wait for EP-42 (epic section 5). Open question: which test tooling is used for the web app and the karigar PWA.
+- **Non-functional checks:** Performance: run on deploy if too slow for every push. Pricing on is not tested here; price logic tests wait for EP-42 (epic section 5). Open question: which test tooling is used for the web app and the karigar web app.
 - **Depends on:** EP-40-S1, EP-08-S13, EP-08-S19, EP-13-S9
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -294,7 +294,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 - **Audit entry written:** No by the suite. Flows write their normal entries in staging.
 - **Data changes:** None in the product database. Resets the staging database to the fixture seed before each run (EP-02-S13).
 - **UI reference:** Routes `today`, `decisions`, `leads`, `lead-create`, `lead-convert`, `order-copy`, `k-jobs`, `parcels`, `parcel-arrival`, `parcel-tag`, `parcel-qc`, `parcel-match`, `parcel-clear`, `stock`, `edit-propose`, `edit-apply`, `stock-out`, `scrap-decision`. Acceptance references: `04-parcel-match.svg`, `05-edit-propose-apply.svg`, `06-stock-out.svg`, `22-owner-clear-mismatch.svg`.
-- **Non-functional checks:** Performance: screen load under 2 seconds and live events within about 1 second (epic section 13). Personal data: made-up customers only. Availability: tests limited to the main flows to stay stable (epic section 16 risk). Open question: which flows are required before launch and which can follow. Open question: which tooling drives the web app and the karigar PWA. D4 is decided: the first flow uses phone and password after activation.
+- **Non-functional checks:** Performance: screen load under 2 seconds and live events within about 1 second (epic section 13). Personal data: made-up customers only. Availability: tests limited to the main flows to stay stable (epic section 16 risk). Open question: which flows are required before launch and which can follow. Open question: which tooling drives the web app and the karigar web app. D4 is decided: the first flow uses phone and password after activation.
 - **Depends on:** EP-40-S5, EP-01-S12, EP-02-S13, EP-04-S4, EP-04-S5, EP-08-S9, EP-19-S2, EP-20-S4, EP-20-S6, EP-21-S2, EP-21-S6, EP-21-S8, EP-23-S4, EP-23-S11, EP-24-S3, EP-24-S9, EP-25-S2, EP-25-S7, EP-26-S7, EP-27-S6, EP-28-S2, EP-30-S6, EP-37-S8
 - **Definition of done:** code reviewed · tests pass · deployed to staging · acceptance criteria demoed
 
@@ -333,4 +333,4 @@ Copied from the epic's section 17. Not answered here.
 - G24: does "EP-03 onwards" include EP-41 to EP-43? (EP-40-S13)
 - Which end-to-end flows are required before launch, and which can follow? (EP-40-S12)
 - Q5d: what is the expected outcome for the last-digit middle case, so it can be tested? (EP-40-S3)
-- What test tooling is used for the web app and the karigar PWA? (EP-40-S1, S10, S12)
+- What test tooling is used for the web app and the karigar web app? (EP-40-S1, S10, S12)

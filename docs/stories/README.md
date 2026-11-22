@@ -40,7 +40,7 @@ Layers: A Platform foundation, B Master data, C Core gold pipeline, D Experience
 | EP-17 | Customer master | B | M2 Masters | 14 | [EP-17-stories.md](./EP-17-stories.md) |
 | EP-18 | Metal pool ledger | C | M3 Intake loop | 12 | [EP-18-stories.md](./EP-18-stories.md) |
 | EP-19 | Order copy and karigar jobs | C | M3 Intake loop | 14 | [EP-19-stories.md](./EP-19-stories.md) |
-| EP-20 | Karigar portal (PWA) | C | M3 Intake loop | 15 | [EP-20-stories.md](./EP-20-stories.md) |
+| EP-20 | Karigar portal | C | M3 Intake loop | 15 | [EP-20-stories.md](./EP-20-stories.md) |
 | EP-21 | Parcel intake and tagging | C | M3 Intake loop | 14 | [EP-21-stories.md](./EP-21-stories.md) |
 | EP-22 | Stock and piece lifecycle | C | M3 Intake loop | 11 | [EP-22-stories.md](./EP-22-stories.md) |
 | EP-23 | Exact-match gate and owner clearance | C | M3 Intake loop | 14 | [EP-23-stories.md](./EP-23-stories.md) |
