@@ -6,6 +6,8 @@ Photos, reference images, bench photos and PO attachments are stored in an S3-co
 
 SeaweedFS (`chrislusf/seaweedfs:4.48`, S3 gateway on `127.0.0.1:8333`) runs as the `objectstore` service of `docker-compose.yml`. MinIO was not chosen: its community images stopped shipping in October 2025. Storage is reached only through the `ObjectStorage` interface (`object-storage.ts`), with one adapter for any S3 API (`s3-storage.ts`, `@aws-sdk/client-s3`) and one in memory for tests (`memory-storage.ts`).
 
+Volume limits: every bucket is a SeaweedFS collection that reserves 7 volumes, and SeaweedFS allows only 8 volumes by default, so a second bucket (another lane, or the test bucket) failed with `No writable volumes and no free volumes left`. `docker-compose.yml` and CI therefore start it with `-volume.max=0` (limit set from free disk space) and `-master.volumeSizeLimitMB=64` (small volumes, so many lanes fit on the Colima disk). After changing these flags, recreate the container with `docker compose up -d --force-recreate --wait objectstore`; stored objects are kept.
+
 ```sh
 npm run storage:up       # docker compose up -d --wait objectstore (starts only that service)
 npm run storage:create   # create the lane's bucket, and in development its test bucket; safe to repeat
