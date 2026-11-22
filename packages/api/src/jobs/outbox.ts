@@ -11,7 +11,8 @@ export type OutboxTopic =
   | 'lead.sla_passed'
   | 'karigar_job.overdue'
   | 'notify.karigar_job_overdue_reminder'
-  | 'wishes.run_requested';
+  | 'wishes.run_requested'
+  | 'user.access_changed';
 
 export async function emitOutboxEvent(
   client: pg.PoolClient,

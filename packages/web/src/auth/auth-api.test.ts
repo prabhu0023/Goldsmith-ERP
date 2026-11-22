@@ -7,7 +7,7 @@ afterEach(() => {
 });
 describe('authCall', () => {
   it('posts JSON to /api/auth/<op> on the same origin and returns the data', async () => {
-    const data = { ok: true, user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' }, landingRoute: 'today' };
+    const data = { ok: true, user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' }, landingRoute: 'today', permissions: ['markLeadLost'] };
     const fetchStub = reply(200, data);
     vi.stubGlobal('fetch', fetchStub);
     const answer = await authCall('signIn', { phone: '98410 11111', password: 'counter-2026' });

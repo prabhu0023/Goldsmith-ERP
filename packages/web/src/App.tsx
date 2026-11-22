@@ -5,7 +5,7 @@ export default function App() {
   return (
     <AuthGate>
       {(s, signOut) => (
-        <StoreProvider key={s.user.userId} signedIn={s.user} onSignOut={signOut}>
+        <StoreProvider key={s.user.userId} signedIn={s.user} permissions={s.permissions} onSignOut={signOut}>
           <AppShell />
         </StoreProvider>
       )}

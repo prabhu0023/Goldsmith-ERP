@@ -6,7 +6,6 @@ import { productionJobs } from './jobs/production-jobs.js';
 import { createScheduler, type Scheduler } from './jobs/scheduler.js';
 import { systemClock } from './pipeline/server-clock.js';
 import { sessionResolverFor } from './pipeline/session-resolver.js';
-import { handlers } from './services/index.js';
 
 function start(): void {
   let config: ReturnType<typeof loadConfig>;
@@ -32,7 +31,7 @@ function start(): void {
   const sessions = sessionResolverFor(config, pool, systemClock);
 
   let scheduler: Scheduler | undefined;
-  const server = createApp(config, { pool, sessions, handlers }).listen(config.port, () => {
+  const server = createApp(config, { pool, sessions }).listen(config.port, () => {
     console.log(`[api] ready on http://localhost:${config.port} (APP_ENV=${config.appEnv})`);
     if (config.jobsEnabled && pool) {
       scheduler = createScheduler({ pool, clock: systemClock, jobs: productionJobs, pollMs: config.jobsPollIntervalMs });

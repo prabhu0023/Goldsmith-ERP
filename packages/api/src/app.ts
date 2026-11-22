@@ -6,15 +6,16 @@ import { type AuthDeps, createAuthRouter } from './auth/auth-router.js';
 import { createDevMailboxRouter } from './auth/dev-mailbox.js';
 import { installationShop } from './auth/installation-shop.js';
 import { passwordHasher } from './auth/password-hash.js';
+import { matrixPermissionCheck } from './auth/permission-check.js';
 import type { Config } from './config.js';
 import { checkDatabase, withTimeout } from './health-check.js';
 import { ApiError, type ErrorLog, RateLimitedError, toErrorResponse } from './pipeline/api-errors.js';
-import { allowAllPermissions, allowAllRateLimiter, type PermissionCheck, type RateLimiter } from './pipeline/hooks.js';
+import { allowAllRateLimiter, type PermissionCheck, type RateLimiter } from './pipeline/hooks.js';
 import { clientAddressOf, createOperationRouter } from './pipeline/operation-router.js';
 import { createOperationRegistry, type HandlerMap } from './pipeline/registry.js';
 import { type Clock, systemClock } from './pipeline/server-clock.js';
 import { noSessionResolver, type SessionResolver } from './pipeline/session-resolver.js';
-import { handlers as serviceHandlers } from './services/index.js';
+import { createServiceHandlers } from './services/index.js';
 
 /** One 0.0001 g scale; one weighing on it has a ceiling of half a step = 5 units. */
 const PROBE_SCALE: Scale = { id: 'probe', name: 'Probe scale', readabilityG: 0.0001, capacityG: 1 };
@@ -62,13 +63,13 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     sessions = noSessionResolver,
     clock = systemClock,
     rateLimiter = allowAllRateLimiter,
-    permissions = allowAllPermissions,
+    permissions = matrixPermissionCheck,
     contract = sharedContract,
-    handlers = serviceHandlers,
     log = console.error,
     healthTimeoutMs = 2000,
   } = deps;
   const auth = authDepsFor(config, deps.auth);
+  const handlers = deps.handlers ?? createServiceHandlers({ mailer: auth.mailer, appUrl: auth.appUrl, log });
   // Throws at startup for a handler the contract does not declare (EP-03-S1).
   const registry = createOperationRegistry(contract, handlers);
 

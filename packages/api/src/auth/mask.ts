@@ -13,3 +13,12 @@ export function maskEmail(email: string): string {
   if (at < 1) return '•••';
   return `${email[0]}•••${email.slice(at)}`;
 }
+/**
+ * Free text (a deactivation reason) with every phone-like run of 10 or more digits and every
+ * email address masked, e.g. "call 98410 44444" -> "call +91 ••••• 44444".
+ */
+export function maskContactsInText(text: string): string {
+  return text
+    .replace(/\+?\d[\d\s-]{8,}\d/g, (run) => (run.replace(/[^0-9]/g, '').length >= 10 ? maskPhone(run) : run))
+    .replace(/[^\s@]+@[^\s@]+/g, maskEmail);
+}

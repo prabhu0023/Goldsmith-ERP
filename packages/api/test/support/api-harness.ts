@@ -16,7 +16,7 @@ import { createPasswordHasher } from '../../src/auth/password-hash.js';
 import { createSessionResolver, generateSecret, hashSecret, SESSION_COOKIE } from '../../src/auth/session-store.js';
 import { type AppEnv, loadConfig } from '../../src/config.js';
 import type { ErrorLog } from '../../src/pipeline/api-errors.js';
-import type { PermissionCheck, RateLimiter } from '../../src/pipeline/hooks.js';
+import { allowAllPermissions, type PermissionCheck, type RateLimiter } from '../../src/pipeline/hooks.js';
 import type { Tx } from '../../src/pipeline/operation-transaction.js';
 import type { AnyHandler, HandlerMap, OperationCtx } from '../../src/pipeline/registry.js';
 import { type Clock, fixedClock } from '../../src/pipeline/server-clock.js';
@@ -42,6 +42,11 @@ export interface HarnessOptions {
   auth?: Partial<AuthDeps>;
   /** Defaults to development. */
   appEnv?: AppEnv;
+  /**
+   * Use the production contract, handlers and permission check instead of the fixture
+   * operations and allow-all permissions (EP-05).
+   */
+  production?: boolean;
 }
 
 /** The fast hasher every harness uses (the S2 tests use the production parameters). */
@@ -214,9 +219,7 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
     sessions: createSessionResolver({ pool, clock, idleMinutes: config.sessionIdleMinutes }),
     clock,
     rateLimiter: options.rateLimiter,
-    permissions: options.permissions,
-    contract: testContract,
-    handlers,
+    ...(options.production ? {} : { permissions: options.permissions ?? allowAllPermissions, contract: testContract, handlers }),
     log: options.log ?? ((message, err) => logged.push({ message, err })),
     auth: {
       installationShop: async () => shop.shopId,

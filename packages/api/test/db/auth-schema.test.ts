@@ -69,7 +69,7 @@ describeDb('sign-in schema (EP-04-S1, S3, S5, S7, S8, S9, S13, S14)', () => {
   it('allows one first-owner marker per shop', async () => {
     const { shopId } = await newShop(pool);
     const a = await addUser(shopId, '9841011111', { role: 'owner' });
-    const b = await addUser(shopId, '9841022222', { role: 'owner' });
+    const b = await addUser(shopId, '9841022222', { role: 'staff' });
     const mark = (userId: string) =>
       pool.query('insert into shop_first_owners (shop_id, user_id, created_at) values ($1, $2, now())', [shopId, userId]);
     await mark(a.id);

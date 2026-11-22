@@ -26,6 +26,8 @@ export const sessionResult = z.object({
     role: z.enum(['owner', 'staff', 'karigar']),
   }),
   landingRoute: z.enum(['today', 'decisions', 'k-jobs']),
+  /** The role's permission list (EP-05-S12 AC5); the web hides what the role may not do. */
+  permissions: z.array(z.string()),
 });
 const passwordLinkInput = z.object({ token: z.string().min(1), password: z.string() });
 export const authContract = {

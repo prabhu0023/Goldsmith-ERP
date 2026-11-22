@@ -1,11 +1,11 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { initialState } from '../data/seed';
-import { demoNow } from '@goldsmith/shared';
+import { ROLE_INFO, demoNow, permissionsFor } from '@goldsmith/shared';
 import { landingRoute } from '../nav';
 import type { Route, RouteId } from '../nav';
 import type { Actor, AppState, ErrorCode, Identity, OperationInput, RoleId, Settings } from '@goldsmith/shared';
-import { actorOf, identities as identitiesOf } from './selectors';
+import { actorOf, identities as identitiesOf, initialsOf } from './selectors';
 import * as T from './transitions';
 
 export interface ActionResult {
@@ -89,8 +89,8 @@ export interface Store {
   role: RoleId;
   identity: Identity;
   actor: Actor;
-  identities: Identity[];
-  switchIdentity: (id: string) => void;
+  /** Whether the person may run an operation: the session's permissions, else the role's (EP-05-S12). */
+  can: (op: string) => boolean;
   /** Set when a real session is signed in: ends it and returns to sign-in, or resolves to the error sentence. */
   signOut?: () => Promise<string | null>;
   /** Demo-clock time, refreshed every 30 seconds and after each action. */
@@ -103,6 +103,8 @@ interface StoreProviderProps {
   children: ReactNode;
   /** The signed-in person; the prototype identity with the same name and role, else the first of that role. */
   signedIn?: { name: string; role: RoleId };
+  /** The session's permission list (EP-05-S12 AC5); without it the role's list applies. */
+  permissions?: readonly string[];
   onSignOut?: () => Promise<string | null>;
 }
 /** The prototype identity a signed-in person acts as. */
@@ -110,15 +112,31 @@ function identityFor(signedIn: { name: string; role: RoleId }): Identity | undef
   const all = identitiesOf(initialState());
   return all.find((i) => i.name === signedIn.name && i.role === signedIn.role) ?? all.find((i) => i.role === signedIn.role);
 }
-export function StoreProvider({ children, signedIn, onSignOut }: StoreProviderProps) {
+export function StoreProvider({ children, signedIn, permissions, onSignOut }: StoreProviderProps) {
   const [state, setState] = useState<AppState>(initialState);
   const stateRef = useRef(state);
-  const [identityId, setIdentityId] = useState(() => (signedIn && identityFor(signedIn)?.id) || 'ST-01');
+  const [identityId] = useState(() => (signedIn && identityFor(signedIn)?.id) || 'ST-01');
   const [route, setRoute] = useState<Route>(() => ({ id: signedIn ? landingRoute[signedIn.role] : 'today' }));
   const [now, setNow] = useState(demoNow);
 
   const allIdentities = useMemo(() => identitiesOf(state), [state]);
-  const identity = allIdentities.find((i) => i.id === identityId) ?? allIdentities[0];
+  const base = allIdentities.find((i) => i.id === identityId) ?? allIdentities[0];
+  const signedName = signedIn?.name;
+  const signedRole = signedIn?.role;
+  // The shown and acting name come from the session; the prototype id and karigarId from identityFor.
+  const identity = useMemo<Identity>(
+    () =>
+      signedName && signedRole
+        ? {
+            ...base,
+            name: signedName,
+            role: signedRole,
+            initials: initialsOf(signedName),
+            subtitle: ROLE_INFO.find((r) => r.id === signedRole)?.label ?? signedRole,
+          }
+        : base,
+    [base, signedName, signedRole],
+  );
   const identityRef = useRef(identity);
   identityRef.current = identity;
 
@@ -155,16 +173,8 @@ export function StoreProvider({ children, signedIn, onSignOut }: StoreProviderPr
     window.scrollTo({ top: 0 });
   }, []);
 
-  const switchIdentity = useCallback(
-    (id: string) => {
-      const next = identitiesOf(stateRef.current).find((i) => i.id === id);
-      if (!next) return;
-      setIdentityId(id);
-      setRoute({ id: landingRoute[next.role] });
-      window.scrollTo({ top: 0 });
-    },
-    [],
-  );
+  const allowed = useMemo(() => new Set<string>(permissions ?? permissionsFor(identity.role)), [permissions, identity.role]);
+  const can = useCallback((op: string) => allowed.has(op), [allowed]);
 
   const value = useMemo<Store>(
     () => ({
@@ -175,12 +185,11 @@ export function StoreProvider({ children, signedIn, onSignOut }: StoreProviderPr
       role: identity.role,
       identity,
       actor: actorOf(identity),
-      identities: allIdentities,
-      switchIdentity,
+      can,
       signOut: onSignOut,
       now,
     }),
-    [state, actions, go, route, identity, allIdentities, switchIdentity, onSignOut, now],
+    [state, actions, go, route, identity, can, onSignOut, now],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

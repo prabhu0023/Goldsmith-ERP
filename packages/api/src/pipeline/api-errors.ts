@@ -59,8 +59,8 @@ export class UnauthenticatedError extends ApiError {
 }
 
 export class ForbiddenError extends ApiError {
-  constructor() {
-    super('forbidden', 'You are not allowed to do this.');
+  constructor(message = 'You are not allowed to do this.') {
+    super('forbidden', message);
     this.name = 'ForbiddenError';
   }
 }
@@ -89,6 +89,7 @@ const NOUNS: Record<string, string> = {
   KarigarJob: 'job',
   PieceEdit: 'edit',
   MetalPool: 'metal pool',
+  User: 'user',
 };
 
 const nounOf = (entity: string): string => NOUNS[entity] ?? 'record';

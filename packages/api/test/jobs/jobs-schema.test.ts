@@ -29,7 +29,12 @@ describeDb('EP-10 background jobs schema', () => {
        values ($1, $2, 'System (SLA breach job)', $3, $4, 'Lead marked late', 'LD-2026-001', $5)`,
       [shop.shopId, values.actorId, values.actorRole, values.kind ?? 'lead_marked_late', now],
     );
-  const addOwner = () => newUser(pool, shop, { name: 'Sanjay Seth', role: 'owner' });
+  // One shop has one live owner (EP-05-S9), so the owner is created once and reused.
+  let ownerId: Promise<string> | undefined;
+  const addOwner = () => {
+    ownerId ??= newUser(pool, shop, { name: 'Sanjay Seth', role: 'owner' });
+    return ownerId;
+  };
 
   it('has the new tables and columns, every time a timestamptz', async () => {
     const tz = { type: 'timestamp with time zone' };

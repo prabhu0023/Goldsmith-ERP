@@ -1,3 +1,4 @@
+import { permissionsFor } from '@goldsmith/shared';
 import { afterAll, beforeAll, beforeEach, expect, it, vi } from 'vitest';
 import type { PasswordHasher } from '../../src/auth/password-hash.js';
 import { hashSecret } from '../../src/auth/session-store.js';
@@ -59,6 +60,7 @@ describeDb('sign in with phone and password (EP-04-S3, S5, S14 AC1)', () => {
         ok: true,
         user: { userId: rajesh, name: 'Rajesh Verma', role: 'staff' },
         landingRoute: 'today',
+        permissions: [...permissionsFor('staff')],
       });
       expect(tokenFrom(res.setCookie)).toMatch(/^[A-Za-z0-9_-]{43}$/);
     }

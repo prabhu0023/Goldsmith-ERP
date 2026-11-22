@@ -22,10 +22,10 @@ Production registers one operation today: `markLeadLost` (`{ leadId, reason? }`)
 2. Look up the operation in the contract and the registered handlers. Unknown: `not_found`.
 3. Resolve the session from the `gs_session` cookie (EP-04). A session counts only when it has not ended or expired, its user is active and the user's role is still the role it was issued for.
 4. Rate-limit hook `{ operation, userId, clientAddress }`. Refused: `rate_limited`. The default allows everything; real limits are EP-39.
-5. No session: `unauthenticated`.
+5. No session: `unauthenticated`. Then the permission hook with the session's actor (see Permissions below). Refused: `forbidden`, before the body is validated or a transaction opens.
 6. Validate the body against the operation's input schema. Unknown fields are dropped, so a client-sent `by`, `actor`, `at` or `time` never reaches the handler.
 7. Check the `Idempotency-Key` header (create operations only).
-8. One database transaction: load the shop, build `ctx = { by, at, shop }` from the session and the server clock, run the permission hook, run the handler. Any error rolls everything back; after-commit hooks run only after a commit.
+8. One database transaction: load the shop, build `ctx = { by, at, shop }` from the session and the server clock, run the handler. Any error rolls everything back; after-commit hooks run only after a commit.
 9. Send the result.
 
 ## Errors
@@ -73,6 +73,16 @@ Copy the reference service `packages/api/src/services/mark-lead-lost.ts`:
 4. Test it over HTTP like `packages/api/test/services/mark-lead-lost.test.ts`.
 
 Never name an api file after a shared module (`contract.ts`, `leads.ts`, `clock.ts`, ...): `npm run lint` refuses it.
+
+## Permissions (EP-05)
+
+- **The list.** `packages/shared/src/permissions/permissions.ts` holds the fixed permission list for the three roles: `OPERATION_RULES` gives each operation the roles allowed to call it and the sentence a refusal shows. `roleMay(role, op)`, `refusalFor(op)` and `permissionsFor(role)` read it; `signIn` and `readCurrentSession` return `permissionsFor(role)` as `permissions`, which the web uses only to hide buttons.
+- **Adding a rule.** A new contract operation needs one `OPERATION_RULES` entry, e.g. `myOp: ownerOnly('Only the owner can …')`. `npm run typecheck` fails with "Property 'myOp' is missing" until it has one. An operation the prototype has but the contract does not yet declare is listed in `PLANNED_OPERATIONS`; delete it there when it is ported.
+- **Deny by default.** An operation with no entry is refused for every role with "You are not allowed to do this.".
+- **Where it runs.** `matrixPermissionCheck` (`packages/api/src/auth/permission-check.ts`) is the app's default permission hook. The operation router calls it right after the session check (step 5 above), with `{ id, name, role }` from the session, never from the body, so a refused call reads and writes nothing. Sign-in operations are not role-gated (`AUTH_OPERATION_ACCESS`).
+- **Karigar scope.** A karigar reads only their own jobs (`listMyJobs`, `readMyJob`). Filter in SQL by `callerKarigarId(tx, ctx)` (`packages/api/src/auth/karigar-scope.ts`), the karigar record on the caller's user row; another karigar's record answers `not_found`, not `forbidden`.
+- **User operations** (owner only, `packages/api/src/users/`): `createUser` (a create; mails the activation link), `resendActivation`, `updateUserProfile`, `updateUserRole`, `deactivateUser`, `reactivateUser`, `unlockUser`, `linkKarigar` and `listUsers`. `userId` is the user's uuid and `karigarId` the karigar code ("KG-04"); writes other than resend and unlock take the user's `version`. Each write locks the shop row first, so one shop always has exactly one owner ("The shop already has an owner.", "The shop needs its owner."), and writes its lifecycle audit entry (masked phones and emails) in the same transaction.
+- **`user.access_changed`.** A role change or deactivation ends every open session of the user and adds one `user.access_changed` row to `outbox_events` in the same transaction: `{ userId, reason: 'deactivated' | 'role_changed', role?, at }`, ids only. EP-07 delivers it. The user's next request is refused as `unauthenticated` either way.
 
 ## Sign-in (EP-04)
 
