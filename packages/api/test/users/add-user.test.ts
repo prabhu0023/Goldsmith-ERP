@@ -107,6 +107,20 @@ describeDb('add a user (EP-05-S4)', () => {
     });
   });
 
+  it('AC6: resending to a deactivated user who never activated asks to reactivate first, and sends nothing', async () => {
+    const add = await h.asOwner('createUser', {
+      name: 'Meera Nair',
+      phone: '+91 98410 66666',
+      email: 'meera.nair@example.com',
+      role: 'staff',
+    });
+    const meera = add.body.id as string;
+    const version = (await userRow(h, meera)).version;
+    expect(await h.asOwner('deactivateUser', { userId: meera, version })).toEqual({ status: 200, body: { ok: true } });
+    const sent = h.mailer.messages().length;
+    expect(await h.asOwner('resendActivation', { userId: meera })).toEqual(refused(USER_MESSAGES.resendDeactivated));
+    expect(h.mailer.messages()).toHaveLength(sent);
+  });
   it('AC7: the role owner is refused because the shop already has an owner', async () => {
     const res = await h.asOwner('createUser', { ...DEEPAK, phone: '+91 90030 71151', role: 'owner' });
     expect(res).toEqual(refused(USER_MESSAGES.shopHasOwner));

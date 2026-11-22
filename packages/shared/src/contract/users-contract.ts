@@ -21,6 +21,7 @@ export const USER_MESSAGES = {
   alreadyActive: 'This user is already active.',
   phoneTaken: 'Another user already signs in with this phone number.',
   notPending: 'This user has already activated their account.',
+  resendDeactivated: 'This user is deactivated. Reactivate them before resending the activation link.',
 } as const;
 
 const userId = z.uuid();

@@ -1,6 +1,7 @@
 /**
  * Resend activation (EP-05-S4 AC6): a new activation link for a user who has not activated
- * yet; issuing it replaces the earlier link (EP-04-S10). Any other user is refused.
+ * yet; issuing it replaces the earlier link (EP-04-S10). A deactivated user must be reactivated
+ * first; any other user has already activated and is refused.
  */
 import { type contract, DomainError, USER_MESSAGES } from '@goldsmith/shared';
 import { issueActivationLink } from '../auth/activation.js';
@@ -12,6 +13,7 @@ export function resendActivationHandler(deps: UserHandlerDeps): Handler<typeof c
   return async (tx, ctx, input) => {
     await lockShopForUsers(tx, ctx.shop);
     const user = await loadUserForUpdate(tx, ctx.shop, input.userId);
+    if (user.status === 'deactivated') throw new DomainError(USER_MESSAGES.resendDeactivated);
     if (user.status !== 'pending_activation') throw new DomainError(USER_MESSAGES.notPending);
     await issueActivationLink(tx, {
       shopId: ctx.shop.shopId,
