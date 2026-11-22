@@ -33,7 +33,7 @@ Requirements: survives restarts, no duplicate execution with two API processes, 
 
 ## Outbox topics
 
-Rows in `outbox_events` are written in the job's transaction. Nothing reads or sends them yet: live delivery is EP-07 (live events), EP-11/EP-12 (notifications, WhatsApp) and EP-33 (wishes). Payloads hold human codes only, never phone, name or token.
+Rows in `outbox_events` are written in the job's transaction. The live channel (EP-07, [live.md](live.md)) publishes the rows whose topic is in its catalogue; the others wait for EP-11/EP-12 (notifications, WhatsApp) and EP-33 (wishes), and the live publisher never touches them. Payloads hold human codes only, never phone, name or token.
 
 | Topic | Payload |
 | --- | --- |
@@ -41,6 +41,9 @@ Rows in `outbox_events` are written in the job's transaction. Nothing reads or s
 | `karigar_job.overdue` | `{ jobId, overdueSince }` |
 | `notify.karigar_job_overdue_reminder` | `{ jobId, karigarId, overdueDays, date }` |
 | `wishes.run_requested` | `{ date, items: [{ customerId, kind: 'birthday' \| 'anniversary' }] }` |
+| `lead.alert` (live) | written by the SLA breach job next to `lead.sla_passed`: "Lead arrived / passed its SLA" to staff and owner |
+| `karigar_job.status_changed` (live) | written by the overdue job on the first overdue day next to `karigar_job.overdue`: "Karigar job status changed" to staff, owner and the job's karigar |
+| `user.access_changed` (live) | written by EP-05 on deactivate or role change; delivered to that user's streams |
 
 ## Configuration
 
@@ -72,10 +75,10 @@ Schedule, Cancel and Run are TypeScript functions, never contract operations, so
 - **Reminder frequency:** one overdue reminder per job per Asia/Kolkata day.
 - **Who may see and retry runs:** Owner only for now; the check reads `ctx.by.role`, so it keeps working when EP-04 sessions replace the EP-03 dev stub.
 - **G17 broadcasts:** scheduled broadcasts are not a job yet.
-- **G26 event name:** `lead.sla_passed` and `karigar_job.overdue` are working names until the EP-07 live events catalogue fixes them.
+- **G26 event names:** fixed by EP-07. The live catalogue names are `lead.alert` and `karigar_job.status_changed` (written by the same jobs in the same transaction); `lead.sla_passed` and `karigar_job.overdue` stay as they are for the notification epics.
 - **EP-09 file retention** is scheduled as `file-retention` (above, when storage is configured); **EP-03 idempotency-record cleanup** is not scheduled yet. Run history grows fast: `lead-sla-timers` and `edit-token-expiry` each write a JobRun every minute (about 2,880 rows a day), so the newest 50 cover about 25 minutes and `RUN-<year>` codes pass 99,999 after about 35 days (codes keep working, they get longer). Use `jobName` (e.g. `lead-sla-breach`, `wishes-9am`) to find the runs that matter; retention of sweep runs is not handled by `file-retention` (it removes stored files only) and is still open.
 - **29 February wishes:** the wishes queue matches birthday/anniversary month and day exactly, so a 29 February date is only queued in leap years. Whether to greet on 28 February or 1 March in common years is left to EP-33.
-- **Live delivery** of outbox events is EP-07 / EP-11 / EP-33; screen counts updating live (S5 AC4) waits on EP-07.
+- **Live delivery** of the live topics is EP-07 ([live.md](live.md)); notifications and wishes stay with EP-11 / EP-33. Screen counts updating live (S5 AC4): the Leads rail badge refreshes from the server on `lead.alert`; the screens themselves read the in-memory store until EP-08.
 
 ## Acceptance criteria map (S1–S13)
 
