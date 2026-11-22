@@ -6,14 +6,7 @@
  */
 import type { Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import {
-  type LiveCatalogue,
-  type LiveEnvelope,
-  type LiveServerMessage,
-  type LiveTopic,
-  liveServerMessageSchema,
-  type RoleId,
-} from '@goldsmith/shared';
+import type { LiveCatalogue, LiveEnvelope, LiveServerMessage, LiveTopic, RoleId } from '@goldsmith/shared';
 import type pg from 'pg';
 import { createApp } from '../../src/app.js';
 import { createSessionResolver } from '../../src/auth/session-store.js';
@@ -27,6 +20,7 @@ import type { Clock } from '../../src/pipeline/server-clock.js';
 import { addKarigar, addPiece, newShop, type TestShop, testPool } from '../db/db-test-helpers.js';
 import { HIGH_AUTH_LIMITS, newSession, newUser, SERVER_NOW, sessionCookie, testPasswords } from '../support/api-harness.js';
 import { type MutableClock, mutableClock } from '../support/test-clock.js';
+import { readSseFrames } from './node-live-stream.js';
 
 type Queryable = pg.Pool | pg.PoolClient;
 
@@ -203,30 +197,16 @@ export async function openLiveStream(base: string, token: string | null, opts: C
     finish();
     return client;
   }
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
+  const body = res.body;
   void (async () => {
     try {
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        for (let at = buffer.indexOf('\n\n'); at >= 0; at = buffer.indexOf('\n\n')) {
-          const frame = buffer.slice(0, at);
-          buffer = buffer.slice(at + 2);
-          let data: string | null = null;
-          for (const line of frame.split('\n')) {
-            if (line.startsWith('id: ')) client.lastEventId = Number(line.slice(4));
-            if (line.startsWith('data: ')) data = line.slice(6);
-          }
-          if (data === null) continue;
-          const msg = liveServerMessageSchema.parse(JSON.parse(data));
-          if (msg.type === 'hello') client.hello = msg;
-          client.messages.push(msg);
-          for (const w of waiters.splice(0)) w();
-        }
-      }
+      await readSseFrames(body, ({ id, msg }) => {
+        if (id !== null) client.lastEventId = id;
+        if (msg === null) return;
+        if (msg.type === 'hello') client.hello = msg;
+        client.messages.push(msg);
+        for (const w of waiters.splice(0)) w();
+      });
     } catch {
       // Aborted by the test.
     } finally {

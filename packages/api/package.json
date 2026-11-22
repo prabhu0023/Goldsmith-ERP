@@ -20,7 +20,8 @@
     "db:dev-password": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts dev-password",
     "db:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts create",
     "db:new": "node --conditions=@goldsmith/source --import tsx src/db/cli.ts new",
-    "storage:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/files/storage-cli.ts create"
+    "storage:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/files/storage-cli.ts create",
+    "live:demo": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx scripts/live-demo.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1175.0",
