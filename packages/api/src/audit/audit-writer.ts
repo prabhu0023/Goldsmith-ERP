@@ -21,6 +21,8 @@ import {
 } from '@goldsmith/shared';
 import type pg from 'pg';
 import { maskContactsInText } from '../auth/mask.js';
+import type { Tx } from '../pipeline/operation-transaction.js';
+import type { OperationCtx } from '../pipeline/registry.js';
 import { redactSecrets, stripMoney } from './redact.js';
 
 type Queryable = pg.Pool | pg.PoolClient;
@@ -193,4 +195,40 @@ export function changedFields(
     outAfter[key] = now;
   }
   return { before: outBefore, after: outAfter };
+}
+
+export interface AuditChange {
+  kind: AuditAction;
+  entityType?: AuditEntityType;
+  entityId: string;
+  ref?: string | null;
+  summary: string;
+  reason?: string | null;
+  tokenReference?: string | null;
+  /** The record's fields as read; null for a create. */
+  before: Values | null;
+  /** The same fields as saved. */
+  after: Values | null;
+}
+
+/**
+ * Audit a service function's change (EP-06-S2, S3): only the changed fields are stored, on the
+ * operation's transaction, with the session user as actor and the server time.
+ */
+export async function auditChange(tx: Tx, ctx: OperationCtx, change: AuditChange): Promise<{ id: string }> {
+  const { before, after } = changedFields(change.before, change.after);
+  return appendAudit(tx.client, {
+    shopId: ctx.shop.shopId,
+    at: ctx.at,
+    actor: { kind: 'user', ...ctx.by },
+    kind: change.kind,
+    entityType: change.entityType,
+    entityId: change.entityId,
+    summary: change.summary,
+    reason: change.reason,
+    ref: change.ref,
+    tokenReference: change.tokenReference,
+    before,
+    after,
+  });
 }

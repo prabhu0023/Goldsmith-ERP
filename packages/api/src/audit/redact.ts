@@ -5,6 +5,8 @@
 import { maskEmail, maskPhone } from '../auth/mask.js';
 
 const SECRET_KEY = /password|token|link|secret|code/i;
+/** Keys that match SECRET_KEY but hold no secret: the shop rule "an edit needs a token" (EP-06-S8). */
+const NOT_SECRET_KEYS: ReadonlySet<string> = new Set(['requireEditToken']);
 
 const PHONE_KEY = /phone/i;
 
@@ -16,7 +18,7 @@ export function redactSecrets(value: unknown): unknown {
   if (value === null || typeof value !== 'object' || value instanceof Date) return value;
   const out: Record<string, unknown> = {};
   for (const [key, child] of Object.entries(value)) {
-    if (SECRET_KEY.test(key)) continue;
+    if (SECRET_KEY.test(key) && !NOT_SECRET_KEYS.has(key)) continue;
     if (typeof child === 'string' && PHONE_KEY.test(key)) out[key] = maskPhone(child);
     else if (typeof child === 'string' && EMAIL_KEY.test(key)) out[key] = maskEmail(child);
     else out[key] = redactSecrets(child);

@@ -54,7 +54,6 @@ export const PLANNED_OPERATIONS = [
   'sendWishes',
   'sendBroadcast',
   'upsertScale',
-  'setSetting',
   'setLeadTimer',
   'readReports',
 ] as const;

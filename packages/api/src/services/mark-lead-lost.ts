@@ -6,10 +6,12 @@
  *   - the record is found by its human code within `ctx.shop` (missing -> not_found);
  *   - the domain rule comes from `@goldsmith/shared` (refusal -> rule_refused);
  *   - the write goes through `updateVersioned` (a concurrent change -> conflict);
- *   - everything runs in the one transaction `tx` the pipeline opened for this request.
+ *   - everything runs in the one transaction `tx` the pipeline opened for this request;
+ *   - the change is audited with `auditChange` in that transaction (EP-06-S2).
  * The prototype's hold release is not ported: v1 has no holds.
  */
 import { assertCanMarkLost, type contract, type LeadState } from '@goldsmith/shared';
+import { auditChange } from '../audit/audit-writer.js';
 import { updateVersioned } from '../db/versioned.js';
 import { leadSlaTimerAfterTransition } from '../jobs/handlers/lead-sla.js';
 import { NotFoundError } from '../pipeline/api-errors.js';
@@ -23,11 +25,22 @@ export const markLeadLost: Handler<typeof contract.markLeadLost> = async (tx, ct
   const lead = rows[0];
   if (!lead) throw new NotFoundError('Lead', input.leadId);
   assertCanMarkLost(lead.state);
+  const note = input.reason ? input.reason : lead.note;
   await updateVersioned(tx.client, ctx.shop, {
     table: 'leads',
     id: lead.id,
     expectedVersion: lead.version,
-    set: { state: 'lost', note: input.reason ? input.reason : lead.note },
+    set: { state: 'lost', note },
+  });
+  await auditChange(tx, ctx, {
+    kind: 'lead_lost',
+    entityType: 'lead',
+    entityId: input.leadId,
+    ref: input.leadId,
+    summary: `Lead ${input.leadId} marked lost`,
+    reason: input.reason || null,
+    before: { state: lead.state, note: lead.note },
+    after: { state: 'lost', note },
   });
   await leadSlaTimerAfterTransition(tx.client, ctx.shop, { leadId: lead.id, state: 'lost' });
   return { ok: true };

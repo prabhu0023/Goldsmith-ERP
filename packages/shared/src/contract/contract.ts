@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { okResult, pageInput, pageResult } from './contract-fields.js';
 import { defineOperation } from './define-operation.js';
 import { ERROR_CODES } from './error-codes.js';
+import { settingsOperations } from './settings-contract.js';
 import { userOperations } from './users-contract.js';
 import { filesContract } from './files-contract.js';
 
@@ -60,6 +61,7 @@ export const contract = {
   }),
   ...userOperations,
   ...filesContract,
+  ...settingsOperations,
 } as const;
 
 export type OperationName = keyof typeof contract;

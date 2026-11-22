@@ -18,7 +18,7 @@ import { type AppEnv, loadConfig } from '../../src/config.js';
 import type { ErrorLog } from '../../src/pipeline/api-errors.js';
 import { allowAllPermissions, type PermissionCheck, type RateLimiter } from '../../src/pipeline/hooks.js';
 import type { Tx } from '../../src/pipeline/operation-transaction.js';
-import type { AnyHandler, HandlerMap, OperationCtx } from '../../src/pipeline/registry.js';
+import type { AnyHandler, AuditKindMap, HandlerMap, OperationCtx } from '../../src/pipeline/registry.js';
 import { type Clock, fixedClock } from '../../src/pipeline/server-clock.js';
 import { MemoryStorage } from '../../src/files/memory-storage.js';
 import { addKarigar, appRolePool, newShop, type TestShop, testPool } from '../db/db-test-helpers.js';
@@ -49,6 +49,10 @@ export interface HarnessOptions {
    * role the api runs as (EP-06, FU-001); `pool` (setup and checks) stays the owner.
    */
   production?: boolean;
+  /** Audit kinds per operation for the registry (EP-06); production defaults to the shared map. */
+  auditKinds?: AuditKindMap;
+  /** Handlers used instead of the fixture handlers of the same name (not with `production`). */
+  handlers?: HandlerMap;
 }
 
 /** The fast hasher every harness uses (the S2 tests use the production parameters). */
@@ -198,7 +202,7 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
   const logged: Harness['logged'] = [];
   const fixtures = createFixtureHandlers({ gate: options.gate, onCommit: (op) => commits.push(op) });
   const handlers: Record<string, AnyHandler> = {};
-  for (const [operation, handler] of Object.entries(fixtures as HandlerMap)) {
+  for (const [operation, handler] of Object.entries({ ...(fixtures as HandlerMap), ...options.handlers })) {
     if (!handler) continue;
     const run = handler as (tx: Tx, ctx: OperationCtx, input: unknown) => Promise<unknown>;
     handlers[operation] = async (tx: Tx, ctx: OperationCtx, input: unknown) => {
@@ -222,6 +226,7 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
     sessions: createSessionResolver({ pool: appPool, clock, idleMinutes: config.sessionIdleMinutes }),
     clock,
     rateLimiter: options.rateLimiter,
+    auditKinds: options.auditKinds,
     ...(options.production
       ? {
           files: {

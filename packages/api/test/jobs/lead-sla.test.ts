@@ -13,6 +13,7 @@ import { productionJobs } from '../../src/jobs/production-jobs.js';
 import { runInTransaction } from '../../src/pipeline/operation-transaction.js';
 import { markLeadLost } from '../../src/services/mark-lead-lost.js';
 import { describeDb, type TestShop, testPool } from '../db/db-test-helpers.js';
+import { newUser } from '../support/api-harness.js';
 import { addLead, makeScheduler, manualClock, newJobsShop, pendingStatus, runsOf } from './job-test-helpers.js';
 
 const leadJobs = [leadSlaTimersJob, leadSlaBreachJob];
@@ -231,12 +232,14 @@ describeDb('lead SLA timers (EP-10-S5, S6)', () => {
     const clock = manualClock('2026-11-01T09:00:00Z');
     const id = await addLead(pool, shop, { code: 'LD-2026-911', arrivedAt: '2026-11-01T09:00:00Z' });
     await makeScheduler(pool, clock, shop, leadJobs).tick();
+    // markLeadLost audits its change (EP-06), so the actor is a real user of the shop.
+    const rajesh = await newUser(pool, shop, { name: 'Rajesh Verma' });
     await runInTransaction(
       pool,
       (tx) =>
         markLeadLost(
           tx,
-          { by: { id: 'u-1', name: 'Rajesh Verma', role: 'staff' }, at: clock.now(), shop },
+          { by: { id: rajesh, name: 'Rajesh Verma', role: 'staff' }, at: clock.now(), shop },
           { leadId: 'LD-2026-911', reason: 'Bought elsewhere' },
         ),
       () => {},

@@ -4,6 +4,7 @@
  */
 import type { contract } from '@goldsmith/shared';
 import type { Handlers } from '../pipeline/registry.js';
+import { setSetting } from '../settings/set-setting.js';
 import { createUserHandlers, type UserHandlerDeps } from '../users/index.js';
 import { listJobRuns } from './list-job-runs.js';
 import { listMyJobs } from './list-my-jobs.js';
@@ -17,6 +18,7 @@ export const handlers: Handlers<typeof contract> = {
   retryJobRun,
   listMyJobs,
   readMyJob,
+  setSetting,
 };
 
 /** Every production handler, including the user operations, which need the account mailer (EP-05). */
