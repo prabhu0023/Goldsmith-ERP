@@ -140,11 +140,11 @@ Other actors that appear in the stories but own no screen:
 | | |
 | --- | --- |
 | Goal | Know what to make, how much it must weigh, how much gold he holds, and tell the desk where the job stands. |
-| Frequency | A few taps several times a day on a 5-inch phone, often offline. |
+| Frequency | A few taps several times a day on a 5-inch phone, often on weak signal. |
 | Top tasks | Accept a job and confirm the due date. See reference photo, target weights, gold issued and wastage allowed. Update status (gold received, working on it, ready, sent to the showroom). Add a bench photo or voice note. Raise a problem on his own job. Hand over one or several ready jobs. |
 | Never sees | Prices, margins, invoices, customers, leads, stock, another karigar's work or scorecard (mockup 11). |
-| Design priorities | 56 px targets, 15 px text floor, one question per screen, "gold with me" as the hero figure, no desktop frame, works with no signal. |
-| Risks to design out | Losing an update when signal drops (queue it and show the queue). Pressing the wrong state with oily hands (large targets, confirm the irreversible hand-over). Seeing any money. |
+| Design priorities | 56 px targets, 15 px text floor, one question per screen, "gold with me" as the hero figure, no desktop frame. Online only in v1 (D6): with no signal the screen says so and the buttons are disabled with a reason. |
+| Risks to design out | Losing an update when signal drops (online only in v1: the button is disabled with a reason, so an update is never accepted and then lost). Pressing the wrong state with oily hands (large targets, confirm the irreversible hand-over). Seeing any money. |
 
 ### 3.5 Customer (external)
 
@@ -367,7 +367,7 @@ flowchart LR
     B --> C["Accept, confirm date"]
     C --> D["Gold received"] --> E["Working on it"] --> F["Ready for checking"] --> G["Sent to the showroom<br/>creates the parcel"]
     B -.-> P["Raise a problem<br/>SCR-24"]
-    G -.-> Q["Offline? Queued, shown as waiting<br/>SCR-25"]
+    G -.-> Q["No signal? Connection-lost state, buttons disabled<br/>EP-08-S11 (SCR-25 deferred)"]
 ```
 
 **K1. See the bench** (mockup 09, screen 1): "GOLD WITH ME 186.400 g across 2 jobs · 0.8% wastage allowed", then job cards with a due flag ("Due today", "Due in 9 days"). Late cards use the same card with the red edge (style not drawn, EP-20-S11).
@@ -378,7 +378,7 @@ flowchart LR
 
 **K4. Raise a problem** (SCR-24, not drawn): the same composer and words as staff (mockup 13), scoped to his own job. A problem on someone else's job is refused with a sentence the server returns (EP-24-S6).
 
-**K5. Work with no signal.** The app installs to the home screen (EP-20-S12a), opens from cache showing "last updated 3:10 pm", and queues updates. Each queued update shows "Waiting to send" in amber and turns green when the server accepts it, or red with the server's sentence if it is refused (EP-20-S12b, not drawn).
+**K5. Work with no signal.** The app is online only in v1 (D6). With no signal the EP-08-S11 state shows, what is on screen stays visible and read-only, and the step buttons are disabled with a reason. Nothing is queued. When the signal returns the screen catches up (EP-07-S7). Install to the home screen, opening from cache and queued updates are Deferred (EP-20-S12a, EP-20-S12b).
 
 ### 5.5 Cross-role chains
 
@@ -443,12 +443,12 @@ flowchart LR
 
 | ID | Screen | Route | Role | Mockup | Epic and stories | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| SCR-20 | Karigar sign-in and install to home screen | `sign-in`, PWA | K | none | EP-20-S2, S12a; EP-41-S11 | Gap |
+| SCR-20 | Karigar sign-in in the phone browser. Install to home screen: Deferred, not decided (EP-20 section 17) | `sign-in` | K | none | EP-20-S2; EP-20-S12a (Deferred); EP-41-S11 | Gap |
 | SCR-21 | My jobs, job sheet, update status, photo, note, voice | `k-jobs` | K | 09 | EP-20-S1, S3 to S7, S10a, S10b, S11; EP-19-S5; EP-09-S9, S10; EP-11-S8; EP-07-S6; EP-42-S14 | Partly (accept box, late card) |
 | SCR-22 | Gold tab: gold with me, per job, allowance | `k-jobs` Gold tab | K | 09 (hero only) | EP-20-S9; EP-18-S11 | Gap (tab) |
 | SCR-23 | Me tab: profile, code, wastage allowance | `k-jobs` Me tab | K | 09 (header only) | EP-16-S12 | Gap (tab) |
 | SCR-24 | Raise a problem on the phone | `k-jobs` | K | 11, 13 (wording) | EP-20-S8; EP-24-S5, S6 | Gap |
-| SCR-25 | Offline and sync status, queue per update | `k-jobs` | K | none | EP-20-S12b | Gap |
+| SCR-25 | Deferred (D6, online only): offline and sync status, queue per update. Not built in v1; the connection-lost state is SCR-06 | `k-jobs` | K | none | EP-20-S12b (Deferred) | Deferred |
 | SCR-26 | Hand over several jobs, hand over again after a send-back | `k-jobs` | K | 12 (rule) | EP-20-S7, S13 | Gap |
 
 #### E. Parcel intake and the match gate (EP-14, EP-15, EP-21, EP-23, EP-36)
@@ -546,7 +546,7 @@ Every epic appears once here with where its screens are and how well they are dr
 | EP-17 | Customer master | SCR-44, SCR-45, SCR-46 | 23 | Partly |
 | EP-18 | Metal pool ledger | SCR-47, SCR-18 balance, SCR-12 gold location | 08, 19 | Partly |
 | EP-19 | Order copy and karigar jobs | SCR-18, SCR-19 | 19 | Partly |
-| EP-20 | Karigar portal (PWA) | SCR-20 to SCR-26 | 09 | Partly |
+| EP-20 | Karigar portal | SCR-20 to SCR-26 | 09 | Partly |
 | EP-21 | Parcel intake and tagging | SCR-27 to SCR-30 | 07, 20, 21 | Partly |
 | EP-22 | Stock and piece lifecycle | SCR-34 | 03, 12 | Drawn (states missing) |
 | EP-23 | Exact-match gate and owner clearance | SCR-31, SCR-32 | 04, 14, 22 | Drawn |
@@ -766,7 +766,7 @@ A piece that is **Billed** or **Scrapped** is frozen and shows a single locked c
 | Refused action | The server's sentence beside the control. Nothing changes on screen. | EP-08-S5 |
 | Network failure | "Could not reach the shop. Nothing was saved. Try again." The retry cannot apply the action twice. | EP-08-S6 |
 | Reconnecting | Amber banner "Reconnecting…". Data stays visible. On return, the screen catches up without a reload. | EP-07-S7; EP-08-S10 |
-| Offline | Banner "No signal". Server actions are disabled and say why. The karigar app is the exception: it queues. | EP-08-S11; EP-20-S12b |
+| Offline | Banner "No signal". Server actions are disabled and say why. The karigar app is the same: nothing is queued (D6, online only). | EP-08-S11 |
 | Session ended | Return to sign-in with "Your session has ended. Sign in again." | EP-08-S15 |
 | Stale write | "Someone changed this piece while you were looking. Reload to see it." Offers reload only. | EP-02-S14 |
 | Stopped or frozen | Red banner naming the problem; every form on the target is read-only. | EP-24-S2, S10; EP-21-S13 |
@@ -883,14 +883,14 @@ Decisions is a single column of cards. Each decision opens one screen at a time:
 
 Reports, the security log and imports are desktop-first and remain readable but are not designed for phone editing.
 
-### 9.5 Karigar phone as a PWA
+### 9.5 Karigar phone as a web app
 
 | Aspect | Design |
 | --- | --- |
 | Frame | A real full-screen app at 360 to 430 px wide. Never shown inside a device frame, on a phone or a desktop. On a wide screen the same single column is centred at 480 px wide. The prototype's `PhoneFrame` is not carried over (EP-20, spec §6). |
-| Install | One install prompt after the second visit, worded "Add to your home screen so it opens like an app." Dismissable once. After install it opens from cache. |
+| Install | No install prompt and no opening from cache in v1 (D5, D6; EP-20-S12a Deferred). Whether the app should be installable to the home screen is an open question in EP-20 section 17. |
 | Navigation | Three bottom tabs, Jobs, Gold, Me, 56 px high. Back returns within the job. |
-| Offline | Banner "No signal. You can still update your jobs." Jobs show "last updated 3:10 pm". Updates queue; each shows its queue state; refusals show the server's sentence and ask him to look again. A queued update never silently disappears. |
+| No signal | The EP-08-S11 banner "No signal". Jobs already on screen stay visible, marked as possibly out of date. Step buttons, photo and raise a problem are disabled with a reason. Nothing is queued (D6, online only). On return the screen catches up (EP-07-S7). |
 | Photos | Camera opens straight from the "Take a photo of the bench" tile. Large photos are compressed on the phone; a refusal for size or type is a sentence, not a code. |
 | Voice | Tap once to start recording, tap again to stop; playback and discard before sending. |
 | Language | English in v1. The हिन्दी toggle (mockup 09) is hidden until EP-44. |
@@ -953,7 +953,7 @@ This list is measured against `docs/MOCKUP-COVERAGE.md` §3 and re-checked again
 | UXG-11 | SCR-47 | EP-18-S2, S7 to S9; EP-41-S6 | Pool balance, ledger with filters, record opening balance, record gold returned, post an adjustment with a reason | Listed (EP-18) | M3 |
 | UXG-12 | SCR-19 | EP-19-S7 to S9, S11, S12 | Board with lanes (sent, accepted, on the bench, ready) and an overdue lane; job detail; cancel and return gold; settlement shown on release | Listed (EP-19) | M3 |
 | UXG-13 | SCR-16 | EP-28-S10 to S12; EP-29-S13 | Lead detail behind "Open": activity timeline, mark lost with a reason, expiry, parse failure and retry | **New** | M5 |
-| UXG-14 | SCR-22 to SCR-26 | EP-20-S4, S7 to S9, S11 to S13; EP-16-S12; EP-24-S5 | Gold tab, Me tab, raise a problem, accept-and-confirm-date box, late card, offline and sync status, multi-job hand-over | Gold, Me, offline listed (EP-20); others **New** | M3 |
+| UXG-14 | SCR-22 to SCR-26 | EP-20-S4, S7 to S9, S11 to S13; EP-16-S12; EP-24-S5 | Gold tab, Me tab, raise a problem, accept-and-confirm-date box, late card, multi-job hand-over (the offline and sync status screen SCR-25 is Deferred, D6) | Gold, Me listed (EP-20); others **New** | M3 |
 | UXG-15 | SCR-27; SCR-28 variants | EP-21-S3, S4, S10 | Parcels-in list with stage; tray entry; parcel with no job (karigar and PO fields) | Listed (EP-21); no-job case **New** | M3 |
 | UXG-16 | SCR-33 | EP-36-S8 to S10 | Tag label layout with barcode; reprint; parcel sheet | G8 only (EP-36) | M7 |
 | UXG-17 | SCR-38, SCR-39 | EP-27-S2 to S9 | "Ask to scrap" dialog; the owner's scrap decision with its two outcome panels; pick list behind "Melt and remake" | **New** | M4 |
@@ -1042,7 +1042,7 @@ The spec's other content stays as written: the seven problems with v1 (§1), the
 | A-07 | "Ask to scrap" is a dialog on the piece drawer, and the owner's decision is a separate screen (`scrap-decision`). | Merge into the Decisions card. |
 | A-08 | A second sender "Priya (Manager)" is a staff user, not a fourth role. | Add a role to EP-05. |
 | A-09 | The public showcase page is signed-out, price-free, expiring and revocable. | Depends on the EP-39-S14 review. |
-| A-10 | The karigar offline queue (D6) is "queue updates offline", as PRODUCTION-SCOPE recommends, though D6 is listed as open. | Read-only offline simplifies SCR-25. |
+| A-10 | D6 is decided: karigars are online only, so SCR-25 (offline and sync status) is Deferred. The connection-lost state stays. | None; this assumption is now settled. |
 
 ### 12.2 Open questions for the owner or the team
 
