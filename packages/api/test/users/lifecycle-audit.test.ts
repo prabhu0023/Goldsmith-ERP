@@ -3,6 +3,7 @@ import { USER_MESSAGES } from '@goldsmith/shared';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { fixedClock } from '../../src/pipeline/server-clock.js';
 import { addKarigar, describeDb } from '../db/db-test-helpers.js';
+import { newUser } from '../support/api-harness.js';
 import { auditOf, refused, startUsersHarness, type UsersHarness, userRow } from './user-test-helpers.js';
 
 /** 11:15 in Asia/Kolkata. */
@@ -119,6 +120,18 @@ describeDb('audit every user lifecycle change (EP-05-S14)', () => {
     );
   });
 
+  it('AC5: a phone or email typed into the deactivation reason is masked', async () => {
+    const arun = await newUser(h.pool, h.shop, { name: 'Arun Pillai', phone: '+91 98410 55555' });
+    await h.asOwner('deactivateUser', {
+      userId: arun,
+      version: await version(arun),
+      reason: 'Moved to Chennai, call +91 98410 33333 or arun.pillai@example.com',
+    });
+    const [entry] = await auditOf(h, 'user_deactivated', arun);
+    expect(entry).toMatchObject({
+      detail: { entity: 'user', entityId: arun, reason: 'Moved to Chennai, call +91 ••••• 33333 or a•••@example.com' },
+    });
+  });
   it('AC5: no entry holds a full phone number', async () => {
     const { rows } = await h.pool.query<{ text: string }>(
       `select concat_ws(' ', actor_name, summary, detail::text, reference, before_value::text, after_value::text) as text

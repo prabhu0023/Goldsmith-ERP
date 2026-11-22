@@ -9,8 +9,8 @@ import { useStore } from '../../store/StoreProvider';
 import { initialsOf } from '../../store/selectors';
 import { Button, Card, DetailDrawer, Field, Input, Notice, PageHeader, Select, StatusChip } from '../ui';
 import type { Tone } from '../ui';
-import { rowActions, statusLabel } from './user-rows';
-import type { RowAction, UserRow } from './user-rows';
+import { afterListAnswer, rowActions, statusLabel } from './user-rows';
+import type { DirectoryList, RowAction, UserRow } from './user-rows';
 const roleLabel = (role: RoleId): string => ROLE_INFO.find((r) => r.id === role)?.label ?? role;
 const ACTION_LABEL: Record<RowAction, string> = {
   resend: 'Resend activation link',
@@ -32,6 +32,16 @@ function runAction(action: RowAction, u: UserRow): Promise<OpsAnswer<'resendActi
       return opsCall('unlockUser', { userId: u.id });
   }
 }
+/** The directory's load failure (EP-05-S11 AC4): the server's message and a Retry button. */
+export function DirectoryLoadError({ message, onRetry }: { message: string; onRetry: () => void }) {
+  return (
+    <div className="mb-4 flex flex-wrap items-center gap-3">
+      <Notice tone="stop">{message}</Notice>
+      <Button onClick={onRetry}>Retry</Button>
+    </div>
+  );
+}
+
 /** Owner only (EP-05-S11). Every user of the shop from the server, their role, status and actions. */
 export function StaffDirectory() {
   const { can } = useStore();
@@ -49,21 +59,18 @@ export function StaffDirectory() {
 }
 function UserDirectory() {
   const { go } = useStore();
-  const [users, setUsers] = useState<UserRow[]>([]);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [list, setList] = useState<DirectoryList>({ users: [], nextCursor: null, loadError: null });
+  const { users, nextCursor, loadError } = list;
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
   const load = useCallback(async (cursor?: string) => {
     setLoading(true);
-    setLoadError(null);
+    setList((prev) => ({ ...prev, loadError: null }));
     const answer = await opsCall('listUsers', cursor ? { cursor } : {});
     setLoading(false);
-    if (!answer.ok) return setLoadError(answer.message);
-    setUsers((prev) => (cursor ? [...prev, ...answer.data.items] : answer.data.items));
-    setNextCursor(answer.data.nextCursor);
+    setList((prev) => afterListAnswer(prev, answer, cursor));
   }, []);
   useEffect(() => {
     void load();
@@ -93,12 +100,7 @@ function UserDirectory() {
           <Notice tone="stop">{actionError}</Notice>
         </div>
       )}
-      {loadError && (
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <Notice tone="stop">{loadError}</Notice>
-          <Button onClick={() => void load()}>Retry</Button>
-        </div>
-      )}
+      {loadError && <DirectoryLoadError message={loadError} onRetry={() => void load()} />}
       <ul className="space-y-3">
         {users.map((u) => (
           <li key={u.id}>

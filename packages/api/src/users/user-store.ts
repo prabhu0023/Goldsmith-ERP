@@ -33,12 +33,20 @@ export interface KarigarRef {
   code: string;
 }
 
-/** Lock the shop row for this transaction, so user changes in one shop run one at a time. */
+/**
+ * Lock the shop row for this transaction, so user changes in one shop run one at a time.
+ * `for no key update` conflicts with itself but not with the key-share locks that foreign-key
+ * inserts take, so other writes in the shop (including the target user's own) do not queue
+ * behind it or deadlock with it.
+ */
 export async function lockShopForUsers(tx: Tx, shop: ShopContext): Promise<void> {
-  await tx.client.query('select id from shops where id = $1 for update', [shop.shopId]);
+  await tx.client.query('select id from shops where id = $1 for no key update', [shop.shopId]);
 }
 
-/** The user, locked for this transaction; a miss (or another shop's user) is not_found. */
+/**
+ * The user, locked for this transaction (`for no key update`, as for the shop row); a miss (or
+ * another shop's user) is not_found.
+ */
 export async function loadUserForUpdate(tx: Tx, shop: ShopContext, userId: string): Promise<UserRow> {
   const { rows } = await tx.client.query<UserRow>(
     `select u.id, u.name, u.phone, u.phone_e164, u.email, u.role, u.status, u.karigar_id,
@@ -46,7 +54,7 @@ export async function loadUserForUpdate(tx: Tx, shop: ShopContext, userId: strin
        from users u
        left join karigars k on k.shop_id = u.shop_id and k.id = u.karigar_id
       where u.shop_id = $1 and u.id = $2
-      for update of u`,
+      for no key update of u`,
     [shop.shopId, userId],
   );
   const user = rows[0];

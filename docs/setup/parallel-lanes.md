@@ -67,6 +67,8 @@ Then write the SQL into that file. The existing `0001_…` to `0015_…` keep th
 
 Two branches merge in either order, so a migration from the branch merged second can have an earlier timestamp than one already applied. The runner applies every file that has no history row, even one that sorts before an applied file, and `npm run db:status` lists it as `pending` until then. `db:status` also shows `applied`, `changed` (file edited after it was applied) and `missing` (applied, but the file is gone); `db:migrate` stops on `changed` or `missing` before applying anything. Two files with the same timestamp stop the run with an error naming both: run `db:new` again on the branch not yet merged and move its SQL into the new file.
 
+A migration that adds audit kinds widens `audit_entries_kind_check` order-safely: `20261122T0720_ep05_users_roles.sql` reads the kinds already in the constraint with the pattern `'([a-z_]+)'`, adds its own and rebuilds the constraint, so kinds another lane added first are kept. That pattern matches only `a-z` and `_`, so an audit kind must not contain a digit or any other character (`image_v2_added` would be dropped without an error). A later block that widens the check can reuse the same pattern.
+
 The history table `schema_migrations` stores the version as a number: `7` for `0007`, `202611211030` for `20261121T1030`. On a database migrated before timestamp names existed, the next `db:migrate` widens that column from `integer` to `bigint` and keeps its rows.
 
 ## Merge order

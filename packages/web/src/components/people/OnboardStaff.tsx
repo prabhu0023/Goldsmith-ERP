@@ -1,4 +1,4 @@
-import { ROLE_INFO, normaliseIndianMobile } from '@goldsmith/shared';
+import { ROLE_INFO } from '@goldsmith/shared';
 import type { RoleId } from '@goldsmith/shared';
 import { Check, X } from 'lucide-react';
 import { useState } from 'react';
@@ -7,7 +7,9 @@ import { opsCall } from '../../api/ops-client';
 import { useStore } from '../../store/StoreProvider';
 import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, cn } from '../ui';
 import { firstName } from '../home/util';
-type FieldName = 'name' | 'phone' | 'email' | 'karigarId';
+import { addUserFieldErrors } from './user-rows';
+import type { AddUserField } from './user-rows';
+type FieldName = AddUserField;
 const ROLE_ORDER: RoleId[] = ['staff', 'karigar', 'owner'];
 /** Screen 25. Owner only (EP-05-S4). The role fixes the permission list; nobody ticks boxes. */
 export function OnboardStaff() {
@@ -41,11 +43,7 @@ function AddUserForm() {
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setNotice(null);
-    const found: Partial<Record<FieldName, string>> = {};
-    if (!name.trim()) found.name = 'Add the name.';
-    if (normaliseIndianMobile(phone) === null) found.phone = 'Enter a 10-digit mobile number.';
-    if (!email.trim()) found.email = 'Add the email address. The activation link goes there.';
-    if (role === 'karigar' && !karigarId.trim()) found.karigarId = 'Add the karigar code, e.g. KG-04.';
+    const found = addUserFieldErrors({ name, phone, email, role, karigarId });
     setErrors(found);
     if (Object.keys(found).length > 0) return;
     setBusy(true);

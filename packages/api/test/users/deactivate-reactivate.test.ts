@@ -3,7 +3,7 @@
  * deactivation (EP-05-S10 AC1, AC2, AC4, AC5).
  */
 import { USER_MESSAGES } from '@goldsmith/shared';
-import { afterAll, beforeAll, expect, it } from 'vitest';
+import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import { describeDb } from '../db/db-test-helpers.js';
 import { newUser, newUserWithPassword, SERVER_NOW } from '../support/api-harness.js';
 import {
@@ -20,6 +20,18 @@ import {
   WRONG_PASSWORD,
 } from './user-test-helpers.js';
 
+/** The user whose lifecycle audit insert fails on purpose (S10 AC2), or null. */
+const failAudit = vi.hoisted(() => ({ userId: null as string | null }));
+vi.mock('../../src/users/user-audit.js', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../../src/users/user-audit.js')>();
+  return {
+    ...real,
+    writeUserLifecycleAudit: async (...args: Parameters<typeof real.writeUserLifecycleAudit>) => {
+      if (args[3].userId === failAudit.userId) throw new Error('audit insert failed on purpose');
+      return real.writeUserLifecycleAudit(...args);
+    },
+  };
+});
 describeDb('deactivate and reactivate a user (EP-05-S7, S8, S10)', () => {
   let h: UsersHarness;
   let rajesh: string;
@@ -113,7 +125,27 @@ describeDb('deactivate and reactivate a user (EP-05-S7, S8, S10)', () => {
     expect(JSON.stringify(events)).not.toMatch(/Vijay|Kumar|9841077777|98410|77777/);
   });
 
-  it('S10 AC2: a rolled-back deactivation ends no session and emits nothing', async () => {
+  it('S10 AC2: a deactivation that fails after the session end rolls the session end and the event back', async () => {
+    const nikhil = await newUserWithPassword(h.pool, h.shop, {
+      name: 'Nikhil Shah',
+      phone: '+91 90030 71188',
+      password: PASSWORD,
+    });
+    const live = await signIn(h, '+91 90030 71188');
+    // The audit entry is written after endUserAccess, so failing it proves both share the transaction.
+    failAudit.userId = nikhil;
+    try {
+      expect((await deactivate(nikhil)).status).toBe(500);
+    } finally {
+      failAudit.userId = null;
+    }
+    expect(await sessionLive(h, live.token ?? '')).toBe(true);
+    expect(await accessEvents(h, nikhil)).toEqual([]);
+    const { rows } = await h.pool.query(`select end_reason from sessions where user_id = $1`, [nikhil]);
+    expect(rows.map((r) => r.end_reason)).toEqual([null]);
+    expect(await userRow(h, nikhil)).toMatchObject({ status: 'active', deactivated_at: null });
+  });
+  it('S10 AC2: a stale-version deactivation ends no session and emits nothing', async () => {
     const deepak = await newUserWithPassword(h.pool, h.shop, {
       name: 'Deepak Rao',
       phone: '+91 90030 71145',

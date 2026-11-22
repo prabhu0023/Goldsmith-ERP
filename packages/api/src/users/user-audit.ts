@@ -2,14 +2,16 @@
  * Audit entries for user lifecycle changes (EP-05-S14): add, edit, role change, deactivate,
  * reactivate and karigar link. Written in the operation's transaction, so a refused or
  * rolled-back change leaves no entry. Before and after values go through redactSecrets, so
- * phones and emails are masked; value keys must not contain "code", "token", "link",
+ * phones and emails are masked, and so are any phones or emails typed into the reason; value keys must not contain "code", "token", "link",
  * "password" or "secret", because redactSecrets drops those keys (use `karigarId`).
  */
 import type { Actor } from '@goldsmith/shared';
 import type pg from 'pg';
 import { redactSecrets } from '../auth/auth-audit.js';
+import { maskContactsInText } from '../auth/mask.js';
 import type { ShopContext } from '../db/shop-context.js';
 
+/** Audit kinds use only a-z and _: the order-safe kind-check widening keeps no other kind (docs/setup/parallel-lanes.md). */
 export type UserAuditKind =
   | 'user_added'
   | 'user_edited'
@@ -38,7 +40,7 @@ export async function writeUserLifecycleAudit(
   actor: Actor,
   { kind, at, userId, summary, before, after, reason }: UserAuditEntry,
 ): Promise<void> {
-  const detail = { entity: 'user', entityId: userId, ...(reason ? { reason } : {}) };
+  const detail = { entity: 'user', entityId: userId, ...(reason ? { reason: maskContactsInText(reason) } : {}) };
   await client.query(
     `insert into audit_entries
        (shop_id, at, actor_id, actor_name, actor_role, kind, summary, detail, reference, before_value, after_value)

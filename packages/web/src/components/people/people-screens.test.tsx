@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { StoreProvider } from '../../store/StoreProvider';
 import { OnboardStaff } from './OnboardStaff';
-import { StaffDirectory } from './StaffDirectory';
+import { DirectoryLoadError, StaffDirectory } from './StaffDirectory';
 const as = (name: string, role: RoleId, screen: ReactElement) =>
   renderToStaticMarkup(
     <StoreProvider signedIn={{ name, role }} onSignOut={async () => null}>
@@ -17,6 +17,13 @@ describe('people screens (EP-05-S4, S11)', () => {
     expect(html).toContain('Loading the staff list');
     expect(html).toContain('Add a staff member');
     expect(html).not.toContain('Only the owner sees the staff list.');
+  });
+  it('S11 AC4: a failed load shows the message and a Retry button', () => {
+    const html = renderToStaticMarkup(
+      <DirectoryLoadError message="Cannot reach the server. Check the connection and try again." onRetry={() => {}} />,
+    );
+    expect(html).toContain('Cannot reach the server. Check the connection and try again.');
+    expect(html).toMatch(/<button[^>]*>Retry<\/button>/);
   });
   it('the owner sees the add form with email, three roles and the submit button', () => {
     const html = as('Sanjay Seth', 'owner', <OnboardStaff />);
