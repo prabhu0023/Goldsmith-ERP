@@ -5,6 +5,7 @@ import { createPool } from '../../src/db/connection.js';
 import { migrate } from '../../src/db/migrator.js';
 import { loadPrototypeState } from '../../src/db/seed/prototype-loader.js';
 import { countRows, SeedRefusedError, seedPrototype } from '../../src/db/seed/seed-database.js';
+import { MemoryStorage } from '../../src/files/memory-storage.js';
 import { createTempDatabase, describeDb } from './db-test-helpers.js';
 
 const display = (g: number): string => {
@@ -20,13 +21,13 @@ describeDb('prototype seed (EP-02-S13)', () => {
   let pool: pg.Pool;
   let state: AppState;
   let counts: Record<string, number>;
-
+  const storage = new MemoryStorage();
   beforeAll(async () => {
     temp = await createTempDatabase();
     pool = createPool(temp.url, 2);
     await migrate(pool, new URL('../../migrations/', import.meta.url));
     state = await loadPrototypeState();
-    counts = await seedPrototype(pool, { appEnv: 'development', now: NOW });
+    counts = await seedPrototype(pool, { appEnv: 'development', now: NOW, storage });
   }, 60_000);
   afterAll(async () => {
     await pool?.end();
@@ -83,9 +84,12 @@ describeDb('prototype seed (EP-02-S13)', () => {
       lead_fields: childCount(state.leads, (l) => l.fields),
       karigar_jobs: 9,
       order_copies: state.orderCopies.length,
-      // EP-09: the seed images become stored files with attachments in a later step (S13).
-      stored_files: 0,
-      attachments: 0,
+      // EP-09-S13: the four bundled images, attached wherever the prototype used them.
+      stored_files: 4,
+      attachments:
+        childCount(state.pieces, (p) => [...new Set(p.photos)]) +
+        childCount(state.orderCopies, (o) => [...new Set(o.refImages)]) +
+        state.jobs.filter((j) => j.refImage !== null).length,
       metal_pools: 1,
       pool_entries: state.pool.ledger.length,
       problems: state.problems.length,
@@ -196,13 +200,100 @@ describeDb('prototype seed (EP-02-S13)', () => {
     expect(users.filter((u) => u.role === 'karigar')).toHaveLength(3);
   });
 
-  it('refuses a second run and changes nothing', async () => {
-    await expect(seedPrototype(pool, { appEnv: 'development' })).rejects.toBeInstanceOf(SeedRefusedError);
+  it('refuses a second run and changes nothing (EP-09-S13 AC3: still 4 stored files)', async () => {
+    await expect(seedPrototype(pool, { appEnv: 'development', storage })).rejects.toBeInstanceOf(SeedRefusedError);
     expect(await countRows(pool)).toEqual(counts);
+    expect(storage.keys()).toHaveLength(12);
   });
-
-  it('refuses to run in production', async () => {
-    await expect(seedPrototype(pool, { appEnv: 'production' })).rejects.toThrow(/APP_ENV=production/);
+  it('refuses to run in production (EP-09-S13 AC5: no object written)', async () => {
+    const empty = new MemoryStorage();
+    await expect(seedPrototype(pool, { appEnv: 'production', storage: empty })).rejects.toThrow(/APP_ENV=production/);
     expect(await countRows(pool)).toEqual(counts);
+    expect(empty.keys()).toEqual([]);
   });
+  it('EP-09-S13 AC1: stores the four bundled images with thumbnail and display copies under seed keys', async () => {
+    const rows = await codes(
+      `select code, original_name, content_type, storage_key, thumbnail_key, display_key, resize_failed,
+              uploaded_by, uploaded_by_name, uploaded_at, retention_class
+         from stored_files order by code`,
+    );
+    expect(rows.map((r) => [r.code, r.original_name])).toEqual([
+      ['FILE-2030-00001', 'antique_kundan_choker_1793356203018.jpg'],
+      ['FILE-2030-00002', 'chettinad_haram_necklace_1793356204785.jpg'],
+      ['FILE-2030-00003', 'floral_polki_bangle_1793356203612.jpg'],
+      ['FILE-2030-00004', 'peacock_ruby_pendant_1793356204370.jpg'],
+    ]);
+    for (const r of rows) {
+      expect(r).toMatchObject({
+        content_type: 'image/jpeg',
+        storage_key: expect.stringMatching(/^seed\/[0-9a-f]{64}$/),
+        resize_failed: false,
+        uploaded_by: null,
+        uploaded_by_name: 'Seed',
+        uploaded_at: NOW,
+        retention_class: 'standard',
+      });
+      expect(r.thumbnail_key).toBe(`${r.storage_key}-thumb.jpg`);
+      expect(r.display_key).toBe(`${r.storage_key}-display.jpg`);
+    }
+    const keys = rows.flatMap((r) => [r.storage_key, r.thumbnail_key, r.display_key]).sort();
+    expect(storage.keys()).toEqual(keys);
+    expect(keys).toHaveLength(12);
+  });
+  it('EP-09-S13 AC2: attaches each piece photo, order copy reference and job reference the prototype used', async () => {
+    const rows = await codes(
+      `select a.owner_type, a.role, a.position, a.attached_by, a.attached_by_name, f.original_name,
+              coalesce(p.tag_no, o.code, j.code) as owner
+         from attachments a join stored_files f on f.id = a.file_id
+         left join pieces p on p.id = a.piece_id
+         left join order_copies o on o.id = a.order_copy_id
+         left join karigar_jobs j on j.id = a.job_id
+        order by a.owner_type, owner, a.position`,
+    );
+    const actual = (type: string) =>
+      rows.filter((r) => r.owner_type === type).map((r) => [r.owner, r.role, r.position, r.original_name]);
+    const expected = (role: string, list: Array<{ id: string; images: string[] }>) =>
+      list
+        .flatMap((x) => [...new Set(x.images)].map((name, i) => [x.id, role, i + 1, name]))
+        .sort((a, b) => String(a[0]).localeCompare(String(b[0])) || Number(a[2]) - Number(b[2]));
+    expect(actual('piece')).toEqual(expected('photo', state.pieces.map((p) => ({ id: p.id, images: p.photos }))));
+    expect(actual('order_copy')).toEqual(
+      expected('reference', state.orderCopies.map((o) => ({ id: o.id, images: o.refImages }))),
+    );
+    expect(actual('job')).toEqual(
+      expected('reference', state.jobs.map((j) => ({ id: j.id, images: j.refImage ? [j.refImage] : [] }))),
+    );
+    expect(actual('piece').length).toBeGreaterThan(0);
+    expect(actual('order_copy').length).toBeGreaterThan(0);
+    expect(actual('job').length).toBeGreaterThan(0);
+    expect(rows.every((r) => r.attached_by === null && r.attached_by_name === 'Seed')).toBe(true);
+  });
+  it('EP-09-S13 AC3: seeding a fresh database with the same bucket still gives 4 files and 12 objects', async () => {
+    const second = await createTempDatabase();
+    const secondPool = createPool(second.url, 2);
+    try {
+      await migrate(secondPool, new URL('../../migrations/', import.meta.url));
+      const again = await seedPrototype(secondPool, { appEnv: 'development', now: NOW, storage });
+      expect(again.stored_files).toBe(4);
+      expect(again.attachments).toBe(counts.attachments);
+      expect(storage.keys()).toHaveLength(12);
+    } finally {
+      await secondPool.end();
+      await second.drop();
+    }
+  }, 60_000);
+  it('skips the seed images with a message when file storage is not configured', async () => {
+    const third = await createTempDatabase();
+    const thirdPool = createPool(third.url, 2);
+    const lines: string[] = [];
+    try {
+      await migrate(thirdPool, new URL('../../migrations/', import.meta.url));
+      const plain = await seedPrototype(thirdPool, { appEnv: 'development', now: NOW, log: (l) => lines.push(l) });
+      expect(plain).toMatchObject({ stored_files: 0, attachments: 0, pieces: counts.pieces });
+      expect(lines).toEqual(['File storage is not configured: seed images skipped.']);
+    } finally {
+      await thirdPool.end();
+      await third.drop();
+    }
+  }, 60_000);
 });

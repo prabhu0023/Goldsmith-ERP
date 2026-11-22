@@ -46,6 +46,8 @@ npm test                               # wipes and migrates goldsmith_a_test onl
 
 One PostgreSQL container serves every lane. Start and stop it from the main checkout only (`npm run db:up`, `npm run db:down`); `db:up` from a worktree can recreate the container (its mount path differs), though the data volume stays.
 
+One object store (`objectstore`, EP-09) serves every lane too, with a bucket per lane: `goldsmith-files-a` / `goldsmith-files-a-test`, `goldsmith-files-b` / `goldsmith-files-b-test` (same `STORAGE_BUCKET=goldsmith-files` in every `.env`; the lane is added). Start it from any checkout with `docker compose up -d --wait objectstore` (`npm run storage:up`), which starts only that service, then `npm run storage:create` in each lane. See [files.md](files.md).
+
 Then, in each checkout's own terminal:
 
 ```sh

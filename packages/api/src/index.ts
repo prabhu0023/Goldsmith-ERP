@@ -2,6 +2,7 @@ import type pg from 'pg';
 import { createApp } from './app.js';
 import { ConfigError, loadConfig } from './config.js';
 import { createPool } from './db/connection.js';
+import { fileRetentionJob } from './files/file-retention.js';
 import type { FilesDeps } from './files/files-router.js';
 import { storageFromConfig } from './files/storage-config.js';
 import { productionJobs } from './jobs/production-jobs.js';
@@ -51,11 +52,22 @@ async function start(): Promise<void> {
     };
     console.log(`[files] object storage bucket ${storage.bucket} ready`);
   }
+  // Retention (EP-09-S12) runs only when there is a store to remove files from.
+  const jobs = storage
+    ? [
+        ...productionJobs,
+        fileRetentionJob({
+          storage,
+          retention: { poDays: config.fileRetentionPoDays, standardDays: config.fileRetentionStandardDays },
+          log: console.log,
+        }),
+      ]
+    : productionJobs;
   let scheduler: Scheduler | undefined;
   const server = createApp(config, { pool, sessions, files }).listen(config.port, () => {
     console.log(`[api] ready on http://localhost:${config.port} (APP_ENV=${config.appEnv})`);
     if (config.jobsEnabled && pool) {
-      scheduler = createScheduler({ pool, clock: systemClock, jobs: productionJobs, pollMs: config.jobsPollIntervalMs });
+      scheduler = createScheduler({ pool, clock: systemClock, jobs, pollMs: config.jobsPollIntervalMs });
       scheduler.start();
       console.log(`[jobs] scheduler started (poll ${config.jobsPollIntervalMs} ms)`);
     }

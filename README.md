@@ -49,6 +49,8 @@ Two branches at once on one machine: give each worktree its own lane (`LANE=a`, 
 The api's endpoints, error format and how to add an operation are in [docs/setup/api.md](docs/setup/api.md). The web and the api need a signed-in session (EP-04). Seeded users have no password yet: give one a password with `npm run db:dev-password -- "Rajesh Verma" "counter-2026"`, then sign in on the web with phone `98410 11111`, or see docs/setup/api.md for signing in with curl.
 Background jobs (scheduler, job list, configuration, open items) are described in [docs/setup/jobs.md](docs/setup/jobs.md).
 
+File storage (EP-09): `npm run storage:up && npm run storage:create` starts the local S3-compatible store (SeaweedFS) and creates the lane's buckets; add the `STORAGE_*` lines from [docs/setup/files.md](docs/setup/files.md) to `.env`. Routes, limits, roles and open items are in that file.
+
 ## Database (local)
 
 PostgreSQL 17 runs in Docker (`docker-compose.yml`; on macOS use Colima, `colima start`). Add these lines to `.env`:

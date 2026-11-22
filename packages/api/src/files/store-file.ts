@@ -76,13 +76,15 @@ async function deleteAll(deps: StoreFileDeps, keys: readonly string[]): Promise<
 /**
  * Write the original and, for an image, its thumbnail and display copies. A resize failure keeps
  * the original only (`resizeFailed`); a failed write deletes what was already written and throws.
+ * `key` replaces the random key (the dev seed's `seed/<sha256>`, so a re-seed overwrites).
  */
 export async function putFileObjects(
   deps: StoreFileDeps,
   bytes: Buffer,
   contentType: FileContentType,
+  key?: string,
 ): Promise<PreparedFile> {
-  const storageKey = `files/${randomBytes(16).toString('hex')}`;
+  const storageKey = key ?? `files/${randomBytes(16).toString('hex')}`;
   const prepared: PreparedFile = {
     contentType,
     sizeBytes: bytes.length,

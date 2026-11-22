@@ -23,7 +23,7 @@ export const OWNER_ROLES: Record<FileOwnerType, readonly FileRole[]> = {
   job: ['bench', 'reference'],
   lead: ['po', 'reference'],
 };
-const ROLE_LABELS: Record<FileRole, string> = {
+export const ROLE_LABELS: Record<FileRole, string> = {
   photo: 'Photo',
   reference: 'Reference image',
   po: 'PO attachment',

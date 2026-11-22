@@ -4,11 +4,23 @@
  * uuid. Demo times are moved so the demo "now" (DEMO_BASE) is the seeding moment. Weights are
  * converted from the gram text to integer units of 0.0001 g. Not carried over: heldForLeadId,
  * edit tokens, the id counter and the last-used scale.
+ *
+ * With object storage (EP-09-S13) the four bundled JPEGs of packages/web/src/assets/images/ become
+ * stored files (uploaded by "Seed", class standard) with thumbnail and display copies under
+ * `seed/<sha256>` keys, so a second seed overwrites the same 12 objects. The objects are written
+ * before the transaction; inside it the prototype's piece photos, order copy reference images and
+ * job reference images become attachment rows (no audit entries: seed data is not a user action).
+ * Without storage the files are skipped.
  */
-import { randomUUID } from 'node:crypto';
-import { DEMO_BASE, gramsToUnits } from '@goldsmith/shared';
+import { createHash, randomUUID } from 'node:crypto';
+import { readdir, readFile } from 'node:fs/promises';
+import { DEMO_BASE, type FileOwnerType, type FileRole, gramsToUnits } from '@goldsmith/shared';
 import type pg from 'pg';
 import type { AppEnv } from '../../config.js';
+import type { ObjectStorage } from '../../files/object-storage.js';
+import { insertFileRow, type PreparedFile, putFileObjects, type StoredFileRef } from '../../files/store-file.js';
+import type { Tx } from '../../pipeline/operation-transaction.js';
+import { nextCode } from '../codes.js';
 import { insertScoped, loadShopContext } from '../shop-context.js';
 import { withTransaction } from '../transaction.js';
 import { loadPrototypeState } from './prototype-loader.js';
@@ -79,16 +91,52 @@ const unitsOrNull = (g: number | null, what: string): number | null => (g === nu
 export interface SeedOptions {
   appEnv: AppEnv;
   now?: Date;
+  /** Where the seed images go; without it they are skipped. */
+  storage?: ObjectStorage;
+  /** Info lines ("File storage is not configured: …"). */
+  log?: (line: string) => void;
+}
+
+/** Same depth from src/db/seed and dist/db/seed. */
+const SEED_IMAGES_DIR = new URL('../../../../web/src/assets/images/', import.meta.url);
+export const SEED_UPLOADER = 'Seed';
+const OWNER_COLUMNS: Record<FileOwnerType, string> = {
+  piece: 'piece_id',
+  order_copy: 'order_copy_id',
+  job: 'job_id',
+  lead: 'lead_id',
+};
+
+interface SeedImage {
+  /** The file name, which the prototype loader puts in photos / refImages / refImage. */
+  name: string;
+  prepared: PreparedFile;
+}
+
+/** Write every bundled JPEG and its copies under seed/<sha256> keys. */
+async function putSeedImages(storage: ObjectStorage, log: (line: string) => void): Promise<SeedImage[]> {
+  const names = (await readdir(SEED_IMAGES_DIR)).filter((n) => n.endsWith('.jpg')).sort();
+  const images: SeedImage[] = [];
+  for (const name of names) {
+    const bytes = await readFile(new URL(name, SEED_IMAGES_DIR));
+    const key = `seed/${createHash('sha256').update(bytes).digest('hex')}`;
+    images.push({ name, prepared: await putFileObjects({ storage, log }, bytes, 'image/jpeg', key) });
+  }
+  return images;
 }
 
 /** Seed an empty database; returns the row count of every seeded table. */
 export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promise<Record<string, number>> {
   if (options.appEnv === 'production') throw new SeedRefusedError('db:seed is refused when APP_ENV=production');
+  const log = options.log ?? (() => {});
   const state = await loadPrototypeState();
-  const offset = (options.now ?? new Date()).getTime() - DEMO_BASE;
+  const now = options.now ?? new Date();
+  const offset = now.getTime() - DEMO_BASE;
   const time = (ms: number | null): Date | null => (ms === null ? null : new Date(ms + offset));
-
-  return withTransaction(pool, async (client) => {
+  const seedImages = options.storage ? await putSeedImages(options.storage, log) : undefined;
+  if (!seedImages) log('File storage is not configured: seed images skipped.');
+  const hooks: Array<() => void | Promise<void>> = [];
+  const counts = await withTransaction(pool, async (client) => {
     await client.query('lock table shops in exclusive mode');
     const existing = (await client.query<{ n: number }>('select count(*) as n from shops')).rows[0].n;
     if (existing > 0) {
@@ -441,6 +489,40 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
       });
     }
 
+    if (seedImages) {
+      const tx: Tx = { client, afterCommit: (fn) => hooks.push(fn) };
+      const files = new Map<string, StoredFileRef>();
+      for (const img of seedImages) {
+        const row = {
+          originalName: img.name,
+          retentionClass: 'standard' as const,
+          uploadedBy: { id: null, name: SEED_UPLOADER },
+          at: now,
+        };
+        files.set(img.name, await insertFileRow(tx, ctx, img.prepared, row, log));
+      }
+      const attachAll = async (ownerType: FileOwnerType, ownerId: string, role: FileRole, names: readonly string[]) => {
+        // The same image twice on one owner is one attachment (attachments_file_owner_role).
+        for (const [i, name] of [...new Set(names)].entries()) {
+          const file = files.get(name);
+          if (!file) throw new Error(`Seed refers to unknown image ${name}`);
+          await ins('attachments', {
+            code: await nextCode(client, ctx, { table: 'attachments', prefix: `AT-${now.getUTCFullYear()}`, pad: 5 }),
+            file_id: file.id,
+            owner_type: ownerType,
+            [OWNER_COLUMNS[ownerType]]: ownerId,
+            role,
+            position: i + 1,
+            attached_by: null,
+            attached_by_name: SEED_UPLOADER,
+            attached_at: now,
+          });
+        }
+      };
+      for (const p of state.pieces) await attachAll('piece', ref('piece', p.id), 'photo', p.photos);
+      for (const o of state.orderCopies) await attachAll('order_copy', ref('orderCopy', o.id), 'reference', o.refImages);
+      for (const j of state.jobs) if (j.refImage) await attachAll('job', ref('job', j.id), 'reference', [j.refImage]);
+    }
     // The balance is the integer sum of the ledger, so the two always agree.
     const entries = state.pool.ledger.map((e) => ({ e, deltaUnits: units(e.deltaG, `pool entry ${e.id}`) }));
     const metalPool = await ins('metal_pools', { balance_units: entries.reduce((sum, x) => sum + x.deltaUnits, 0) });
@@ -542,4 +624,6 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
     await client.query('set constraints all immediate');
     return countRows(client);
   });
+  for (const hook of hooks) await hook();
+  return counts;
 }
