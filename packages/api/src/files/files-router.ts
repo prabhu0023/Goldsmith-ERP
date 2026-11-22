@@ -10,7 +10,9 @@
  *   read the body counting bytes (stopped at the limit; a body that ends short -> cut off),
  *   type from the first bytes (415), write the objects (store-file.ts), then
  *   (f) one transaction: session confirm, idempotency claim (a replay answers the stored id and
- *   the objects just written are deleted, S2 AC5), insert the StoredFile row.
+ *   the objects just written are deleted, S2 AC5), insert the StoredFile row and, with a target
+ *   (`ownerType`, `ownerId`, `role`, e.g. a karigar's bench photo on an own job, S10), attach it
+ *   in the same transaction (attachments.ts).
  *   A failed transaction deletes the objects again (S1 AC4). Answers `{ ok: true, id }`.
  *
  * `GET /api/files/:fileId/:size?exp&sig` (EP-09-S5): a signed link (file-links.ts). Any refusal
@@ -35,6 +37,7 @@ import { runInTransaction } from '../pipeline/operation-transaction.js';
 import type { Clock } from '../pipeline/server-clock.js';
 import type { SessionResolver } from '../pipeline/session-resolver.js';
 import { parseInput } from '../pipeline/validate-input.js';
+import { attach, checkOwnerRole } from './attachments.js';
 import { SNIFF_BYTES } from './content-type-sniff.js';
 import { fileByCode, type FileRow } from './file-access.js';
 import {
@@ -76,8 +79,6 @@ export interface FilesRouterDeps {
 /** The operation name the rate limiter and idempotency records see for an upload. */
 export const CREATE_FILE = 'createFile';
 
-/** Answer while uploads that also attach are not served yet (EP-09 plan item 6). */
-export const ATTACH_ON_UPLOAD_NOT_YET = 'Upload the file first, then attach it.';
 
 function idempotencyKeyOf(req: Request): string | undefined {
   const key = req.get(IDEMPOTENCY_HEADER);
@@ -149,7 +150,7 @@ export function createFilesRouter(deps: FilesRouterDeps): Router {
           : undefined;
       const shop = await loadShopContext(pool, session.shopId);
       await checkUpload(pool, shop, actor, target);
-      if (target) throw new ValidationError('ownerType', ATTACH_ON_UPLOAD_NOT_YET);
+      if (target) checkOwnerRole(target.ownerType, target.role);
 
       const bytes = await readBody(req, files.limits);
       bodyRead = true;
@@ -189,6 +190,7 @@ export function createFilesRouter(deps: FilesRouterDeps): Router {
               },
               files.log,
             );
+            if (target) await attach(tx, shop, actor, at, { file, ...target });
             if (claimId !== undefined) await completeKey(tx, claimId, file.code);
             return { id: file.code, replayed: false };
           },

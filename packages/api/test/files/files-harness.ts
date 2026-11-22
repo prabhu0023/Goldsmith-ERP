@@ -81,7 +81,7 @@ export interface FilesHarness {
   addOrderCopy(code: string, jobId: string): Promise<string>;
   /** Insert a lead; returns its id. */
   addLead(code: string): Promise<string>;
-  /** Attach a file (by code) directly in the database (the attach operation is EP-09 plan item 6). */
+  /** Attach a file (by code) directly in the database, without the createAttachment role checks or audit. */
   attach(fileCode: string, ownerType: FileOwnerType, ownerId: string, role: FileRole): Promise<void>;
   close(): Promise<void>;
 }
