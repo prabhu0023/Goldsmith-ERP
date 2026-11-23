@@ -106,6 +106,16 @@ describeDb('EP-07-S8 parcel presence', () => {
     d.close();
   });
 
+  it("S8 second tab: Deepak's second tab on BATCH-2026-044 gets Rajesh in its join answer", async () => {
+    const d1 = await h.connect(deepak.token);
+    expect((await join(deepak, d1, P44)).body).toEqual({ ok: true, others: [{ userId: rajesh.id, name: 'Rajesh Verma' }] });
+    const d2 = await h.connect(deepak.token);
+    expect((await join(deepak, d2, P44)).body).toEqual({ ok: true, others: [{ userId: rajesh.id, name: 'Rajesh Verma' }] });
+    await untilNames(r, P44, ['Deepak Rao'], 1_000);
+    d1.close();
+    d2.close();
+    await untilNames(r, P44, [], 1_000);
+  });
   it('S8 rule: presence of an unknown parcel is not_found; the name comes from the server', async () => {
     const res = await join(rajesh, r, 'BATCH-2026-999');
     expect([res.status, res.body.code]).toEqual([404, 'not_found']);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   AUDIT_ACTIONS,
+  AUDIT_EXEMPT_OPERATIONS,
   AUTH_OPERATION_AUDIT_KINDS,
   authContract,
   contract,
@@ -21,14 +22,21 @@ describe('state-changing operation lists (EP-06-S2 AC4, S7 AC6)', () => {
     expect(Object.keys(kinds).sort()).toEqual(Object.keys(ops).sort());
   });
 
-  it.each(maps)('%s: an entry is null exactly when the operation is a read or list', (_label, ops, kinds) => {
+  it.each(maps)('%s: an entry is null exactly when the operation is a read, a list or exempt with a reason', (_label, ops, kinds) => {
+    const exempt = AUDIT_EXEMPT_OPERATIONS as Record<string, string | undefined>;
     for (const [name, def] of Object.entries(ops)) {
       const entry = (kinds as Record<string, readonly string[] | null>)[name];
-      if (def.kind === 'read' || def.kind === 'list') expect(entry, name).toBeNull();
+      if (def.kind === 'read' || def.kind === 'list' || exempt[name]) expect(entry, name).toBeNull();
       else expect(entry?.length, name).toBeGreaterThan(0);
     }
   });
 
+  it('exempts only commands, each with a reason', () => {
+    for (const [name, reason] of Object.entries(AUDIT_EXEMPT_OPERATIONS)) {
+      expect(contract[name as keyof typeof contract].kind, name).toBe('command');
+      expect(reason?.length, name).toBeGreaterThan(0);
+    }
+  });
   it('declares only known audit kinds', () => {
     for (const kinds of [OPERATION_AUDIT_KINDS, AUTH_OPERATION_AUDIT_KINDS]) {
       for (const list of Object.values(kinds)) {

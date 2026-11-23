@@ -17,7 +17,7 @@
  *   tab, whose join changes nobody's list and so is not broadcast, still shows who is there. A
  *   presence message that arrived while the join was on its way is newer and wins.
  *
- * D6 (offline karigar phone) stays open: there is no offline queue; a long gap ends in refetch_all.
+ * D6 (online only, decided): there is no offline queue; a long gap ends in refetch_all.
  */
 import type { LiveEnvelope } from './live-envelope.js';
 import type { LivePresenceOther, LiveServerMessage } from './live-protocol.js';

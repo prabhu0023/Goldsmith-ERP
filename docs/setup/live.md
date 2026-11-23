@@ -141,7 +141,8 @@ Client 1 (Deepak) triggers "Piece billed" for TAG-8841; client 2 (Rajesh, the sh
 
 ## Open items
 
-- **D5** (karigar app form) and **D6** (a karigar phone offline for hours) stay open. Reconnect and catch-up work; there is no offline queue, and a gap longer than the replay window ends in `refetch_all`.
+- **D5** (a React web app in the phone's browser) and **D6** (online only) are decided (`docs/decisions/D5-D6-karigar-app.md`). The channel fits both: reconnect and catch-up work, there is no offline queue, and a gap longer than the replay window ends in `refetch_all` (FU-015).
+- **Session re-check:** a refused open re-checks the session through the sliding `readCurrentSession`, so a stream that keeps being refused while the session is valid keeps an idle tab signed in (FU-017).
 - **Replay window** length is not decided (5 minutes until it is).
 - **Screens:** `stock` and the other screens still read the in-memory store, so they do not consume live events yet (EP-08); no piece read operation exists for the refetch (EP-22). The tests drive the entity cache with a stand-in read.
 - **Multi-process:** presence per process; an optional LISTEN/NOTIFY wake-up would cut cross-process latency below the 500 ms poll.

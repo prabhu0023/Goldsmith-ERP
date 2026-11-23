@@ -98,8 +98,25 @@ export const OPERATION_AUDIT_KINDS = {
   createAttachment: ['file_attached'],
   deleteAttachment: ['file_detached'],
   listAttachments: null,
+  // The live channel (EP-07): exempt with a reason in AUDIT_EXEMPT_OPERATIONS; readRailBadges reads.
+  subscribeLiveChannel: null,
+  unsubscribeLiveChannel: null,
+  joinParcelPresence: null,
+  leaveParcelPresence: null,
+  readRailBadges: null,
 } as const satisfies Readonly<Record<OperationName, readonly AuditAction[] | null>>;
 
+/**
+ * Commands that write no audit entry, each with the reason. They change no stored state: the live
+ * channel's subscriptions and parcel presence (join, which is also the heartbeat, and leave) live
+ * in memory with the open stream and end with it (EP-07).
+ */
+export const AUDIT_EXEMPT_OPERATIONS: Readonly<Partial<Record<OperationName, string>>> = {
+  subscribeLiveChannel: 'adds a channel to the open live stream, in memory only; no stored state changes',
+  unsubscribeLiveChannel: 'removes a channel from the open live stream, in memory only; no stored state changes',
+  joinParcelPresence: 'records presence (join or heartbeat) in memory for the open stream; no stored state changes',
+  leaveParcelPresence: 'removes in-memory presence for the open stream; no stored state changes',
+};
 /**
  * The sign-in operations (EP-04), served by the auth router (not wrapped). A reset request for an
  * unknown phone and a sign-out of an already ended session change nothing and write nothing.
