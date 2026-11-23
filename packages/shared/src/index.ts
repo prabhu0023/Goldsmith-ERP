@@ -2,13 +2,16 @@
  * Public surface of @goldsmith/shared: pure domain rules and types, no React, no I/O.
  * web uses these for instant feedback; api uses the same code as the authority.
  */
+export * from './contract/audit-contract.js';
 export * from './contract/auth-contract.js';
 export * from './contract/contract.js';
 export * from './contract/contract-fields.js';
 export * from './contract/define-operation.js';
 export * from './contract/error-codes.js';
+export * from './contract/settings-contract.js';
 export * from './contract/users-contract.js';
 export * from './contract/files-contract.js';
+export * from './domain/audit-log.js';
 export * from './domain/clock.js';
 export * from './domain/domain-error.js';
 export * from './domain/edits.js';

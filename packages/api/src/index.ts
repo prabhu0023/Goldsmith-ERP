@@ -1,6 +1,7 @@
 import type pg from 'pg';
 import { createApp } from './app.js';
 import { ConfigError, loadConfig } from './config.js';
+import { auditGrantProblems } from './db/app-role.js';
 import { createPool } from './db/connection.js';
 import { fileRetentionJob } from './files/file-retention.js';
 import type { FilesDeps } from './files/files-router.js';
@@ -9,6 +10,28 @@ import { productionJobs } from './jobs/production-jobs.js';
 import { createScheduler, type Scheduler } from './jobs/scheduler.js';
 import { systemClock } from './pipeline/server-clock.js';
 import { sessionResolverFor } from './pipeline/session-resolver.js';
+
+/**
+ * The api must not be able to change audit entries (EP-06-S1, FU-001): staging and production
+ * stop when its connection can; development warns (APP_DATABASE_URL unset uses DATABASE_URL).
+ */
+async function checkAuditGrants(config: ReturnType<typeof loadConfig>, pool: pg.Pool): Promise<void> {
+  let problem: boolean;
+  try {
+    problem = await auditGrantProblems(pool);
+  } catch (err) {
+    console.error(`[api] could not check the audit grants: ${err instanceof Error ? err.message : String(err)}`);
+    return;
+  }
+  if (!problem) return;
+  const message = 'the database connection can change audit entries; set APP_DATABASE_URL to the goldsmith_app role';
+  if (config.appEnv === 'development') {
+    console.warn(`[api] warning: ${message}`);
+    return;
+  }
+  console.error(`[api] ${message}`);
+  process.exit(1);
+}
 
 async function start(): Promise<void> {
   let config: ReturnType<typeof loadConfig>;
@@ -23,13 +46,15 @@ async function start(): Promise<void> {
   }
 
   let pool: pg.Pool | undefined;
-  if (config.databaseUrl) {
-    pool = createPool(config.databaseUrl, 10, {
+  const databaseUrl = config.appDatabaseUrl ?? config.databaseUrl;
+  if (databaseUrl) {
+    pool = createPool(databaseUrl, 10, {
       connectTimeoutMs: config.databaseConnectTimeoutMs,
       queryTimeoutMs: config.databaseQueryTimeoutMs,
     });
     // An idle connection that drops is discarded by the pool; log it instead of crashing.
     pool.on('error', (err) => console.error(`[api] database connection error: ${err.message}`));
+    void checkAuditGrants(config, pool);
   }
   const sessions = sessionResolverFor(config, pool, systemClock);
 

@@ -18,10 +18,10 @@ import { type AppEnv, loadConfig } from '../../src/config.js';
 import type { ErrorLog } from '../../src/pipeline/api-errors.js';
 import { allowAllPermissions, type PermissionCheck, type RateLimiter } from '../../src/pipeline/hooks.js';
 import type { Tx } from '../../src/pipeline/operation-transaction.js';
-import type { AnyHandler, HandlerMap, OperationCtx } from '../../src/pipeline/registry.js';
+import type { AnyHandler, AuditKindMap, HandlerMap, OperationCtx } from '../../src/pipeline/registry.js';
 import { type Clock, fixedClock } from '../../src/pipeline/server-clock.js';
 import { MemoryStorage } from '../../src/files/memory-storage.js';
-import { addKarigar, newShop, type TestShop, testPool } from '../db/db-test-helpers.js';
+import { addKarigar, appRolePool, newShop, type TestShop, testPool } from '../db/db-test-helpers.js';
 import { createFixtureHandlers, testContract } from './fixture-operations.js';
 
 /** The fixed server time every harness app uses. */
@@ -45,9 +45,14 @@ export interface HarnessOptions {
   appEnv?: AppEnv;
   /**
    * Use the production contract, handlers and permission check instead of the fixture
-   * operations and allow-all permissions (EP-05), with file storage on (in memory, EP-09).
+   * operations and allow-all permissions (EP-05), with file storage on (in memory, EP-09). The app then connects as goldsmith_app, the
+   * role the api runs as (EP-06, FU-001); `pool` (setup and checks) stays the owner.
    */
   production?: boolean;
+  /** Audit kinds per operation for the registry (EP-06); production defaults to the shared map. */
+  auditKinds?: AuditKindMap;
+  /** Handlers used instead of the fixture handlers of the same name (not with `production`). */
+  handlers?: HandlerMap;
 }
 
 /** The fast hasher every harness uses (the S2 tests use the production parameters). */
@@ -197,7 +202,7 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
   const logged: Harness['logged'] = [];
   const fixtures = createFixtureHandlers({ gate: options.gate, onCommit: (op) => commits.push(op) });
   const handlers: Record<string, AnyHandler> = {};
-  for (const [operation, handler] of Object.entries(fixtures as HandlerMap)) {
+  for (const [operation, handler] of Object.entries({ ...(fixtures as HandlerMap), ...options.handlers })) {
     if (!handler) continue;
     const run = handler as (tx: Tx, ctx: OperationCtx, input: unknown) => Promise<unknown>;
     handlers[operation] = async (tx: Tx, ctx: OperationCtx, input: unknown) => {
@@ -215,11 +220,13 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
     API_PORT: '0',
     ...(options.maxBodyBytes === undefined ? {} : { API_MAX_BODY_BYTES: String(options.maxBodyBytes) }),
   });
+  const appPool = options.production ? appRolePool(options.poolSize ?? 10) : pool;
   const app = createApp(config, {
-    pool,
-    sessions: createSessionResolver({ pool, clock, idleMinutes: config.sessionIdleMinutes }),
+    pool: appPool,
+    sessions: createSessionResolver({ pool: appPool, clock, idleMinutes: config.sessionIdleMinutes }),
     clock,
     rateLimiter: options.rateLimiter,
+    auditKinds: options.auditKinds,
     ...(options.production
       ? {
           files: {
@@ -281,6 +288,7 @@ export async function startHarness(options: HarnessOptions = {}): Promise<Harnes
     },
     async close() {
       await new Promise<void>((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
+      if (appPool !== pool) await appPool.end();
       await pool.end();
     },
   };

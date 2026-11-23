@@ -30,6 +30,7 @@ export const editTokenExpiryJob: JobDefinition = {
         summary: `Edit token for ${edit.code} expired`,
         detail: `token ref ${edit.token_ref ?? 'none'}`,
         reference: edit.code,
+        tokenReference: edit.token_ref,
         before: { expiredAt: null },
         after: { expiredAt: edit.expired_at.toISOString() },
       });

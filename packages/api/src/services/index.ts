@@ -3,7 +3,10 @@
  * The app registers exactly these; a name the contract does not declare stops it at startup.
  */
 import type { contract } from '@goldsmith/shared';
+import { listAuditEntries } from '../audit/list-audit-entries.js';
+import { readAuditEntry } from '../audit/read-audit-entry.js';
 import type { Handlers } from '../pipeline/registry.js';
+import { setSetting } from '../settings/set-setting.js';
 import { createUserHandlers, type UserHandlerDeps } from '../users/index.js';
 import { listJobRuns } from './list-job-runs.js';
 import { listMyJobs } from './list-my-jobs.js';
@@ -17,6 +20,9 @@ export const handlers: Handlers<typeof contract> = {
   retryJobRun,
   listMyJobs,
   readMyJob,
+  setSetting,
+  listAuditEntries,
+  readAuditEntry,
 };
 
 /** Every production handler, including the user operations, which need the account mailer (EP-05). */

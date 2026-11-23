@@ -127,7 +127,9 @@ export async function applyRetention(
         kind: 'file_removed_by_retention',
         at: now,
         summary: `${ROLE_LABELS[o.role]} ${file.code} removed by retention from ${OWNER_NOUNS[o.owner_type].toLowerCase()} ${o.owner_code}`,
+        ownerType: o.owner_type,
         reference: o.owner_code,
+        role: o.role,
         before: [file.code],
         after: [],
       });

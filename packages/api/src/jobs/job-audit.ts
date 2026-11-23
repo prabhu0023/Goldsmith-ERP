@@ -6,6 +6,7 @@
  */
 import type { Actor } from '@goldsmith/shared';
 import type pg from 'pg';
+import { type AuditActor, appendAudit } from '../audit/audit-writer.js';
 import type { ShopContext } from '../db/shop-context.js';
 
 export type JobAuditKind =
@@ -20,8 +21,10 @@ export interface JobAuditEntry {
   at: Date;
   summary: string;
   detail?: string | null;
-  /** The lead, job, edit or run code it concerns. */
+  /** The lead, job, edit or run code it concerns; also the entry's entity id. */
   reference?: string | null;
+  /** The record id of the token concerned (an edit's token_ref), never the token itself. */
+  tokenReference?: string | null;
   before?: unknown;
   after?: unknown;
 }
@@ -29,40 +32,28 @@ export interface JobAuditEntry {
 /** "System (SLA breach job)". */
 export const systemActorName = (label: string): string => `System (${label})`;
 
-const json = (value: unknown): string | null => (value === undefined ? null : JSON.stringify(value));
-
-async function insertAudit(
-  client: pg.PoolClient,
-  shop: ShopContext,
-  actor: { id: string | null; name: string; role: string },
-  entry: JobAuditEntry,
-): Promise<void> {
-  await client.query(
-    `insert into audit_entries
-       (shop_id, at, actor_id, actor_name, actor_role, kind, summary, detail, reference, before_value, after_value)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-    [
-      shop.shopId,
-      entry.at,
-      actor.id,
-      actor.name,
-      actor.role,
-      entry.kind,
-      entry.summary,
-      entry.detail ?? null,
-      entry.reference ?? null,
-      json(entry.before),
-      json(entry.after),
-    ],
-  );
+function insertAudit(client: pg.PoolClient, shop: ShopContext, actor: AuditActor, entry: JobAuditEntry): Promise<unknown> {
+  return appendAudit(client, {
+    shopId: shop.shopId,
+    at: entry.at,
+    actor,
+    kind: entry.kind,
+    entityId: entry.reference ?? '',
+    summary: entry.summary,
+    detail: entry.detail ?? null,
+    ref: entry.reference ?? null,
+    tokenReference: entry.tokenReference ?? null,
+    before: entry.before,
+    after: entry.after,
+  });
 }
 
 /** An entry made by the job labelled `label`. */
-export function writeJobAudit(client: pg.PoolClient, shop: ShopContext, label: string, entry: JobAuditEntry): Promise<void> {
-  return insertAudit(client, shop, { id: null, name: systemActorName(label), role: 'system' }, entry);
+export async function writeJobAudit(client: pg.PoolClient, shop: ShopContext, label: string, entry: JobAuditEntry): Promise<void> {
+  await insertAudit(client, shop, { kind: 'system', name: systemActorName(label) }, entry);
 }
 
 /** An entry made by a signed-in person (e.g. the Owner retrying a run). */
-export function writeUserAudit(client: pg.PoolClient, shop: ShopContext, actor: Actor, entry: JobAuditEntry): Promise<void> {
-  return insertAudit(client, shop, { id: actor.id, name: actor.name, role: actor.role }, entry);
+export async function writeUserAudit(client: pg.PoolClient, shop: ShopContext, actor: Actor, entry: JobAuditEntry): Promise<void> {
+  await insertAudit(client, shop, { kind: 'user', ...actor }, entry);
 }

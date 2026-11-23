@@ -24,6 +24,8 @@ const OWNER_EXTRAS = [
   'setSetting',
   'listJobRuns',
   'retryJobRun',
+  'listAuditEntries',
+  'readAuditEntry',
   'createUser',
   'updateUserRole',
   'listUsers',

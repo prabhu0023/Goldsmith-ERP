@@ -1,12 +1,13 @@
 /**
  * Database commands: `migrate`, `status`, `reset`, `seed`, `dev-session <user name>`,
  * `dev-password <user name> <password>`, `create` and `new <name>` (run via `npm run db:<command>`). Reads DATABASE_URL, APP_ENV and LANE
- * (`create` also TEST_DATABASE_URL; `seed` also STORAGE_* for the seed images; `new` reads nothing). Exit code 0 on success, 1 with a
+ * (`create` also TEST_DATABASE_URL and APP_DATABASE_URL; `seed` also STORAGE_* for the seed images; `new` reads nothing). Exit code 0 on success, 1 with a
  * one-line error otherwise.
  */
 import type { AppEnv } from '../config.js';
 import { S3Storage } from '../files/s3-storage.js';
 import { readStorageEnv } from '../files/storage-config.js';
+import { credentialsOf, ensureAppLoginRole } from './app-role.js';
 import { createPool } from './connection.js';
 import { createDatabases } from './create-databases.js';
 import { readDbEnv } from './db-env.js';
@@ -97,11 +98,22 @@ async function main(command: string | undefined, arg: string | undefined, arg2: 
     console.log(`Created packages/api/migrations/${file}`);
     return;
   }
-  const { databaseUrl, appEnv, lane, testDatabaseUrl } = readDbEnv();
+  const { databaseUrl, appEnv, lane, testDatabaseUrl, appDatabaseUrl } = readDbEnv();
   if (command === 'create') {
     const urls = testDatabaseUrl ? [databaseUrl, testDatabaseUrl] : [databaseUrl];
     for (const r of await createDatabases(urls)) {
       console.log(`${r.created ? 'Created' : 'Exists '}  ${r.name}${lane ? ` (lane ${lane})` : ''}`);
+    }
+    // The api's role (FU-001): the migration makes it NOLOGIN; locally it gets LOGIN here.
+    if (appDatabaseUrl && appEnv === 'development') {
+      const admin = createPool(databaseUrl, 1);
+      try {
+        const creds = credentialsOf(appDatabaseUrl);
+        await ensureAppLoginRole(admin, creds);
+        console.log(`App role ${creds.user}: login ready`);
+      } finally {
+        await admin.end();
+      }
     }
     return;
   }

@@ -92,8 +92,8 @@ describeDb('Run Retention (EP-09-S12)', () => {
         actor_role: 'system',
         summary: `PO attachment ${poFile} removed by retention from lead LD-2026-401`,
         reference: 'LD-2026-401',
-        before_value: [poFile],
-        after_value: [],
+        before_value: { po: [poFile] },
+        after_value: { po: [] },
         at,
       },
     ]);

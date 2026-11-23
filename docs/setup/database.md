@@ -38,6 +38,7 @@ Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 
 | `0013_code_counters` | `code_counters (shop_id, prefix, last_value)`: per-shop counters behind `nextCode()` (EP-03-S7) |
 | `0014_idempotency_records` | `idempotency_records (key, operation, user_id, result_id, created_at, expires_at)`, unique `(key, operation, user_id)`: the created id of each create sent with an `Idempotency-Key` (EP-03-S8); expires after `IDEMPOTENCY_RETENTION_HOURS` (default 24) |
 | `0015_idempotency_input_hash` | `idempotency_records.input_hash`: SHA-256 of the validated input; a repeat with the same key and a different hash is refused as `conflict` (EP-03-S8, PR #3 review) |
+| `20261122T1732_ep06_audit_log` | `audit_entries` gains `entity_type`, `entity_id`, `reason`, `token_reference`; checks on entity type and the widened kind list; entity present on every new row (`not valid`, older rows keep nulls); indexes by entity, actor and kind; role `goldsmith_app` with only `SELECT, INSERT` on `audit_entries` (EP-06, [audit.md](audit.md)) |
 
 Conventions every table follows:
 
@@ -60,6 +61,15 @@ Conventions every table follows:
 - `loadShopContext(client, shopId)` → `{ shopId, locationId }`; `insertScoped(client, ctx, table, values)`: parameterised insert that sets `shop_id` (and `location_id` on the gold tables) from the context.
 - `updateVersioned(client, ctx, { table, id, expectedVersion, set })`: `update … where id = $1 and shop_id = $2 and version = $3`. No row matched: if the id does not exist in the caller's shop (missing, or another shop's row) → `RowNotFoundError` (`code 'ROW_NOT_FOUND'`, `entity`, `id`), mapped by EP-03 to `not_found`; otherwise → `StaleWriteError` (`code 'STALE_WRITE'`, `entity`, `id`, `expectedVersion`), the same type for all seven versioned tables, mapped to `conflict`.
 - `nextCode(client, ctx, { table, prefix, pad = 3 })` → `<prefix>-<number>` (e.g. `LD-2026-214`): one atomic upsert on `code_counters` (`0013`), so parallel creates get distinct codes; a prefix used for the first time continues after the highest existing code in `table`. Primary keys stay internal uuids; the code is the record's id in the API.
+
+## Application role (`goldsmith_app`, FU-001, EP-06-S1)
+
+The api connects as `goldsmith_app`, not as the owner of the tables. Migration `20261122T1732_ep06_audit_log.sql` creates the role `NOLOGIN` when it is missing (roles are cluster-wide, so every lane and database shares it) and grants it `SELECT, INSERT, UPDATE, DELETE` on every table and `USAGE, SELECT` on every sequence in schema `public`, with default privileges for tables later migrations create. On `audit_entries` it keeps only `SELECT` and `INSERT`, and it has no access to `schema_migrations`. It owns nothing, so it cannot drop or disable the append-only triggers: `UPDATE`, `DELETE`, `TRUNCATE` and `alter table … disable trigger` fail with `42501` (`packages/api/test/audit/audit-store.test.ts`).
+
+- **Connections.** The api server uses `APP_DATABASE_URL` (the lane is added like `DATABASE_URL`). Migrations, seed, reset and the dev tools keep `DATABASE_URL`, the owner.
+- **Local login.** `npm run db:create` (with `APP_ENV=development` and `APP_DATABASE_URL` set) gives the role `LOGIN` with the password in `APP_DATABASE_URL` and prints `App role goldsmith_app: login ready`. The local value is `postgres://goldsmith_app:localapp@localhost:5432/goldsmith_dev`; `localapp` is a local-only password of low entropy, so the secret scan does not flag it. The test setup (`test/db/global-setup.ts`) does the same before migrating, so CI needs no change; the production test harness (`startHarness({ production: true })`) runs the app as the role.
+- **Startup check.** The api checks its connection at startup (`auditGrantProblems` in `packages/api/src/db/app-role.ts`): when it owns `audit_entries` or can `UPDATE`, `DELETE` or `TRUNCATE` it, staging and production log `the database connection can change audit entries; set APP_DATABASE_URL to the goldsmith_app role` and exit 1; development logs a warning. With `APP_DATABASE_URL` unset, development falls back to `DATABASE_URL`.
+- **Deployed environments (FU-008).** The login secret for `goldsmith_app` and `APP_DATABASE_URL` are set in the host's secret store, and the grants check runs against staging once it exists.
 
 ## Seed
 

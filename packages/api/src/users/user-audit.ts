@@ -7,7 +7,7 @@
  */
 import type { Actor } from '@goldsmith/shared';
 import type pg from 'pg';
-import { redactSecrets } from '../auth/auth-audit.js';
+import { appendAudit } from '../audit/audit-writer.js';
 import { maskContactsInText } from '../auth/mask.js';
 import type { ShopContext } from '../db/shop-context.js';
 
@@ -32,8 +32,6 @@ export interface UserAuditEntry {
   reason?: string;
 }
 
-const json = (value: unknown): string | null => (value === undefined ? null : JSON.stringify(redactSecrets(value)));
-
 export async function writeUserLifecycleAudit(
   client: pg.PoolClient,
   shop: ShopContext,
@@ -41,22 +39,17 @@ export async function writeUserLifecycleAudit(
   { kind, at, userId, summary, before, after, reason }: UserAuditEntry,
 ): Promise<void> {
   const detail = { entity: 'user', entityId: userId, ...(reason ? { reason: maskContactsInText(reason) } : {}) };
-  await client.query(
-    `insert into audit_entries
-       (shop_id, at, actor_id, actor_name, actor_role, kind, summary, detail, reference, before_value, after_value)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-    [
-      shop.shopId,
-      at,
-      actor.id,
-      actor.name,
-      actor.role,
-      kind,
-      summary,
-      JSON.stringify(detail),
-      null,
-      json(before),
-      json(after),
-    ],
-  );
+  await appendAudit(client, {
+    shopId: shop.shopId,
+    at,
+    actor: { kind: 'user', ...actor },
+    kind,
+    entityType: 'user',
+    entityId: userId,
+    summary,
+    detail: JSON.stringify(detail),
+    reason: reason ?? null,
+    before,
+    after,
+  });
 }

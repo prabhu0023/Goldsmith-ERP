@@ -1,39 +1,17 @@
-import { useState } from 'react';
-import { fmtDateTime } from '@goldsmith/shared';
+import { AUDIT_ACTION_LABELS, AUDIT_GROUPS, auditActorLabel, auditFieldRows, fmtAuditTime } from '@goldsmith/shared';
+import type { AuditGroupId, OperationResult } from '@goldsmith/shared';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
+import { opsCall } from '../../api/ops-client';
 import { useStore } from '../../store/StoreProvider';
-import type { AuditKind } from '@goldsmith/shared';
-import { Card, PageHeader, Pill, SectionLabel, cn } from '../ui';
-
-type Group = 'all' | 'edits' | 'losses' | 'problems' | 'scrap' | 'stock-out' | 'rules';
-
-const GROUPS: { id: Group; label: string; kinds: AuditKind[] }[] = [
-  { id: 'all', label: 'Everything', kinds: [] },
-  { id: 'edits', label: 'Tag edits', kinds: ['edit_applied', 'edit_refused'] },
-  { id: 'losses', label: 'Parcels and losses', kinds: ['loss_accepted', 'parcel_sent_back', 'parcel_last_digit'] },
-  { id: 'problems', label: 'Problems', kinds: ['problem_cleared'] },
-  { id: 'scrap', label: 'Scrap', kinds: ['scrap_marked', 'scrap_declined'] },
-  { id: 'stock-out', label: 'Stock-out', kinds: ['stock_out'] },
-  { id: 'rules', label: 'Rules', kinds: ['setting_changed'] },
-];
-
-const KIND_WORDS: Record<AuditKind, string> = {
-  edit_applied: 'Edit applied',
-  edit_refused: 'Edit refused',
-  loss_accepted: 'Loss accepted',
-  parcel_sent_back: 'Parcel sent back',
-  parcel_last_digit: 'Released at the last digit',
-  problem_cleared: 'Problem cleared',
-  scrap_marked: 'Scrapped',
-  scrap_declined: 'Scrap declined',
-  stock_out: 'Stock-out',
-  setting_changed: 'Rule changed',
-};
-
-/** Owner only. Every edit, accepted loss, cleared problem, scrap and rule change: who, when and why. */
+import { Button, Card, DetailDrawer, Field, Input, Notice, PageHeader, Pill, Select, cn } from '../ui';
+import { afterAuditAnswer, auditListInput, NO_FILTERS, securityLogNotice, SYSTEM_ACTOR } from './security-log-state';
+import type { AuditEntry, AuditFilters, AuditList, AuditListItem, SecurityLogNotice } from './security-log-state';
+type UserOption = Pick<OperationResult<'listUsers'>['items'][number], 'id' | 'name'>;
+/** Owner only (EP-06-S9 to S12). Every entry from the server: who, when, what and why. */
 export function SecurityLog() {
-  const { state, role } = useStore();
-  const [group, setGroup] = useState<Group>('all');
-  if (role !== 'owner') {
+  const { can } = useStore();
+  if (!can('listAuditEntries')) {
     return (
       <div>
         <PageHeader title="Security log" />
@@ -43,49 +21,269 @@ export function SecurityLog() {
       </div>
     );
   }
-  const g = GROUPS.find((x) => x.id === group) ?? GROUPS[0];
-  const rows = [...state.audit].filter((a) => g.kinds.length === 0 || g.kinds.includes(a.kind)).sort((a, b) => b.at - a.at);
-
+  return <AuditLog />;
+}
+const isOnline = () => typeof navigator === 'undefined' || navigator.onLine !== false;
+function AuditLog() {
+  const [filters, setFilters] = useState<AuditFilters>(NO_FILTERS);
+  const [entityText, setEntityText] = useState('');
+  const [list, setList] = useState<AuditList>({ entries: [], nextCursor: null, loadError: null });
+  const [loading, setLoading] = useState(true);
+  const [online, setOnline] = useState(isOnline);
+  const [users, setUsers] = useState<UserOption[]>([]);
+  const [openId, setOpenId] = useState<string | null>(null);
+  // Only the newest request may change the list: an answer for older filters is dropped.
+  const request = useRef(0);
+  const load = useCallback(
+    async (cursor?: string) => {
+      const mine = ++request.current;
+      setLoading(true);
+      setList((prev) => ({ ...prev, loadError: null }));
+      const answer = await opsCall('listAuditEntries', auditListInput(filters, cursor));
+      if (mine !== request.current) return;
+      setLoading(false);
+      setList((prev) => afterAuditAnswer(prev, answer, cursor));
+    },
+    [filters],
+  );
+  useEffect(() => {
+    void load();
+  }, [load]);
+  useEffect(() => {
+    const offline = () => setOnline(false);
+    const back = () => {
+      setOnline(true);
+      void load();
+    };
+    window.addEventListener('offline', offline);
+    window.addEventListener('online', back);
+    return () => {
+      window.removeEventListener('offline', offline);
+      window.removeEventListener('online', back);
+    };
+  }, [load]);
+  useEffect(() => {
+    void opsCall('listUsers', { pageSize: 200 }).then((answer) => {
+      if (answer.ok) setUsers(answer.data.items.map(({ id, name }) => ({ id, name })));
+    });
+  }, []);
+  const change = (next: Partial<AuditFilters>) => setFilters((prev) => ({ ...prev, ...next }));
+  const findEntity = (e: FormEvent) => {
+    e.preventDefault();
+    change({ entity: entityText });
+  };
+  const { entries, nextCursor, loadError } = list;
+  const notice = securityLogNotice({ loading, error: loadError, online });
   return (
     <div>
       <PageHeader title="Security log" subtitle="Everything that changed the books and who did it. Entries are never edited or removed." />
-      <div role="group" aria-label="Kind of entry" className="mb-4 flex flex-wrap gap-2">
-        {GROUPS.map((x) => (
-          <button
-            key={x.id}
-            type="button"
-            aria-pressed={group === x.id}
-            onClick={() => setGroup(x.id)}
-            className={cn(
-              'min-h-10 rounded-full border px-3 text-sm font-semibold',
-              group === x.id ? 'border-gold bg-gold-soft text-gold-ink' : 'border-line-2 bg-surface text-ink-3 hover:bg-paper',
-            )}
-          >
-            {x.label}
-          </button>
-        ))}
+      <AuditGroupButtons group={filters.group} onChange={(group) => change({ group })} />
+      <div className="mb-4 flex flex-wrap items-end gap-3">
+        <form onSubmit={findEntity} className="flex items-end gap-2">
+          <Field label="Tag, batch or record">
+            <Input value={entityText} onChange={(e) => setEntityText(e.target.value)} placeholder="TAG-8841" autoComplete="off" />
+          </Field>
+          <Button type="submit">Find</Button>
+        </form>
+        <Field label="Who">
+          <Select value={filters.actor} onChange={(e) => change({ actor: e.target.value })}>
+            <option value="">Everyone</option>
+            <option value={SYSTEM_ACTOR}>System</option>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="From">
+          <Input type="date" value={filters.from} onChange={(e) => change({ from: e.target.value })} />
+        </Field>
+        <Field label="To">
+          <Input type="date" value={filters.to} onChange={(e) => change({ to: e.target.value })} />
+        </Field>
       </div>
-      <SectionLabel className="mb-3">{rows.length} entries</SectionLabel>
-      {rows.length === 0 ? (
-        <Card>
-          <p className="text-[15px] text-ink-2">Nothing has been logged under this heading.</p>
-        </Card>
-      ) : (
-        <ul className="space-y-2">
-          {rows.map((a) => (
-            <li key={a.id} className="rounded-xl border border-line bg-surface p-4">
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <Pill>{KIND_WORDS[a.kind]}</Pill>
-                <span className="font-mono text-sm text-ink-3">{a.ref}</span>
-                <span className="ml-auto text-sm text-ink-3">
-                  {fmtDateTime(a.at)} · {a.actorName} ({a.actorRole})
-                </span>
-              </div>
-              <p className="mt-2 text-[15px] font-semibold text-ink">{a.summary}</p>
-              {a.detail && <p className="mt-0.5 text-sm text-ink-2">{a.detail}</p>}
+      <SecurityLogStatus notice={notice} message={loadError} onRetry={() => void load()} />
+      <AuditEntries entries={entries} settled={!loading && !loadError} onOpen={setOpenId} />
+      {!loading && nextCursor && (
+        <div className="mt-4">
+          <Button onClick={() => void load(nextCursor)}>Load more</Button>
+        </div>
+      )}
+      {openId && <AuditEntryDrawer key={openId} id={openId} onOpen={setOpenId} onClose={() => setOpenId(null)} />}
+    </div>
+  );
+}
+/** The filter groups, one pressed (EP-06-S10 AC1). */
+export function AuditGroupButtons({ group, onChange }: { group: AuditGroupId; onChange: (group: AuditGroupId) => void }) {
+  return (
+    <div role="group" aria-label="Kind of entry" className="mb-4 flex flex-wrap gap-2">
+      {AUDIT_GROUPS.map((x) => (
+        <button
+          key={x.id}
+          type="button"
+          aria-pressed={group === x.id}
+          onClick={() => onChange(x.id)}
+          className={cn(
+            'min-h-10 rounded-full border px-3 text-sm font-semibold',
+            group === x.id ? 'border-gold bg-gold-soft text-gold-ink' : 'border-line-2 bg-surface text-ink-3 hover:bg-paper',
+          )}
+        >
+          {x.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+/** Loading, a failed load with Retry, or reconnecting while offline (EP-06-S9 AC4). */
+export function SecurityLogStatus({
+  notice,
+  message,
+  onRetry,
+}: {
+  notice: SecurityLogNotice;
+  message: string | null;
+  onRetry: () => void;
+}) {
+  if (notice === 'loading') return <p className="mb-3 text-sm text-ink-3">Loading the security log…</p>;
+  if (notice === 'reconnecting') {
+    return (
+      <div className="mb-4">
+        <Notice tone="wait">Reconnecting…</Notice>
+      </div>
+    );
+  }
+  if (notice === 'error') {
+    return (
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <Notice tone="stop">{message}</Notice>
+        <Button onClick={onRetry}>Retry</Button>
+      </div>
+    );
+  }
+  return null;
+}
+/** The loaded rows, or the empty sentence once a load finished with none (EP-06-S9 AC5). */
+export function AuditEntries({
+  entries,
+  settled,
+  onOpen,
+}: {
+  entries: AuditListItem[];
+  /** True when the last load finished without an error. */
+  settled: boolean;
+  onOpen: (id: string) => void;
+}) {
+  if (settled && entries.length === 0) {
+    return (
+      <Card>
+        <p className="text-[15px] text-ink-2">Nothing has been logged under this heading.</p>
+      </Card>
+    );
+  }
+  return (
+    <ul className="space-y-2">
+      {entries.map((a) => (
+        <li key={a.id}>
+          <AuditLogRow entry={a} onOpen={() => onOpen(a.id)} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+/** One entry in the list: action, ref, shop time, actor and summary. Opens its detail. */
+export function AuditLogRow({ entry, onOpen }: { entry: AuditListItem; onOpen: () => void }) {
+  return (
+    <button type="button" onClick={onOpen} className="block w-full rounded-xl border border-line bg-surface p-4 text-left hover:bg-paper">
+      <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <Pill>{AUDIT_ACTION_LABELS[entry.kind]}</Pill>
+        {entry.ref && <span className="font-mono text-sm text-ink-3">{entry.ref}</span>}
+        <span className="ml-auto text-sm text-ink-3">
+          {fmtAuditTime(entry.at)} · {auditActorLabel(entry)}
+        </span>
+      </span>
+      {entry.summary && <span className="mt-2 block text-[15px] font-semibold text-ink">{entry.summary}</span>}
+    </button>
+  );
+}
+/** Loads one entry and shows it in the drawer (EP-06-S11). */
+function AuditEntryDrawer({ id, onOpen, onClose }: { id: string; onOpen: (id: string) => void; onClose: () => void }) {
+  const [entry, setEntry] = useState<AuditEntry | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const load = useCallback(async () => {
+    setError(null);
+    const answer = await opsCall('readAuditEntry', { id });
+    if (answer.ok) setEntry(answer.data.entry);
+    else setError(answer.message);
+  }, [id]);
+  useEffect(() => {
+    void load();
+  }, [load]);
+  return (
+    <DetailDrawer
+      open
+      onClose={onClose}
+      title={entry ? AUDIT_ACTION_LABELS[entry.kind] : 'Security log entry'}
+      subtitle={entry ? fmtAuditTime(entry.at) : undefined}
+    >
+      {error && <SecurityLogStatus notice="error" message={error} onRetry={() => void load()} />}
+      {!entry && !error && <p className="text-sm text-ink-3">Loading the entry…</p>}
+      {entry && <AuditEntryDetail entry={entry} onOpenEntry={onOpen} />}
+    </DetailDrawer>
+  );
+}
+/**
+ * One entry in full (EP-06-S11): who, when, what, why, each changed field before and after, and
+ * whether a token authorised it. The token's reference is never shown.
+ */
+export function AuditEntryDetail({ entry, onOpenEntry }: { entry: AuditEntry; onOpenEntry: (id: string) => void }) {
+  const fields = auditFieldRows(entry.before, entry.after);
+  return (
+    <div className="space-y-4">
+      <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+        <dt className="text-ink-3">Who</dt>
+        <dd className="text-ink">{auditActorLabel(entry)}</dd>
+        <dt className="text-ink-3">When</dt>
+        <dd className="text-ink">{fmtAuditTime(entry.at)}</dd>
+        <dt className="text-ink-3">What</dt>
+        <dd className="text-ink">{AUDIT_ACTION_LABELS[entry.kind]}</dd>
+        {entry.entityId && (
+          <>
+            <dt className="text-ink-3">Record</dt>
+            <dd className="font-mono text-ink">{entry.entityId}</dd>
+          </>
+        )}
+        {entry.ref && entry.ref !== entry.entityId && !entry.corrects && (
+          <>
+            <dt className="text-ink-3">Ref</dt>
+            <dd className="font-mono text-ink">{entry.ref}</dd>
+          </>
+        )}
+        {entry.reason && (
+          <>
+            <dt className="text-ink-3">Why</dt>
+            <dd className="text-ink">{entry.reason}</dd>
+          </>
+        )}
+      </dl>
+      {entry.summary && <p className="text-[15px] font-semibold text-ink">{entry.summary}</p>}
+      {entry.tokenReference && <Pill>Token used</Pill>}
+      {fields.length > 0 && (
+        <ul className="space-y-1 text-sm">
+          {fields.map((f) => (
+            <li key={f.field}>
+              <span className="text-ink-3">{f.label}: </span>
+              <span className="text-ink">
+                {f.before} → {f.after}
+              </span>
             </li>
           ))}
         </ul>
+      )}
+      {entry.corrects && (
+        <Button size="sm" onClick={() => entry.corrects && onOpenEntry(entry.corrects.id)}>
+          Corrects an earlier entry
+        </Button>
       )}
     </div>
   );

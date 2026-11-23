@@ -1,4 +1,10 @@
-import { type Contract, computeCeiling, contract as sharedContract, type Scale } from '@goldsmith/shared';
+import {
+  type Contract,
+  computeCeiling,
+  contract as sharedContract,
+  OPERATION_AUDIT_KINDS,
+  type Scale,
+} from '@goldsmith/shared';
 import express, { type ErrorRequestHandler, type Express } from 'express';
 import type pg from 'pg';
 import { createAccountMailer, StubMailer } from './auth/account-mail.js';
@@ -14,7 +20,7 @@ import { checkDatabase, withTimeout } from './health-check.js';
 import { ApiError, type ErrorLog, RateLimitedError, toErrorResponse } from './pipeline/api-errors.js';
 import { allowAllRateLimiter, type PermissionCheck, type RateLimiter } from './pipeline/hooks.js';
 import { clientAddressOf, createOperationRouter } from './pipeline/operation-router.js';
-import { createOperationRegistry, type HandlerMap } from './pipeline/registry.js';
+import { type AuditKindMap, createOperationRegistry, type HandlerMap } from './pipeline/registry.js';
 import { type Clock, systemClock } from './pipeline/server-clock.js';
 import { noSessionResolver, type SessionResolver } from './pipeline/session-resolver.js';
 import { createServiceHandlers } from './services/index.js';
@@ -36,6 +42,12 @@ export interface AppDeps {
   permissions: PermissionCheck;
   contract: Contract;
   handlers: HandlerMap;
+  /**
+   * The audit kinds of each state-changing operation (EP-06-S2 AC4). Defaults to the shared
+   * OPERATION_AUDIT_KINDS when `contract` is the shared one (not given); a test contract is not
+   * wrapped unless the test passes its own map.
+   */
+  auditKinds: AuditKindMap;
   /** Server-side log for unexpected errors; never sent to the caller. */
   log: ErrorLog;
   /** How long Read Health waits for the database before reporting it down. */
@@ -79,7 +91,8 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
     ...(deps.files ? createFileHandlers(deps.files) : {}),
   };
   // Throws at startup for a handler the contract does not declare (EP-03-S1).
-  const registry = createOperationRegistry(contract, handlers);
+  const auditKinds = deps.auditKinds ?? (deps.contract ? undefined : OPERATION_AUDIT_KINDS);
+  const registry = createOperationRegistry(contract, handlers, { auditKinds });
 
   const app = express();
   app.disable('x-powered-by');
