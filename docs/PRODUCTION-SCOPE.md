@@ -85,14 +85,14 @@ shop's own domain.
 ## 4. Decisions to make before EP-01
 
 These shape the bottom layer. The recommended option is listed first; each is reversible only at cost.
-D1, D1a, D2, D4, D5, D6, D7 and D10 are decided. D3, D4a (email provider), D8 and D9 are open.
+D1, D1a, D2, D3, D4, D5, D6, D7 and D10 are decided. D4a (email provider), D8 and D9 are open.
 
 | # | Decision | Options | Recommendation and reason |
 | --- | --- | --- | --- |
 | D1 | Backend approach | **Decided: Option C**, own Node + TypeScript API | All server logic (rules, sign-in, sessions, live channel, jobs, notifications, WhatsApp) runs in the team's own Node API; `express` is already in `package.json`. Managed PostgreSQL in an India region on the same cloud provider, reached over its private network. Managed backend platforms are not used. See [decisions/D1-backend-approach.md](decisions/D1-backend-approach.md). |
 | D1a | Cloud provider | **Decided: AWS, Mumbai region (ap-south-1)** | Owner, 22 November 2026. Files in Amazon S3, the database in Amazon RDS for PostgreSQL, and the Node API on an AWS compute service chosen when deployment is built (EP-01-S12). All three in the same account and region, the API reaching RDS and S3 over the private network. Local development keeps SeaweedFS and Docker PostgreSQL. See [decisions/D1-backend-approach.md](decisions/D1-backend-approach.md). |
 | D2 | Database | Relational (PostgreSQL class) / document | **Decided: PostgreSQL** (managed, per D1). The domain is ledgers, foreign keys and transactions. |
-| D3 | Live transport | WebSocket / Server-Sent Events | WebSocket. Needs two-way for presence. Built in the Node API (D1). Still open. |
+| D3 | Live transport | WebSocket / Server-Sent Events | Decided: Server-Sent Events over HTTP (owner, 22 Nov 2026); presence via HTTP heartbeats |
 | D4 | Sign-in method | **Decided: phone number + password** | Phone numbers are unique. No OTP sign-in in v1 (deferred). The owner adds a user with name, phone, email and role; a single-use activation link (24 hours, resendable) lets the user set their own password. Forgot password sends a single-use reset link (1 hour) to the account's email. 5 wrong passwords lock the account for 15 minutes. Every user has an email address. See [decisions/D4-sign-in.md](decisions/D4-sign-in.md). |
 | D4a | Email provider | Any transactional email service | **Open.** Sends the activation and password-reset emails (now a required channel) and email alerts (EP-11). The sender sits behind one interface. |
 | D5 | Karigar app | Installable web app (PWA) / native app | **Decided: a React web app**, used in the phone's browser. Owner, 22 November 2026. One codebase with the staff app (React) and no app store. It is not a native app. Installing it to the home screen is not decided (EP-20 section 17). See [decisions/D5-D6-karigar-app.md](decisions/D5-D6-karigar-app.md). |

@@ -159,11 +159,11 @@ export function createSessionResolver({
       if (row.status !== 'active' || row.role !== row.role_at_issue) return null;
       return { sessionId: row.id, userId: row.user_id, shopId: row.shop_id, name: row.name, role: row.role };
     },
-    async confirm(client: pg.PoolClient, session: Session, at: Date) {
+    async confirm(client: pg.PoolClient, session: Session, at: Date, opts: { extend?: boolean } = {}) {
       const { rowCount } = await client.query(
-        `update sessions set expires_at = $2
+        `update sessions set expires_at = case when $4 then $2 else expires_at end
           where id = $1 and ended_at is null and expires_at > $3`,
-        [session.sessionId, minutesAfter(at, idleMinutes), at],
+        [session.sessionId, minutesAfter(at, idleMinutes), at, opts.extend !== false],
       );
       return rowCount === 1;
     },

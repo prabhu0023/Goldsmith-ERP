@@ -7,6 +7,8 @@
  */
 import { addShopDays, type JobStatus, jobOverdueDays, shopDate, shopDateTime } from '@goldsmith/shared';
 import { writeJobAudit } from '../job-audit.js';
+import { karigarUserIdOf } from '../../live/audience-lookup.js';
+import { emitLiveEvent } from '../../live/emit-live-event.js';
 import type { JobDefinition } from '../job-definition.js';
 import { emitOutboxEvent } from '../outbox.js';
 
@@ -21,6 +23,7 @@ interface OverdueCandidate {
   overdue_since: Date | null;
   last_reminder_at: Date | null;
   karigar_code: string;
+  karigar_id: string;
 }
 
 const iso = (d: Date | null): string | null => (d === null ? null : d.toISOString());
@@ -35,7 +38,7 @@ export const karigarOverdueJob: JobDefinition = {
     const today = shopDate(now);
     const { rows } = await tx.client.query<OverdueCandidate>(
       `select j.id, j.code, j.status, j.due_date, j.confirmed_date, j.overdue_since, j.last_reminder_at,
-              k.code as karigar_code
+              k.code as karigar_code, j.karigar_id
          from karigar_jobs j
          join karigars k on k.shop_id = j.shop_id and k.id = j.karigar_id
         where j.shop_id = $1 and j.status <> 'handed_over' and coalesce(j.confirmed_date, j.due_date) is not null
@@ -53,8 +56,8 @@ export const karigarOverdueJob: JobDefinition = {
       const agreed = confirmedDate ?? dueDate;
       const firstDay = job.overdue_since === null;
       const overdueSince = job.overdue_since ?? new Date(shopDateTime(addShopDays(shopDate(agreed), 1), 0, 0));
-      await tx.client.query(
-        'update karigar_jobs set overdue_since = $3, last_reminder_at = $4 where shop_id = $1 and id = $2',
+      const updated = await tx.client.query<{ version: number }>(
+        'update karigar_jobs set overdue_since = $3, last_reminder_at = $4 where shop_id = $1 and id = $2 returning version',
         [ctx.shop.shopId, job.id, overdueSince, ctx.now],
       );
       await emitOutboxEvent(
@@ -72,6 +75,13 @@ export const karigarOverdueJob: JobDefinition = {
           { jobId: job.code, overdueSince: overdueSince.toISOString() },
           ctx.now,
         );
+        // "Karigar job status changed" to staff, owner and the owning karigar (EP-07-S11).
+        await emitLiveEvent(tx, ctx.shop, 'karigar_job.status_changed', {
+          entityId: job.code,
+          entityVersion: updated.rows[0].version,
+          at: ctx.now,
+          karigarUserId: await karigarUserIdOf(tx.client, ctx.shop, job.karigar_id),
+        });
       }
       await writeJobAudit(tx.client, ctx.shop, LABEL, {
         kind: firstDay ? 'job_marked_overdue' : 'job_reminder_sent',

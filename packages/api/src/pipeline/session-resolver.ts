@@ -27,9 +27,11 @@ export interface SessionResolver {
   resolve(req: Request): Promise<Session | null>;
   /**
    * Inside the operation's transaction: extend the session and lock its row. False when it ended
-   * or expired since `resolve`; the operation is then refused as unauthenticated.
+   * or expired since `resolve`; the operation is then refused as unauthenticated. With
+   * `extend: false` (an operation with `extendsSession: false`) the row is checked and locked but
+   * its expiry is left as it is.
    */
-  confirm?(client: pg.PoolClient, session: Session, at: Date): Promise<boolean>;
+  confirm?(client: pg.PoolClient, session: Session, at: Date, opts?: { extend?: boolean }): Promise<boolean>;
 }
 
 /** Nobody is signed in (no database). */

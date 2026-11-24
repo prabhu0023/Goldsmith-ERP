@@ -12,7 +12,8 @@
  *       Idempotency-Key header too (-> validation, field Idempotency-Key)
  *   (f) one transaction (EP-03-S6): shop context, ctx { by, at, shop } from the session and the
  *       server clock, session confirm (extends and row-locks it; ended or expired since (b) ->
- *       unauthenticated, EP-04-S12, S13), idempotency claim for a create with a key
+ *       unauthenticated, EP-04-S12, S13; an operation with `extendsSession: false`, such as the
+ *       live channel's background calls, is checked and locked without extending), idempotency claim for a create with a key
  *       (EP-03-S8; a replay answers the stored id without running the service function; the
  *       same key with a different input answers conflict),
  *       service function, store the created id with the claim
@@ -130,7 +131,8 @@ export function createOperationRouter(deps: OperationRouterDeps): Router {
             at: clock.now(),
             shop,
           };
-          if (sessions.confirm && !(await sessions.confirm(tx.client, session, ctx.at))) {
+          const extend = op.def.extendsSession !== false;
+          if (sessions.confirm && !(await sessions.confirm(tx.client, session, ctx.at, { extend }))) {
             throw new UnauthenticatedError();
           }
           return runOperation(tx, ctx, op, input, idempotency);

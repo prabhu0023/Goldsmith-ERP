@@ -5,6 +5,8 @@
 import type { contract } from '@goldsmith/shared';
 import { listAuditEntries } from '../audit/list-audit-entries.js';
 import { readAuditEntry } from '../audit/read-audit-entry.js';
+import { liveHandlers } from '../live/live-operations.js';
+import { readRailBadges } from '../live/read-rail-badges.js';
 import type { Handlers } from '../pipeline/registry.js';
 import { setSetting } from '../settings/set-setting.js';
 import { createUserHandlers, type UserHandlerDeps } from '../users/index.js';
@@ -23,9 +25,13 @@ export const handlers: Handlers<typeof contract> = {
   setSetting,
   listAuditEntries,
   readAuditEntry,
+  readRailBadges,
 };
 
-/** Every production handler, including the user operations, which need the account mailer (EP-05). */
+/**
+ * Every production handler, including the user operations, which need the account mailer (EP-05),
+ * and the live channel's operations (EP-07).
+ */
 export function createServiceHandlers(deps: UserHandlerDeps): Handlers<typeof contract> {
-  return { ...handlers, ...createUserHandlers(deps) };
+  return { ...handlers, ...createUserHandlers(deps), ...liveHandlers };
 }

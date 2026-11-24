@@ -7,6 +7,7 @@ import { fileRetentionJob } from './files/file-retention.js';
 import type { FilesDeps } from './files/files-router.js';
 import { storageFromConfig } from './files/storage-config.js';
 import { productionJobs } from './jobs/production-jobs.js';
+import { createLiveChannel, type LiveChannel } from './live/live-channel.js';
 import { createScheduler, type Scheduler } from './jobs/scheduler.js';
 import { systemClock } from './pipeline/server-clock.js';
 import { sessionResolverFor } from './pipeline/session-resolver.js';
@@ -89,8 +90,16 @@ async function start(): Promise<void> {
       ]
     : productionJobs;
   let scheduler: Scheduler | undefined;
-  const server = createApp(config, { pool, sessions, files }).listen(config.port, () => {
+  // The live channel (EP-07): one per process, serving GET /api/live (Server-Sent Events, D3).
+  const live: LiveChannel | undefined = pool
+    ? createLiveChannel({ pool, sessions, clock: systemClock, appUrl: config.appUrl, log: console.error })
+    : undefined;
+  const server = createApp(config, { pool, sessions, files, live }).listen(config.port, () => {
     console.log(`[api] ready on http://localhost:${config.port} (APP_ENV=${config.appEnv})`);
+    if (live) {
+      live.start();
+      console.log('[live] channel started (GET /api/live)');
+    }
     if (config.jobsEnabled && pool) {
       scheduler = createScheduler({ pool, clock: systemClock, jobs, pollMs: config.jobsPollIntervalMs });
       scheduler.start();
@@ -107,6 +116,8 @@ async function start(): Promise<void> {
     if (stopping) return;
     stopping = true;
     console.log(`[api] ${signal}: stopping`);
+    // Open streams would keep server.close waiting: end them first.
+    await live?.stop();
     await scheduler?.stop();
     await new Promise<void>((resolve) => server.close(() => resolve()));
     await pool?.end();

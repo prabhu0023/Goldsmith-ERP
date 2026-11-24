@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { mergeRailBadges, useLiveRailBadges } from '../../live/rail-badges-live';
 import { navFor, routeTitles } from '../../nav';
 import { railBadges } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
@@ -26,6 +27,7 @@ function PricingToggle() {
 export function AppShell() {
   const { state, route, role, now, go } = useStore();
   const [menuOpen, setMenuOpen] = useState(false);
+  const liveBadges = useLiveRailBadges(role);
   const Screen = registry[route.id];
 
   useEffect(() => setMenuOpen(false), [route.id, role]);
@@ -60,7 +62,7 @@ export function AppShell() {
     <Rail
       sections={navFor(role)}
       routeId={route.id}
-      badges={railBadges(state, role, now)}
+      badges={mergeRailBadges(railBadges(state, role, now), liveBadges)}
       onNavigate={(id) => go(id)}
       branch={role === 'owner' ? 'All branches' : 'Main showroom'}
       footer={

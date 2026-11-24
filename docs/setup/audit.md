@@ -93,8 +93,10 @@ The api connects as `goldsmith_app` (`APP_DATABASE_URL`), which has only `SELECT
 | job `file-retention` | scheduler (added when storage is on) | `file_removed_by_retention`, one per owner of the removed file |
 | job `lead-sla-timers` | scheduler | exempt: reschedules job-internal timer rows only |
 | job `wishes-9am` | scheduler | exempt: emits an outbox event only, no record changes |
+| `subscribeLiveChannel`, `unsubscribeLiveChannel` | `/api/ops` | exempt: in-memory channels of the open live stream (EP-07, `AUDIT_EXEMPT_OPERATIONS`) |
+| `joinParcelPresence`, `leaveParcelPresence` | `/api/ops` | exempt: in-memory parcel presence (join is also the heartbeat) of the open live stream (EP-07) |
 
-Reads write nothing: `listJobRuns`, `listMyJobs`, `readMyJob`, `listUsers`, `listAuditEntries`, `readAuditEntry`, `readFileLinks`, `listAttachments`, `readCurrentSession`, `checkPasswordLink`. Which operations write a second entry, and whether that is right, is FU-009.
+Reads write nothing: `listJobRuns`, `listMyJobs`, `readMyJob`, `listUsers`, `listAuditEntries`, `readAuditEntry`, `readFileLinks`, `listAttachments`, `readRailBadges`, `readCurrentSession`, `checkPasswordLink`. Which operations write a second entry, and whether that is right, is FU-009.
 
 **Covered by rule.** These operations arrive in EP-18 onward. Each has its kind in `TRANSITION_AUDIT_KINDS` and must be added to `OPERATION_AUDIT_KINDS` and `AUDIT_CASES` when it is ported, or typecheck and the guard fail: `createLead`, `confirmLead`, `startWorkingLead`, `routeLeadItemToStock`, `createOrderCopyAndJob`, `acceptJob`, `startJob`, `markJobReady`, `handOver`, `recordParcelArrival`, `saveTag`, `qcTick`, `releaseParcel`, `ownerRecheckTag`, `raiseProblem`, `proposeEdit`, `ownerAgreeEdit`, `requestScrap`, `onboardCustomer`, `onboardKarigar`, `onboardStaff`, `sendWishes`, `sendBroadcast`, `upsertScale`, plus the prototype-audited `applyEdit`, `refuseEdit`, `ownerSendBack`, `ownerAcceptLoss`, `clearProblem`, `stockOut`, `ownerScrap`, `ownerDeclineScrap` (the 10 prototype kinds). `releaseHold` has no kind: v1 has no holds.
 

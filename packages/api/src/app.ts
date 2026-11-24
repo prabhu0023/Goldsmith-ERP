@@ -17,6 +17,8 @@ import type { Config } from './config.js';
 import { createFileHandlers } from './files/file-handlers.js';
 import { createFilesRouter, type FilesDeps } from './files/files-router.js';
 import { checkDatabase, withTimeout } from './health-check.js';
+import { createDevEmitRouter } from './live/dev-emit-router.js';
+import type { LiveChannel } from './live/live-channel.js';
 import { ApiError, type ErrorLog, RateLimitedError, toErrorResponse } from './pipeline/api-errors.js';
 import { allowAllRateLimiter, type PermissionCheck, type RateLimiter } from './pipeline/hooks.js';
 import { clientAddressOf, createOperationRouter } from './pipeline/operation-router.js';
@@ -56,6 +58,8 @@ export interface AppDeps {
   auth: Partial<AuthDeps>;
   /** File upload and signed links (EP-09); unset when object storage is not configured. */
   files?: FilesDeps;
+  /** The live channel (EP-07); its stream is served only when given. */
+  live: Pick<LiveChannel, 'router'>;
 }
 
 /** The sign-in dependencies from config, with `overrides` on top. */
@@ -126,6 +130,11 @@ export function createApp(config: Config, deps: Partial<AppDeps> = {}): Express 
   // The account-email stub's mailbox (EP-04-S4), never in production.
   if (auth.mailer instanceof StubMailer && config.appEnv !== 'production') {
     app.use(createDevMailboxRouter(auth.mailer));
+  }
+  if (deps.live) app.use(deps.live.router);
+  // The live test-event stub (EP-07-S12), never in production.
+  if (config.appEnv !== 'production') {
+    app.use(createDevEmitRouter({ pool, sessions, clock, log, maxBodyBytes: config.maxBodyBytes }));
   }
   app.use(createAuthRouter({ pool, sessions, clock, rateLimiter, log, maxBodyBytes: config.maxBodyBytes, auth }));
   app.use(
