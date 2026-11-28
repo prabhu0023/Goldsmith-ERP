@@ -12,6 +12,7 @@ export * from './contract/settings-contract.js';
 export * from './contract/live-contract.js';
 export * from './contract/pieces-contract.js';
 export * from './contract/users-contract.js';
+export * from './contract/customers-contract.js';
 export * from './contract/files-contract.js';
 export * from './domain/audit-log.js';
 export * from './domain/clock.js';

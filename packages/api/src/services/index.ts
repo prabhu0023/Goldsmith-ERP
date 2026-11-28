@@ -3,6 +3,7 @@
  * The app registers exactly these; a name the contract does not declare stops it at startup.
  */
 import type { contract } from '@goldsmith/shared';
+import { customerHandlers } from '../customers/index.js';
 import { listAuditEntries } from '../audit/list-audit-entries.js';
 import { readAuditEntry } from '../audit/read-audit-entry.js';
 import { liveHandlers } from '../live/live-operations.js';
@@ -35,5 +36,5 @@ export const handlers: Handlers<typeof contract> = {
  * and the live channel's operations (EP-07).
  */
 export function createServiceHandlers(deps: UserHandlerDeps): Handlers<typeof contract> {
-  return { ...handlers, ...createUserHandlers(deps), ...liveHandlers };
+  return { ...handlers, ...createUserHandlers(deps), ...customerHandlers, ...liveHandlers };
 }

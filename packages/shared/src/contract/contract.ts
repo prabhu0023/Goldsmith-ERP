@@ -6,6 +6,7 @@
 import { z } from 'zod';
 import { auditOperations } from './audit-contract.js';
 import { okResult, pageInput, pageResult } from './contract-fields.js';
+import { customerOperations } from './customers-contract.js';
 import { defineOperation } from './define-operation.js';
 import { ERROR_CODES } from './error-codes.js';
 import { settingsOperations } from './settings-contract.js';
@@ -63,6 +64,7 @@ export const contract = {
     errors: ERROR_CODES,
   }),
   ...userOperations,
+  ...customerOperations,
   ...pieceOperations,
   ...filesContract,
   ...settingsOperations,

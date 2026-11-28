@@ -22,6 +22,7 @@ const NO_REQUIRED_INPUT = [
 it('lists the operations with no required input, so a new required field joins the loop', () => {
   expect(NO_REQUIRED_INPUT).toEqual([
     'listAuditEntries',
+    'listCustomers',
     'listJobRuns',
     'listMyJobs',
     'listUsers',
@@ -61,8 +62,8 @@ describeDb('empty body is a validation refusal for every operation with required
       res.body.field,
     );
   });
-  it.each(['listJobRuns', 'listUsers', 'listAuditEntries'])('%s: a page size of 0 and a bad filter are validation refusals', async (op) => {
-    const bad: Record<string, unknown> = { listJobRuns: { result: 'bogus' }, listUsers: {}, listAuditEntries: { actorRole: 'bogus' } };
+  it.each(['listJobRuns', 'listUsers', 'listAuditEntries', 'listCustomers'])('%s: a page size of 0 and a bad filter are validation refusals', async (op) => {
+    const bad: Record<string, unknown> = { listJobRuns: { result: 'bogus' }, listUsers: {}, listAuditEntries: { actorRole: 'bogus' }, listCustomers: { group: 'Festive collector' } };
     for (const body of [{ pageSize: 0 }, { pageSize: 'many' }, bad[op]]) {
       if (Object.keys(body as object).length === 0) continue;
       const res = await h.call(op, body, { session: sessions.owner });

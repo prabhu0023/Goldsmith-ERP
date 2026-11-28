@@ -51,6 +51,14 @@ const MANIFEST: Record<string, Row> = {
   unlockUser: row('users/directory.test.ts', MATRIX_VALIDATION, 'users/directory.test.ts'),
   linkKarigar: row('users/link-karigar.test.ts', MATRIX_VALIDATION, 'users/link-karigar.test.ts'),
   listUsers: row('users/directory.test.ts', 'users/directory.test.ts', 'users/directory.test.ts'),
+  // Customers
+  createCustomer: row('customers/add-customer.test.ts', 'customers/add-customer.test.ts', 'customers/add-customer.test.ts', 'customers/customer-access.test.ts'),
+  updateCustomer: row('customers/edit-customer.test.ts', 'customers/edit-customer.test.ts', 'customers/edit-customer.test.ts', 'customers/customer-access.test.ts'),
+  listCustomers: row('customers/directory.test.ts', MATRIX_VALIDATION, 'customers/directory.test.ts', 'customers/customer-access.test.ts'),
+  readCustomer: row('customers/directory.test.ts', MATRIX_VALIDATION, 'customers/directory.test.ts', 'customers/customer-access.test.ts'),
+  findCustomerByPhone: row('customers/phone-match.test.ts', MATRIX_VALIDATION, { na: 'a phone nobody holds, or too short to be one, answers customer: null, not an error (customers/phone-match.test.ts)' }, 'customers/customer-access.test.ts'),
+  recordConsent: row('customers/consent.test.ts', 'customers/consent.test.ts', 'customers/consent.test.ts', 'customers/customer-access.test.ts'),
+  eraseCustomer: row('customers/erase-customer.test.ts', 'customers/erase-customer.test.ts', 'customers/erase-customer.test.ts', 'customers/customer-access.test.ts'),
   // Karigar jobs
   listMyJobs: row('permissions/karigar-scope.test.ts', 'permissions/karigar-scope.test.ts', 'permissions/karigar-scope.test.ts'),
   readMyJob: row('permissions/karigar-scope.test.ts', MATRIX_VALIDATION, 'permissions/karigar-scope.test.ts'),
