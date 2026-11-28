@@ -89,3 +89,20 @@ describe('stored weight units (0.0001 g, EP-02-S2)', () => {
     }
   });
 });
+describe('net weight and match ceiling on integer units (EP-40-S2)', () => {
+  it('AC2: gross 485.5000 g less stones 38.2000 g is 447.3000 g net', () => {
+    const net = netUnits(4855000, 382000);
+    expect(net).toBe(4473000);
+    expect(unitsToGrams(net)).toBe('447.3000');
+  });
+  it('names both units: 1 stored unit is 0.0001 g and is 10 comparison units of 0.00001 g', () => {
+    expect(STORED_UNITS_PER_G).toBe(10000);
+    expect(UNITS_PER_G / STORED_UNITS_PER_G).toBe(10);
+  });
+  it('refuses five decimals and a bare sign instead of rounding', () => {
+    for (const bad of ['1.23456', '-1.23456', '0.00005', '-']) {
+      expect(gramsToUnits(bad).ok, bad).toBe(false);
+    }
+    expect(gramsToUnits('-1')).toEqual({ ok: true, units: -10000 });
+  });
+});

@@ -28,6 +28,21 @@ describe('match ceiling', () => {
   });
 });
 
+describe('match ceiling at the shop scales (EP-40-S2 AC4, FR-40-3)', () => {
+  const platform: Scale = { id: 'SC-PLAT', name: 'Platform', readabilityG: 0.01, capacityG: 30000 };
+  const bench: Scale = { id: 'SC-BENCH', name: 'Bench', readabilityG: 0.0001, capacityG: 500 };
+  it('one Platform weighing and 300 Bench weighings give a ceiling of 0.02 g (2000 units of 0.00001 g)', () => {
+    const weighings = [{ scaleId: platform.id }, ...Array.from({ length: 300 }, () => ({ scaleId: bench.id }))];
+    const c = computeCeiling(weighings, [platform, bench]);
+    expect(c.weighings).toBe(301);
+    expect(c.ceilingU).toBe(2000);
+    expect(c.ceilingG).toBe(0.02);
+  });
+  it('is half the scale step per weighing, as a whole number of 0.00001 g units', () => {
+    expect(computeCeiling([{ scaleId: platform.id }], [platform]).ceilingU).toBe(500);
+    expect(computeCeiling([{ scaleId: bench.id }], [bench]).ceilingU).toBe(5);
+  });
+});
 describe('parcel verdict', () => {
   it('is a mismatch when the tags are 138 mg short', () => {
     const { parcel, pieces } = parcelWith(120.138);

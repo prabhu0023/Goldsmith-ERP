@@ -114,6 +114,27 @@ describe('permission list (EP-05-S1)', () => {
     expect(refusalFor('clearProblem')).toBe('Only the owner can clear a problem.');
   });
 
+  it('lets only the owner call each owner-only prototype operation, and every role raise a problem (EP-40-S4 AC5, AC6)', () => {
+    for (const op of [
+      'clearMismatch',
+      'ownerSendBack',
+      'ownerRecheckTag',
+      'ownerAcceptLoss',
+      'clearProblem',
+      'ownerAgreeEdit',
+      'applyEdit',
+      'refuseEdit',
+      'ownerScrap',
+      'ownerDeclineScrap',
+      'onboardStaff',
+      'onboardKarigar',
+      'upsertScale',
+    ] as const) {
+      expect(roleMay('owner', op), `owner ${op}`).toBe(true);
+      expect(roleMay('staff', op), `staff ${op}`).toBe(false);
+      expect(roleMay('karigar', op), `karigar ${op}`).toBe(false);
+    }
+  });
   it('answers each refusal with its sentence', () => {
     expect(refusalFor('clearMismatch')).toBe('Only the owner can clear a mismatch.');
     expect(refusalFor('createUser')).toBe('Only the owner can add staff or change a role.');
