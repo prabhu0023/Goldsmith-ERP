@@ -21,6 +21,10 @@
     "db:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/db/cli.ts create",
     "db:new": "node --conditions=@goldsmith/source --import tsx src/db/cli.ts new",
     "storage:create": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/files/storage-cli.ts create",
+    "backup:db": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts backup-db",
+    "backup:list": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts backup-list",
+    "backup:check": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts backup-check",
+    "backup:prune": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts backup-prune",
     "live:demo": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx scripts/live-demo.ts"
   },
   "dependencies": {
