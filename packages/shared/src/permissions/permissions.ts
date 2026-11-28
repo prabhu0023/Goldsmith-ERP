@@ -49,7 +49,6 @@ export const PLANNED_OPERATIONS = [
   'ownerScrap',
   'ownerDeclineScrap',
   'onboardCustomer',
-  'onboardKarigar',
   'onboardStaff',
   'sendWishes',
   'sendBroadcast',
@@ -84,6 +83,8 @@ const shopFloor = { roles: SHOP_FLOOR, refusal: KARIGAR_REFUSED } as const;
 const karigarOnly = { roles: KARIGAR, refusal: KARIGAR_ONLY } as const;
 const ownerOnly = <const S extends string>(refusal: S) => ({ roles: OWNER, refusal }) as const;
 const usersRule = ownerOnly(USERS_REFUSED);
+/** Adding a karigar and changing the record or allowance (EP-16-S2); the sentence is KARIGAR_MESSAGES.ownerOnly. */
+const karigarWrites = ownerOnly('Only the owner can add a karigar or change their wastage allowance.');
 
 export const OPERATION_RULES = {
   // Staff and owner.
@@ -143,7 +144,10 @@ export const OPERATION_RULES = {
   refuseEdit: ownerOnly('Only the owner can refuse an edit.'),
   ownerScrap: ownerOnly('Only the owner can mark a piece as scrap.'),
   ownerDeclineScrap: ownerOnly('Only the owner can decline a scrap request.'),
-  onboardKarigar: ownerOnly('Only the owner can add a karigar.'),
+  onboardKarigar: karigarWrites,
+  updateKarigarDetails: karigarWrites,
+  updateKarigarWastage: karigarWrites,
+  updateKarigarStatus: karigarWrites,
   onboardStaff: ownerOnly('Only the owner can onboard staff.'),
   upsertScale: ownerOnly('Only the owner can change the scales.'),
   setSetting: ownerOnly(RULES_REFUSED),

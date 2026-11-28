@@ -20,6 +20,9 @@ const OWNER_EXTRAS = [
   'ownerScrap',
   'onboardStaff',
   'onboardKarigar',
+  'updateKarigarDetails',
+  'updateKarigarWastage',
+  'updateKarigarStatus',
   'upsertScale',
   'setSetting',
   'listJobRuns',
@@ -138,6 +141,9 @@ describe('permission list (EP-05-S1)', () => {
   it('answers each refusal with its sentence', () => {
     expect(refusalFor('clearMismatch')).toBe('Only the owner can clear a mismatch.');
     expect(refusalFor('createUser')).toBe('Only the owner can add staff or change a role.');
+    for (const op of ['onboardKarigar', 'updateKarigarDetails', 'updateKarigarWastage', 'updateKarigarStatus']) {
+      expect(refusalFor(op)).toBe('Only the owner can add a karigar or change their wastage allowance.');
+    }
     expect(refusalFor('listJobRuns')).toBe('Only the owner can see and retry job runs.');
     expect(refusalFor('markLeadLost')).toBe('A karigar can only work on their own jobs.');
     expect(refusalFor('listMyJobs')).toBe('Only a karigar can do this, on their own job.');

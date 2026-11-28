@@ -14,7 +14,14 @@
  */
 import { createHash, randomUUID } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
-import { AUDIT_ACTION_ENTITY, DEMO_BASE, type FileOwnerType, type FileRole, gramsToUnits } from '@goldsmith/shared';
+import {
+  AUDIT_ACTION_ENTITY,
+  DEMO_BASE,
+  type FileOwnerType,
+  type FileRole,
+  gramsToUnits,
+  normaliseIndianMobile,
+} from '@goldsmith/shared';
 import type pg from 'pg';
 import type { AppEnv } from '../../config.js';
 import type { ObjectStorage } from '../../files/object-storage.js';
@@ -34,7 +41,7 @@ export const SEEDED_TABLES = [
   'settings',
   'scales',
   'karigars',
-  'karigar_gap_history',
+  'karigar_specialties',
   'staff_members',
   'users',
   'customers',
@@ -125,6 +132,14 @@ async function putSeedImages(storage: ObjectStorage, log: (line: string) => void
   return images;
 }
 
+/** The prototype keeps a karigar's specialties as one text ("Kundan and Polki"); the table has one row each. */
+function splitSpecialties(text: string | null): string[] {
+  const names = (text ?? '')
+    .split(/\s*,\s*|\s+and\s+/i)
+    .map((n) => n.trim())
+    .filter((n) => n !== '');
+  return [...new Set(names)];
+}
 /** Seed an empty database; returns the row count of every seeded table. */
 export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promise<Record<string, number>> {
   if (options.appEnv === 'production') throw new SeedRefusedError('db:seed is refused when APP_ENV=production');
@@ -208,22 +223,15 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         id: karigarId,
         code: k.id,
         name: k.name,
-        phone: k.phone,
-        specialty: k.specialty,
+        phone: normaliseIndianMobile(k.phone) ?? k.phone,
+        email: `${k.id.toLowerCase()}@example.com`,
         language: k.language,
-        wastage_pct: k.wastagePct,
-        metal_loss_pct: k.metalLossPct,
-        late_days: k.lateDays,
-        rating: k.rating,
-        finished_jobs: k.finishedJobs,
+        wastage_bp: Math.round(k.wastagePct * 100),
+        status: 'active',
         open_since: k.openSince,
       });
-      for (const [position, mg] of k.gapsMg.entries()) {
-        await ins('karigar_gap_history', {
-          karigar_id: karigarId,
-          position,
-          gap_units: units(mg / 1000, `karigar ${k.id} gap ${position}`),
-        });
+      for (const [position, specialty] of splitSpecialties(k.specialty).entries()) {
+        await ins('karigar_specialties', { karigar_id: karigarId, specialty, position });
       }
     }
 

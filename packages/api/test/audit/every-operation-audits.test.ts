@@ -101,6 +101,36 @@ const AUDIT_CASES: Record<StateChangingOperation, AuditCase> = {
     await addKarigar(h.pool, h.shop, 'KG-62');
     return () => h.asOwner('linkKarigar', { userId: id, version, karigarId: 'KG-62' });
   },
+  async onboardKarigar(h) {
+    return () =>
+      h.asOwner('onboardKarigar', {
+        name: 'Ravi Achari',
+        phone: phone(),
+        email: 'ravi.achari@example.com',
+        specialties: ['Temple'],
+        wastageBp: 90,
+      });
+  },
+  async updateKarigarDetails(h) {
+    await addKarigar(h.pool, h.shop, 'KG-71');
+    return () =>
+      h.asOwner('updateKarigarDetails', {
+        karigarId: 'KG-71',
+        version: 1,
+        name: 'Kavita Rao',
+        phone: phone(),
+        email: 'kg-63@example.test',
+        specialties: ['Meenakari'],
+      });
+  },
+  async updateKarigarWastage(h) {
+    await addKarigar(h.pool, h.shop, 'KG-72');
+    return () => h.asOwner('updateKarigarWastage', { karigarId: 'KG-72', version: 1, wastageBp: 100, reason: 'Harder pieces' });
+  },
+  async updateKarigarStatus(h) {
+    await addKarigar(h.pool, h.shop, 'KG-73');
+    return () => h.asOwner('updateKarigarStatus', { karigarId: 'KG-73', version: 1, status: 'deactivated' });
+  },
   async setSetting(h) {
     return () => h.asOwner('setSetting', { key: 'autoSendWishes', value: true });
   },

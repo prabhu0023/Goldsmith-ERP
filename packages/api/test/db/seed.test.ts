@@ -68,7 +68,7 @@ describeDb('prototype seed (EP-02-S13)', () => {
       settings: 1,
       scales: state.scales.length,
       karigars: 3,
-      karigar_gap_history: childCount(state.karigars, (k) => k.gapsMg),
+      karigar_specialties: 5,
       staff_members: 3,
       users: 6,
       customers: 8,
@@ -171,16 +171,17 @@ describeDb('prototype seed (EP-02-S13)', () => {
       );
       expect(manifest.rows).toEqual(pc.manifest.map((m) => ({ code: m.id, kind: m.kind, item_count: m.count })));
     }
-    for (const k of state.karigars) {
-      const gaps = await pool.query(
-        `select g.gap_units from karigar_gap_history g join karigars k on k.id = g.karigar_id
-          where k.code = $1 order by g.position`,
-        [k.id],
-      );
-      expect(gaps.rows.map((r) => r.gap_units)).toEqual(k.gapsMg.map((mg) => mg * 10));
-    }
+    const karigars = await codes(
+      `select k.code, k.email, k.phone, k.wastage_bp, k.status, k.language,
+              (select array_agg(s.specialty order by s.position) from karigar_specialties s where s.karigar_id = k.id) as specialties
+         from karigars k order by k.code`,
+    );
+    expect(karigars).toEqual([
+      { code: 'KG-01', email: 'kg-01@example.com', phone: '+919840010101', wastage_bp: 70, status: 'active', language: 'Tamil', specialties: ['Chettinad'] },
+      { code: 'KG-02', email: 'kg-02@example.com', phone: '+919840020202', wastage_bp: 80, status: 'active', language: 'Hindi', specialties: ['Kundan', 'Polki'] },
+      { code: 'KG-04', email: 'kg-04@example.com', phone: '+919840040404', wastage_bp: 80, status: 'active', language: 'Hindi', specialties: ['Antique', 'Temple'] },
+    ]);
   });
-
   it('gives every audit entry an actor that is a user of the shop', async () => {
     const rows = await codes(
       `select a.code, u.name as user_name, a.actor_name from audit_entries a

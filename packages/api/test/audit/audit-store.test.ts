@@ -82,7 +82,8 @@ describeDb('audit store (EP-06-S1, S7 AC5)', () => {
   it('EP-06-S1 AC2: goldsmith_app can still change the other tables', async () => {
     const { shopId } = await newShop(owner);
     const { rows } = await app.query<{ id: string }>(
-      `insert into karigars (shop_id, code, name) values ($1, 'KG-04', 'Lakshmi Devi') returning id`,
+      `insert into karigars (shop_id, code, name, email, wastage_bp)
+       values ($1, 'KG-04', 'Lakshmi Devi', 'kg-04@example.test', 70) returning id`,
       [shopId],
     );
     await app.query(`update karigars set name = 'Lakshmi D.' where id = $1`, [rows[0].id]);

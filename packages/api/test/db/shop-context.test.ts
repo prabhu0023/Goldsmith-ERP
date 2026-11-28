@@ -43,6 +43,8 @@ describeDb('shop-scoped inserts (EP-02-S14, D7)', () => {
     const karigar = await insertScoped<Record<string, unknown>>(pool, ctx, 'karigars', {
       code: 'KG-01',
       name: 'Lakshmi Devi',
+      email: 'kg-01@example.test',
+      wastage_bp: 70,
       shop_id: other.shopId,
     });
     expect(karigar.shop_id).toBe(mine.shopId);

@@ -108,7 +108,8 @@ export async function addPiece(
 /** Insert a karigar; returns its id. */
 export async function addKarigar(client: Queryable, shop: TestShop, code = 'KG-01'): Promise<string> {
   const res = await client.query<{ id: string }>(
-    `insert into karigars (shop_id, code, name) values ($1, $2, 'Test karigar') returning id`,
+    `insert into karigars (shop_id, code, name, email, wastage_bp)
+     values ($1, $2, 'Test karigar', lower($2) || '@example.test', 70) returning id`,
     [shop.shopId, code],
   );
   return res.rows[0].id;

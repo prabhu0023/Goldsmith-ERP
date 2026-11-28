@@ -51,6 +51,11 @@ const MANIFEST: Record<string, Row> = {
   unlockUser: row('users/directory.test.ts', MATRIX_VALIDATION, 'users/directory.test.ts'),
   linkKarigar: row('users/link-karigar.test.ts', MATRIX_VALIDATION, 'users/link-karigar.test.ts'),
   listUsers: row('users/directory.test.ts', 'users/directory.test.ts', 'users/directory.test.ts'),
+  // Karigar master
+  onboardKarigar: row('karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts'),
+  updateKarigarDetails: row('karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts'),
+  updateKarigarWastage: row('karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts'),
+  updateKarigarStatus: row('karigars/karigar-writes.test.ts', MATRIX_VALIDATION, 'karigars/karigar-writes.test.ts'),
   // Karigar jobs
   listMyJobs: row('permissions/karigar-scope.test.ts', 'permissions/karigar-scope.test.ts', 'permissions/karigar-scope.test.ts'),
   readMyJob: row('permissions/karigar-scope.test.ts', MATRIX_VALIDATION, 'permissions/karigar-scope.test.ts'),
