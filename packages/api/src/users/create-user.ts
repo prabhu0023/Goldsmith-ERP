@@ -12,6 +12,7 @@ import { issueActivationLink } from '../auth/activation.js';
 import type { Handler } from '../pipeline/registry.js';
 import type { UserHandlerDeps } from './index.js';
 import { writeUserLifecycleAudit } from './user-audit.js';
+import { emitUserListChanged } from './user-live.js';
 import {
   assertKarigarFree,
   assertPhoneFree,
@@ -62,6 +63,7 @@ export function createUserHandler(deps: UserHandlerDeps): Handler<typeof contrac
       appUrl: deps.appUrl,
       log: deps.log,
     });
+    await emitUserListChanged(tx, ctx, id);
     return { ok: true, id };
   };
 }

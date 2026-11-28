@@ -7,6 +7,7 @@ import { type contract, DomainError, USER_MESSAGES } from '@goldsmith/shared';
 import { updateVersioned } from '../db/versioned.js';
 import type { Handler } from '../pipeline/registry.js';
 import { writeUserLifecycleAudit } from './user-audit.js';
+import { emitUserListChanged } from './user-live.js';
 import {
   assertKarigarFree,
   assertPhoneFree,
@@ -38,5 +39,6 @@ export const reactivateUser: Handler<typeof contract.reactivateUser> = async (tx
     before: { status: 'deactivated' },
     after: { status },
   });
+  await emitUserListChanged(tx, ctx, user.id);
   return { ok: true };
 };

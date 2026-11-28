@@ -112,6 +112,13 @@ export const LIVE_CATALOGUE = {
     audience: ({ userId }) => ({ channels: [userChannel(userId)] }),
     refreshesBadges: false,
   }),
+  'user.list_changed': entry<NoParams>({
+    topic: 'user.list_changed',
+    name: 'User list changed',
+    entityType: 'user',
+    audience: () => ({ channels: [OWNER] }),
+    refreshesBadges: false,
+  }),
 } as const satisfies LiveCatalogue;
 
 export type LiveTopic = keyof typeof LIVE_CATALOGUE;
@@ -139,8 +146,9 @@ export function liveAudienceFor(topic: string, params: object, catalogue: LiveCa
 /**
  * The operations whose permission lets a role read an entity type's events, from the one
  * permission list (`OPERATION_RULES`): a receiver whose role may run none of them gets no event
- * about that entity. A karigar's `readMyJob` covers only their own jobs (karigar scope). `user`
- * events go to that user only, so no operation grants them.
+ * about that entity. A karigar's `readMyJob` covers only their own jobs (karigar scope). A `user`
+ * event about the receiver's own account always passes (`user.access_changed`); one about another
+ * user needs `listUsers` (`user.list_changed`, owner only).
  */
 export const ENTITY_READ_PERMISSIONS = {
   piece: ['readPiece'],
@@ -149,5 +157,5 @@ export const ENTITY_READ_PERMISSIONS = {
   lead: ['markLeadLost'],
   karigar_job: ['createOrderCopyAndJob', 'readMyJob'],
   metal_pool: ['createOrderCopyAndJob'],
-  user: [],
+  user: ['listUsers'],
 } as const satisfies Record<LiveEntityType, readonly PermissionName[]>;

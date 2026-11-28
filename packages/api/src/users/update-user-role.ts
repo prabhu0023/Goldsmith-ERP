@@ -9,6 +9,7 @@ import { updateVersioned } from '../db/versioned.js';
 import type { Handler } from '../pipeline/registry.js';
 import { endUserAccess } from './end-access.js';
 import { writeUserLifecycleAudit } from './user-audit.js';
+import { emitUserListChanged } from './user-live.js';
 import {
   assertKarigarFree,
   type KarigarRef,
@@ -51,5 +52,6 @@ export const updateUserRole: Handler<typeof contract.updateUserRole> = async (tx
     before: { role: user.role, karigarId: user.karigar_code },
     after: { role: input.role, karigarId: karigar?.code ?? null },
   });
+  await emitUserListChanged(tx, ctx, user.id);
   return { ok: true };
 };
