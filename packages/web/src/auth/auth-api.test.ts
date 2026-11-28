@@ -45,4 +45,17 @@ describe('authCall', () => {
     expect(answer.ok).toBe(false);
     if (!answer.ok) expect(answer.code).toBe('internal');
   });
+  it('adds the background header only when asked (the live client session check)', async () => {
+    const fetchStub = reply(200, { ok: true });
+    vi.stubGlobal('fetch', fetchStub);
+    await authCall('readCurrentSession', {});
+    await authCall('readCurrentSession', {}, { background: true });
+    const headers = fetchStub.mock.calls.map((c) => ((c as unknown as [string, RequestInit])[1].headers ?? {}) as Record<string, string>);
+    expect(headers[0]).not.toHaveProperty('X-Background-Refresh');
+    expect(headers[1]).toMatchObject({ 'X-Background-Refresh': '1' });
+  });
+  it('flags a lost connection as a network failure', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('Failed to fetch'))));
+    expect(await authCall('readCurrentSession', {})).toMatchObject({ ok: false, code: 'internal', network: true });
+  });
 });

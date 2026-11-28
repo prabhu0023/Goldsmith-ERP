@@ -17,7 +17,7 @@ import {
   type LiveTimers,
   liveServerMessageSchema,
 } from '@goldsmith/shared';
-import { opsCall } from '../api/ops-client';
+import { createApiClient } from '../api/api-client';
 
 const MESSAGE_TYPES: readonly LiveServerMessageType[] = ['hello', 'event', 'refetch_all', 'replayed', 'presence', 'closed'];
 
@@ -66,10 +66,11 @@ export function browserStreamSource(
   };
 }
 
-/** The live operations through the ordinary `POST /api/ops` pipeline. */
+const liveApi = createApiClient();
+/** The live operations through the ordinary `POST /api/ops` pipeline; none carries an idempotency key. */
 export const browserLiveOps: LiveOpsCaller = {
   call: async (op, input) => {
-    const answer = await opsCall(op, input as never);
+    const answer = await liveApi.call(op, input as never, { idempotencyKey: false });
     if (!answer.ok) return { ok: false };
     // A join answers who else is on the parcel; the shared client shows it (S8).
     const others = (answer.data as { others?: LivePresenceOther[] }).others;
