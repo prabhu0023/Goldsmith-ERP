@@ -8,7 +8,10 @@
  *   restore-drop <name> [--allow-staging]    drop a throwaway restore database
  *   check-audit --backup <id|latest> --target <name> [--source]   audit-log completeness check of a restore
  *   restore-sends --since <ISO> [--until <ISO>]   sends and lost work after a restore point
- * Reads DATABASE_URL, APP_ENV, LANE and the BACKUP_* variables (backup-db and restore-db also BACKUP_ENCRYPTION_KEY).
+ *   backup-files                             encrypted copy of every object of the lane's file bucket
+ *   restore-files --backup <id|latest> --bucket <name>   restore into a new throwaway bucket
+ *   check-files --target <db> --bucket <name>   every stored file of a restored database is in the restored bucket
+ * Reads DATABASE_URL, APP_ENV, LANE and the BACKUP_* variables (backup-db, restore-db, backup-files and restore-files also BACKUP_ENCRYPTION_KEY; the file commands read STORAGE_*).
  * Exit code 0 on success, 1 with a one-line error otherwise.
  */
 import { parseArgs } from 'node:util';
@@ -18,10 +21,15 @@ import { runDatabaseBackup } from './backup-db.js';
 import { checkBackupPresent } from './backup-check.js';
 import { listBackups, type RunRecord } from './backup-records.js';
 import { LocalFolderStore } from './backup-store.js';
+import { readStorageEnv } from '../files/storage-config.js';
+import { S3Storage } from '../files/s3-storage.js';
 import { dropRestored } from './drop-restored.js';
+import { checkFileReferences } from './files-check.js';
+import { backupFiles, openFileStores } from './files-backup.js';
+import { restoreFiles } from './files-restore.js';
 import { createOperatorNotifier, fileSink, logSink, outboxSink } from './notify-operator.js';
 import { readBackupKey, readOpsEnv } from './ops-env.js';
-import { assertRestoreTarget } from './ops-guards.js';
+import { assertRestoreBucket, assertRestoreTarget } from './ops-guards.js';
 import { createPgTools } from './pg-tools.js';
 import { loadManifest, restoreDatabase, urlForDatabase } from './restore-db.js';
 import { pruneBackups } from './retention.js';
@@ -35,6 +43,9 @@ const COMMANDS = [
   'restore-drop',
   'check-audit',
   'restore-sends',
+  'backup-files',
+  'restore-files',
+  'check-files',
 ];
 const MAX_IDS_SHOWN = 20;
 function table(rows: string[][]): void {
@@ -62,6 +73,13 @@ function printList(runs: RunRecord[]): void {
     ]),
   ]);
 }
+/** The file bucket settings (lane applied), or a clear error when STORAGE_BUCKET is not set. */
+function storageSettings(): NonNullable<ReturnType<typeof readStorageEnv>> {
+  const settings = readStorageEnv();
+  if (!settings) throw new Error('STORAGE_BUCKET is not set; there is no file storage to back up or check');
+  return settings;
+}
+
 function requireOption(values: Record<string, unknown>, name: string, command: string): string {
   const value = values[name];
   if (typeof value !== 'string' || value === '') throw new Error(`${command} needs --${name}`);
@@ -79,6 +97,7 @@ async function main(command: string | undefined, args: string[]): Promise<void> 
       'retention-days': { type: 'string' },
       backup: { type: 'string' },
       target: { type: 'string' },
+      bucket: { type: 'string' },
       'allow-staging': { type: 'boolean' },
       source: { type: 'boolean' },
       since: { type: 'string' },
@@ -161,6 +180,65 @@ async function main(command: string | undefined, args: string[]): Promise<void> 
     console.log(
       `Audit check passed: ${result.tables} tables and ${result.auditEntries} audit entries match ${manifest.id}${values.source ? ' and the source' : ''}; append-only rule intact.`,
     );
+  } else if (command === 'backup-files') {
+    const settings = storageSettings();
+    const storage = new S3Storage(settings);
+    try {
+      const result = await backupFiles({
+        env,
+        store,
+        files: openFileStores(env.laneDir),
+        storage,
+        bucket: settings.bucket,
+        notifier,
+        getKey: () => readBackupKey(),
+      });
+      const r = result.record;
+      console.log(
+        `File backup ${r.id} complete: ${result.manifest.objects.length} objects from bucket ${settings.bucket} (${megabytes(r.sizeBytes)}, ${result.written} new, ${r.durationMs} ms, encrypted) in ${r.location}`,
+      );
+    } finally {
+      storage.close();
+    }
+  } else if (command === 'restore-files') {
+    const settings = storageSettings();
+    const bucket = requireOption(values, 'bucket', command);
+    const opened: S3Storage[] = [];
+    try {
+      const result = await restoreFiles(
+        {
+          env,
+          store,
+          files: openFileStores(env.laneDir),
+          openStorage: (name) => {
+            const storage = new S3Storage({ ...settings, bucket: name });
+            opened.push(storage);
+            return storage;
+          },
+          getKey: () => readBackupKey(),
+        },
+        { backup: requireOption(values, 'backup', command), bucket, allowStaging: values['allow-staging'] },
+      );
+      console.log(`Restored ${result.backup} into bucket ${result.bucket}: ${result.objects} objects verified and written (${result.durationMs} ms).`);
+    } finally {
+      for (const storage of opened) storage.close();
+    }
+  } else if (command === 'check-files') {
+    const settings = storageSettings();
+    const target = requireOption(values, 'target', command);
+    const bucket = requireOption(values, 'bucket', command);
+    const guard = { appEnv: env.appEnv, lane: env.lane, allowStaging: values['allow-staging'] };
+    assertRestoreTarget({ ...guard, name: target, liveDatabase: new URL(env.databaseUrl).pathname.slice(1) });
+    assertRestoreBucket({ ...guard, name: bucket });
+    const storage = new S3Storage({ ...settings, bucket });
+    try {
+      const result = await checkFileReferences({ targetUrl: urlForDatabase(env.databaseUrl, target), storage });
+      for (const m of result.missing) console.log(`FAIL missing file ${m.code} (${m.missing.join(', ')})`);
+      if (!result.ok) throw new Error(`File check failed: ${result.missing.length} of ${result.files} file(s) missing from the restored bucket, listed above`);
+      console.log(`File check passed: ${result.files} files (${result.keys} stored copies) are all in bucket ${bucket}; zero missing.`);
+    } finally {
+      storage.close();
+    }
   } else if (command === 'restore-sends') {
     const since = parseInstant(requireOption(values, 'since', command), '--since');
     const until = values.until === undefined ? undefined : parseInstant(values.until, '--until');
@@ -184,9 +262,14 @@ async function main(command: string | undefined, args: string[]): Promise<void> 
       retentionDays: raw === undefined ? env.retentionDays : Number(raw),
       now: new Date(),
       dryRun: values['dry-run'],
+      files: openFileStores(env.laneDir),
     });
     const verb = result.dryRun ? 'Would delete' : 'Deleted';
     for (const r of result.expired) console.log(`${verb} ${r.id} (started ${r.startedAt})`);
+    for (const r of result.expiredFileRuns) console.log(`${verb} ${r.id} (file storage, started ${r.startedAt})`);
+    console.log(
+      `${verb} ${result.expiredFileRuns.length} file backup run(s) and ${result.removedObjects} unreferenced file object(s); ${result.keptFileRuns} file run(s) kept${result.dryRun ? ' (dry run, nothing deleted)' : ''}.`,
+    );
     console.log(
       `${verb} ${result.expired.length} backup(s) older than ${result.retentionDays} days; ${result.kept} kept${result.dryRun ? ' (dry run, nothing deleted)' : ''}.`,
     );

@@ -1,9 +1,12 @@
+import { createHash } from 'node:crypto';
 import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { appendRun, dumpFileName, listBackups, manifestFileName } from '../../src/ops/backup-records.js';
+import { MemoryStorage } from '../../src/files/memory-storage.js';
+import { backupFiles, type ListableStorage, objectFileName, openFileStores } from '../../src/ops/files-backup.js';
 import { pruneBackups } from '../../src/ops/retention.js';
-import { type BackupFolder, backupFolder } from './ops-test-helpers.js';
+import { type BackupFolder, backupFolder, opsEnv, recordingNotifier, TEST_KEY } from './ops-test-helpers.js';
 const NOW = new Date('2026-06-30T12:00:00Z');
 const folders: BackupFolder[] = [];
 afterAll(() => {
@@ -87,5 +90,132 @@ describe('pruneBackups', () => {
     const result = await pruneBackups({ store: folder.store, retentionDays: 2, now: NOW });
     expect(result.expired).toEqual([]);
     expect(existsSync(folder.store.locate('notes.txt'))).toBe(true);
+  });
+});
+
+class ListableMemory extends MemoryStorage implements ListableStorage {
+  async listKeys(): Promise<string[]> {
+    return this.keys();
+  }
+}
+
+describe('pruneBackups, file storage runs (EP-38-S10 AC4)', () => {
+  const sha = (text: string): string => createHash('sha256').update(Buffer.from(text)).digest('hex');
+  // Three runs: June 1 (a, b), June 20 (a, c; b was deleted live), June 29 (a, c, d).
+  async function fileRuns() {
+    const folder = backupFolder();
+    folders.push(folder);
+    const files = openFileStores(folder.dir);
+    const live = new ListableMemory();
+    const run = async (at: string) =>
+      backupFiles({
+        env: opsEnv('postgres://localapp:localapp@localhost:5432/unused', folder.dir),
+        store: folder.store,
+        files,
+        storage: live,
+        bucket: 'goldsmith-files-c',
+        notifier: recordingNotifier(),
+        getKey: () => TEST_KEY,
+        now: () => new Date(at),
+      });
+    await live.put('files/a', Buffer.from('A'), 'image/jpeg');
+    await live.put('files/b', Buffer.from('B'), 'image/jpeg');
+    const old = await run('2026-06-01T10:00:00Z');
+    await live.delete('files/b');
+    await live.put('files/c', Buffer.from('C'), 'image/jpeg');
+    const middle = await run('2026-06-20T10:00:00Z');
+    await live.put('files/d', Buffer.from('D'), 'image/jpeg');
+    const recent = await run('2026-06-29T10:00:00Z');
+    return { folder, files, live, old, middle, recent };
+  }
+  const objectNames = async (folder: BackupFolder): Promise<string[]> => (await openFileStores(folder.dir).objects.list()).sort();
+
+  it('expires the old run and removes only the objects no retained run lists', async () => {
+    const { folder, files, live, old, middle, recent } = await fileRuns();
+    const liveBefore = JSON.stringify([...live.objects.entries()]);
+    expect(await objectNames(folder)).toEqual(['A', 'B', 'C', 'D'].map((t) => objectFileName(sha(t))).sort());
+
+    const result = await pruneBackups({ store: folder.store, retentionDays: 30, now: NOW, files });
+    // 30 days before June 30 is May 31: nothing is old enough yet.
+    expect(result.expiredFileRuns).toEqual([]);
+    expect(result.removedObjects).toBe(0);
+
+    const short = await pruneBackups({ store: folder.store, retentionDays: 20, now: NOW, files });
+    expect(short.expiredFileRuns.map((r) => r.id)).toEqual([old.record.id]);
+    expect(short.keptFileRuns).toBe(2);
+    expect(short.removedObjects).toBe(1);
+    // B was only in the old run; A, C, D are listed by retained runs.
+    expect(await objectNames(folder)).toEqual(['A', 'C', 'D'].map((t) => objectFileName(sha(t))).sort());
+    expect(existsSync(files.manifests.locate(`${old.record.id}.manifest.json`))).toBe(false);
+    for (const r of [middle, recent]) expect(existsSync(files.manifests.locate(`${r.record.id}.manifest.json`))).toBe(true);
+    const list = await listBackups(folder.store, { kind: 'file storage' });
+    expect(list.find((r) => r.id === old.record.id)).toMatchObject({ status: 'deleted', deletedAt: NOW.toISOString() });
+    expect(list.filter((r) => r.status === 'complete').map((r) => r.id)).toEqual([middle.record.id, recent.record.id]);
+    // The live bucket is never touched.
+    expect(JSON.stringify([...live.objects.entries()])).toBe(liveBefore);
+  });
+
+  it('keeps an object a retained run still lists even when the expired run lists it too', async () => {
+    const { folder, files, old } = await fileRuns();
+    await pruneBackups({ store: folder.store, retentionDays: 20, now: NOW, files });
+    expect(old.manifest.objects.map((o) => o.key)).toEqual(['files/a', 'files/b']);
+    expect(await objectNames(folder)).toContain(objectFileName(sha('A')));
+  });
+
+  it('a dry run reports the runs and objects but deletes nothing', async () => {
+    const { folder, files, old } = await fileRuns();
+    const before = await objectNames(folder);
+    const result = await pruneBackups({ store: folder.store, retentionDays: 20, now: NOW, files, dryRun: true });
+    expect(result.expiredFileRuns.map((r) => r.id)).toEqual([old.record.id]);
+    expect(result.removedObjects).toBe(1);
+    expect(await objectNames(folder)).toEqual(before);
+    expect(existsSync(files.manifests.locate(`${old.record.id}.manifest.json`))).toBe(true);
+    expect((await listBackups(folder.store, { kind: 'file storage', status: 'complete' })).length).toBe(3);
+  });
+
+  it('a second prune finds nothing more to delete', async () => {
+    const { folder, files } = await fileRuns();
+    await pruneBackups({ store: folder.store, retentionDays: 20, now: NOW, files });
+    const again = await pruneBackups({ store: folder.store, retentionDays: 20, now: NOW, files });
+    expect(again.expiredFileRuns).toEqual([]);
+    expect(again.removedObjects).toBe(0);
+  });
+
+  it('removes objects of a failed run once no manifest lists them, but not while a recent run is still going', async () => {
+    const { folder, files } = await fileRuns();
+    // An object left behind by a run that failed after writing it.
+    await files.objects.writeText(objectFileName('f'.repeat(64)), 'orphan');
+    await appendRun(folder.store, {
+      id: 'files-20260630T110000Z-abcd',
+      kind: 'file storage',
+      status: 'started',
+      environment: 'development',
+      startedAt: '2026-06-30T11:00:00.000Z',
+    });
+    const busy = await pruneBackups({ store: folder.store, retentionDays: 30, now: NOW, files });
+    expect(busy.removedObjects).toBe(0);
+    expect(existsSync(files.objects.locate(objectFileName('f'.repeat(64))))).toBe(true);
+    await appendRun(folder.store, { id: 'files-20260630T110000Z-abcd', kind: 'file storage', status: 'failed', environment: 'development', startedAt: '2026-06-30T11:00:00.000Z' });
+    const idle = await pruneBackups({ store: folder.store, retentionDays: 30, now: NOW, files });
+    expect(idle.removedObjects).toBe(1);
+    expect(existsSync(files.objects.locate(objectFileName('f'.repeat(64))))).toBe(false);
+    expect((await objectNames(folder)).length).toBe(4);
+  });
+
+  it('removes nothing when a manifest cannot be read, and leaves other files alone', async () => {
+    const { folder, files } = await fileRuns();
+    await files.manifests.writeText('files-20260610T100000Z-0000.manifest.json', 'not json');
+    await files.manifests.writeText('notes.txt', 'keep');
+    const before = await objectNames(folder);
+    await expect(pruneBackups({ store: folder.store, retentionDays: 20, now: NOW, files })).rejects.toThrow('not readable');
+    expect(await objectNames(folder)).toEqual(before);
+    expect(existsSync(files.manifests.locate('notes.txt'))).toBe(true);
+  });
+
+  it('does not touch file runs when no file stores are given', async () => {
+    const { folder, old } = await fileRuns();
+    const result = await pruneBackups({ store: folder.store, retentionDays: 20, now: NOW });
+    expect(result.expiredFileRuns).toEqual([]);
+    expect(existsSync(openFileStores(folder.dir).manifests.locate(`${old.record.id}.manifest.json`))).toBe(true);
   });
 });
