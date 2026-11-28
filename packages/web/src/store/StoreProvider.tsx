@@ -99,6 +99,8 @@ export interface Store {
 }
 
 const StoreContext = createContext<Store | null>(null);
+// A string that survives minification, so scripts/check-production-bundle.mjs can tell whether the prototype store is in a build.
+StoreContext.displayName = 'goldsmith:prototype-store';
 
 interface StoreProviderProps {
   children: ReactNode;

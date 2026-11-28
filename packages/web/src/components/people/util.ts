@@ -37,3 +37,5 @@ export const initialsOf = (name: string): string =>
     .map((w) => w[0])
     .join('')
     .toUpperCase();
+/** The first word of a name. */
+export const firstName = (name: string): string => name.split(/\s+/)[0] ?? name;

@@ -8,7 +8,7 @@ import { useAction } from '../../query/use-action';
 import { useNavigation } from '../../shell/navigation';
 import { useSession } from '../../shell/session-context';
 import { ActionButton, ActionError, Button, Card, Field, Input, PageHeader, SectionLabel, cn } from '../ui';
-import { firstName } from '../home/util';
+import { firstName } from './util';
 import { addUserFieldErrors, addUserRefusal } from './user-rows';
 import type { AddUserField } from './user-rows';
 type FieldName = AddUserField;
