@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S1: System can store categories, styles, purities, inclusion types and specialties as lists
 
 - **Story ID:** EP-15-S1
+- **Status:** Not started
 - **Title:** System can store categories, styles, purities, inclusion types and specialties as lists
 - **As a:** System
 - **I want:** five owner-maintained list tables, `categories`, `styles`, `purities`, `inclusion_types` and `specialties`, each entry with id, name, status (`active` or `retired`), sort order, created at and version, plus a List Reference operation that returns active entries in sort order by default and all entries when asked, and references from pieces, manifest rows, order copies, lead items and karigars to these entries in place of free text
@@ -34,6 +35,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S2: System can seed the lists from the prototype values
 
 - **Story ID:** EP-15-S2
+- **Status:** Not started
 - **Title:** System can seed the lists from the prototype values
 - **As a:** System
 - **I want:** the dev and staging seed to fill the five lists from the prototype values and map the seeded free-text kinds, styles and purities on pieces, manifest rows, order copies and karigars to the new list entries
@@ -59,6 +61,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S3: Owner can add, rename, reorder and retire a list entry
 
 - **Story ID:** EP-15-S3
+- **Status:** Not started
 - **Title:** Owner can add, rename, reorder and retire a list entry
 - **As a:** Owner
 - **I want:** to add an entry to any of the five lists, rename it, move it up or down, retire it and reactivate it, through Create Reference entry and Update Reference entry, saving with the version I last read
@@ -85,6 +88,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S4: System can reject a stored value that is not an active list entry
 
 - **Story ID:** EP-15-S4
+- **Status:** Not started
 - **Title:** System can reject a stored value that is not an active list entry
 - **As a:** System
 - **I want:** one shared server check that every new manifest row, tag and order copy names an active category, style and purity, that keeps a retired entry valid on a record that already holds it, and that lets a lead item hold free-text style until the item is routed
@@ -109,6 +113,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S5: Staff can pick categories, styles and purities from server lists on every form
 
 - **Story ID:** EP-15-S5
+- **Status:** Not started
 - **Title:** Staff can pick categories, styles and purities from server lists on every form
 - **As a:** Staff
 - **I want:** one shared picker for each list, loaded through the EP-08 data layer from List Reference, that offers active entries in the owner's sort order, shows purities as "22K (916)", and stores the entry id
@@ -133,6 +138,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S6: System can generate the next tag number in the decided format without duplicates
 
 - **Story ID:** EP-15-S6
+- **Status:** Not started
 - **Title:** System can generate the next tag number in the decided format without duplicates
 - **As a:** System
 - **I want:** a Reserve Next tag number operation backed by one counter row that is incremented atomically, formatted by the decided pattern, and never hands the same number to two callers
@@ -158,6 +164,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S7: System can reject a tag number used on another piece
 
 - **Story ID:** EP-15-S7
+- **Status:** Not started
 - **Title:** System can reject a tag number used on another piece
 - **As a:** System
 - **I want:** every tag save to check the tag number, trimmed and upper-cased, against all pieces in every parcel and status, and refuse a used one with "`<tag>` is already used on another piece."
@@ -182,6 +189,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S8: System can check HUID format and uniqueness
 
 - **Story ID:** EP-15-S8
+- **Status:** Not started
 - **Title:** System can check HUID format and uniqueness
 - **As a:** System
 - **I want:** a Check HUID operation and the same check on every tag save, which trims and upper-cases the HUID, checks it against the stored HUID rule (6 characters, letters A to Z and digits 0 to 9), and, if HUID uniqueness is confirmed, refuses one already used on another piece
@@ -206,6 +214,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S9: System can record an inclusion's unit as grams or carats
 
 - **Story ID:** EP-15-S9
+- **Status:** Not started
 - **Title:** System can record an inclusion's unit as grams or carats
 - **As a:** System
 - **I want:** itemised inclusion rows on a piece, each pointing at an inclusion type, holding its weight as an integer in units of 0.0001 g and, for types recorded in carats, the carat figure stored alongside the gram figure
@@ -230,6 +239,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S10: Owner can keep a design master that pieces point to (G3)
 
 - **Story ID:** EP-15-S10
+- **Status:** Not started
 - **Title:** Owner can keep a design master that pieces point to (G3)
 - **As a:** Owner
 - **I want:** to create, rename and retire designs, each with a name, a category, a style, an optional maker karigar and reference images, and to set which design a piece belongs to
@@ -255,6 +265,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S11: Staff can see a design marked sold out when none is in stock (G3)
 
 - **Story ID:** EP-15-S11
+- **Status:** Not started
 - **Title:** Staff can see a design marked sold out when none is in stock (G3)
 - **As a:** Staff
 - **I want:** Read Design to return, per design, the count of pieces in stock, pieces billed and times asked for, and to derive "Sold out" when no piece of the design is in stock, plus a count of sold-out designs for the stock screen
@@ -280,6 +291,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S12: System can audit changes to reference lists
 
 - **Story ID:** EP-15-S12
+- **Status:** Not started
 - **Title:** System can audit changes to reference lists
 - **As a:** System
 - **I want:** every add, rename, reorder, retire and reactivate of a list entry, every change to the tag format or HUID rule, and every design change to write one audit entry in the same transaction, with before and after values

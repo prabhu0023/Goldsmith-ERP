@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S1: System can store a stock-out with its pieces, seller, reference and invoice number
 
 - **Story ID:** EP-26-S1
+- **Status:** Not started
 - **Title:** System can store a stock-out with its pieces, seller, reference and invoice number
 - **As a:** System
 - **I want:** the `stock_outs` and `stock_out_pieces` tables from EP-02-S10 to hold one record per stock-out with id (`SO-` prefix), seller id, actor id, reference (text), invoice number (text), at (UTC), the shop ID, a nullable customer id and a nullable amount socket, and one child row per piece
@@ -33,6 +34,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S2: System can take pieces out of stock in one locked transaction
 
 - **Story ID:** EP-26-S2
+- **Status:** Not started
 - **Title:** System can take pieces out of stock in one locked transaction
 - **As a:** System
 - **I want:** a Create Stock-out operation that, in one transaction, de-duplicates the piece ids, locks every piece row in a fixed order, checks each is `in_stock`, inserts the stock-out and its child rows, and moves each piece to `billed` with sold time and stock-out id through Update Piece state
@@ -57,6 +59,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S3: System can refuse the second seller with "already taken"
 
 - **Story ID:** EP-26-S3
+- **Status:** Not started
 - **Title:** System can refuse the second seller with "already taken"
 - **As a:** System
 - **I want:** the stock-out transaction to refuse, as a whole, any sale that reaches a piece row after another stock-out has billed it, with "{tag} is already taken." naming the first such piece
@@ -81,6 +84,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S4: Staff can add pieces to a sale by tag
 
 - **Story ID:** EP-26-S4
+- **Status:** Not started
 - **Title:** Staff can add pieces to a sale by tag
 - **As a:** Staff
 - **I want:** to type a tag number or scan it into "Scan another tag" on `stock-out`, or arrive from "Add to a sale" in the piece drawer on `stock`, and see each piece added under "WHAT IS LEAVING THE SHOWCASE" with its name, tag, purity, HUID and pure gold
@@ -105,6 +109,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S5: Staff can see the pure gold leaving the floor before confirming
 
 - **Story ID:** EP-26-S5
+- **Status:** Not started
 - **Title:** Staff can see the pure gold leaving the floor before confirming
 - **As a:** Staff
 - **I want:** a "LEAVING THE FLOOR" total under the sale list showing the summed pure gold and the piece count, and the footer line "{n} pieces · {g} pure gold · sold by {seller} · {invoice}", with the value column present but empty while pricing is off
@@ -129,6 +134,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S6: Staff can confirm or change the seller
 
 - **Story ID:** EP-26-S6
+- **Status:** Not started
 - **Title:** Staff can confirm or change the seller
 - **As a:** Staff
 - **I want:** "Who sold it" on `stock-out` to show me as the seller by default, with a picker filled from a List Active sellers read so I can pick the staff member who actually made the sale
@@ -153,6 +159,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S7: Staff can enter the reference and invoice number and take the pieces out
 
 - **Story ID:** EP-26-S7
+- **Status:** Not started
 - **Title:** Staff can enter the reference and invoice number and take the pieces out
 - **As a:** Staff
 - **I want:** to fill "Reference number" and "Tax invoice number · from your billing book", read "This locks the pieces for good · Once out, their weights freeze. No edit, not even by the owner.", and press "Take them out of stock"
@@ -177,6 +184,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S8: System can void open edits on sold pieces
 
 - **Story ID:** EP-26-S8
+- **Status:** Not started
 - **Title:** System can void open edits on sold pieces
 - **As a:** System
 - **I want:** the stock-out transaction to call the EP-25-S11 Void open edits function for each piece, with void reason `sold`, after the piece moves to `billed`
@@ -200,6 +208,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S9: System can count the sale to the seller
 
 - **Story ID:** EP-26-S9
+- **Status:** Not started
 - **Title:** System can count the sale to the seller
 - **As a:** System
 - **I want:** the stock-out transaction to add the number of distinct pieces to the seller's sale count on their staff record
@@ -223,6 +232,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S10: System can freeze a billed piece's weights against every role
 
 - **Story ID:** EP-26-S10
+- **Status:** Not started
 - **Title:** System can freeze a billed piece's weights against every role
 - **As a:** System
 - **I want:** every write path that touches piece weights, purity, HUID, stone count, name or state (edit propose, edit apply, tag save, problem raise, scrap request) to refuse a `billed` piece, with no override for the owner
@@ -246,6 +256,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S11: Staff can see sold pieces disappear from other screens live
 
 - **Story ID:** EP-26-S11
+- **Status:** Not started
 - **Title:** Staff can see sold pieces disappear from other screens live
 - **As a:** Staff
 - **I want:** pieces sold at another counter to leave my stock list, my open drawer and my own draft sale list on `stock-out` within about a second, with a line telling me who sold them
@@ -269,6 +280,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S12: System can audit every stock-out
 
 - **Story ID:** EP-26-S12
+- **Status:** Not started
 - **Title:** System can audit every stock-out
 - **As a:** System
 - **I want:** an append-only `stock_out` audit entry written in the stock-out transaction with actor, seller, stock-out id, piece tags, reference, invoice number, and each piece's status before and after
@@ -293,6 +305,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S13: Staff can see today's stock-outs and gold out today
 
 - **Story ID:** EP-26-S13
+- **Status:** Not started
 - **Title:** Staff can see today's stock-outs and gold out today
 - **As a:** Staff
 - **I want:** List Stock-outs and Read Stock-out reads, and a today summary giving the pieces out today and the pure gold out today, feeding "GOLD OUT TODAY" and "Pieces out today" on `today`, the owner's home, and the recent list on `stock-out`

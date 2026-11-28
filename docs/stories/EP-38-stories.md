@@ -9,6 +9,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S1: System can take a daily database backup
 
 - **Story ID:** EP-38-S1
+- **Status:** Partial: the production daily schedule is the RDS backup window, not built (D1a, FU-018).
 - **Title:** System can take a daily database backup
 - **As a:** System
 - **I want:** to take a full backup of the production and staging databases at least once a day on a schedule, and write a backup record for each run
@@ -33,6 +34,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S2: System can keep a continuous log for point-in-time restore
 
 - **Story ID:** EP-38-S2
+- **Status:** Not started
 - **Title:** System can keep a continuous log for point-in-time restore
 - **As a:** System
 - **I want:** to ship the database's change log continuously to backup storage between daily backups
@@ -56,6 +58,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S3: System can back up file storage
 
 - **Story ID:** EP-38-S3
+- **Status:** Partial: S3 versioning and the copy to another region or account are cloud work (D1a, FU-018).
 - **Title:** System can back up file storage
 - **As a:** System
 - **I want:** to copy object storage (piece photos, order copy reference images, PO attachments and bench photos) to backup storage, keeping earlier versions of each file
@@ -80,6 +83,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S4: System can encrypt backups and keep them apart from live data
 
 - **Story ID:** EP-38-S4
+- **Status:** Partial: India region, operator-only IAM access and credentials that cannot delete backups (AC2-4) are cloud work (D1a, FU-018).
 - **Title:** System can encrypt backups and keep them apart from live data
 - **As a:** System
 - **I want:** every database backup, continuous log and file storage copy to be encrypted at rest and stored in a separate location from the live data, in an India region (D10, decided)
@@ -104,6 +108,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S5: Operator can receive an alert when a backup fails
 
 - **Story ID:** EP-38-S5
+- **Status:** Partial: the continuous-log alarm (AC3) is cloud, and delivery to a person needs EP-11 and EP-37 (FU-018).
 - **Title:** Operator can receive an alert when a backup fails
 - **As a:** Developer
 - **I want:** an alert through the EP-37 alert route when a daily backup, the continuous log or a file storage backup fails or does not happen
@@ -128,6 +133,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S6: Operator can restore staging to a point in time
 
 - **Story ID:** EP-38-S6
+- **Status:** Partial: point-in-time restore and the production approver (AC1, AC5) are cloud; screen refetch (AC3, AC4) waits for live screens (FU-012, FU-018).
 - **Title:** Operator can restore staging to a point in time
 - **As a:** Developer
 - **I want:** to restore the staging database and its files to a chosen point in time, and to use the same procedure for production once the agreed approver has approved
@@ -152,6 +158,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S7: Operator can check that the audit log is whole after a restore
 
 - **Story ID:** EP-38-S7
+- **Status:** Done
 - **Title:** Operator can check that the audit log is whole after a restore
 - **As a:** Developer
 - **I want:** a check that compares the restored audit log with the source up to the restore point and reports any missing or changed entry
@@ -176,6 +183,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S8: Operator can follow a written restore drill and record its duration
 
 - **Story ID:** EP-38-S8
+- **Status:** Partial: go-live sign-off needs staging (AC4) and the drill reminder is cloud work (AC5) (FU-018).
 - **Title:** Operator can follow a written restore drill and record its duration
 - **As a:** Developer
 - **I want:** a written restore drill that names each step, who does it and how long it takes, run in staging before launch and then on the agreed schedule, with each run recorded
@@ -200,6 +208,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S9: Operator can list sends made after a restore point for follow-up
 
 - **Story ID:** EP-38-S9
+- **Status:** Partial: provider message id, template and status need EP-11 and EP-12; no repeat wish needs EP-33 (FU-018).
 - **Title:** Operator can list sends made after a restore point for follow-up
 - **As a:** Developer
 - **I want:** to list the WhatsApp messages (including owner edit codes) and account emails sent between the restore point and the restore, from provider logs and receipts, and the work lost in that window
@@ -224,6 +233,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S10: System can delete backups after the retention period
 
 - **Story ID:** EP-38-S10
+- **Status:** Partial: continuous-log retention (AC3) and S3 noncurrent-version expiry (AC4) are cloud work (FU-018).
 - **Title:** System can delete backups after the retention period
 - **As a:** System
 - **I want:** daily backups, continuous log segments and old file versions to be deleted once they pass the agreed retention period

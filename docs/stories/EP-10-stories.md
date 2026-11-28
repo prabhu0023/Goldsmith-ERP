@@ -9,6 +9,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S1: System can register and run scheduled and delayed jobs on the server clock
 
 - **Story ID:** EP-10-S1
+- **Status:** Done
 - **Title:** System can register and run scheduled and delayed jobs on the server clock
 - **As a:** System
 - **I want:** a scheduler that holds JobDefinition records (name, schedule, handler, max attempts) and runs each job at a set time, after a delay, or on a repeat, using the server clock
@@ -33,6 +34,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S2: System can record a run history for each job
 
 - **Story ID:** EP-10-S2
+- **Status:** Done
 - **Title:** System can record a run history for each job
 - **As a:** System
 - **I want:** one JobRun row per run, with job name, idempotency key, scheduled at, started at, finished at, attempts, result (ok, retrying, failed) and error text
@@ -57,6 +59,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S3: System can retry a failed job with backoff and mark it failed after the last attempt
 
 - **Story ID:** EP-10-S3
+- **Status:** Done
 - **Title:** System can retry a failed job with backoff and mark it failed after the last attempt
 - **As a:** System
 - **I want:** a failed run to be tried again with a longer wait each time, up to the job's max attempts, and then marked failed with its error
@@ -81,6 +84,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S4: System can act once per idempotency key
 
 - **Story ID:** EP-10-S4
+- **Status:** Done
 - **Title:** System can act once per idempotency key
 - **As a:** System
 - **I want:** each trigger to carry an idempotency key, such as the lead id plus "sla-breach", that is claimed inside the handler's transaction, so a second run with the same key does nothing
@@ -105,6 +109,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S5: System can mark a lead late when its SLA passes and emit the passed-SLA event
 
 - **Story ID:** EP-10-S5
+- **Status:** Done
 - **Title:** System can mark a lead late when its SLA passes and emit the passed-SLA event
 - **As a:** System
 - **I want:** a delayed job, scheduled when a lead arrives, that checks the lead at `arrivedAt` plus `settings.leadSlaHours` and, if it is still `needs_glance` or `opened`, sets SLA breached at and emits the passed-SLA event
@@ -129,6 +134,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S6: System can cancel a lead's SLA timer when staff start working it
 
 - **Story ID:** EP-10-S6
+- **Status:** Done
 - **Title:** System can cancel a lead's SLA timer when staff start working it
 - **As a:** System
 - **I want:** the lead's pending SLA job to be cancelled in the same transaction that moves the lead out of `needs_glance` or `opened`
@@ -153,6 +159,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S7: System can mark a karigar job overdue past its agreed date
 
 - **Story ID:** EP-10-S7
+- **Status:** Done
 - **Title:** System can mark a karigar job overdue past its agreed date
 - **As a:** System
 - **I want:** a daily job that finds karigar jobs not `handed_over` whose agreed date (`confirmedDate ?? dueDate`) is before today in Asia/Kolkata, sets overdue since, and hands one reminder per job per day to EP-11
@@ -177,6 +184,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S8: System can expire edit tokens after 10 minutes
 
 - **Story ID:** EP-10-S8
+- **Status:** Done
 - **Title:** System can expire edit tokens after 10 minutes
 - **As a:** System
 - **I want:** a sweep that runs every minute and sets expired at on every PieceEdit token (the owner edit code) issued more than 10 minutes ago and not yet used
@@ -201,6 +209,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S9: System can start the 9 am wishes run when auto-send is on
 
 - **Story ID:** EP-10-S9
+- **Status:** Done
 - **Title:** System can start the 9 am wishes run when auto-send is on
 - **As a:** System
 - **I want:** a daily job at 9 am Asia/Kolkata that reads `settings.autoSendWishes` and, when it is on, hands that day's birthday and anniversary queue to EP-33 once
@@ -225,6 +234,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S10: System can compute day boundaries and 9 am in Asia/Kolkata
 
 - **Story ID:** EP-10-S10
+- **Status:** Done
 - **Title:** System can compute day boundaries and 9 am in Asia/Kolkata
 - **As a:** System
 - **I want:** shared functions that give the start of the day, the date and 09:00 in Asia/Kolkata for any UTC instant, used by the overdue and wishes jobs
@@ -249,6 +259,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S11: System can run missed jobs after downtime
 
 - **Story ID:** EP-10-S11
+- **Status:** Done
 - **Title:** System can run missed jobs after downtime
 - **As a:** System
 - **I want:** the scheduler, on start, to run every delayed job whose due time passed while it was down, and to run each missed daily job for today only
@@ -273,6 +284,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S12: System can audit job-made changes with a System actor
 
 - **Story ID:** EP-10-S12
+- **Status:** Done
 - **Title:** System can audit job-made changes with a System actor
 - **As a:** System
 - **I want:** every state change made by a job handler to write an audit entry whose actor is the System actor named after the job, in the same transaction as the change
@@ -297,6 +309,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S13: Owner can see recent job runs and failures
 
 - **Story ID:** EP-10-S13
+- **Status:** Done
 - **Title:** Owner can see recent job runs and failures
 - **As a:** Owner
 - **I want:** to list recent job runs newest first, filter to failed ones, and retry a failed run

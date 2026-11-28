@@ -9,6 +9,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S1: System can store a file in object storage with a database record
 
 - **Story ID:** EP-09-S1
+- **Status:** Done
 - **Title:** System can store a file in object storage with a database record
 - **As a:** System
 - **I want:** every stored file to be written to a private object storage bucket under a generated storage key, with one StoredFile row in the database that describes it
@@ -33,6 +34,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S2: Staff can upload an image and get a file id
 
 - **Story ID:** EP-09-S2
+- **Status:** Done
 - **Title:** Staff can upload an image and get a file id
 - **As a:** Staff
 - **I want:** to upload an image through the API and get back a file id I can then attach to a piece, order copy or lead
@@ -57,6 +59,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S3: System can reject files that are too large or of a type not allowed
 
 - **Story ID:** EP-09-S3
+- **Status:** Done
 - **Title:** System can reject files that are too large or of a type not allowed
 - **As a:** System
 - **I want:** to refuse any upload above the size limit or whose content, read from the file bytes, is not on the allowed type list, with a sentence that names the limit
@@ -81,6 +84,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S4: System can make thumbnail and display-size copies of an image
 
 - **Story ID:** EP-09-S4
+- **Status:** Done
 - **Title:** System can make thumbnail and display-size copies of an image
 - **As a:** System
 - **I want:** every stored image to get a thumbnail copy and a display-size copy, with their keys, width and height on the StoredFile row, and an original that stays usable if resizing fails
@@ -105,6 +109,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S5: System can serve a file through a signed, expiring link
 
 - **Story ID:** EP-09-S5
+- **Status:** Done
 - **Title:** System can serve a file through a signed, expiring link
 - **As a:** System
 - **I want:** Read File link to return a signed link for one file and one size (thumbnail, display or original) that stops working after a set time
@@ -129,6 +134,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S6: System can check a file request against the owning entity and the caller's role
 
 - **Story ID:** EP-09-S6
+- **Status:** Done
 - **Title:** System can check a file request against the owning entity and the caller's role
 - **As a:** System
 - **I want:** every link request to find what the file is attached to (piece, order copy, job or lead) and allow it only if the caller's role may read that entity
@@ -153,6 +159,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S7: Staff can attach photos to a piece
 
 - **Story ID:** EP-09-S7
+- **Status:** Done
 - **Title:** Staff can attach photos to a piece
 - **As a:** Staff
 - **I want:** to attach uploaded photos to a piece in a set order, and remove one I attached by mistake
@@ -177,6 +184,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S8: Staff can attach reference images to an order copy
 
 - **Story ID:** EP-09-S8
+- **Status:** Done
 - **Title:** Staff can attach reference images to an order copy
 - **As a:** Staff
 - **I want:** to attach chosen images to an order copy as reference images, picking each one explicitly from the lead's files, the catalogue or a new photo
@@ -201,6 +209,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S9: Karigar can see only the reference images of their own jobs
 
 - **Story ID:** EP-09-S9
+- **Status:** Done
 - **Title:** Karigar can see only the reference images of their own jobs
 - **As a:** Karigar
 - **I want:** to open the reference images of the jobs issued to me on my phone
@@ -225,6 +234,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S10: Karigar can upload a bench photo to their own job
 
 - **Story ID:** EP-09-S10
+- **Status:** Done
 - **Title:** Karigar can upload a bench photo to their own job
 - **As a:** Karigar
 - **I want:** to take a photo of my bench work and attach it to one of my own jobs
@@ -249,6 +259,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S11: System can store an inbound PO attachment and link it to its lead
 
 - **Story ID:** EP-09-S11
+- **Status:** Done
 - **Title:** System can store an inbound PO attachment and link it to its lead
 - **As a:** System
 - **I want:** an internal Create Inbound file operation that the email and WhatsApp intake can call to store an attachment and link it to the lead it creates, with role PO
@@ -273,6 +284,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S12: System can apply the retention rule to stored files
 
 - **Story ID:** EP-09-S12
+- **Status:** Done
 - **Title:** System can apply the retention rule to stored files
 - **As a:** System
 - **I want:** an internal Run Retention operation that finds files past the keep period of their retention class and removes the original, thumbnail and display copies together, or keeps them where the rule says so
@@ -297,6 +309,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S13: Developer can load the four bundled images as dev seed files
 
 - **Story ID:** EP-09-S13
+- **Status:** Done
 - **Title:** Developer can load the four bundled images as dev seed files
 - **As a:** Developer
 - **I want:** the dev and staging seed to store the four JPEGs in `src/assets/images/` as StoredFile rows and attach them to the seeded pieces, order copies and jobs that used them

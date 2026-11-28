@@ -262,6 +262,7 @@ Milestones follow epic numbers, so working bottom-up and working milestone by mi
 
 ```
 Story ID:      EP-xx-Sy
+Status:        <Done | Partial | Not started | Deferred | Later>; add a short reason for Partial and Deferred
 Title:         <role> can <action>
 As a           <Owner | Staff | Karigar>
 I want         <capability>

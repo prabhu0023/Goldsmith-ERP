@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S1: System can store shop settings with seed defaults
 
 - **Story ID:** EP-13-S1
+- **Status:** Not started
 - **Title:** System can store shop settings with seed defaults
 - **As a:** System
 - **I want:** one typed settings record for the shop, keyed by its shop ID, created with the seed defaults when the shop is created (`pricingEnabled` false, `leadSlaHours` 8, `requireEditToken` true, `notifyChannels` WhatsApp on, app on, email off, `lateLeadAudience` `staff_then_owner`, `autoSendWishes` false, `wishSendTime` 09:00, `ageingThresholdDays` empty), and a Read Settings operation that owner and staff screens and background jobs can call
@@ -34,6 +35,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S2: System can refuse a settings change from a role not allowed to make it
 
 - **Story ID:** EP-13-S2
+- **Status:** Not started
 - **Title:** System can refuse a settings change from a role not allowed to make it
 - **As a:** System
 - **I want:** one Update Setting operation that takes a key, a new value and the version the caller last read, checks the caller's role against the permission matrix for that key before anything else, and refuses with "Only the owner can change the shop rules." when the role is not allowed
@@ -59,6 +61,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S3: System can audit every settings change with old and new value
 
 - **Story ID:** EP-13-S3
+- **Status:** Not started
 - **Title:** System can audit every settings change with old and new value
 - **As a:** System
 - **I want:** every accepted Update Setting, for every key including `pricingEnabled`, to write a `setting_changed` audit entry in the same transaction, with the key, old value, new value, actor and time, and a List Setting changes operation for the owner that reads those entries
@@ -83,6 +86,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S4: Owner can change the lead SLA hours
 
 - **Story ID:** EP-13-S4
+- **Status:** Not started
 - **Title:** Owner can change the lead SLA hours
 - **As a:** Owner
 - **I want:** to change the number of hours after which a lead counts as late, from the "A lead is late after … hours" field in the rules panel
@@ -107,6 +111,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S5: Owner can set who hears about a late lead first
 
 - **Story ID:** EP-13-S5
+- **Status:** Not started
 - **Title:** Owner can set who hears about a late lead first
 - **As a:** Owner
 - **I want:** to choose "Staff first, then me" (`staff_then_owner`) or "Only me" (`owner_only`) under "Who hears about a late lead"
@@ -130,6 +135,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S6: Owner can switch notification channels on and off
 
 - **Story ID:** EP-13-S6
+- **Status:** Not started
 - **Title:** Owner can switch notification channels on and off
 - **As a:** Owner
 - **I want:** three switches under "How it reaches me" for WhatsApp, In the app and Email, each stored in `notifyChannels`
@@ -153,6 +159,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S7: Owner can switch auto-send wishes and set the send time
 
 - **Story ID:** EP-13-S7
+- **Status:** Not started
 - **Title:** Owner can switch auto-send wishes and set the send time
 - **As a:** Owner
 - **I want:** to switch "Send wishes automatically at 9 am" on or off on `wishes` and set the daily send time `wishSendTime`, with the change checked and audited on the server
@@ -177,6 +184,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S8: Owner can set the ageing threshold for gold sitting too long (G5)
 
 - **Story ID:** EP-13-S8
+- **Status:** Not started
 - **Title:** Owner can set the ageing threshold for gold sitting too long (G5)
 - **As a:** Owner
 - **I want:** to set `ageingThresholdDays`, the number of days a piece may sit unsold before the "GOLD SITTING TOO LONG" alert counts it
@@ -200,6 +208,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S9: Owner can switch the pricing flag, owner-only and audited
 
 - **Story ID:** EP-13-S9
+- **Status:** Not started
 - **Title:** Owner can switch the pricing flag, owner-only and audited
 - **As a:** Owner
 - **I want:** the "Pricing" switch, owner-level and off by default, moved from the AppShell dev switch to the settings page, with the change checked on the server and audited like every other setting
@@ -223,6 +232,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S10: Owner can set the edit-token rule (after G18 is answered)
 
 - **Story ID:** EP-13-S10
+- **Status:** Not started
 - **Title:** Owner can set the edit-token rule (after G18 is answered)
 - **As a:** Owner
 - **I want:** the "YOUR RULE · Code before a tag edit" switch to set `requireEditToken`, within whatever limit the G18 answer sets
@@ -247,6 +257,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S11: Owner can enter shop hours and holidays for the lead timer
 
 - **Story ID:** EP-13-S11
+- **Status:** Not started
 - **Title:** Owner can enter shop hours and holidays for the lead timer
 - **As a:** Owner
 - **I want:** to enter an opening and closing time for each weekday, mark a weekday closed, and add holidays with a date and label, through Read Shop hours and Update Shop hours
@@ -272,6 +283,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S12: Owner can create, rename and close branches (Deferred: no branches in v1, D7)
 
 - **Story ID:** EP-13-S12
+- **Status:** Deferred: no branches in v1 (D7).
 - **Title:** Owner can create, rename and close branches (Deferred: no branches in v1, D7)
 - **As a:** Owner
 - **I want:** Deferred: no branches in v1 (D7). Nothing is built for this story in v1. Was: Create Branch, Update Branch and List Branches operations over branch records
@@ -294,6 +306,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S13: Owner can see all settings on one settings page
 
 - **Story ID:** EP-13-S13
+- **Status:** Not started
 - **Title:** Owner can see all settings on one settings page
 - **As a:** Owner
 - **I want:** one shop settings page that loads every setting from the server and lets me change the lead timer, late-lead audience, channels, auto-send wishes and send time, ageing threshold, pricing switch, edit-token rule and, where built, shop hours, with loading, error and refusal states
@@ -318,6 +331,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S14: System can push a changed setting to open screens live
 
 - **Story ID:** EP-13-S14
+- **Status:** Not started
 - **Title:** System can push a changed setting to open screens live
 - **As a:** System
 - **I want:** every accepted settings, shop-hours or holiday change to publish a "Setting changed" event after its transaction commits, carrying the key, the new value and the version, to every open owner and staff connection, and to clear any cached settings read

@@ -9,6 +9,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S1: System can limit every karigar read to the signed-in karigar's jobs
 
 - **Story ID:** EP-20-S1
+- **Status:** Not started
 - **Title:** System can limit every karigar read to the signed-in karigar's jobs
 - **As a:** System
 - **I want:** every karigar-callable operation in this epic (List My jobs, Read My job, the state changes, Create Hand-over, Create Job media, Update Job note, Read Gold with me, Create Raised problem) to filter by the karigar record linked to the session user, and to return a fixed allow-list of fields
@@ -33,6 +34,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S2: Karigar can sign in on the phone
 
 - **Story ID:** EP-20-S2
+- **Status:** Not started
 - **Title:** Karigar can sign in on the phone
 - **As a:** Karigar
 - **I want:** to sign in on my phone with the method EP-04 provides, land on "My jobs" (`k-jobs`), stay signed in at the bench, and be signed out at once if the owner deactivates me
@@ -57,6 +59,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S3: Karigar can see their own jobs
 
 - **Story ID:** EP-20-S3
+- **Status:** Not started
 - **Title:** Karigar can see their own jobs
 - **As a:** Karigar
 - **I want:** the Jobs tab to list my open jobs with title, pieces, purity, style, due label and reference image, and a job sheet with "What it should look like", "Finished piece must weigh", "Gold inside it, after stones", "Allowed to be off by" and "Note from the desk"
@@ -81,6 +84,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S4: Karigar can accept a job and confirm a date
 
 - **Story ID:** EP-20-S4
+- **Status:** Not started
 - **Title:** Karigar can accept a job and confirm a date
 - **As a:** Karigar
 - **I want:** on a job in `sent`, a "Will you make this?" box with "I will deliver by" and "Accept this job", which accepts the job and makes my date the agreed date
@@ -105,6 +109,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S5: Karigar can mark a job worked on and ready
 
 - **Story ID:** EP-20-S5
+- **Status:** Not started
 - **Title:** Karigar can mark a job worked on and ready
 - **As a:** Karigar
 - **I want:** under "Where is it now?", to tap "Working on it" and later "Ready for checking", one step at a time, with an optional note in "Anything to tell the desk?"
@@ -129,6 +134,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S6: Karigar can hand over a ready job and create the parcel
 
 - **Story ID:** EP-20-S6
+- **Status:** Not started
 - **Title:** Karigar can hand over a ready job and create the parcel
 - **As a:** Karigar
 - **I want:** on a `ready` job, to tap "Sent to the showroom", which marks the job handed over and creates the arriving parcel in the same transaction
@@ -153,6 +159,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S7: Karigar can hand over again after a send-back
 
 - **Story ID:** EP-20-S7
+- **Status:** Not started
 - **Title:** Karigar can hand over again after a send-back
 - **As a:** Karigar
 - **I want:** when the owner has sent my parcel back and the job is on my bench again, to tap "Sent to the showroom" and have the same parcel reset to weighing, with its weighings, QC ticks and draft tags cleared
@@ -177,6 +184,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S8: Karigar can raise a problem on a job
 
 - **Story ID:** EP-20-S8
+- **Status:** Not started
 - **Title:** Karigar can raise a problem on a job
 - **As a:** Karigar
 - **I want:** a "Raise a problem" button on my open job that asks "What is wrong" and stops the job until the owner starts it again
@@ -201,6 +209,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S9: Karigar can see gold with me
 
 - **Story ID:** EP-20-S9
+- **Status:** Not started
 - **Title:** Karigar can see gold with me
 - **As a:** Karigar
 - **I want:** a "GOLD WITH ME" figure on my phone, with the number of jobs it covers, my wastage allowance and the line "You may be off by 500 mg either way", and a Gold tab that lists the gold per open job
@@ -227,6 +236,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 Split note: EP-20-S10 was split into S10a and S10b because the photo and typed note use existing EP-09 storage and can ship with the core flow, while the spoken note depends on the open gap G16 and brings its own storage and recognition cost (epic section 16).
 
 - **Story ID:** EP-20-S10a
+- **Status:** Not started
 - **Title:** Karigar can add a photo and a note (part 1: bench photo and typed note)
 - **As a:** Karigar
 - **I want:** "Add a photo (optional)" with "Take a photo of the bench", and a typed note in "Anything to tell the desk?", sent with "Send the update"
@@ -253,6 +263,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 Split note: EP-20-S10 was split into S10a and S10b because the photo and typed note use existing EP-09 storage and can ship with the core flow, while the spoken note depends on the open gap G16 and brings its own storage and recognition cost (epic section 16).
 
 - **Story ID:** EP-20-S10b
+- **Status:** Not started
 - **Title:** Karigar can add a photo and a note (part 2: spoken note, G16)
 - **As a:** Karigar
 - **I want:** the "Type or speak" control on "Anything to tell the desk?" to let me record a short spoken note and send it with the update
@@ -276,6 +287,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 ## EP-20-S11: Karigar can receive a new job live
 
 - **Story ID:** EP-20-S11
+- **Status:** Not started
 - **Title:** Karigar can receive a new job live
 - **As a:** Karigar
 - **I want:** a job the desk sends me to appear at the top of "My jobs" while the phone is open, and a late job to show as late, without refreshing
@@ -302,6 +314,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only, so v1 has no offline cache, no service worker and no opening the app with no signal. Owner decision D5 is that the karigar app is a React web app opened in the phone browser. Installing it to the home screen is not decided (epic section 17). The story ID, title and history are kept so the story graph stays valid. What is deferred: the web app manifest and icons, the service worker that cached the app shell and the karigar's own reads, and the cached "last updated" view of jobs. The connection-lost state of EP-08-S11 stays in v1.
 
 - **Story ID:** EP-20-S12a
+- **Status:** Deferred: v1 is online only, no offline cache or queue (D6).
 - **Title:** Karigar can install the app and use it offline with a sync queue (part 1: install and open from cache) (Deferred: v1 is online only, D6)
 - **As a:** Karigar
 - **I want:** Deferred: no home-screen install and no use of cached jobs with no signal in v1; the app is a React web app used online in the phone browser (D5, D6)
@@ -324,6 +337,7 @@ Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026
 Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only. There is no offline queue, no on-device queue of updates, no "Sync Queued updates" operation and no replay of queued updates. The story ID, title and history are kept so the story graph stays valid, and its dependency on EP-20-S12a is kept (deferred too). What is deferred: the Sync Queued updates operation, the on-device queue (JobUpdate), idempotent replay in client order, and the refusal handling after sync (the old D6 side question). In v1 a karigar update is sent when it is tapped. With no signal the EP-08-S11 state shows and the buttons are disabled with a reason.
 
 - **Story ID:** EP-20-S12b
+- **Status:** Deferred: v1 is online only, no offline cache or queue (D6).
 - **Title:** Karigar can install the app and use it offline with a sync queue (part 2: offline queue and sync) (Deferred: v1 is online only, D6)
 - **As a:** Karigar
 - **I want:** Deferred: no offline queue in v1; each update is sent when I tap it, and with no signal the buttons are disabled with a reason (D6)
@@ -344,6 +358,7 @@ Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026
 ## EP-20-S13: Karigar can hand over several jobs at once (G14)
 
 - **Story ID:** EP-20-S13
+- **Status:** Not started
 - **Title:** Karigar can hand over several jobs at once (G14)
 - **As a:** Karigar
 - **I want:** to pick several of my `ready` jobs and send them to the showroom in one hand-over that creates one arriving parcel

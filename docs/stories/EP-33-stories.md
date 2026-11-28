@@ -9,6 +9,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S1: System can store wishes, templates and sender identities
 
 - **Story ID:** EP-33-S1
+- **Status:** Not started
 - **Title:** System can store wishes, templates and sender identities
 - **As a:** System
 - **I want:** the `wishes` table from EP-02-S12 extended to hold one row per customer, occasion and year with sender identity, template version, times, provider message id, delivery status, failure reason and who sent it; a `wish_templates` table with one versioned text per occasion; and the EP-12 SenderIdentity table extended so two identities can be marked as wish senders under the owner
@@ -33,6 +34,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S2: System can build today's and tomorrow's wishes queue
 
 - **Story ID:** EP-33-S2
+- **Status:** Not started
 - **Title:** System can build today's and tomorrow's wishes queue
 - **As a:** System
 - **I want:** a List Wishes queue operation that returns every active customer whose `dob` or `anniversary` falls today or tomorrow in Asia/Kolkata, one row per customer and occasion, found through a month-and-day index rather than a scan of every customer
@@ -57,6 +59,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S3: Staff can see each customer's occasion and consent state
 
 - **Story ID:** EP-33-S3
+- **Status:** Not started
 - **Title:** Staff can see each customer's occasion and consent state
 - **As a:** Staff
 - **I want:** each row on `wishes` to show the customer's initials, name and occasion with "today" or "tomorrow", their group, their last purchase or piece count, a consent line that matches the auto-send setting, and the one action that fits the row
@@ -81,6 +84,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S4: Staff can send a wish now to opted-in customers
 
 - **Story ID:** EP-33-S4
+- **Status:** Not started
 - **Title:** Staff can send a wish now to opted-in customers
 - **As a:** Staff
 - **I want:** to press "Send now" on one row, or select several of today's rows and send them together, so the server creates one wish per customer and occasion and sends it through the approved WhatsApp template from the chosen sender
@@ -105,6 +109,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S5: System can refuse a wish to a customer who is not opted in
 
 - **Story ID:** EP-33-S5
+- **Status:** Not started
 - **Title:** System can refuse a wish to a customer who is not opted in
 - **As a:** System
 - **I want:** every wish send, from "Send now" or from the 9 am run, to read the customer's current consent at the moment of sending and skip the customer when it is off, with no wish row and no provider call
@@ -128,6 +133,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S6: Staff can see "Call instead" for customers not opted in
 
 - **Story ID:** EP-33-S6
+- **Status:** Not started
 - **Title:** Staff can see "Call instead" for customers not opted in
 - **As a:** Staff
 - **I want:** a customer who is not opted in to stay in the queue with "Call instead" in place of "Send now", opening the phone dialler with their number, and never to be selectable for a WhatsApp send
@@ -151,6 +157,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S7: Owner can choose the two sender identities
 
 - **Story ID:** EP-33-S7
+- **Status:** Not started
 - **Title:** Owner can choose the two sender identities
 - **As a:** Owner
 - **I want:** to set which two sender identities wishes come from, give each a display name, mark one as the default for the 9 am run, and see both under "SENT FROM" on `wishes`
@@ -175,6 +182,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S8: Owner can edit the wish template once for all
 
 - **Story ID:** EP-33-S8
+- **Status:** Not started
 - **Title:** Owner can edit the wish template once for all
 - **As a:** Owner
 - **I want:** to press "Edit the message", change the birthday or the anniversary text keeping {name}, and save it as a new version that every later wish uses once WhatsApp has approved it
@@ -199,6 +207,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S9: System can send wishes automatically at 9 am
 
 - **Story ID:** EP-33-S9
+- **Status:** Not started
 - **Title:** System can send wishes automatically at 9 am
 - **As a:** System
 - **I want:** when the EP-10-S9 job starts at 9 am Asia/Kolkata with `autoSendWishes` on, to send today's wish to every opted-in customer in the queue not already wished this year, from the default sender, as the System actor "Scheduler"
@@ -223,6 +232,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S10: System can send at most one wish per customer per occasion per year
 
 - **Story ID:** EP-33-S10
+- **Status:** Not started
 - **Title:** System can send at most one wish per customer per occasion per year
 - **As a:** System
 - **I want:** every wish to claim the unique key (customer id, occasion, occasion year) inside the send transaction, so a second request for the same key, from a person or the 9 am run, sends nothing
@@ -247,6 +257,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S11: Staff can preview a wish as it lands
 
 - **Story ID:** EP-33-S11
+- **Status:** Not started
 - **Title:** Staff can preview a wish as it lands
 - **As a:** Staff
 - **I want:** to press "Preview" on any queue row and see a phone frame with the message filled in for that customer, from the selected sender, using the text that would be sent now
@@ -270,6 +281,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S12: Staff can see delivery status and failures
 
 - **Story ID:** EP-33-S12
+- **Status:** Not started
 - **Title:** Staff can see delivery status and failures
 - **As a:** Staff
 - **I want:** a List Sent wishes read that shows each wish sent today with its sender, time and delivery status (queued, sent, delivered, failed) and, for a failure, the provider's reason, plus the count of wishes sent today for the homes
@@ -294,6 +306,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S13: System can audit wishes, template edits and the auto-send switch
 
 - **Story ID:** EP-33-S13
+- **Status:** Not started
 - **Title:** System can audit wishes, template edits and the auto-send switch
 - **As a:** System
 - **I want:** an append-only audit entry for every wish sent, every template edit and every change to the auto-send switch, written in the same transaction as the change, and the `wishes` toggle routed through the EP-13 settings update so it is checked and audited

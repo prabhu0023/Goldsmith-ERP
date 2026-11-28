@@ -9,6 +9,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S1: Owner can review and approve the UX design of the report hub and section layout
 
 - **Story ID:** EP-35-S1
+- **Status:** Not started
 - **Title:** Owner can review and approve the UX design of the report hub and section layout
 - **As a:** Owner
 - **I want:** a design for the report hub, one reusable section-report layout, the period picker and export (if decided), with no branch picker (one shop, D7), drawn as mockups in `docs/ux/mockups/` and shown to me for approval before any report is built
@@ -33,6 +34,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S2: System can compute period totals from integer weight units
 
 - **Story ID:** EP-35-S2
+- **Status:** Not started
 - **Title:** System can compute period totals from integer weight units
 - **As a:** System
 - **I want:** one set of shared report functions on the server that take a period (start and end dates in Asia/Kolkata), scope every query to the caller's shop, convert the period to UTC bounds, and return sums of integer weights in units of 0.0001 g, counts, and percentages computed from integers, using the same functions the Decisions home and the pool page already use for the same figures
@@ -57,6 +59,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S3: System can refuse report requests from anyone but the owner
 
 - **Story ID:** EP-35-S3
+- **Status:** Not started
 - **Title:** System can refuse report requests from anyone but the owner
 - **As a:** System
 - **I want:** every report operation (List Report sections, Read Stock, Karigar, Leads, Intake and Outreach report, Create Report export) to check on the server that the caller holds the owner permission "Read every section's report", and to refuse everyone else
@@ -81,6 +84,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S4: Owner can open the report hub with the five sections
 
 - **Story ID:** EP-35-S4
+- **Status:** Not started
 - **Title:** Owner can open the report hub with the five sections
 - **As a:** Owner
 - **I want:** a "Reports" item in the owner rail that opens the report hub, where List Report sections returns the five sections, stock, karigars, leads, intake and outreach, each with one headline figure in grams or counts for the default period
@@ -105,6 +109,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S5: Owner can choose a period for a section report
 
 - **Story ID:** EP-35-S5
+- **Status:** Not started
 - **Title:** Owner can choose a period for a section report
 - **As a:** Owner
 - **I want:** a period picker on the hub and on every section report, with the periods and the default agreed in the design, so that every figure on the screen is recomputed for the period I pick and the period stays the same when I move between sections
@@ -129,6 +134,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S6: Owner can read the stock report
 
 - **Story ID:** EP-35-S6
+- **Status:** Not started
 - **Title:** Owner can read the stock report
 - **As a:** Owner
 - **I want:** the stock section, through Read Stock report, to show pure gold on the floor and its piece count at the end of the period, pieces held back from the floor (`draft`, `with_owner`, `stopped`) with their pure gold, pieces and pure gold that went out in the period, and pieces scrapped with the gold returned to the pool
@@ -153,6 +159,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S7: Owner can read stock ageing by days in stock
 
 - **Story ID:** EP-35-S7
+- **Status:** Not started
 - **Title:** Owner can read stock ageing by days in stock
 - **As a:** Owner
 - **I want:** the stock section to show the pieces on the floor at the end of the period grouped by days in stock, with the piece count and pure gold of each group, and the oldest piece's age
@@ -177,6 +184,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S8: Owner can read the karigar report
 
 - **Story ID:** EP-35-S8
+- **Status:** Not started
 - **Title:** Owner can read the karigar report
 - **As a:** Owner
 - **I want:** the karigar section, through Read Karigar report, to show one row per karigar with gold with them now, gold issued and returned in the period, metal loss in grams and as a percentage, open jobs, overdue jobs, days late and parcel gaps, worst first
@@ -201,6 +209,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S9: Owner can read the leads report
 
 - **Story ID:** EP-35-S9
+- **Status:** Not started
 - **Title:** Owner can read the leads report
 - **As a:** Owner
 - **I want:** the leads section, through Read Leads report, to show leads that arrived in the period by source (counter, email, WhatsApp) and by current state, how many met the SLA and how many went late, item lines routed to stock and to make, and leads lost with their reasons
@@ -225,6 +234,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S10: Owner can read the intake report
 
 - **Story ID:** EP-35-S10
+- **Status:** Not started
 - **Title:** Owner can read the intake report
 - **As a:** Owner
 - **I want:** the intake section, through Read Intake report, to show parcels received in the period, verdict counts (`exact`, `last_digit`, `mismatch`), owner clearances by kind (`sent_back`, `rechecking`, `loss_accepted`), the total grams of accepted loss with each reason, and stop-the-line problems raised and cleared
@@ -249,6 +259,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S11: Owner can read the outreach report
 
 - **Story ID:** EP-35-S11
+- **Status:** Not started
 - **Title:** Owner can read the outreach report
 - **As a:** Owner
 - **I want:** the outreach section, through Read Outreach report, to show wishes sent in the period, broadcasts sent with their audience and recipient counts, replies, and leads created from replies
@@ -273,6 +284,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S12: Owner can choose one branch or all branches (Deferred: no branches in v1, D7)
 
 - **Story ID:** EP-35-S12
+- **Status:** Deferred: no branches in v1 (D7).
 - **Title:** Owner can choose one branch or all branches (Deferred: no branches in v1, D7)
 - **As a:** Owner
 - **I want:** Deferred: no branches in v1 (D7). Nothing is built for this story in v1. Was: a branch picker on the hub and every section report with each open branch and "All branches"
@@ -295,6 +307,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S13: Owner can export a section report (if export is decided)
 
 - **Story ID:** EP-35-S13
+- **Status:** Not started
 - **Title:** Owner can export a section report (if export is decided)
 - **As a:** Owner
 - **I want:** an export action on each section report that, through Create Report export, produces a file of that section for the chosen period in the decided format, which I can download through a signed, expiring link

@@ -9,6 +9,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S1: System can build the "needs you now" cards for a staff member
 
 - **Story ID:** EP-31-S1
+- **Status:** Not started
 - **Title:** System can build the "needs you now" cards for a staff member
 - **As a:** System
 - **I want:** one Read Today cards operation that, for the signed-in user, collects every waiting item from the pipeline tables (stopped parcels, open problems on jobs and pieces, open parcels, leads near or past the SLA) and returns them as cards, each with a stable key, a kind, a tone (`stop`, `wait` or `gold`), a title, a detail line and one action (label, route id and parameters)
@@ -33,6 +34,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S2: System can rank the cards by the decided rule
 
 - **Story ID:** EP-31-S2
+- **Status:** Not started
 - **Title:** System can rank the cards by the decided rule
 - **As a:** System
 - **I want:** one server ranking function that orders the cards from EP-31-S1 by an ordered list of card kinds, then by a tie-break within each kind, with the kind order held in one place in the shared package
@@ -57,6 +59,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S3: Staff can land on Today after sign-in
 
 - **Story ID:** EP-31-S3
+- **Status:** Not started
 - **Title:** Staff can land on Today after sign-in
 - **As a:** Staff
 - **I want:** to arrive on `today` straight after signing in, with the greeting "Good morning, Rajesh" (or afternoon or evening) and the date in Asia/Kolkata, and with the screen loaded from the EP-08 data layer
@@ -81,6 +84,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S4: Staff can see stopped parcels, jobs and pieces as cards
 
 - **Story ID:** EP-31-S4
+- **Status:** Not started
 - **Title:** Staff can see stopped parcels, jobs and pieces as cards
 - **As a:** Staff
 - **I want:** a `stop` card for each parcel stopped by a mismatch or a raised problem, and for each job or piece with an open problem, each saying who or what stopped it and that only the owner can start it again
@@ -105,6 +109,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S5: Staff can see parcels waiting to be weighed, tagged or matched
 
 - **Story ID:** EP-31-S5
+- **Status:** Not started
 - **Title:** Staff can see parcels waiting to be weighed, tagged or matched
 - **As a:** Staff
 - **I want:** one card for each `open` parcel, saying whether it has not been weighed, how many pieces are still untagged, or that it is fully tagged and ready to match, with an action that opens the right intake step
@@ -129,6 +134,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S6: Staff can see leads near or past the SLA
 
 - **Story ID:** EP-31-S6
+- **Status:** Not started
 - **Title:** Staff can see leads near or past the SLA
 - **As a:** Staff
 - **I want:** a card for each lead that is past its SLA or has 2 hours or less left, most overdue first, at most 3, and one "more leads" card for the rest
@@ -153,6 +159,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S7: Staff can start a sale, a parcel or a customer from the tiles
 
 - **Story ID:** EP-31-S7
+- **Status:** Not started
 - **Title:** Staff can start a sale, a parcel or a customer from the tiles
 - **As a:** Staff
 - **I want:** three start tiles under "START SOMETHING": "Sell a piece" opening `stock-out`, "Receive a parcel" opening `parcel-arrival`, and "Add a customer" opening `customer-new`
@@ -177,6 +184,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S8: Staff can see the showcase figures in grams and counts
 
 - **Story ID:** EP-31-S8
+- **Status:** Not started
 - **Title:** Staff can see the showcase figures in grams and counts
 - **As a:** Staff
 - **I want:** one Read Showcase figures operation that returns pure gold on the floor, pieces I can sell today, pieces held back from the floor, pieces out today and gold out today, as integer sums and counts, shown under "THE SHOWCASE RIGHT NOW" and in "GOLD OUT TODAY"
@@ -201,6 +209,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S9: Staff can see today's birthdays and anniversaries
 
 - **Story ID:** EP-31-S9
+- **Status:** Not started
 - **Title:** Staff can see today's birthdays and anniversaries
 - **As a:** Staff
 - **I want:** a List Wishes due today read that returns customers whose `dob` or `anniversary` day and month fall on today in Asia/Kolkata and who have not been wished today, each with name, group, kind and "last bought" or purchase count, shown under "SAY HAPPY BIRTHDAY" with a "Message" action
@@ -225,6 +234,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S10: Staff can search a piece by tag, HUID or name
 
 - **Story ID:** EP-31-S10
+- **Status:** Not started
 - **Title:** Staff can search a piece by tag, HUID or name
 - **As a:** Staff
 - **I want:** to type in "Search tag, HUID or name" on `today` and press "Find it", so the matching piece opens in the piece drawer on `stock`, or the screen says nothing was found
@@ -249,6 +259,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S11: Staff can see cards and figures update live
 
 - **Story ID:** EP-31-S11
+- **Status:** Not started
 - **Title:** Staff can see cards and figures update live
 - **As a:** Staff
 - **I want:** the cards and showcase figures on `today` to refetch within about 1 second when a relevant live event arrives, without a reload, and to catch up after a dropped connection
@@ -273,6 +284,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S12: Staff can see an empty state when nothing is waiting
 
 - **Story ID:** EP-31-S12
+- **Status:** Not started
 - **Title:** Staff can see an empty state when nothing is waiting
 - **As a:** Staff
 - **I want:** the "NEEDS YOU NOW" section to say plainly that nothing is waiting when Read Today cards returns no card

@@ -9,6 +9,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S1: System can record import runs with loaded and refused rows
 
 - **Story ID:** EP-41-S1
+- **Status:** Not started
 - **Title:** System can record import runs with loaded and refused rows
 - **As a:** System
 - **I want:** an `import_runs` table and an `import_row_errors` table, and a shared import runner that reads an uploaded list for one kind, checks every row with that kind's own create rules, loads the good rows, and records each refused row with its row number, field and reason
@@ -34,6 +35,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S2: Owner can import karigars from a list
 
 - **Story ID:** EP-41-S2
+- **Status:** Not started
 - **Title:** Owner can import karigars from a list
 - **As a:** Owner
 - **I want:** to upload the shop's karigar list with name, phone, email, workshop location, specialties, language and wastage allowance, and have each row created through the same rules as Add a karigar
@@ -58,6 +60,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S3: Owner can import customers with their consent status
 
 - **Story ID:** EP-41-S3
+- **Status:** Not started
 - **Title:** Owner can import customers with their consent status
 - **As a:** Owner
 - **I want:** to upload the customer list with name, phone, birthday, anniversary and group, and for each row either a record of WhatsApp consent with the date it was given, or nothing
@@ -82,6 +85,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S4: Owner can import existing stock as in-stock pieces with integer weights
 
 - **Story ID:** EP-41-S4
+- **Status:** Not started
 - **Title:** Owner can import existing stock as in-stock pieces with integer weights
 - **As a:** Owner
 - **I want:** to upload the showroom stock list with tag number, HUID, name, kind, purity, gross weight and stone weight, and have each row created as a piece with source "import"
@@ -107,6 +111,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S5: Owner can register the real scales with true readabilities
 
 - **Story ID:** EP-41-S5
+- **Status:** Not started
 - **Title:** Owner can register the real scales with true readabilities
 - **As a:** Owner
 - **I want:** to register each real scale in the shop with its name, true readability and capacity from its documentation, and retire the seed scales that do not exist, before the first real parcel is weighed
@@ -131,6 +136,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S6: Owner can record the opening pool balance
 
 - **Story ID:** EP-41-S6
+- **Status:** Not started
 - **Title:** Owner can record the opening pool balance
 - **As a:** Owner
 - **I want:** to record the pool's opening balance at launch, once, using the Create Opening entry from EP-18-S2 with the agreed figure and a reason that names the launch
@@ -154,6 +160,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S7: Owner can record the gold each karigar holds at launch
 
 - **Story ID:** EP-41-S7
+- **Status:** Not started
 - **Title:** Owner can record the gold each karigar holds at launch
 - **As a:** Owner
 - **I want:** to record, for each karigar, the grams of gold they hold at launch, either as an open job carried over from the register or as an opening holding with no job, through Create Karigar holding
@@ -179,6 +186,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S8: Owner can create accounts for every staff member and karigar
 
 - **Story ID:** EP-41-S8
+- **Status:** Not started
 - **Title:** Owner can create accounts for every staff member and karigar
 - **As a:** Owner
 - **I want:** the first-run setup wizard (EP-45) run once on production to create the shop and my owner account, then an account for every staff member and karigar, each with an email for the activation link, each karigar user linked to their karigar record, either one by one on `staff-new` or from a users list
@@ -203,6 +211,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S9: Owner can rehearse every import on staging
 
 - **Story ID:** EP-41-S9
+- **Status:** Not started
 - **Title:** Owner can rehearse every import on staging
 - **As a:** Owner
 - **I want:** to run every import (scales, karigars, users, customers, stock, opening pool, karigar holdings) on staging first, in launch order, read the refused rows, fix the lists, and run again, without touching production
@@ -227,6 +236,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S10: Staff can follow role-based training for their screens
 
 - **Story ID:** EP-41-S10
+- **Status:** Not started
 - **Title:** Staff can follow role-based training for their screens
 - **As a:** Staff
 - **I want:** short training material and a practice session on staging for the screens Staff use: sign-in, `today`, parcel arrival, tagging and the match, `stock`, `stock-out`, customers, leads and order copies; and the same for the owner on `decisions`, clearing a mismatch, edit tokens, scrap and settings
@@ -251,6 +261,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S11: Karigar can sign in and follow training on the phone portal
 
 - **Story ID:** EP-41-S11
+- **Status:** Not started
 - **Title:** Karigar can sign in and follow training on the phone portal
 - **As a:** Karigar
 - **I want:** to be signed in on my own phone during training, open the portal in the phone browser, and practise accepting a job, marking it ready, handing it over and reading "Gold with me"
@@ -275,6 +286,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S12: Owner can compare daily app figures with the paper register
 
 - **Story ID:** EP-41-S12
+- **Status:** Not started
 - **Title:** Owner can compare daily app figures with the paper register
 - **As a:** Owner
 - **I want:** for each day of the parallel run, the app's figures (pieces in stock, pure gold on the floor, gold with karigars, pool balance, pieces out) next to the register figures I enter, with the difference and a note
@@ -299,6 +311,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S13: Owner can tick and sign the go-live checklist
 
 - **Story ID:** EP-41-S13
+- **Status:** Not started
 - **Title:** Owner can tick and sign the go-live checklist
 - **As a:** Owner
 - **I want:** a go-live checklist where each item has a responsible person and a tick, the operator ticks the technical items, and I sign the whole list before the shop starts using the app for real
@@ -323,6 +336,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S14: Owner can follow a rollback plan to the paper register
 
 - **Story ID:** EP-41-S14
+- **Status:** Not started
 - **Title:** Owner can follow a rollback plan to the paper register
 - **As a:** Owner
 - **I want:** a written rollback plan that says when go-live counts as failed, who decides, how the shop returns to the paper register, and how work done in the app in the meantime is copied back

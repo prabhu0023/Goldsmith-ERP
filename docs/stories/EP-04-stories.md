@@ -11,6 +11,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S1: System can create the first owner once when the shop has no owner
 
 - **Story ID:** EP-04-S1
+- **Status:** Done
 - **Title:** System can create the first owner once when the shop has no owner
 - **As a:** System
 - **I want:** a one-time Create First owner operation that makes one user with role `owner`, a name, a phone and an email, status `pending_activation` and no password, only while the shop holds no owner, and that is called only by the first-run setup wizard (EP-45)
@@ -35,6 +36,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S2: System can store and check passwords as salted hashes
 
 - **Story ID:** EP-04-S2
+- **Status:** Done
 - **Title:** System can store and check passwords as salted hashes
 - **As a:** System
 - **I want:** a server module that turns a password into a salted hash with a modern password-hashing algorithm, refuses passwords shorter than 8 characters, and checks a submitted password against the stored hash with the results `ok` or `wrong`
@@ -59,6 +61,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S3: User can sign in with phone number and password
 
 - **Story ID:** EP-04-S3
+- **Status:** Done
 - **Title:** User can sign in with phone number and password
 - **As a:** Staff
 - **I want:** to type my phone number and my password on the sign-in screen and tap "Sign in"
@@ -83,6 +86,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S4: System can send account emails through a stub until email is live
 
 - **Story ID:** EP-04-S4
+- **Status:** Done
 - **Title:** System can send account emails through a stub until email is live
 - **As a:** System
 - **I want:** an account-email delivery interface (activation and reset emails) with one stub implementation that, in development and staging only, shows the email and its link in a developer mailbox page and the developer console
@@ -106,6 +110,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S5: User can get a session after entering the right password
 
 - **Story ID:** EP-04-S5
+- **Status:** Done
 - **Title:** User can get a session after entering the right password
 - **As a:** Staff
 - **I want:** to be signed in as soon as my phone number and password are accepted
@@ -130,6 +135,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S6: User can land on their role's home after sign-in
 
 - **Story ID:** EP-04-S6
+- **Status:** Done
 - **Title:** User can land on their role's home after sign-in
 - **As a:** Owner
 - **I want:** to arrive on my own home screen straight after sign-in, and the app to know my name and role from a Read Current session call
@@ -154,6 +160,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S7: User can reset a forgotten password from an emailed link
 
 - **Story ID:** EP-04-S7
+- **Status:** Done
 - **Title:** User can reset a forgotten password from an emailed link
 - **As a:** Karigar
 - **I want:** a "Forgot password" link on the sign-in screen where I enter my phone number, and an email with a link that lets me set a new password
@@ -178,6 +185,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S8: System can lock out a phone after repeated failed attempts
 
 - **Story ID:** EP-04-S8
+- **Status:** Done
 - **Title:** System can lock out a phone after repeated failed attempts
 - **As a:** System
 - **I want:** to count wrong passwords per account and lock the account for 15 minutes once 5 wrong passwords are entered in a row, with an Unlock operation the owner can call sooner (EP-05)
@@ -203,6 +211,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S9: System can rate-limit sign-in attempts and reset-link requests per phone and device
 
 - **Story ID:** EP-04-S9
+- **Status:** Done
 - **Title:** System can rate-limit sign-in attempts and reset-link requests per phone and device
 - **As a:** System
 - **I want:** the EP-03-S11 rate-limit hook filled in for the sign-in and reset-link operations, counting requests per phone and per device
@@ -227,6 +236,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S10: User can set their first password from an activation link
 
 - **Story ID:** EP-04-S10
+- **Status:** Done
 - **Title:** User can set their first password from an activation link
 - **As a:** Staff
 - **I want:** to open the activation link in the email the shop sent me, choose my own password and then sign in
@@ -251,6 +261,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S11: User can sign out
 
 - **Story ID:** EP-04-S11
+- **Status:** Done
 - **Title:** User can sign out
 - **As a:** Staff
 - **I want:** a "Sign out" action that ends my session on this device straight away
@@ -274,6 +285,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S12: System can expire idle sessions
 
 - **Story ID:** EP-04-S12
+- **Status:** Done
 - **Title:** System can expire idle sessions
 - **As a:** System
 - **I want:** every session to carry an `expires at` time, and requests after that time to be refused as unauthenticated
@@ -297,6 +309,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S13: System can end all sessions of a deactivated or re-roled user at once
 
 - **Story ID:** EP-04-S13
+- **Status:** Done
 - **Title:** System can end all sessions of a deactivated or re-roled user at once
 - **As a:** System
 - **I want:** a Delete All sessions of a user operation that ends every open session of one user, called when "User deactivated or role changed" happens, and the user's open screens sent back to sign-in
@@ -321,6 +334,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S14: System can audit sign-in, failure, lockout and sign-out without the password
 
 - **Story ID:** EP-04-S14
+- **Status:** Done
 - **Title:** System can audit sign-in, failure, lockout and sign-out without the password
 - **As a:** System
 - **I want:** one helper that writes an audit entry for every sign-in event (signed in, sign-in failed, locked, unlocked, signed out, sessions ended, first owner created, activation link sent, password set, password reset requested, password reset) with actor and time, and with the password and link secret always left out

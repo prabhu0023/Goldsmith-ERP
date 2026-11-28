@@ -9,6 +9,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S1: System can store broadcasts, recipients and showcases
 
 - **Story ID:** EP-34-S1
+- **Status:** Not started
 - **Title:** System can store broadcasts, recipients and showcases
 - **As a:** System
 - **I want:** the `broadcasts`, `broadcast_recipients` and `broadcast_pieces` tables from EP-02-S12 extended with status, template, schedule, counts and per-recipient tracking, a `broadcast_templates` table for "Festive preview", "New arrivals" and "Blank", and new `showcases` and `showcase_pieces` tables with a hashed public link token
@@ -33,6 +34,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S2: System can resolve an audience to opted-in customers with a skipped count
 
 - **Story ID:** EP-34-S2
+- **Status:** Not started
 - **Title:** System can resolve an audience to opted-in customers with a skipped count
 - **As a:** System
 - **I want:** a Read Audience count operation, and one server function used by it and by every send, that turns a customer group or `All` (plus any agreed filters) into the list of active customers whose current consent is opted in, with the count of those skipped because they are not
@@ -57,6 +59,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S3: Staff can choose an audience by group and see the counts
 
 - **Story ID:** EP-34-S3
+- **Status:** Not started
 - **Title:** Staff can choose an audience by group and see the counts
 - **As a:** Staff
 - **I want:** "WHO HEARS IT" on `broadcast` to show one chip per customer group and one for everyone, each with its opted-in count from the server, and a line under them with the reachable and skipped numbers for the chip I pick
@@ -81,6 +84,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S4: Staff can start from a template and fill {name} per person
 
 - **Story ID:** EP-34-S4
+- **Status:** Not started
 - **Title:** Staff can start from a template and fill {name} per person
 - **As a:** Staff
 - **I want:** to pick "Festive preview", "New arrivals" or "Blank" under "Start from a template", edit the text in the message box, and have the server replace {name} with each recipient's first name when it sends
@@ -105,6 +109,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S5: Staff can attach in-stock pieces to a broadcast
 
 - **Story ID:** EP-34-S5
+- **Status:** Not started
 - **Title:** Staff can attach in-stock pieces to a broadcast
 - **As a:** Staff
 - **I want:** "Attach pieces from the catalogue" to open a picker of in-stock pieces with photo, name, tag, purity and pure gold, and to save my choice on the broadcast draft, with the server refusing any piece not in stock
@@ -129,6 +134,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S6: Staff can preview a broadcast as it lands on a phone
 
 - **Story ID:** EP-34-S6
+- **Status:** Not started
 - **Title:** Staff can preview a broadcast as it lands on a phone
 - **As a:** Staff
 - **I want:** "HOW IT LANDS ON THEIR PHONE" to show a phone frame with the shop's business account name, the message filled in for one real recipient from the audience, and a "See the pieces" button when pieces are attached
@@ -153,6 +159,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S7: Staff can send a broadcast to opted-in customers
 
 - **Story ID:** EP-34-S7
+- **Status:** Not started
 - **Title:** Staff can send a broadcast to opted-in customers
 - **As a:** Staff
 - **I want:** to press "Send" on a draft so the server checks the message and pieces, resolves the audience to opted-in customers at that moment, writes one recipient row each, and hands one approved template message per recipient to the WhatsApp integration through a job queue
@@ -177,6 +184,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S8: System can drop sold pieces from drafts live
 
 - **Story ID:** EP-34-S8
+- **Status:** Not started
 - **Title:** System can drop sold pieces from drafts live
 - **As a:** System
 - **I want:** when a piece is billed or scrapped, to remove it from every unsent broadcast draft, scheduled broadcast and showcase draft, and to tell any open `broadcast` or `catalogue` screen which piece went; and at send time, to refuse any attached piece that is no longer in stock and name it
@@ -201,6 +209,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S9: System can turn a broadcast reply into a lead
 
 - **Story ID:** EP-34-S9
+- **Status:** Not started
 - **Title:** System can turn a broadcast reply into a lead
 - **As a:** System
 - **I want:** when EP-29-S11 creates a lead from a reply to a broadcast or a showcase, to set replied at and the lead id on that customer's `broadcast_recipients` row, and to let staff filter the inbox by broadcast
@@ -225,6 +234,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S10: Staff can schedule a broadcast for later (G17)
 
 - **Story ID:** EP-34-S10
+- **Status:** Not started
 - **Title:** Staff can schedule a broadcast for later (G17)
 - **As a:** Staff
 - **I want:** "Later" to let me pick a date and time in Asia/Kolkata, store the broadcast as `scheduled`, and have a delayed job send it at that time to the audience as resolved at that moment; and to cancel it before it runs
@@ -249,6 +259,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S11: Staff can see delivered, opened and replied counts (G17)
 
 - **Story ID:** EP-34-S11
+- **Status:** Not started
 - **Title:** Staff can see delivered, opened and replied counts (G17)
 - **As a:** Staff
 - **I want:** each sent broadcast to show how many messages were delivered, opened and replied to, from per-recipient times copied from WhatsApp receipts and reply leads, and to open the list of recipients who replied
@@ -273,6 +284,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S12: Staff can build a catalogue showcase with no price shown
 
 - **Story ID:** EP-34-S12
+- **Status:** Not started
 - **Title:** Staff can build a catalogue showcase with no price shown
 - **As a:** Staff
 - **I want:** on `catalogue`, to filter in-stock pieces by style, collection, weight and tag, choose some, see "A showcase of N pieces" with their total pure gold and "no price shown", and see each piece card as the customer will, with an empty value socket
@@ -297,6 +309,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S13: Staff can send a showcase to one person
 
 - **Story ID:** EP-34-S13
+- **Status:** Not started
 - **Title:** Staff can send a showcase to one person
 - **As a:** Staff
 - **I want:** to send a showcase either "To one person", by picking one opted-in customer, or "Send to a broadcast audience" through the same audience picker, so the server sends the chosen in-stock pieces with photos and pure gold through WhatsApp; and to reach "To one person" from the piece drawer's "Share" on `stock`
@@ -323,6 +336,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 Split note: EP-34-S14 was split into S14a and S14b because creating and revoking the link is a signed-in staff action, while serving the page to anyone with the link is a new public surface with its own security, caching and performance checks.
 
 - **Story ID:** EP-34-S14a
+- **Status:** Not started
 - **Title:** Staff can create and revoke a public showcase link (G9)
 - **As a:** Staff
 - **I want:** "Copy a link" to create an unguessable link for the current showcase with an expiry, copy it to the clipboard, and let me revoke it later from the showcase
@@ -349,6 +363,7 @@ Split note: EP-34-S14 was split into S14a and S14b because creating and revoking
 Split note: EP-34-S14 was split into S14a and S14b because creating and revoking the link is a signed-in staff action, while serving the page to anyone with the link is a new public surface with its own security, caching and performance checks.
 
 - **Story ID:** EP-34-S14b
+- **Status:** Not started
 - **Title:** Staff can create and revoke a public showcase link (G9)
 - **As a:** System
 - **I want:** a Read Public showcase operation and page that anyone with a valid link can open without signing in, showing only the chosen pieces that are still `in_stock`, with photo, name, purity, style and pure gold, and no price, tag history or customer data
@@ -373,6 +388,7 @@ Split note: EP-34-S14 was split into S14a and S14b because creating and revoking
 ## EP-34-S15: Owner can push aged pieces from the ageing alert into a broadcast
 
 - **Story ID:** EP-34-S15
+- **Status:** Not started
 - **Title:** Owner can push aged pieces from the ageing alert into a broadcast
 - **As a:** Owner
 - **I want:** "Push on WhatsApp" on the "GOLD SITTING TOO LONG" card to open `broadcast` with a new draft that already has the aged pieces attached, so I only pick the audience and the message

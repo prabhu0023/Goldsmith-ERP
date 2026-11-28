@@ -9,6 +9,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S1: System can build the owner's exception queue on the server
 
 - **Story ID:** EP-32-S1
+- **Status:** Not started
 - **Title:** System can build the owner's exception queue on the server
 - **As a:** System
 - **I want:** one Read Owner exception queue operation that returns, in one call, the "blocking" cards (mismatched parcels, open raised problems, one edits card, one scrap card) and the "running late" cards (one late-leads card, one overdue-jobs card), each with a stable key, a kind, a block, a title, a detail line and one action (label, route id and parameters), plus the counts per block and the total
@@ -33,6 +34,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S2: Owner can land on Decisions after sign-in
 
 - **Story ID:** EP-32-S2
+- **Status:** Not started
 - **Title:** Owner can land on Decisions after sign-in
 - **As a:** Owner
 - **I want:** to arrive on `decisions` straight after signing in, with a header that counts what is waiting ("Six things are waiting on you"), the line "Only what nobody else may do. A parcel that matches never appears on this screen." and the date in Asia/Kolkata, loaded from the EP-08 data layer
@@ -57,6 +59,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S3: Owner can see mismatched parcels with the karigar's recent average
 
 - **Story ID:** EP-32-S3
+- **Status:** Not started
 - **Title:** Owner can see mismatched parcels with the karigar's recent average
 - **As a:** Owner
 - **I want:** one blocking card per parcel stopped with verdict `mismatch` and no open raised problem, showing the parcel, karigar, gap in mg, pieces held back, measured against expected pure gold, the stop time and the karigar's average gap over his last six parcels, with "Open it" to `parcel-clear`
@@ -81,6 +84,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S4: Owner can see raised problems and clear them from the card
 
 - **Story ID:** EP-32-S4
+- **Status:** Not started
 - **Title:** Owner can see raised problems and clear them from the card
 - **As a:** Owner
 - **I want:** one blocking card per open raised problem, oldest first, saying who stopped which parcel, job or piece, with their text quoted and the time raised, and a "Clear it and start again" button that clears it through EP-24
@@ -105,6 +109,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S5: Owner can see open edit proposals and scrap requests as one card each
 
 - **Story ID:** EP-32-S5
+- **Status:** Not started
 - **Title:** Owner can see open edit proposals and scrap requests as one card each
 - **As a:** Owner
 - **I want:** one blocking card for all open edit proposals that names up to 3 of them, and one blocking card for all pending scrap requests, with "Read them" opening `edit-apply` and "Decide" opening `scrap-decision`
@@ -129,6 +134,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S6: Owner can see late leads and overdue jobs under Running late
 
 - **Story ID:** EP-32-S6
+- **Status:** Not started
 - **Title:** Owner can see late leads and overdue jobs under Running late
 - **As a:** Owner
 - **I want:** a "RUNNING LATE · THE CLOCK TOLD ME, NOT A PERSON" block with one card for leads past their SLA, naming each lead and hours waiting with "See leads", and one card for karigar jobs past their agreed date, naming each karigar and days over with "See tracker"
@@ -153,6 +159,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S7: Owner can see what went through without him today
 
 - **Story ID:** EP-32-S7
+- **Status:** Not started
 - **Title:** Owner can see what went through without him today
 - **As a:** Owner
 - **I want:** one Read Went through today operation and a "WENT THROUGH WITHOUT YOU TODAY · NO BUTTONS HERE" block that lists the parcels released today without a loss, their piece count and pure gold, the pieces out today and the wishes sent today, with no actions
@@ -177,6 +184,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S8: Owner can change the alert rules from the rules panel
 
 - **Story ID:** EP-32-S8
+- **Status:** Not started
 - **Title:** Owner can change the alert rules from the rules panel
 - **As a:** Owner
 - **I want:** a "THE RULES BEHIND THESE ALERTS" panel on `decisions` that shows and changes the lead SLA hours, who hears about a late lead ("Staff first, then me" or "Only me"), how it reaches me (WhatsApp, In the app, Email) and the "Code before a tag edit" rule, saving through the EP-13 settings operations, plus the fixed line "A parcel comes to me when it does not match exactly · Nothing for you to set"
@@ -201,6 +209,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S9: Owner can see where the gold is right now
 
 - **Story ID:** EP-32-S9
+- **Status:** Not started
 - **Title:** Owner can see where the gold is right now
 - **As a:** Owner
 - **I want:** one Read Gold locations operation and a "WHERE THE GOLD IS RIGHT NOW" block showing gold on the floor with its piece count, gold with karigars with open and past-date job counts, the metal pool balance and pieces out today, all as grams from integer sums
@@ -225,6 +234,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S10: Owner can see karigars worst first (G4)
 
 - **Story ID:** EP-32-S10
+- **Status:** Not started
 - **Title:** Owner can see karigars worst first (G4)
 - **As a:** Owner
 - **I want:** a "KARIGARS, WORST FIRST" block listing karigars over their wastage allowance first, each with code, specialties, open jobs, metal loss, days late and rating, with "Open ledger", and the karigars inside their allowance summarised in one line
@@ -249,6 +259,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S11: Owner can see gold sitting too long and act on it (G5)
 
 - **Story ID:** EP-32-S11
+- **Status:** Not started
 - **Title:** Owner can see gold sitting too long and act on it (G5)
 - **As a:** Owner
 - **I want:** one Read Ageing alert operation and a "GOLD SITTING TOO LONG" card that, when `in_stock` pieces have not moved for `ageingThresholdDays`, shows their total pure gold, piece count, main style and the oldest age, with "Push on WhatsApp" and "Melt and remake"
@@ -273,6 +284,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S12: Owner can see the badge and cards update live
 
 - **Story ID:** EP-32-S12
+- **Status:** Not started
 - **Title:** Owner can see the badge and cards update live
 - **As a:** Owner
 - **I want:** the Decisions rail badge to show the queue `total`, and the cards, the "went through" block, the gold locations, the karigars and the ageing card to refetch within about 1 second when a relevant live event arrives, and to catch up after a dropped connection
@@ -297,6 +309,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S13: System can refuse the Decisions queue to any role but owner
 
 - **Story ID:** EP-32-S13
+- **Status:** Not started
 - **Title:** System can refuse the Decisions queue to any role but owner
 - **As a:** System
 - **I want:** every Decisions read (Owner exception queue, Went through today, Gold locations, Karigars worst first, Ageing alert, the Decisions badge count and the Decisions updates subscription) to refuse any caller whose role is not Owner, and the `decisions` route not to be offered to them

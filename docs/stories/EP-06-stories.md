@@ -9,6 +9,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S1: System can store audit entries that cannot be updated or deleted
 
 - **Story ID:** EP-06-S1
+- **Status:** Partial: AC5 (grants check run in CI against staging) waits for staging (FU-008, D1a).
 - **Title:** System can store audit entries that cannot be updated or deleted
 - **As a:** System
 - **I want:** the `audit_entries` table from EP-02-S11 extended with entity type, entity id, before, after, reason and token reference columns, and locked so the application's database role can only insert and select rows
@@ -33,6 +34,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S2: System can write an audit entry in the same transaction as every state change
 
 - **Story ID:** EP-06-S2
+- **Status:** Partial: one call writes more than one audit entry for createUser, createFirstOwner, updateUserRole and deactivateUser, so "exactly one entry" is not met (FU-009, EP-40).
 - **Title:** System can write an audit entry in the same transaction as every state change
 - **As a:** System
 - **I want:** a service-layer wrapper that every state-changing operation runs through, which appends exactly one audit entry inside the operation's transaction before it commits
@@ -57,6 +59,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S3: System can record before and after values for each change
 
 - **Story ID:** EP-06-S3
+- **Status:** Done
 - **Title:** System can record before and after values for each change
 - **As a:** System
 - **I want:** the audit writer to take the row as it was read and the row as it will be saved, and store only the fields that changed in `before` and `after`
@@ -81,6 +84,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S4: System can record a token reference instead of the token value
 
 - **Story ID:** EP-06-S4
+- **Status:** Done
 - **Title:** System can record a token reference instead of the token value
 - **As a:** System
 - **I want:** operations that use a one-time token (applying an edit with the owner edit code) to store the id of the hashed token record in `token reference`, and never the 6-digit value
@@ -104,6 +108,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S5: System can record weights in entries as integer units of 0.0001 g
 
 - **Story ID:** EP-06-S5
+- **Status:** Done
 - **Title:** System can record weights in entries as integer units of 0.0001 g
 - **As a:** System
 - **I want:** every weight inside before and after (for example `grossG`, `stoneG`, `lossG`, `gapNetG`, `deltaG`) stored as an integer in units of 0.0001 g using the shared conversion from EP-02-S2, and shown at four decimals
@@ -127,6 +132,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S6: System can record actions taken by the scheduler and integrations
 
 - **Story ID:** EP-06-S6
+- **Status:** Done
 - **Title:** System can record actions taken by the scheduler and integrations
 - **As a:** System
 - **I want:** a System actor for changes made with no signed-in user, with a name that says which part acted, such as "Scheduler" or "WhatsApp intake"
@@ -150,6 +156,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S7: System can audit lead, job, parcel, problem, edit-proposal and onboarding transitions not audited today
 
 - **Story ID:** EP-06-S7
+- **Status:** Done
 - **Title:** System can audit lead, job, parcel, problem, edit-proposal and onboarding transitions not audited today
 - **As a:** System
 - **I want:** an action kind in the shared action list for every transition that the prototype does not audit, so that each one writes an entry when its feature epic ports it
@@ -175,6 +182,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S8: System can audit the pricing flag and every other setting change
 
 - **Story ID:** EP-06-S8
+- **Status:** Done
 - **Title:** System can audit the pricing flag and every other setting change
 - **As a:** System
 - **I want:** every setting change, including `pricingEnabled`, to write a `setting_changed` entry with the setting key in ref and the old and new values in before and after
@@ -199,6 +207,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S9: Owner can list audit entries newest first, one page at a time
 
 - **Story ID:** EP-06-S9
+- **Status:** Done
 - **Title:** Owner can list audit entries newest first, one page at a time
 - **As a:** Owner
 - **I want:** the Security log on route `security` to load entries from the server newest first, a page at a time, each row showing the kind label, ref, time in Asia/Kolkata, actor name and role, and summary
@@ -224,6 +233,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S10: Owner can filter the log by kind group, entity, actor and date
 
 - **Story ID:** EP-06-S10
+- **Status:** Done
 - **Title:** Owner can filter the log by kind group, entity, actor and date
 - **As a:** Owner
 - **I want:** to narrow the Security log by kind group (Everything, Tag edits, Parcels and losses, Problems, Scrap, Stock-out, Rules), by entity such as TAG-8841 or BATCH-2026-044, by actor, and by a date range
@@ -248,6 +258,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S11: Owner can open one entry and see before and after values
 
 - **Story ID:** EP-06-S11
+- **Status:** Done
 - **Title:** Owner can open one entry and see before and after values
 - **As a:** Owner
 - **I want:** to open a row on the Security log and see the full entry: actor, role, time, entity, action, reason, token reference marker, and each changed field with its before and after value
@@ -272,6 +283,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S12: System can refuse audit reads by staff and karigars
 
 - **Story ID:** EP-06-S12
+- **Status:** Done
 - **Title:** System can refuse audit reads by staff and karigars
 - **As a:** System
 - **I want:** List Audit entries and Read Audit entry to be in the owner's permission list only, so the permission hook refuses any staff or karigar call

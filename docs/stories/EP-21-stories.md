@@ -9,6 +9,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S1: System can store parcels, weighings, manifests, pieces and checks as integer weights
 
 - **Story ID:** EP-21-S1
+- **Status:** Not started
 - **Title:** System can store parcels, weighings, manifests, pieces and checks as integer weights
 - **As a:** System
 - **I want:** the intake fields this epic needs on top of the EP-02 tables: a three-part quality check per piece (scale agrees, hallmark, deductions, by, at), the tray weighing a piece was weighed in, the scale and tagger on each piece, and the tag-return fields, with every weight stored as an integer in units of 0.0001 g
@@ -34,6 +35,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S2: Staff can record a parcel's arrival with scale and manifest
 
 - **Story ID:** EP-21-S2
+- **Status:** Not started
 - **Title:** Staff can record a parcel's arrival with scale and manifest
 - **As a:** Staff
 - **I want:** on `parcel-arrival`, to pick "Which scale is this on?", type "Everything on the scale together" and "Of that, the stones, pearls, lac — anything not gold", see "SO THE PURE GOLD IN THIS PARCEL IS", list the kinds and counts inside, and press "Open the parcel for tagging"
@@ -58,6 +60,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S3: Staff can weigh a parcel in trays
 
 - **Story ID:** EP-21-S3
+- **Status:** Not started
 - **Title:** Staff can weigh a parcel in trays
 - **As a:** Staff
 - **I want:** on `parcel-arrival`, to choose "Weigh it in trays", enter each tray as its own weighing with "Which scale is this tray on?", gross and stones, add or remove trays before tagging, and see the trays summed
@@ -82,6 +85,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S4: Staff can receive a parcel with no job
 
 - **Story ID:** EP-21-S4
+- **Status:** Not started
 - **Title:** Staff can receive a parcel with no job
 - **As a:** Staff
 - **I want:** to start `parcel-arrival` without a hand-over, pick the karigar it came from and type a PO reference such as PO-2026-915, then weigh and list it as usual
@@ -106,6 +110,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S5: System can enforce the tagging rules on the server
 
 - **Story ID:** EP-21-S5
+- **Status:** Not started
 - **Title:** System can enforce the tagging rules on the server
 - **As a:** System
 - **I want:** every Create Tag and Update Tag to check, inside one transaction, that the parcel is weighed and not stopped or released, the tag number is free, the stones are not above the gross, the scale is registered, and the kind is on the manifest with room left
@@ -130,6 +135,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S6: Staff can tag one item with nothing pre-filled
 
 - **Story ID:** EP-21-S6
+- **Status:** Not started
 - **Title:** Staff can tag one item with nothing pre-filled
 - **As a:** Staff
 - **I want:** "Tag item 8 of 12" on `parcel-tag` with "Kind of item" picked from the manifest, a suggested "New tag number" and HUID, name, purity, size, collection, style, stone count, the tray, and the weights "On the scale now" and "Stones, kemp, lac on this piece" typed fresh, then "Save tag · go to item 9" or "Save and stop here"
@@ -154,6 +160,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S7: Staff can attach photos to a tag
 
 - **Story ID:** EP-21-S7
+- **Status:** Not started
 - **Title:** Staff can attach photos to a tag
 - **As a:** Staff
 - **I want:** the "Photo" box and "Add more angles" on `parcel-tag` to upload pictures taken at the bench through file storage and keep them on the piece in order
@@ -178,6 +185,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S8: Staff can run the three quality checks
 
 - **Story ID:** EP-21-S8
+- **Status:** Not started
 - **Title:** Staff can run the three quality checks
 - **As a:** Staff
 - **I want:** on `parcel-qc`, for each tagged piece, to answer "Does the scale agree?" by typing "You re-weigh", "Is the hallmark on the piece?" and "Do the deductions look honest?", then press "Checked — on to piece 5"
@@ -202,6 +210,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S9: Staff can send a tag back for re-tag
 
 - **Story ID:** EP-21-S9
+- **Status:** Not started
 - **Title:** Staff can send a tag back for re-tag
 - **As a:** Staff
 - **I want:** "Send this tag back to Deepak" on `parcel-qc`, with an optional reason, which marks the piece for re-tag by the person who tagged it, clears its check and opens it on `parcel-tag` for whoever picks it up
@@ -226,6 +235,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S10: Staff can see the parcels-in list with stage
 
 - **Story ID:** EP-21-S10
+- **Status:** Not started
 - **Title:** Staff can see the parcels-in list with stage
 - **As a:** Staff
 - **I want:** the "Parcels in" screen (`parcels`) to list open and stopped parcels with karigar, job or PO reference, arrival age, stage (weigh, tag, match), "N of M tagged" and the next action "Weigh it", "Keep tagging", "Match and release" or "Open"
@@ -250,6 +260,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S11: Staff can see another staff member's saved tag live
 
 - **Story ID:** EP-21-S11
+- **Status:** Not started
 - **Title:** Staff can see another staff member's saved tag live
 - **As a:** Staff
 - **I want:** when another staff member saves a tag on the parcel I am tagging, my progress, "STILL TO TAG" list and suggested next item to update within about a second
@@ -274,6 +285,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S12: Staff can see who else has an item open
 
 - **Story ID:** EP-21-S12
+- **Status:** Not started
 - **Title:** Staff can see who else has an item open
 - **As a:** Staff
 - **I want:** the tag form to show the names of other staff who have the same item open, for example "Deepak Rao is also on item 8", and the parcel panel to show who is tagging it
@@ -298,6 +310,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S13: System can freeze tagging when a parcel stops
 
 - **Story ID:** EP-21-S13
+- **Status:** Not started
 - **Title:** System can freeze tagging when a parcel stops
 - **As a:** System
 - **I want:** to refuse new tags, re-tags, checks and send-backs on a stopped parcel, except a re-tag of the one piece the owner asked to re-check, and to freeze the open tag and check forms live when the parcel stops
@@ -322,6 +335,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S14: System can audit arrival, tags and checks
 
 - **Story ID:** EP-21-S14
+- **Status:** Not started
 - **Title:** System can audit arrival, tags and checks
 - **As a:** System
 - **I want:** every arrival, added weighing, parcel created without a job, tag save, re-tag, re-check, photo change, quality check and send-back to write one audit entry in the same transaction, with before and after values and weights in integer units

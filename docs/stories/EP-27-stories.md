@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S1: System can store scrap requests with their states
 
 - **Story ID:** EP-27-S1
+- **Status:** Not started
 - **Title:** System can store scrap requests with their states
 - **As a:** System
 - **I want:** the `scrap_requests` table from EP-02-S10 to hold one row per request with id (`SR-` prefix), piece id, reason, requested by (user id), requested at (UTC), status (`pending`, `scrapped`, `declined`), decided by (user id) and decided at, with at most one `pending` request per piece
@@ -33,6 +34,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S2: Staff can request scrap for an in-stock piece with a reason
 
 - **Story ID:** EP-27-S2
+- **Status:** Not started
 - **Title:** Staff can request scrap for an in-stock piece with a reason
 - **As a:** Staff
 - **I want:** to press "Ask to scrap" in the piece drawer on `stock`, read that the piece comes off the floor while the owner decides and that its pure gold goes back to the metal pool, type why under "Why scrap it", and press "Send to the owner"
@@ -57,6 +59,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S3: System can refuse a scrap request for a non-stock piece
 
 - **Story ID:** EP-27-S3
+- **Status:** Not started
 - **Title:** System can refuse a scrap request for a non-stock piece
 - **As a:** System
 - **I want:** Create Scrap request to lock the piece row and refuse, as a whole, any piece whose state is not `in_stock`, with "{tag} is not in stock."
@@ -81,6 +84,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S4: System can park a requested piece with the owner
 
 - **Story ID:** EP-27-S4
+- **Status:** Not started
 - **Title:** System can park a requested piece with the owner
 - **As a:** System
 - **I want:** Create Scrap request to move the piece from `in_stock` to `with_owner` through Update Piece state, keeping `prevStatus` `in_stock`, in the same transaction as the request row
@@ -105,6 +109,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S5: Owner can see pending scrap requests with days in stock and pure gold
 
 - **Story ID:** EP-27-S5
+- **Status:** Not started
 - **Title:** Owner can see pending scrap requests with days in stock and pure gold
 - **As a:** Owner
 - **I want:** a List Pending scrap requests read, shown as the card "1 piece to be marked as scrap" on `decisions` and as the list and detail on `scrap-decision`, with piece name, tag, purity, days in stock, gross on the scale, stones, pure gold, requester, how long ago they asked and the reason
@@ -129,6 +134,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S6: Owner can mark a piece scrapped and credit its gold to the pool
 
 - **Story ID:** EP-27-S6
+- **Status:** Not started
 - **Title:** Owner can mark a piece scrapped and credit its gold to the pool
 - **As a:** Owner
 - **I want:** to press "Mark it scrapped" on `scrap-decision`, after which the server, in one transaction, locks the request and piece, sets the request to `scrapped`, moves the piece from `with_owner` to `scrapped`, and calls EP-18's Post Recovery to credit the piece's net gold to the pool as a `recovered` entry referencing the piece and the request
@@ -153,6 +159,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S7: Owner can decline a scrap request and return the piece to stock
 
 - **Story ID:** EP-27-S7
+- **Status:** Not started
 - **Title:** Owner can decline a scrap request and return the piece to stock
 - **As a:** Owner
 - **I want:** to press "Decline, keep it in stock" on `scrap-decision`, after which the server sets the request to `declined` and moves the piece from `with_owner` back to its `prevStatus` `in_stock`
@@ -177,6 +184,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S8: System can void open edits on a scrapped piece
 
 - **Story ID:** EP-27-S8
+- **Status:** Not started
 - **Title:** System can void open edits on a scrapped piece
 - **As a:** System
 - **I want:** the mark-scrapped transaction to call the EP-25-S11 Void open edits function for the piece, with void reason `scrapped`, after the piece moves to `scrapped`
@@ -201,6 +209,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S9: Owner can start a scrap from the "Melt and remake" action on the ageing alert
 
 - **Story ID:** EP-27-S9
+- **Status:** Not started
 - **Title:** Owner can start a scrap from the "Melt and remake" action on the ageing alert
 - **As a:** Owner
 - **I want:** "Melt and remake" on the "GOLD SITTING TOO LONG" alert to open a list of the aged `in_stock` pieces, oldest first, where I pick one or more, give one reason, and land on `scrap-decision` for each new request so I can mark it scrapped at once
@@ -225,6 +234,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S10: System can push scrap requests and decisions live
 
 - **Story ID:** EP-27-S10
+- **Status:** Not started
 - **Title:** System can push scrap requests and decisions live
 - **As a:** System
 - **I want:** to publish "Scrap requested" after a request commits and "Piece scrapped" (with outcome `scrapped` or `declined`) after a decision commits, each with request id, piece id, tag number, piece version and outcome, to Owner and Staff connections only
@@ -249,6 +259,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S11: System can audit every request and decision
 
 - **Story ID:** EP-27-S11
+- **Status:** Not started
 - **Title:** System can audit every request and decision
 - **As a:** System
 - **I want:** to write an append-only audit entry in the same transaction as each scrap request (`scrap_requested`, a new kind), each mark-scrapped (`scrap_marked`) and each decline (`scrap_declined`), with actor, role, time, request id, piece tag, reason and pure gold

@@ -9,6 +9,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S1: System can store order copies, jobs and settlements with integer weights
 
 - **Story ID:** EP-19-S1
+- **Status:** Not started
 - **Title:** System can store order copies, jobs and settlements with integer weights
 - **As a:** System
 - **I want:** the `order_copies` and `karigar_jobs` tables from EP-02-S8 extended with the fields this epic needs, and a new `job_settlements` table, with every weight an integer in units of 0.0001 g
@@ -33,6 +34,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S2: System can issue gold and create a job in one transaction
 
 - **Story ID:** EP-19-S2
+- **Status:** Not started
 - **Title:** System can issue gold and create a job in one transaction
 - **As a:** System
 - **I want:** one Create Order copy and job operation that, inside a single transaction, checks the inputs, takes the EP-18 pool lock, creates the order copy and a job in `sent`, posts the `issued` pool entry through EP-18-S3 and writes the audit entry
@@ -57,6 +59,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S3: Staff can build an order copy without a lead
 
 - **Story ID:** EP-19-S3
+- **Status:** Not started
 - **Title:** Staff can build an order copy without a lead
 - **As a:** Staff
 - **I want:** to open `order-copy` with no lead and fill in reference images, the brief, how many, purity, "Finished piece should weigh", the gold inside after stones, and "Allowed to be off by", then press "Send the order copy"
@@ -81,6 +84,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S4: Staff can pick a karigar and due date with suggested gold shown
 
 - **Story ID:** EP-19-S4
+- **Status:** Not started
 - **Title:** Staff can pick a karigar and due date with suggested gold shown
 - **As a:** Staff
 - **I want:** to pick "Who makes it" from active karigars, set the "Due date", and see a suggested gold figure (target plus the karigar's allowance) under "Pure gold issued to …" as a hint, while I type the issued figure myself
@@ -105,6 +109,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S5: Karigar can receive the sent job
 
 - **Story ID:** EP-19-S5
+- **Status:** Not started
 - **Title:** Karigar can receive the sent job
 - **As a:** Karigar
 - **I want:** a job sent to me to appear in my job list and be readable with its reference images, brief, quantity, purity, targets, tolerance and due date, with a notice that it has arrived
@@ -129,6 +134,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S6: System can enforce the job state order and the stopped guard
 
 - **Story ID:** EP-19-S6
+- **Status:** Not started
 - **Title:** System can enforce the job state order and the stopped guard
 - **As a:** System
 - **I want:** Update Job state operations for accept (with a confirmed date), start, mark ready and hand over that allow only `sent` → `accepted` → `on_bench` → `ready` → `handed_over`, refuse any move on a stopped job, and use a version check
@@ -153,6 +159,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S7: System can push job status changes live
 
 - **Story ID:** EP-19-S7
+- **Status:** Not started
 - **Title:** System can push job status changes live
 - **As a:** System
 - **I want:** to emit "Karigar job status changed" after every committed send, transition, cancel or stop flag change, carrying job id, karigar id, new status, stopped flag and version, to owner and staff connections and to the job's own karigar only
@@ -177,6 +184,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S8: Staff can see the job tracker with an overdue lane
 
 - **Story ID:** EP-19-S8
+- **Status:** Not started
 - **Title:** Staff can see the job tracker with an overdue lane
 - **As a:** Staff
 - **I want:** a tracker board that lists open jobs in lanes Sent, Accepted, On the bench and Ready, plus an Overdue lane, each card showing job number, title, karigar, quantity, agreed date and days over, with a filter by karigar
@@ -201,6 +209,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S9: System can flag overdue jobs and remind the karigar
 
 - **Story ID:** EP-19-S9
+- **Status:** Not started
 - **Title:** System can flag overdue jobs and remind the karigar
 - **As a:** System
 - **I want:** the EP-10-S7 overdue job to run against the real `karigar_jobs` table, every job read to return its agreed date and days over, and each overdue job to hand one reminder per day to the karigar through EP-11-S8
@@ -225,6 +234,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S10: Owner can see overdue jobs on Decisions
 
 - **Story ID:** EP-19-S10
+- **Status:** Not started
 - **Title:** Owner can see overdue jobs on Decisions
 - **As a:** Owner
 - **I want:** a Read Overdue jobs summary that returns the count of jobs past their agreed date and, per job, the karigar, days over and whether a reminder was sent, shown on `decisions` under "RUNNING LATE" with "See tracker"
@@ -249,6 +259,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S11: Staff can cancel a job and return the gold
 
 - **Story ID:** EP-19-S11
+- **Status:** Not started
 - **Title:** Staff can cancel a job and return the gold
 - **As a:** Staff
 - **I want:** to cancel a job that is not handed over, with a reason, so that it closes and its gold goes back to the pool in one `returned` entry through EP-18
@@ -273,6 +284,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S12: System can settle a job when its parcel is released (G23)
 
 - **Story ID:** EP-19-S12
+- **Status:** Not started
 - **Title:** System can settle a job when its parcel is released (G23)
 - **As a:** System
 - **I want:** a Settle Job function that the parcel release of EP-23 calls inside its own transaction, which records gold issued, net returned, the allowance in force, the allowed loss and the loss, sets `settledAt`, and flags a loss above the allowance
@@ -297,6 +309,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S13: Staff can start an order copy from a sold-out design (G3)
 
 - **Story ID:** EP-19-S13
+- **Status:** Not started
 - **Title:** Staff can start an order copy from a sold-out design (G3)
 - **As a:** Staff
 - **I want:** "Order another from Vijay" on a sold-out design to open `order-copy` as a draft with the design, its category and style, and the named karigar filled in, and every weight empty
@@ -321,6 +334,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S14: System can audit order copy and job changes
 
 - **Story ID:** EP-19-S14
+- **Status:** Not started
 - **Title:** System can audit order copy and job changes
 - **As a:** System
 - **I want:** every write on order copies and jobs to write one audit entry in its own transaction, with fixed action names `order_copy_sent`, `job_accepted`, `job_started`, `job_ready`, `job_handed_over`, `job_cancelled`, `job_overdue` and `job_settled`, and a test that fails if any job write has none

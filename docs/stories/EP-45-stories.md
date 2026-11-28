@@ -11,6 +11,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S1: System can show the setup wizard only until setup is complete
 
 - **Story ID:** EP-45-S1
+- **Status:** Not started
 - **Title:** System can show the setup wizard only until setup is complete
 - **As a:** System
 - **I want:** a Read Setup status operation, a server-side setup gate that sends every route to the wizard while the shop's `setup completed at` is empty, and a Check Setup key operation that opens steps 1 and 2 only for a caller holding the one-time setup key from environment configuration
@@ -35,6 +36,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S2: Owner can enter the shop details: name, address, GSTIN and logo
 
 - **Story ID:** EP-45-S2
+- **Status:** Not started
 - **Title:** Owner can enter the shop details: name, address, GSTIN and logo
 - **As a:** Owner
 - **I want:** step 1 of the wizard, where I enter the shop name, the address, the GSTIN if the shop has one, and upload the shop logo
@@ -60,6 +62,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S3: Owner can create the owner account and get the activation email
 
 - **Story ID:** EP-45-S3
+- **Status:** Not started
 - **Title:** Owner can create the owner account and get the activation email
 - **As a:** Owner
 - **I want:** step 2 of the wizard, where I enter my name, phone and email, and then get an activation email that lets me set my own password
@@ -84,6 +87,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S4: Owner can resume setup after activating his account and signing in
 
 - **Story ID:** EP-45-S4
+- **Status:** Not started
 - **Title:** Owner can resume setup after activating his account and signing in
 - **As a:** Owner
 - **I want:** after I set my password from the activation email and sign in with my phone and password, to land back in the wizard at the first unfinished step
@@ -107,6 +111,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S5: Owner can register the shop's scales and their readability
 
 - **Story ID:** EP-45-S5
+- **Status:** Not started
 - **Title:** Owner can register the shop's scales and their readability
 - **As a:** Owner
 - **I want:** step 3 of the wizard, where I add each balance in the shop with its name, its smallest step (readability) and its heaviest load
@@ -131,6 +136,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S6: Owner can set the lead response time and opening hours
 
 - **Story ID:** EP-45-S6
+- **Status:** Not started
 - **Title:** Owner can set the lead response time and opening hours
 - **As a:** Owner
 - **I want:** step 4 of the wizard, where I confirm or change the lead response time (8 hours unless I change it) and enter the shop's opening and closing times for each weekday
@@ -155,6 +161,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S7: Owner can invite the first staff and karigars
 
 - **Story ID:** EP-45-S7
+- **Status:** Not started
 - **Title:** Owner can invite the first staff and karigars
 - **As a:** Owner
 - **I want:** step 5 of the wizard, where I add my first staff and karigars with name, phone, email and role, and each gets an activation email; or skip the step and add people later
@@ -179,6 +186,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S8: Owner can finish setup so the wizard is never shown again
 
 - **Story ID:** EP-45-S8
+- **Status:** Not started
 - **Title:** Owner can finish setup so the wizard is never shown again
 - **As a:** Owner
 - **I want:** a "Finish setup" button on the last step that checks every required step is done, closes the wizard and takes me to my home
@@ -203,6 +211,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S9: System can audit every setup step
 
 - **Story ID:** EP-45-S9
+- **Status:** Not started
 - **Title:** System can audit every setup step
 - **As a:** System
 - **I want:** each setup step (shop created, first owner created, each step done or skipped, setup completed, setup session opened, setup key refused) to write an audit entry in the same transaction, with actor "setup" or the owner, time and the values stored

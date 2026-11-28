@@ -9,6 +9,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S1: System can store devices and link a balance to a registered scale
 
 - **Story ID:** EP-36-S1
+- **Status:** Not started
 - **Title:** System can store devices and link a balance to a registered scale
 - **As a:** System
 - **I want:** a `devices` table holding each balance, label printer, sheet printer and scanner with its kind, model, counter, active flag and, for a balance, the one registered scale it is linked to, plus a List Devices operation
@@ -33,6 +34,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S2: System can record whether each weight was read or typed
 
 - **Story ID:** EP-36-S2
+- **Status:** Not started
 - **Title:** System can record whether each weight was read or typed
 - **As a:** System
 - **I want:** every weighing on a parcel and every gross and stone figure on a piece to store its source (`read` or `typed`) and the device id when it was read, set by the save operations of EP-21
@@ -57,6 +59,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S3: Owner can set up the balance and printer for a counter
 
 - **Story ID:** EP-36-S3
+- **Status:** Not started
 - **Title:** Owner can set up the balance and printer for a counter
 - **As a:** Owner
 - **I want:** a device setup panel on `scales` where I add a device, pick its kind and model, set its counter, link a balance to a registered scale, and switch a device off, through Create Device and Update Device
@@ -81,6 +84,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S4: Staff can read a stable weight from the balance on parcel arrival
 
 - **Story ID:** EP-36-S4
+- **Status:** Not started
 - **Title:** Staff can read a stable weight from the balance on parcel arrival
 - **As a:** Staff
 - **I want:** a "Read from balance" control beside "Everything on the scale together" and "Of that, the stones, pearls, lac — anything not gold" on `parcel-arrival`, for the whole parcel and for each tray, that fills the field only once the balance reports a stable value
@@ -105,6 +109,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S5: Staff can read gross and stone weights from the balance when tagging
 
 - **Story ID:** EP-36-S5
+- **Status:** Not started
 - **Title:** Staff can read gross and stone weights from the balance when tagging
 - **As a:** Staff
 - **I want:** a "Read from balance" control beside "On the scale now" and "Stones, kemp, lac on this piece" on `parcel-tag`, each taking a fresh stable reading for the piece in front of me
@@ -129,6 +134,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S6: System can set the scale id from the device that gave the reading
 
 - **Story ID:** EP-36-S6
+- **Status:** Not started
 - **Title:** System can set the scale id from the device that gave the reading
 - **As a:** System
 - **I want:** the server to take the scale id of any `read` figure from the linked scale of the named balance device, ignoring any scale id the client sends for it, and to refuse a reading whose scale is not in the registry
@@ -152,6 +158,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S7: Staff can fall back to typing a weight when no device is connected
 
 - **Story ID:** EP-36-S7
+- **Status:** Not started
 - **Title:** Staff can fall back to typing a weight when no device is connected
 - **As a:** Staff
 - **I want:** to type any weight and pick the scale by hand on `parcel-arrival` and `parcel-tag` whenever the balance is missing, switched off or drops mid-form, without losing what I have entered
@@ -175,6 +182,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S8: Staff can print a tag label with a barcode
 
 - **Story ID:** EP-36-S8
+- **Status:** Not started
 - **Title:** Staff can print a tag label with a barcode
 - **As a:** Staff
 - **I want:** to print a label for a saved piece on the counter's label printer, showing the tag number as a barcode and as text, with the other agreed fields and no price, through Read Tag label and Create Label print record
@@ -199,6 +207,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S9: Staff can reprint a tag label
 
 - **Story ID:** EP-36-S9
+- **Status:** Not started
 - **Title:** Staff can reprint a tag label
 - **As a:** Staff
 - **I want:** to reprint the label of a saved piece from the tag screen or the piece drawer on `stock`, with the same content as the first label
@@ -222,6 +231,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S10: Staff can print the parcel sheet from the match screen (G8)
 
 - **Story ID:** EP-36-S10
+- **Status:** Not started
 - **Title:** Staff can print the parcel sheet from the match screen (G8)
 - **As a:** Staff
 - **I want:** "Print parcel sheet" on `parcel-match` to print a sheet with the parcel id, karigar, order, each weighing with its scale name, and every item with its tag number and three weights, through Read Parcel sheet
@@ -245,6 +255,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S11: Staff can scan a tag to add a piece to a stock-out
 
 - **Story ID:** EP-36-S11
+- **Status:** Not started
 - **Title:** Staff can scan a tag to add a piece to a stock-out
 - **As a:** Staff
 - **I want:** to scan a tag barcode into "Scan another tag" on `stock-out` and have the piece join "WHAT IS LEAVING THE SHOWCASE" with its photo and name, through Read Piece by scanned tag
@@ -269,6 +280,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S12: System can refuse a scanned tag that is not in stock
 
 - **Story ID:** EP-36-S12
+- **Status:** Not started
 - **Title:** System can refuse a scanned tag that is not in stock
 - **As a:** System
 - **I want:** a scanned tag that is sold, scrapped, stopped, not yet released or unknown to be refused with exactly the same sentence as the same tag typed by hand

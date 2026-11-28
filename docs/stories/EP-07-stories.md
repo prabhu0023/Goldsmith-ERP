@@ -9,6 +9,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S1: System can publish an event only after its operation's transaction commits
 
 - **Story ID:** EP-07-S1
+- **Status:** Done
 - **Title:** System can publish an event only after its operation's transaction commits
 - **As a:** System
 - **I want:** service functions to record each event they cause in an outbox row inside the operation's transaction, and a publisher to send the event to the live channel only once that transaction has committed
@@ -33,6 +34,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S2: System can stamp each event with a sequence number, entity id and version
 
 - **Story ID:** EP-07-S2
+- **Status:** Partial: AC5 (stock screen shows the refetched piece) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - **Title:** System can stamp each event with a sequence number, entity id and version
 - **As a:** System
 - **I want:** every published event to carry one envelope: sequence number, event name, entity type, entity id, entity version, emitted at (UTC) and audience, and no business values
@@ -57,6 +59,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S3: User can open an authenticated live connection
 
 - **Story ID:** EP-07-S3
+- **Status:** Done
 - **Title:** User can open an authenticated live connection
 - **As a:** Staff
 - **I want:** my browser to open one live connection when I sign in, authenticated with my session, and keep it open while any screen is open
@@ -81,6 +84,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S4: System can subscribe a connection to its user and role channels
 
 - **Story ID:** EP-07-S4
+- **Status:** Done
 - **Title:** System can subscribe a connection to its user and role channels
 - **As a:** System
 - **I want:** each new connection to join its user channel and its role channel automatically, and to join or leave an entity channel (for example one parcel) when the client asks
@@ -105,6 +109,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S5: System can filter every event by the receiver's permissions
 
 - **Story ID:** EP-07-S5
+- **Status:** Done
 - **Title:** System can filter every event by the receiver's permissions
 - **As a:** System
 - **I want:** the channel to check, for each event and each subscribed connection, that the receiving user may read the entity under EP-05 before delivering it
@@ -128,6 +133,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S6: Karigar can receive only events about their own jobs
 
 - **Story ID:** EP-07-S6
+- **Status:** Done
 - **Title:** Karigar can receive only events about their own jobs
 - **As a:** Karigar
 - **I want:** my phone to get live updates only for jobs issued to me and for my own account
@@ -152,6 +158,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S7: User can reconnect and catch up from the last sequence number
 
 - **Story ID:** EP-07-S7
+- **Status:** Done
 - **Title:** User can reconnect and catch up from the last sequence number
 - **As a:** Staff
 - **I want:** my browser to reconnect on its own after the connection drops, send the last sequence number it received, and get every event it missed in order
@@ -176,6 +183,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S8: Staff can see who else is working on the same parcel
 
 - **Story ID:** EP-07-S8
+- **Status:** Done
 - **Title:** Staff can see who else is working on the same parcel
 - **As a:** Staff
 - **I want:** to see the names of the other staff who have the same parcel open on `parcel-tag` or `parcel-match`, updated live as they join and leave
@@ -200,6 +208,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S9: User can see rail badge counts update live
 
 - **Story ID:** EP-07-S9
+- **Status:** Partial: no rail badge is server-backed yet; each moves to server counts with its screen (FU-012).
 - **Title:** User can see rail badge counts update live
 - **As a:** Owner
 - **I want:** the counts on the rail items (Decisions, Leads, Parcels in, Showroom stock) to change within about a second of a relevant event, recomputed from server data
@@ -224,6 +233,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S10: System can close a user's connections when they are deactivated or re-roled
 
 - **Story ID:** EP-07-S10
+- **Status:** Done
 - **Title:** System can close a user's connections when they are deactivated or re-roled
 - **As a:** System
 - **I want:** the channel to consume "User deactivated or role changed", deliver it to that user's open connections, then close them and drop their subscriptions and presence
@@ -247,6 +257,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S11: System can carry each of the 10 catalogue events to its audience
 
 - **Story ID:** EP-07-S11
+- **Status:** Partial: AC4 (stock screen drops a billed piece live) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - **Title:** System can carry each of the 10 catalogue events to its audience
 - **As a:** System
 - **I want:** the 10 catalogue events registered in the shared package with their entity type and audience channels, so that an emitting epic only names the event and the channel routes it
@@ -271,6 +282,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S12: Developer can test two browsers receiving each other's events
 
 - **Story ID:** EP-07-S12
+- **Status:** Partial: AC1 runs against a stand-in read until the piece read of EP-22 exists (FU-013).
 - **Title:** Developer can test two browsers receiving each other's events
 - **As a:** Developer
 - **I want:** an automated test that signs in two browsers as different staff on staging, makes a change in one and checks the other receives the event and refetches, plus a short manual demo script

@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S1: System can store scales with readability and capacity as integer weights
 
 - **Story ID:** EP-14-S1
+- **Status:** Not started
 - **Title:** System can store scales with readability and capacity as integer weights
 - **As a:** System
 - **I want:** the `scales` table from EP-02-S4 extended with status (`active` or `retired`), counter key (nullable), shop ID (D7), created at, retired at and version, with readability and capacity kept as integers in units of 0.0001 g, plus a List Scales operation that returns active scales by default and all scales when asked
@@ -34,6 +35,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S2: System can seed the bench balance and platform scale for dev
 
 - **Story ID:** EP-14-S2
+- **Status:** Not started
 - **Title:** System can seed the bench balance and platform scale for dev
 - **As a:** System
 - **I want:** the dev and staging seed to create two active scales, "Bench balance" reading to 0.0001 g up to 600 g and "Platform scale" reading to 0.01 g up to 30 kg, with the new registry columns filled
@@ -57,6 +59,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S3: Owner can register a scale
 
 - **Story ID:** EP-14-S3
+- **Status:** Not started
 - **Title:** Owner can register a scale
 - **As a:** Owner
 - **I want:** to add a scale on `scales` with a name, a smallest step in grams and a heaviest load in grams, through a Create Scale operation that returns the new id
@@ -82,6 +85,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S4: System can refuse scale changes from anyone but the owner
 
 - **Story ID:** EP-14-S4
+- **Status:** Not started
 - **Title:** System can refuse scale changes from anyone but the owner
 - **As a:** System
 - **I want:** Create Scale, Update Scale, Update Scale status and Update Scale assignment to check the caller's role on the server before validation, and refuse every role other than owner with "Only the owner can change the scales."
@@ -106,6 +110,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S5: Owner can edit a scale's name, readability and capacity
 
 - **Story ID:** EP-14-S5
+- **Status:** Not started
 - **Title:** Owner can edit a scale's name, readability and capacity
 - **As a:** Owner
 - **I want:** to open a scale on `scales` and change its name, smallest step or heaviest load, saving with the version I last read
@@ -130,6 +135,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S6: System can apply the decided rule when a scale used by open parcels is edited
 
 - **Story ID:** EP-14-S6
+- **Status:** Not started
 - **Title:** System can apply the decided rule when a scale used by open parcels is edited
 - **As a:** System
 - **I want:** an Update Scale that changes readability to first find the open parcels (not yet released) with weighings on that scale, and then apply one decided rule: either each weighing keeps the readability it was taken with, or the edit is refused while the scale is in use
@@ -154,6 +160,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S7: Owner can retire a scale
 
 - **Story ID:** EP-14-S7
+- **Status:** Not started
 - **Title:** Owner can retire a scale
 - **As a:** Owner
 - **I want:** to retire a scale that is no longer used, and reactivate it if I retired it by mistake, through Update Scale status
@@ -178,6 +185,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S8: Owner can assign a scale to a counter
 
 - **Story ID:** EP-14-S8
+- **Status:** Not started
 - **Title:** Owner can assign a scale to a counter
 - **As a:** Owner
 - **I want:** to set which counter a scale sits at, through Update Scale assignment
@@ -202,6 +210,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S9: Staff can have their last scale remembered for the session
 
 - **Story ID:** EP-14-S9
+- **Status:** Not started
 - **Title:** Staff can have their last scale remembered for the session
 - **As a:** Staff
 - **I want:** the scale picker on `parcel-arrival` and `parcel-tag` to default to the scale I picked last in this session, stored on the server per user, and cleared when I sign out
@@ -226,6 +235,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S10: System can compute the ceiling server-side from the registry
 
 - **Story ID:** EP-14-S10
+- **Status:** Not started
 - **Title:** System can compute the ceiling server-side from the registry
 - **As a:** System
 - **I want:** one ceiling function in the shared package, `ceiling = Σ ½ × readability` over every weighing, that reads each weighing's scale from the registry, returns rows per scale with count and subtotal, the total and a plain line, and runs on the server as the authority while the client runs the same code for instant feedback
@@ -251,6 +261,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S11: Staff can see a warning when a weight is above the scale's capacity
 
 - **Story ID:** EP-14-S11
+- **Status:** Not started
 - **Title:** Staff can see a warning when a weight is above the scale's capacity
 - **As a:** Staff
 - **I want:** a warning beside the weight field, naming the capacity, as soon as I type a weight above the chosen scale's heaviest load, and the same warning returned by the server when the weighing is saved
@@ -275,6 +286,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S12: System can audit every scale change
 
 - **Story ID:** EP-14-S12
+- **Status:** Not started
 - **Title:** System can audit every scale change
 - **As a:** System
 - **I want:** every committed add, edit, retire, reactivate and assignment of a scale to write an audit entry in the same transaction, with actor, time, scale id, action and before and after values

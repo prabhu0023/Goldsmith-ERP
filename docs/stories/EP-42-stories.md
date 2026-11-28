@@ -9,6 +9,7 @@ Role note: this is a layer F (Later) epic and the only epic with price logic. St
 ## EP-42-S1: System can store money as integers in the decided unit
 
 - **Story ID:** EP-42-S1
+- **Status:** Later
 - **Title:** System can store money as integers in the decided unit
 - **As a:** System
 - **I want:** every money column (`pieces.valueINR`, `customers.budgetINR`, `customers.spentINR`, `stock_outs.amountINR` and the new gold rate per gram) to be an integer column in one decided money unit, with shared helpers that convert to and from the display string and one rounding rule applied once at the end of a computation
@@ -35,6 +36,7 @@ Role note: this is a layer F (Later) epic and the only epic with price logic. St
 Cross-reference: the owner-only check on `pricingEnabled` is built in EP-13-S9 and tested in EP-39-S11; this story confirms it holds for the pricing switch and extends the same check to the gold rate operations.
 
 - **Story ID:** EP-42-S2
+- **Status:** Later
 - **Title:** System can refuse a pricing switch change from anyone but the owner (G12)
 - **As a:** System
 - **I want:** Update Pricing switch and Create Gold rate (by hand) to be refused on the server for every caller who is not the owner, and the AppShell `PricingToggle` dev switch to be gone from every build
@@ -61,6 +63,7 @@ Cross-reference: the owner-only check on `pricingEnabled` is built in EP-13-S9 a
 Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write the `setting_changed` entry for `pricingEnabled`; this story adds the pricing-specific checks.
 
 - **Story ID:** EP-42-S3
+- **Status:** Later
 - **Title:** System can audit every change of the pricing switch
 - **As a:** System
 - **I want:** every accepted change of `pricingEnabled` to write one `setting_changed` entry with ref `pricingEnabled`, before and after, in the same transaction as the change
@@ -85,6 +88,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S4: Owner can enter or confirm the day's gold rate
 
 - **Story ID:** EP-42-S4
+- **Status:** Later
 - **Title:** Owner can enter or confirm the day's gold rate
 - **As a:** Owner
 - **I want:** a gold rate page where I type today's rate per gram (per purity if decided), or confirm a fetched rate, and see past rates with their date, source and who entered them
@@ -109,6 +113,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S5: System can fetch the day's gold rate from the chosen source
 
 - **Story ID:** EP-42-S5
+- **Status:** Later
 - **Title:** System can fetch the day's gold rate from the chosen source
 - **As a:** System
 - **I want:** a scheduled job that, if a provider is chosen, fetches the day's rate each morning in Asia/Kolkata, stores it with source `provider`, and retries with backoff when the provider fails
@@ -133,6 +138,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S6: Owner can turn pricing on and off
 
 - **Story ID:** EP-42-S6
+- **Status:** Later
 - **Title:** Owner can turn pricing on and off
 - **As a:** Owner
 - **I want:** the Pricing switch on the settings page to reveal every value socket when I turn it on, and hide them all again when I turn it off, keeping every stored amount
@@ -157,6 +163,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S7: Staff can see the day's rate chip in the top bar
 
 - **Story ID:** EP-42-S7
+- **Status:** Later
 - **Title:** Staff can see the day's rate chip in the top bar
 - **As a:** Staff
 - **I want:** a rate chip in the top bar, such as "22K today ₹X/g", while Pricing is on, with the rate's date and source when it is not today's
@@ -181,6 +188,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S8: System can compute a piece's value at the day's rate by the agreed formula
 
 - **Story ID:** EP-42-S8
+- **Status:** Later
 - **Title:** System can compute a piece's value at the day's rate by the agreed formula
 - **As a:** System
 - **I want:** one shared function that takes a piece's integer weights in units of 0.0001 g, its purity, and the day's rate, and returns the piece value as an integer in the decided unit by the formula the owner signs off, rounding once at the end
@@ -205,6 +213,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S9: Staff can see piece value on the stock card and piece drawer
 
 - **Story ID:** EP-42-S9
+- **Status:** Later
 - **Title:** Staff can see piece value on the stock card and piece drawer
 - **As a:** Staff
 - **I want:** the "Value at today's rate" line below pure gold and gross · stones on each stock card, and a "Value" row in the piece drawer, both filled from the server through `ValueSlot` while Pricing is on
@@ -229,6 +238,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S10: Staff can see the value column and total on a stock-out
 
 - **Story ID:** EP-42-S10
+- **Status:** Later
 - **Title:** Staff can see the value column and total on a stock-out
 - **As a:** Staff
 - **I want:** the "value · when on" column on `stock-out` to show each piece's value at today's rate, and "total value" under the sale list to show their sum, next to the pure gold total
@@ -253,6 +263,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S11: Staff can record the invoice amount on a stock-out
 
 - **Story ID:** EP-42-S11
+- **Status:** Later
 - **Title:** Staff can record the invoice amount on a stock-out
 - **As a:** Staff
 - **I want:** an invoice amount on the stock-out form while Pricing is on, stored in `amountINR` in the same transaction that marks the pieces billed
@@ -277,6 +288,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S12: Owner can see the value band on the Decisions home
 
 - **Story ID:** EP-42-S12
+- **Status:** Later
 - **Title:** Owner can see the value band on the Decisions home
 - **As a:** Owner
 - **I want:** "Worth at today's rate" under "Gold on the floor" in the WHERE THE GOLD IS RIGHT NOW block, computed on the server from the in-stock pieces and today's rate
@@ -301,6 +313,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S13: Owner can set a customer budget and see spend history
 
 - **Story ID:** EP-42-S13
+- **Status:** Later
 - **Title:** Owner can set a customer budget and see spend history
 - **As a:** Owner
 - **I want:** to set a budget on a customer record and see "Budget · spent" with a spend history built from stock-outs linked to that customer, each by tag, grams, invoice number and amount
@@ -325,6 +338,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S14: System can keep all values out of karigar responses
 
 - **Story ID:** EP-42-S14
+- **Status:** Later
 - **Title:** System can keep all values out of karigar responses
 - **As a:** System
 - **I want:** every response and live event sent to a karigar to carry no value, rate, budget, spend or invoice amount field, whatever the Pricing switch says, and an automated test that checks every karigar-readable operation
@@ -349,6 +363,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S15: System can refresh open screens when pricing or the rate changes
 
 - **Story ID:** EP-42-S15
+- **Status:** Later
 - **Title:** System can refresh open screens when pricing or the rate changes
 - **As a:** System
 - **I want:** to publish "Gold rate changed" after a new rate for today commits, and to map it and "Setting changed" for `pricingEnabled` to the reads behind the rate chip, stock cards, piece drawer, stock-out values, customer budget and the Decisions value band

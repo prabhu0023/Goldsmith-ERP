@@ -9,6 +9,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S1: System can compute the scale ceiling from the registry on the server
 
 - **Story ID:** EP-23-S1
+- **Status:** Not started
 - **Title:** System can compute the scale ceiling from the registry on the server
 - **As a:** System
 - **I want:** to collect every weighing of a parcel (each parcel or tray weighing from EP-21 and each piece weighing on a tag), take the readability of the scale recorded on each one, pass them to the EP-14-S10 ceiling function, and keep the exact ceiling and its plain line on the parcel's verdict snapshot
@@ -33,6 +34,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S2: System can compute gaps and a verdict for a parcel
 
 - **Story ID:** EP-23-S2
+- **Status:** Not started
 - **Title:** System can compute gaps and a verdict for a parcel
 - **As a:** System
 - **I want:** one shared function, Evaluate Parcel, that the server runs as the authority after every weighing or tag change, which returns `incomplete` until the parcel is weighed and every listed item is tagged, and otherwise the signed gaps on gross, stones and pure gold (tags minus parcel), the worst gap, the ceiling from EP-23-S1, and the verdict `exact`, `last_digit` or `mismatch`
@@ -57,6 +59,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S3: Staff can see the live verdict while tagging
 
 - **Story ID:** EP-23-S3
+- **Status:** Not started
 - **Title:** Staff can see the live verdict while tagging
 - **As a:** Staff
 - **I want:** the "Match and release" step (`parcel-match`) to show "EVERY ITEM ON THE LIST MUST BE TAGGED" with "12 of 12 tagged", the table "THE PARCEL SAID", "THE 12 TAGS SAY" and "GAP" for "On the scale", "Stones, pearls, lac" and "Pure gold", and the gauge "THE GAP ON PURE GOLD, EITHER WAY", all read from the server and updated within about a second whenever anyone saves a tag
@@ -81,6 +84,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S4: Staff can release an exact match into stock
 
 - **Story ID:** EP-23-S4
+- **Status:** Not started
 - **Title:** Staff can release an exact match into stock
 - **As a:** Staff
 - **I want:** to press "Release 12 pieces into stock" on `parcel-match` when the verdict is `exact` and every piece has passed its three quality checks, with the note "Releasing also closes Mahesh Soni's job and settles the gold issued against it."
@@ -105,6 +109,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S5: Staff can release a last-digit match with an audit entry
 
 - **Story ID:** EP-23-S5
+- **Status:** Not started
 - **Title:** Staff can release a last-digit match with an audit entry
 - **As a:** Staff
 - **I want:** to release a parcel whose verdict is `last_digit` the same way as an exact match, with the screen telling me the gap is within what the scales could cause, and the server writing an audit entry with the gap
@@ -129,6 +134,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S6: System can refuse a staff release of a mismatch
 
 - **Story ID:** EP-23-S6
+- **Status:** Not started
 - **Title:** System can refuse a staff release of a mismatch
 - **As a:** System
 - **I want:** Create Parcel release to refuse any parcel whose server verdict is `mismatch` or `incomplete`, whatever the caller sends, with the prototype sentences
@@ -153,6 +159,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S7: System can stop a mismatched parcel and notify the owner
 
 - **Story ID:** EP-23-S7
+- **Status:** Not started
 - **Title:** System can stop a mismatched parcel and notify the owner
 - **As a:** System
 - **I want:** when an evaluation inside a tag save or weighing change gives `mismatch`, to set the parcel `status` to `stopped` with `stoppedAt` from the server clock, move its draft pieces to `with_owner`, and publish "Parcel stopped (mismatch or raised problem)" so the owner is notified and parcel screens freeze
@@ -177,6 +184,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S8: System can settle the job and record the gap on release
 
 - **Story ID:** EP-23-S8
+- **Status:** Not started
 - **Title:** System can settle the job and record the gap on release
 - **As a:** System
 - **I want:** every release (staff release or owner accept-loss) to move all pieces to `in_stock`, call Settle Job for the parcel's job, and write one karigar gap row with the pure gold gap, all in the release transaction
@@ -201,6 +209,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S9: Owner can send a stopped parcel back to the karigar
 
 - **Story ID:** EP-23-S9
+- **Status:** Not started
 - **Title:** Owner can send a stopped parcel back to the karigar
 - **As a:** Owner
 - **I want:** on "Your three ways out" (`parcel-clear`), to press "Send it back" so the parcel is marked sent back, the karigar's job reopens to `on_bench`, and the pieces stay off the floor until he hands it over again
@@ -225,6 +234,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S10: Owner can point to one tag to re-check
 
 - **Story ID:** EP-23-S10
+- **Status:** Not started
 - **Title:** Owner can point to one tag to re-check
 - **As a:** Owner
 - **I want:** on `parcel-clear`, to pick one tag in "Tag to redo" and press "Point to a tag to redo", so only that tag reopens for staff while the parcel stays stopped, and the parcel is judged again when the tag is saved
@@ -249,6 +259,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S11: Owner can accept the loss with a reason
 
 - **Story ID:** EP-23-S11
+- **Status:** Not started
 - **Title:** Owner can accept the loss with a reason
 - **As a:** Owner
 - **I want:** on `parcel-clear`, to type a reason in "Reason — why this loss is acceptable" and press "Release with the loss booked", so the parcel is released with the loss and my reason kept against my name
@@ -273,6 +284,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S12: System can serialise release against late tag saves
 
 - **Story ID:** EP-23-S12
+- **Status:** Not started
 - **Title:** System can serialise release against late tag saves
 - **As a:** System
 - **I want:** release, tag save, re-check, send-back and accept-loss to take the same row lock on the parcel and carry the parcel version, so they run one at a time and each sees the state the previous one left
@@ -297,6 +309,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S13: Owner can see the karigar's last six gaps (G4)
 
 - **Story ID:** EP-23-S13
+- **Status:** Not started
 - **Title:** Owner can see the karigar's last six gaps (G4)
 - **As a:** Owner
 - **I want:** the "IS THIS LIKE HIM?" panel on `parcel-clear` to show the karigar's name and code, the gold issued on this job, his last six parcel gold gaps, today's gap against his usual, and a plain line
@@ -321,6 +334,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S14: Staff can see a tray stop while the rest release (G15)
 
 - **Story ID:** EP-23-S14
+- **Status:** Not started
 - **Title:** Staff can see a tray stop while the rest release (G15)
 - **As a:** Staff
 - **I want:** for a parcel weighed in trays, the server to judge each tray on its own (tray weighing against the tags linked to that tray, with the tray's own ceiling), stop only a tray that does not match, and let me release the pieces of every matching tray
