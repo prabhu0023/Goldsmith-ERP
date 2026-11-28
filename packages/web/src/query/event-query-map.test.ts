@@ -81,7 +81,7 @@ describe('event to query map (S8 AC2)', () => {
     expect(opsOf('karigar_job.status_changed')).toEqual(expect.arrayContaining(['readJob', 'listDecisions', 'readMyJob']));
     expect(opsOf('parcel.handed_over')).toEqual(expect.arrayContaining(['listParcels', 'readTodayCards']));
     expect(opsOf('tag.saved')).toEqual(['readParcel']);
-    expect(opsOf('metal_pool.changed')).toEqual(['readMetalPool']);
+    expect(opsOf('metal_pool.changed')).toEqual(['readPoolBalance', 'listPoolEntries', 'readCustodySummary', 'readGoldWithKarigar']);
   });
 
   it('S15 AC5: another user\'s change refetches the user list; the signed-in user\'s own access event refetches nothing', () => {

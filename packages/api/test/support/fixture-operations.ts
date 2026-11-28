@@ -19,7 +19,7 @@ import { z } from 'zod';
 import { nextCode } from '../../src/db/codes.js';
 import { insertScoped } from '../../src/db/shop-context.js';
 import { updateVersioned } from '../../src/db/versioned.js';
-import { NotFoundError } from '../../src/pipeline/api-errors.js';
+import { ApiError, NotFoundError } from '../../src/pipeline/api-errors.js';
 import type { Tx } from '../../src/pipeline/operation-transaction.js';
 import { clampPageSize, pageQuery } from '../../src/pipeline/paging.js';
 import type { Handlers, OperationCtx } from '../../src/pipeline/registry.js';
@@ -88,6 +88,13 @@ export const testContract = {
     name: 'writeThenRefuse',
     kind: 'command',
     input: z.object(pieceRef),
+    result: okResult,
+    errors: ERROR_CODES,
+  }),
+  refuseWithCode: defineOperation({
+    name: 'refuseWithCode',
+    kind: 'command',
+    input: z.object({ code: z.enum(['pool_insufficient', 'opening_exists']) }),
     result: okResult,
     errors: ERROR_CODES,
   }),
@@ -248,6 +255,10 @@ export function createFixtureHandlers(options: FixtureOptions = {}): Handlers<Te
       throw new DomainError(REFUSAL_SENTENCE);
     },
 
+    async refuseWithCode(_tx, _ctx, input) {
+      throw new ApiError(input.code, `Refused with ${input.code}.`);
+    },
+
     async writeThenCrash(tx, ctx, input) {
       await touchNote(tx, ctx, input.pieceId, 'written before the crash');
       throw new Error('boom at /secret/path.ts');
@@ -275,7 +286,8 @@ export function createFixtureHandlers(options: FixtureOptions = {}): Handlers<Te
         at: ctx.at,
         kind: 'recovered',
         delta_units: 1000,
-        reference: input.parcelId,
+        ref_type: 'piece',
+        ref_id: input.parcelId,
       });
       tx.afterCommit(() => onCommit('parcelWithPoolEntry'));
       return { ok: true };

@@ -1,11 +1,13 @@
 import { ArrowLeft, Check } from 'lucide-react';
 import { useState } from 'react';
 import { DAY, startOfDay } from '@goldsmith/shared';
-import { fmtG, parseWeight, round4 } from '@goldsmith/shared';
+import { fmtG, isOverPool, parseWeight, round4 } from '@goldsmith/shared';
 import { imageList } from '../../data/images';
+import { useQuery } from '../../query/use-query';
 import { useStore } from '../../store/StoreProvider';
 import type { Karigar, Lead, LeadItem } from '@goldsmith/shared';
-import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, Textarea, cn } from '../ui';
+import { ActionButton, Button, Card, Field, Input, Notice, PageHeader, QueryBoundary, SectionLabel, Select, Textarea, cn } from '../ui';
+import { poolBalanceQuery } from '../pool/pool-queries';
 import { fromDateInput, toDateInput } from './util';
 
 const words = (t: string): string[] => t.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 2);
@@ -45,8 +47,10 @@ function pickKarigar(karigars: Karigar[], item: LeadItem): string {
   return (hit ?? karigars[0])?.id ?? '';
 }
 
-function Builder({ lead, item }: { lead: Lead; item: LeadItem }) {
+export function Builder({ lead, item }: { lead: Lead; item: LeadItem }) {
   const { state, actions, go, now } = useStore();
+  // The pool balance is the server's (EP-18); the rest of this screen stays on the prototype store until EP-19.
+  const balance = useQuery(poolBalanceQuery);
   const [imageIds, setImageIds] = useState<string[]>(() => {
     const w = words(`${item.name} ${item.style}`);
     return imageList.filter((im) => words(im.label).some((x) => w.includes(x))).map((im) => im.id);
@@ -72,7 +76,8 @@ function Builder({ lead, item }: { lead: Lead; item: LeadItem }) {
     karigar && grossG !== null && Number.isInteger(qtyN) && qtyN > 0 ? round4(qtyN * grossG * (1 + karigar.wastagePct / 100)) : null;
   const goldShown = goldText ?? (autoGold === null ? '' : autoGold.toFixed(4));
   const goldG = parseWeight(goldShown);
-  const overPool = goldG !== null && goldG > state.pool.balanceG;
+  // A warning only: the server decides when the gold is issued.
+  const overPool = balance.data !== undefined && isOverPool(balance.data.balanceUnits, goldShown);
 
   const toggleImage = (id: string) => setImageIds(imageIds.includes(id) ? imageIds.filter((x) => x !== id) : [...imageIds, id]);
 
@@ -215,20 +220,24 @@ function Builder({ lead, item }: { lead: Lead; item: LeadItem }) {
                   ? `${fmtG(round4(qtyN * (grossG ?? 0)))} g target + ${karigar.wastagePct}% wastage, from the metal pool`
                   : 'Fills in once you give how many and the weight'
               }
-              error={overPool ? `The metal pool only has ${fmtG(state.pool.balanceG)} g.` : undefined}
+              error={overPool && balance.data ? `The metal pool holds ${balance.data.balanceG} g.` : undefined}
             >
               <Input inputMode="decimal" className="font-mono" value={goldShown} onChange={(e) => setGoldText(e.target.value)} />
             </Field>
           </div>
-          <p className="mt-3 text-sm text-ink-3">Metal pool right now: {fmtG(state.pool.balanceG)} g.</p>
+          <div className="mt-3 text-sm text-ink-3">
+            <QueryBoundary label="metal pool balance" query={balance}>
+              {balance.data && <p>{balance.data.balanceG} g in the metal pool</p>}
+            </QueryBoundary>
+          </div>
         </Card>
 
         {error && <Notice tone="stop">{error}</Notice>}
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button variant="primary" size="lg" onClick={send} disabled={overPool}>
+          <ActionButton variant="primary" size="lg" onClick={send}>
             Send the order copy
-          </Button>
+          </ActionButton>
           <p className="text-sm text-ink-3">
             {karigar ? `Lands on ${karigar.name.split(' ')[0]}’s phone to accept.` : 'Pick who makes it.'}
           </p>

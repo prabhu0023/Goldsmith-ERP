@@ -16,7 +16,10 @@ const B_JOB = 'MO-2026-0B01';
 const B_LEAD = 'LD-2026-0B01';
 const B_RUN = 'JR-2026-0B001';
 const B_AUDIT_SUMMARY = 'Shop B private change';
-const B_TABLES = ['users', 'pieces', 'stored_files', 'attachments', 'karigar_jobs', 'leads', 'job_runs', 'audit_entries'];
+const B_POOL_NOTE = 'Shop B pool note 7731';
+const B_POOL_KARIGAR = 'KG-B-POOL';
+const B_POOL_JOB = 'MO-B-POOL-1';
+const B_TABLES = ['users', 'pieces', 'stored_files', 'attachments', 'karigar_jobs', 'leads', 'job_runs', 'audit_entries', 'metal_pools', 'pool_entries'];
 /** Every string value in a request body, however deep. */
 const stringsIn = (v: unknown): string[] =>
   typeof v === 'string' ? [v] : v && typeof v === 'object' ? Object.values(v).flatMap(stringsIn) : [];
@@ -68,6 +71,22 @@ describeDb('shop scoping over the production contract (EP-40-S5 AC8, D7)', () =>
        values ($1, $2, 'lead_sla_breach', now(), now(), 1, 'failed', 'Shop B run failure')`,
       [shopB.shopId, B_RUN],
     );
+    // Shop B's metal pool: an entry with a note, and a karigar with an open job holding gold.
+    const poolB = await h.pool.query<{ id: string }>(
+      'insert into metal_pools (shop_id, balance_units) values ($1, 7731) returning id',
+      [shopB.shopId],
+    );
+    await h.pool.query(
+      `insert into pool_entries (shop_id, location_id, metal_pool_id, code, at, kind, delta_units, note, actor_name)
+       values ($1, $2, $3, 'PL-001', now(), 'opening', 7731, $4, 'Bhavna')`,
+      [shopB.shopId, shopB.locationId, poolB.rows[0].id, B_POOL_NOTE],
+    );
+    const karigarB = await addKarigar(h.pool, shopB, B_POOL_KARIGAR);
+    await h.pool.query(
+      `insert into karigar_jobs (shop_id, code, karigar_id, status, target_gross_units, target_net_units, tolerance_units, gold_issued_units)
+       values ($1, $2, $3, 'on_bench', 100000, 90000, 500, 5551234)`,
+      [shopB.shopId, B_POOL_JOB, karigarB],
+    );
     bAuditId = (
       await h.pool.query<{ id: string }>(
         `insert into audit_entries (shop_id, at, actor_id, actor_name, actor_role, kind, entity_type, entity_id, summary)
@@ -85,6 +104,9 @@ describeDb('shop scoping over the production contract (EP-40-S5 AC8, D7)', () =>
       B_LEAD,
       B_RUN,
       B_AUDIT_SUMMARY,
+      B_POOL_NOTE,
+      B_POOL_JOB,
+      '555.1234',
       bAuditId,
       'Shop B run failure',
     ];
@@ -101,6 +123,10 @@ describeDb('shop scoping over the production contract (EP-40-S5 AC8, D7)', () =>
     ['listAttachments', () => ({ ownerType: 'piece', ownerId: 'TAG-8841' }), () => owner],
     ['readFileLinks', () => ({ files: [{ fileId: B_FILE, size: 'display' }] }), () => owner],
     ['readRailBadges', () => ({}), () => owner],
+    ['readPoolBalance', () => ({}), () => owner],
+    ['listPoolEntries', () => ({}), () => owner],
+    ['readCustodySummary', () => ({}), () => owner],
+    ['readGoldWithKarigar', () => ({ karigarId: 'KG-B-POOL' }), () => owner],
     ['listMyJobs', () => ({}), () => karigar],
     ['readMyJob', () => ({ jobId: B_JOB }), () => karigar],
   ];

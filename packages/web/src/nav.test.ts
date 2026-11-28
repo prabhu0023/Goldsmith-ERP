@@ -22,13 +22,13 @@ describe('route guard (EP-08 D-E, S13)', () => {
   const allIds = Object.keys(routeTitles) as RouteId[];
   it('owner-only routes are the owner rail minus the staff rail', () => {
     expect([...ownerOnlyRoutes].sort()).toEqual(
-      ['decisions', 'karigar-new', 'karigars', 'scales', 'security', 'staff-directory', 'staff-new'].sort(),
+      ['decisions', 'karigar-new', 'karigars', 'metal-pool', 'scales', 'security', 'staff-directory', 'staff-new'].sort(),
     );
   });
   it('the owner-only set agrees with the permission list', () => {
     const closedToStaff = (op: string) => !roleMay('staff', op) && roleMay('owner', op);
-    for (const op of ['listUsers', 'createUser', 'listAuditEntries', 'upsertScale', 'onboardKarigar']) expect(closedToStaff(op)).toBe(true);
-    for (const id of ['staff-directory', 'staff-new', 'security', 'scales', 'karigar-new']) expect(ownerOnlyRoutes.has(id as RouteId)).toBe(true);
+    for (const op of ['listUsers', 'createUser', 'listAuditEntries', 'upsertScale', 'onboardKarigar', 'listPoolEntries']) expect(closedToStaff(op)).toBe(true);
+    for (const id of ['staff-directory', 'staff-new', 'security', 'scales', 'karigar-new', 'metal-pool']) expect(ownerOnlyRoutes.has(id as RouteId)).toBe(true);
   });
   it('staff may open every route except the owner-only ones and k-jobs', () => {
     for (const id of allIds) expect(canOpenRoute('staff', id)).toBe(!ownerOnlyRoutes.has(id) && id !== 'k-jobs');

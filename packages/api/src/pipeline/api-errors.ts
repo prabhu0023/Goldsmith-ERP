@@ -15,6 +15,8 @@ export const HTTP_STATUS: Record<ErrorCode, number> = {
   not_found: 404,
   conflict: 409,
   rule_refused: 422,
+  pool_insufficient: 422,
+  opening_exists: 422,
   rate_limited: 429,
   internal: 500,
 };

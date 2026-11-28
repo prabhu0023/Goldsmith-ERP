@@ -26,6 +26,8 @@ describe('toErrorResponse (EP-03-S4, S5)', () => {
       not_found: 404,
       conflict: 409,
       rule_refused: 422,
+      pool_insufficient: 422,
+      opening_exists: 422,
       rate_limited: 429,
       internal: 500,
     });

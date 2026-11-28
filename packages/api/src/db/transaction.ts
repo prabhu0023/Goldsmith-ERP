@@ -5,6 +5,14 @@
  */
 import type pg from 'pg';
 
+/** Clients with an open transaction opened by withTransaction. */
+const open = new WeakSet<pg.PoolClient>();
+
+/** True while `client` is inside a transaction started by withTransaction. */
+export function isInTransaction(client: pg.PoolClient): boolean {
+  return open.has(client);
+}
+
 export async function withTransaction<T>(pool: pg.Pool, fn: (client: pg.PoolClient) => Promise<T>): Promise<T> {
   const client = await pool.connect();
   let broken: Error | undefined;
@@ -15,6 +23,7 @@ export async function withTransaction<T>(pool: pg.Pool, fn: (client: pg.PoolClie
   client.on('error', onError);
   try {
     await client.query('begin');
+    open.add(client);
     const result = await fn(client);
     await client.query('commit');
     return result;
@@ -24,6 +33,7 @@ export async function withTransaction<T>(pool: pg.Pool, fn: (client: pg.PoolClie
     });
     throw e;
   } finally {
+    open.delete(client);
     // A broken client keeps the listener: it is discarded, and a late error event must not crash.
     if (!broken) client.removeListener('error', onError);
     client.release(broken);

@@ -12,7 +12,16 @@ import { LIVE_CATALOGUE } from '@goldsmith/shared';
 import type { QueryRef } from './query-keys';
 
 /** Reads that exist in the contract today. */
-export const REAL_READS = ['readRailBadges', 'listUsers', 'readPiece', 'readMyJob'] as const satisfies readonly OperationName[];
+export const REAL_READS = [
+  'readRailBadges',
+  'listUsers',
+  'readPiece',
+  'readMyJob',
+  'readPoolBalance',
+  'listPoolEntries',
+  'readCustodySummary',
+  'readGoldWithKarigar',
+] as const satisfies readonly OperationName[];
 
 /**
  * Reads the epic names that have no contract operation yet; the epic that adds each is in the
@@ -30,7 +39,6 @@ export const PLANNED_READS = [
   'listLeads', // EP-28 leads inbox
   'readJob', // EP-19 order copy and karigar jobs
   'readKarigarJobs', // EP-20 karigar portal
-  'readMetalPool', // EP-18 metal pool ledger
 ] as const;
 
 export type ReadName = (typeof REAL_READS)[number] | (typeof PLANNED_READS)[number];
@@ -57,7 +65,7 @@ export const EVENT_QUERIES: Record<LiveTopic, (e: LiveEnvelope, me: EventMe) => 
   'karigar_job.status_changed': () => [R.readJob, R.readKarigarJobs, R.readMyJob, R.listDecisions],
   'parcel.handed_over': () => [R.listParcels, R.readTodayCards, R.readRailBadges],
   'tag.saved': () => [R.readParcel],
-  'metal_pool.changed': () => [R.readMetalPool],
+  'metal_pool.changed': () => [R.readPoolBalance, R.listPoolEntries, R.readCustodySummary, R.readGoldWithKarigar],
   // The signed-in user's own access ended: nothing to refetch, the bridge ends the session. For
   // another user (not sent today: the audience is that user) the owner's list is stale.
   'user.access_changed': (e, me) => (e.entityId === me.userId ? [] : [R.listUsers]),

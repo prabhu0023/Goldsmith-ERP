@@ -23,7 +23,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-15](stories/EP-15-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
 | [EP-16](stories/EP-16-stories.md) | 13 | 0 | 0 | 13 | 0 | 0 |
 | [EP-17](stories/EP-17-stories.md) | 14 | 0 | 0 | 14 | 0 | 0 |
-| [EP-18](stories/EP-18-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
+| [EP-18](stories/EP-18-stories.md) | 12 | 8 | 4 | 0 | 0 | 0 |
 | [EP-19](stories/EP-19-stories.md) | 14 | 0 | 0 | 14 | 0 | 0 |
 | [EP-20](stories/EP-20-stories.md) | 15 | 0 | 0 | 13 | 2 | 0 |
 | [EP-21](stories/EP-21-stories.md) | 14 | 0 | 0 | 14 | 0 | 0 |
@@ -51,7 +51,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-43](stories/EP-43-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-44](stories/EP-44-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-45](stories/EP-45-stories.md) | 9 | 0 | 0 | 9 | 0 | 0 |
-| Total | 586 | 107 | 17 | 419 | 4 | 39 |
+| Total | 586 | 115 | 21 | 407 | 4 | 39 |
 
 ## Partial stories
 
@@ -64,6 +64,10 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 - EP-07-S9 User can see rail badge counts update live: no rail badge is server-backed yet; each moves to server counts with its screen (FU-012).
 - EP-07-S11 System can carry each of the 10 catalogue events to its audience: AC4 (stock screen drops a billed piece live) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - EP-07-S12 Developer can test two browsers receiving each other's events: AC1 runs against a stand-in read until the piece read of EP-22 exists (FU-013).
+- EP-18-S3 System can post an issue entry inside job creation: AC1 and AC2 need the job creation of EP-19; Post Issue is built and tested with a test caller (FU-028).
+- EP-18-S4 System can refuse an issue above the balance: AC1 and AC5 need the order-copy send of EP-19; the refusal and the balance warning are built (FU-028).
+- EP-18-S6 System can post a recovery entry inside a scrap decision: AC1 and AC2 need the scrap decision of EP-27; Post Recovery is built and tested with a test caller (FU-029).
+- EP-18-S10 Staff can see the pool balance on the order copy screen: order-copy is still a prototype screen until EP-19; the balance line, warning and offline state are built (FU-028).
 - EP-38-S1 System can take a daily database backup: the production daily schedule is the RDS backup window, not built (D1a, FU-018).
 - EP-38-S3 System can back up file storage: S3 versioning and the copy to another region or account are cloud work (D1a, FU-018).
 - EP-38-S4 System can encrypt backups and keep them apart from live data: India region, operator-only IAM access and credentials that cannot delete backups (AC2-4) are cloud work (D1a, FU-018).

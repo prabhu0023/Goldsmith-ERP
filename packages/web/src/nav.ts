@@ -1,5 +1,6 @@
 import {
   Bell,
+  Coins,
   Gem,
   Hammer,
   Inbox,
@@ -28,6 +29,7 @@ export type RouteId =
   | 'lead-convert'
   | 'order-copy'
   | 'stock'
+  | 'metal-pool'
   | 'stock-out'
   | 'edit-propose'
   | 'edit-apply'
@@ -109,6 +111,7 @@ const ownerNav: NavSection[] = [
       leadsItem,
       parcelsItem,
       stockItem,
+      { id: 'metal-pool', label: 'Metal pool', icon: Coins },
       { id: 'karigars', label: 'Karigars', icon: Hammer, also: ['karigar-new'] },
       customersItem,
       { id: 'staff-directory', label: 'Staff', icon: UserCog, also: ['staff-new'] },
@@ -139,6 +142,7 @@ export const routeTitles: Record<RouteId, string> = {
   'lead-convert': 'Convert a lead',
   'order-copy': 'Order copy to a karigar',
   stock: 'Showroom stock',
+  'metal-pool': 'Metal pool',
   'stock-out': 'Stock-out',
   'edit-propose': 'Propose a change to a tag',
   'edit-apply': 'Apply a proposed change',
@@ -176,7 +180,7 @@ function closure(sections: NavSection[]): Set<RouteId> {
   return ids;
 }
 const staffRoutes = closure(staffNav);
-/** Routes only the owner reaches: the owner's rail minus the staff rail (decisions, karigars, staff, scales, security). */
+/** Routes only the owner reaches: the owner's rail minus the staff rail (decisions, metal pool, karigars, staff, scales, security). */
 export const ownerOnlyRoutes: ReadonlySet<RouteId> = new Set([...closure(ownerNav)].filter((id) => !staffRoutes.has(id)));
 /**
  * Whether a role may open a screen. The server refuses the operations anyway (EP-05); this keeps

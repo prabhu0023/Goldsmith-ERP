@@ -61,6 +61,14 @@ const MANIFEST: Record<string, Row> = {
   listAttachments: row('files/attachments.test.ts', MATRIX_VALIDATION, 'files/attachments.test.ts'),
   // Pieces
   readPiece: row('services/read-piece.test.ts', MATRIX_VALIDATION, 'services/read-piece.test.ts'),
+  // Metal pool
+  readPoolBalance: row('pool/pool-reads.test.ts', { na: ok }, { na: 'no business rule; a karigar refusal is the permission column (pool/pool-reads.test.ts)' }, 'pool/pool-reads.test.ts'),
+  listPoolEntries: row('pool/pool-reads.test.ts', 'pool/pool-reads.test.ts', 'pool/pool-reads.test.ts', 'pool/pool-reads.test.ts'),
+  createOpeningEntry: row('pool/opening-entry.test.ts', 'pool/opening-entry.test.ts', 'pool/opening-entry.test.ts', 'pool/opening-entry.test.ts'),
+  createReturnEntry: row('pool/return-entry.test.ts', 'pool/return-entry.test.ts', 'pool/return-entry.test.ts', 'pool/return-entry.test.ts'),
+  createAdjustmentEntry: row('pool/adjustment-entry.test.ts', 'pool/adjustment-entry.test.ts', 'pool/adjustment-entry.test.ts', 'pool/adjustment-entry.test.ts'),
+  readCustodySummary: row('pool/custody.test.ts', { na: ok }, { na: 'no business rule; a staff or karigar refusal is the permission column (pool/custody.test.ts)' }, 'pool/custody.test.ts'),
+  readGoldWithKarigar: row('pool/custody.test.ts', 'pool/custody.test.ts', 'pool/custody.test.ts', 'pool/custody.test.ts'),
   // Settings and audit
   setSetting: row('audit/settings-audit.test.ts', 'audit/settings-audit.test.ts', 'audit/settings-audit.test.ts'),
   listAuditEntries: row('audit/audit-log-reads.test.ts', 'audit/audit-log-reads.test.ts', 'audit/audit-log-reads.test.ts'),
