@@ -21,9 +21,7 @@ import { ParcelsList } from '../components/parcels/ParcelsList';
 import { QcCheck } from '../components/parcels/QcCheck';
 import { TagItem } from '../components/parcels/TagItem';
 import { Customers } from '../components/people/Customers';
-import { Karigars } from '../components/people/Karigars';
 import { OnboardCustomer } from '../components/people/OnboardCustomer';
-import { OnboardKarigar } from '../components/people/OnboardKarigar';
 import { ScalesRules } from '../components/settings/ScalesRules';
 import { Broadcast } from '../components/marketing/Broadcast';
 import { CatalogueShare } from '../components/marketing/CatalogueShare';
@@ -56,8 +54,6 @@ export const prototypeScreens: Partial<Record<RouteId, ComponentType>> = {
   'parcel-clear': OwnerClearMismatch,
   customers: Customers,
   'customer-new': OnboardCustomer,
-  karigars: Karigars,
-  'karigar-new': OnboardKarigar,
   scales: ScalesRules,
   wishes: Wishes,
   broadcast: Broadcast,
