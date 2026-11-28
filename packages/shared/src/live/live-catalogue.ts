@@ -156,6 +156,6 @@ export const ENTITY_READ_PERMISSIONS = {
   piece_edit: ['proposeEdit'],
   lead: ['markLeadLost'],
   karigar_job: ['createOrderCopyAndJob', 'readMyJob'],
-  metal_pool: ['createOrderCopyAndJob'],
+  metal_pool: ['readPoolBalance'],
   user: ['listUsers'],
 } as const satisfies Record<LiveEntityType, readonly PermissionName[]>;

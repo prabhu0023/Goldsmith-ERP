@@ -8,6 +8,13 @@ import { readAuditEntry } from '../audit/read-audit-entry.js';
 import { liveHandlers } from '../live/live-operations.js';
 import { readRailBadges } from '../live/read-rail-badges.js';
 import type { Handlers } from '../pipeline/registry.js';
+import { createAdjustmentEntry } from '../pool/create-adjustment-entry.js';
+import { createOpeningEntry } from '../pool/create-opening-entry.js';
+import { createReturnEntry } from '../pool/create-return-entry.js';
+import { listPoolEntries } from '../pool/list-pool-entries.js';
+import { readCustodySummary } from '../pool/read-custody-summary.js';
+import { readGoldWithKarigar } from '../pool/read-gold-with-karigar.js';
+import { readPoolBalance } from '../pool/read-pool-balance.js';
 import { setSetting } from '../settings/set-setting.js';
 import { createUserHandlers, type UserHandlerDeps } from '../users/index.js';
 import { listJobRuns } from './list-job-runs.js';
@@ -24,6 +31,13 @@ export const handlers: Handlers<typeof contract> = {
   listMyJobs,
   readMyJob,
   readPiece,
+  readPoolBalance,
+  listPoolEntries,
+  createOpeningEntry,
+  createReturnEntry,
+  createAdjustmentEntry,
+  readCustodySummary,
+  readGoldWithKarigar,
   setSetting,
   listAuditEntries,
   readAuditEntry,

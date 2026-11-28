@@ -76,7 +76,7 @@ Holds were removed from v1, so there is no "piece held" event. A G26 event is on
 | piece_edit | `proposeEdit` |
 | lead | `markLeadLost` |
 | karigar_job | `createOrderCopyAndJob`, or `readMyJob` for the karigar's own job only (`users.karigar_id = karigar_jobs.karigar_id`) |
-| metal_pool | `createOrderCopyAndJob` (the roles that open `order-copy`) |
+| metal_pool | `readPoolBalance` (staff and owner; a karigar may not call it) |
 | user | the user's own account events always pass (also when deactivated); an event about another user needs `listUsers` (owner), so `user.list_changed` reaches owners only |
 
 ## Publishing, sequence and replay

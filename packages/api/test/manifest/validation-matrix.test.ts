@@ -24,8 +24,12 @@ it('lists the operations with no required input, so a new required field joins t
     'listAuditEntries',
     'listJobRuns',
     'listMyJobs',
+    'listPoolEntries',
     'listUsers',
     'readCurrentSession',
+    'readCustodySummary',
+    'readGoldWithKarigar',
+    'readPoolBalance',
     'readRailBadges',
     'signOut',
   ]);

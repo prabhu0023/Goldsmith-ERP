@@ -11,6 +11,7 @@ import { ERROR_CODES } from './error-codes.js';
 import { settingsOperations } from './settings-contract.js';
 import { liveOperations } from './live-contract.js';
 import { pieceOperations } from './pieces-contract.js';
+import { poolOperations } from './pool-contract.js';
 import { userOperations } from './users-contract.js';
 import { filesContract } from './files-contract.js';
 
@@ -64,6 +65,7 @@ export const contract = {
   }),
   ...userOperations,
   ...pieceOperations,
+  ...poolOperations,
   ...filesContract,
   ...settingsOperations,
   ...auditOperations,

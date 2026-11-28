@@ -78,6 +78,7 @@ const USERS_REFUSED = 'Only the owner can add staff or change a role.';
 const RULES_REFUSED = 'Only the owner can change the rules.';
 const JOB_RUNS_REFUSED = 'Only the owner can see and retry job runs.';
 const AUDIT_REFUSED = 'Only the owner can read the security log.';
+const POOL_LEDGER_REFUSED = 'Only the owner can read the metal pool ledger.';
 
 const everyone = { roles: ['staff', 'owner', 'karigar'], refusal: DEFAULT_REFUSAL } as const;
 const shopFloor = { roles: SHOP_FLOOR, refusal: KARIGAR_REFUSED } as const;
@@ -103,6 +104,8 @@ export const OPERATION_RULES = {
   // A permission-checked read of one piece, for the web's live entity cache (EP-08, FU-013).
   readPiece: shopFloor,
   requestScrap: shopFloor,
+  // The pool balance, for the screens that warn before gold is issued (EP-18-S10).
+  readPoolBalance: shopFloor,
   onboardCustomer: shopFloor,
   sendWishes: shopFloor,
   sendBroadcast: shopFloor,
@@ -132,6 +135,8 @@ export const OPERATION_RULES = {
   addBenchPhoto: karigarOnly,
   markJobReady: karigarOnly,
   handOver: karigarOnly,
+  // The owner, or a karigar on their own gold only; the handler scopes it (EP-18-S11).
+  readGoldWithKarigar: { roles: ['owner', 'karigar'], refusal: 'Only the owner or the karigar can see the gold with a karigar.' },
   // Owner only.
   clearMismatch: ownerOnly('Only the owner can clear a mismatch.'),
   ownerSendBack: ownerOnly('Only the owner can send a parcel back.'),
@@ -153,6 +158,11 @@ export const OPERATION_RULES = {
   retryJobRun: ownerOnly(JOB_RUNS_REFUSED),
   listAuditEntries: ownerOnly(AUDIT_REFUSED),
   readAuditEntry: ownerOnly(AUDIT_REFUSED),
+  listPoolEntries: ownerOnly(POOL_LEDGER_REFUSED),
+  createOpeningEntry: ownerOnly('Only the owner can record the opening balance of the metal pool.'),
+  createReturnEntry: ownerOnly('Only the owner can record gold returned to the metal pool.'),
+  createAdjustmentEntry: ownerOnly('Only the owner can adjust the metal pool.'),
+  readCustodySummary: ownerOnly('Only the owner can see where the gold is.'),
   createUser: usersRule,
   resendActivation: usersRule,
   updateUserProfile: usersRule,

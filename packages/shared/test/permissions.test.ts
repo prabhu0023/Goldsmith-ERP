@@ -29,6 +29,11 @@ const OWNER_EXTRAS = [
   'createUser',
   'updateUserRole',
   'listUsers',
+  'listPoolEntries',
+  'createOpeningEntry',
+  'createReturnEntry',
+  'createAdjustmentEntry',
+  'readCustodySummary',
 ];
 
 const KARIGAR_OWN_JOB_OPS = [
@@ -44,6 +49,8 @@ const KARIGAR_OWN_JOB_OPS = [
 
 /** File operations a karigar may call; the file service limits them to own jobs (EP-09). */
 const KARIGAR_OWN_JOB_FILE_OPS = ['readFileLinks', 'createAttachment', 'listAttachments'];
+/** The karigar's own gold with them (EP-18-S11); the handler answers only their own. */
+const KARIGAR_OWN_GOLD_OPS = ['readGoldWithKarigar'];
 describe('permission list (EP-05-S1)', () => {
   it('AC1: has exactly the three roles', () => {
     expect([...ROLE_IDS].sort()).toEqual(['karigar', 'owner', 'staff']);
@@ -78,12 +85,26 @@ describe('permission list (EP-05-S1)', () => {
 
   it('AC4: karigar may only work their own jobs and raise a problem', () => {
     expect([...ROLE_PERMISSIONS.karigar].sort()).toEqual(
-      [...KARIGAR_OWN_JOB_OPS, ...KARIGAR_OWN_JOB_FILE_OPS, 'raiseProblem'].sort(),
+      [...KARIGAR_OWN_JOB_OPS, ...KARIGAR_OWN_JOB_FILE_OPS, ...KARIGAR_OWN_GOLD_OPS, 'raiseProblem'].sort(),
     );
     const reads = ROLE_PERMISSIONS.karigar.filter((op) => /^(list|read)/.test(op));
-    expect(reads.sort()).toEqual(['listAttachments', 'listMyJobs', 'readFileLinks', 'readMyJob']);
+    expect(reads.sort()).toEqual(['listAttachments', 'listMyJobs', 'readFileLinks', 'readGoldWithKarigar', 'readMyJob']);
   });
 
+  it('EP-18: staff and owner read the pool balance, the owner alone reads the ledger and posts, a karigar reads only their own gold', () => {
+    expect(roleMay('staff', 'readPoolBalance')).toBe(true);
+    expect(roleMay('owner', 'readPoolBalance')).toBe(true);
+    expect(roleMay('karigar', 'readPoolBalance')).toBe(false);
+    for (const op of ['listPoolEntries', 'createOpeningEntry', 'createReturnEntry', 'createAdjustmentEntry', 'readCustodySummary']) {
+      expect(ROLE_PERMISSIONS.owner, op).toContain(op);
+      expect(roleMay('staff', op), op).toBe(false);
+      expect(roleMay('karigar', op), op).toBe(false);
+      expect(refusalFor(op), op).toMatch(/^Only the owner can /);
+    }
+    expect(roleMay('owner', 'readGoldWithKarigar')).toBe(true);
+    expect(roleMay('karigar', 'readGoldWithKarigar')).toBe(true);
+    expect(roleMay('staff', 'readGoldWithKarigar')).toBe(false);
+  });
   it('AC5: every contract operation has a rule', () => {
     for (const op of Object.keys(contract)) expect(Object.hasOwn(OPERATION_RULES, op), `${op} has no rule`).toBe(true);
   });

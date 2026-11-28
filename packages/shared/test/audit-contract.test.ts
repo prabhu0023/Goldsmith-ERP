@@ -51,6 +51,16 @@ describe('state-changing operation lists (EP-06-S2 AC4, S7 AC6)', () => {
   });
 });
 
+describe('metal pool operations (EP-18)', () => {
+  it('the three creates write one pool kind each and the four reads write none', () => {
+    expect(OPERATION_AUDIT_KINDS.createOpeningEntry).toEqual(['pool_opening_recorded']);
+    expect(OPERATION_AUDIT_KINDS.createReturnEntry).toEqual(['pool_return_recorded']);
+    expect(OPERATION_AUDIT_KINDS.createAdjustmentEntry).toEqual(['pool_adjusted']);
+    for (const op of ['readPoolBalance', 'listPoolEntries', 'readCustodySummary', 'readGoldWithKarigar'] as const) {
+      expect(OPERATION_AUDIT_KINDS[op], op).toBeNull();
+    }
+  });
+});
 describe('setSetting contract (EP-06-S8)', () => {
   it('declares the six settings keys, each with a value schema', () => {
     expect([...SETTING_KEYS]).toEqual([

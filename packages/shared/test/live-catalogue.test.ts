@@ -81,6 +81,8 @@ describe('live-event catalogue (EP-07-S11)', () => {
     // a user's own account events pass in the receiver filter regardless.
     expect(ENTITY_READ_PERMISSIONS.user).toEqual(['listUsers']);
     expect(ENTITY_READ_PERMISSIONS.piece).toEqual(['readPiece']);
+    // Staff and owner read the pool balance, so they receive 'Metal pool changed'; a karigar does not (EP-18-S12).
+    expect(ENTITY_READ_PERMISSIONS.metal_pool).toEqual(['readPoolBalance']);
   });
 
   it('S2 rule: the envelope schema refuses an extra field', () => {

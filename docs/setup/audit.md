@@ -24,7 +24,7 @@ Weights in before and after are integers of 0.0001 g (`grossG: 486500` is 48.650
 
 ## Kinds and groups
 
-`packages/shared/src/domain/audit-log.ts` holds the one list `AUDIT_ACTIONS`: the 10 prototype kinds, EP-04's sign-in kinds, EP-10's job kinds, EP-05's user kinds, EP-09's four file kinds and the 25 EP-06-S7 kinds for transitions that arrive in later epics. `AUDIT_ACTION_LABELS` names each on the screen, `AUDIT_ACTION_ENTITY` gives its default entity type. The database check `audit_entries_kind_check` holds exactly this list (`audit-store.test.ts` compares them). A migration that adds kinds widens the check with the order-safe DO block ([parallel-lanes.md](parallel-lanes.md)); kinds and entity types use only `a-z` and `_`.
+`packages/shared/src/domain/audit-log.ts` holds the one list `AUDIT_ACTIONS`: the 10 prototype kinds, EP-04's sign-in kinds, EP-10's job kinds, EP-05's user kinds, EP-09's four file kinds, EP-18's three metal pool kinds (`pool_opening_recorded`, `pool_return_recorded`, `pool_adjusted`, entity type `metal_pool`) and the 25 EP-06-S7 kinds for transitions that arrive in later epics. `AUDIT_ACTION_LABELS` names each on the screen, `AUDIT_ACTION_ENTITY` gives its default entity type. The database check `audit_entries_kind_check` holds exactly this list (`audit-store.test.ts` compares them). A migration that adds kinds widens the check with the order-safe DO block ([parallel-lanes.md](parallel-lanes.md)); kinds and entity types use only `a-z` and `_`.
 
 `AUDIT_GROUPS` are the screen's filter buttons, as in the prototype: Everything, Tag edits (`edit_applied`, `edit_refused`), Parcels and losses (`loss_accepted`, `parcel_sent_back`, `parcel_last_digit`), Problems (`problem_cleared`), Scrap (`scrap_marked`, `scrap_declined`), Stock-out (`stock_out`), Rules (`setting_changed`). A kind is in at most one group; every newer kind is under Everything only.
 
@@ -77,6 +77,9 @@ The api connects as `goldsmith_app` (`APP_DATABASE_URL`), which has only `SELECT
 | `unlockUser` | `/api/ops` | `account_unlocked` |
 | `linkKarigar` | `/api/ops` | `karigar_linked` |
 | `setSetting` | `/api/ops` | `setting_changed` |
+| `createOpeningEntry` | `/api/ops` | `pool_opening_recorded` (entity `metal_pool`, id `metal-pool`) |
+| `createReturnEntry` | `/api/ops` | `pool_return_recorded` (reference: the job code) |
+| `createAdjustmentEntry` | `/api/ops` | `pool_adjusted` (with the reason) |
 | `createAttachment` | `/api/ops` | `file_attached` |
 | `deleteAttachment` | `/api/ops` | `file_detached` |
 | upload with a target | `POST /api/files` | `file_attached` (not wrapped; `attachments.test.ts` checks the entry) |
@@ -96,7 +99,7 @@ The api connects as `goldsmith_app` (`APP_DATABASE_URL`), which has only `SELECT
 | `subscribeLiveChannel`, `unsubscribeLiveChannel` | `/api/ops` | exempt: in-memory channels of the open live stream (EP-07, `AUDIT_EXEMPT_OPERATIONS`) |
 | `joinParcelPresence`, `leaveParcelPresence` | `/api/ops` | exempt: in-memory parcel presence (join is also the heartbeat) of the open live stream (EP-07) |
 
-Reads write nothing: `listJobRuns`, `listMyJobs`, `readMyJob`, `listUsers`, `listAuditEntries`, `readAuditEntry`, `readFileLinks`, `listAttachments`, `readRailBadges`, `readPiece`, `readCurrentSession`, `checkPasswordLink`. Which operations write a second entry, and whether that is right, is FU-009.
+Reads write nothing: `listJobRuns`, `listMyJobs`, `readMyJob`, `listUsers`, `listAuditEntries`, `readAuditEntry`, `readFileLinks`, `listAttachments`, `readRailBadges`, `readPiece`, `readPoolBalance`, `listPoolEntries`, `readCustodySummary`, `readGoldWithKarigar`, `readCurrentSession`, `checkPasswordLink`. Which operations write a second entry, and whether that is right, is FU-009.
 
 **Covered by rule.** These operations arrive in EP-18 onward. Each has its kind in `TRANSITION_AUDIT_KINDS` and must be added to `OPERATION_AUDIT_KINDS` and `AUDIT_CASES` when it is ported, or typecheck and the guard fail: `createLead`, `confirmLead`, `startWorkingLead`, `routeLeadItemToStock`, `createOrderCopyAndJob`, `acceptJob`, `startJob`, `markJobReady`, `handOver`, `recordParcelArrival`, `saveTag`, `qcTick`, `releaseParcel`, `ownerRecheckTag`, `raiseProblem`, `proposeEdit`, `ownerAgreeEdit`, `requestScrap`, `onboardCustomer`, `onboardKarigar`, `onboardStaff`, `sendWishes`, `sendBroadcast`, `upsertScale`, plus the prototype-audited `applyEdit`, `refuseEdit`, `ownerSendBack`, `ownerAcceptLoss`, `clearProblem`, `stockOut`, `ownerScrap`, `ownerDeclineScrap` (the 10 prototype kinds). `releaseHold` has no kind: v1 has no holds.
 

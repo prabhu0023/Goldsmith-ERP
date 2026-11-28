@@ -128,6 +128,25 @@ const AUDIT_CASES: Record<StateChangingOperation, AuditCase> = {
     expect(attached.status, JSON.stringify(attached.body)).toBe(200);
     return () => h.asOwner('deleteAttachment', { attachmentId: attached.body.id });
   },
+  async createOpeningEntry(h) {
+    // The opening balance is allowed only on an empty ledger, so it runs in a shop of its own.
+    const shop = await newShop(h.pool, 'Opening shop');
+    h.shops.push(shop.shopId);
+    const session = await newSession(h.pool, shop, await newUser(h.pool, shop, { name: 'Sanjay Seth', role: 'owner' }));
+    return () => h.call('createOpeningEntry', { amountG: '812.5800' }, { session });
+  },
+  async createReturnEntry(h) {
+    const karigarId = await addKarigar(h.pool, h.shop, 'KG-63');
+    await h.pool.query(
+      `insert into karigar_jobs (shop_id, code, karigar_id, status, target_gross_units, target_net_units, tolerance_units, gold_issued_units)
+       values ($1, 'MO-2026-603', $2, 'on_bench', 100000, 90000, 500, 340000)`,
+      [h.shop.shopId, karigarId],
+    );
+    return () => h.asOwner('createReturnEntry', { jobId: 'MO-2026-603', amountG: '2.5000' });
+  },
+  async createAdjustmentEntry(h) {
+    return () => h.asOwner('createAdjustmentEntry', { adjustmentDeltaG: '1.0000', reason: 'Safe recount' });
+  },
   async signIn(h) {
     const number = phone();
     await newUserWithPassword(h.pool, h.shop, { name: 'Farah Khan', phone: number, password: PASSWORD });

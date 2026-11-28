@@ -68,6 +68,19 @@ describe('operation contract (EP-03-S1)', () => {
     }
   });
 
+  it('EP-18: the pool inputs parse grams to units, the adjustment is signed and its reason is 3 to 500 characters', () => {
+    expect(contract.createOpeningEntry.input.parse({ amountG: '812.5800' })).toEqual({ amountG: 8125800 });
+    expect(contract.createAdjustmentEntry.input.parse({ adjustmentDeltaG: '-0.4000', reason: ' Safe recount 2 Nov ' })).toEqual({
+      adjustmentDeltaG: -4000,
+      reason: 'Safe recount 2 Nov',
+    });
+    expect(contract.createOpeningEntry.input.safeParse({ amountG: '-1.0000' }).success).toBe(false);
+    for (const reason of ['ok', '   ', 'x'.repeat(501)]) {
+      expect(contract.createAdjustmentEntry.input.safeParse({ adjustmentDeltaG: '1.0000', reason }).success, reason).toBe(false);
+    }
+    expect(contract.listPoolEntries.input.safeParse({}).success).toBe(true);
+    expect(contract.readPoolBalance.kind).toBe('read');
+  });
   it('does not expose prototype-only actions such as rememberScale (EP-03-S3)', () => {
     expect('rememberScale' in contract).toBe(false);
   });
