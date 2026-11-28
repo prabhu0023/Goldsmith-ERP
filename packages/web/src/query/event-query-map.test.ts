@@ -78,10 +78,10 @@ describe('event to query map (S8 AC2)', () => {
   it('the other events follow epic section 11', () => {
     expect(opsOf('edit.proposed')).toEqual(expect.arrayContaining(['listDecisions', 'readPiece']));
     expect(opsOf('lead.alert')).toEqual(expect.arrayContaining(['listLeads', 'readTodayCards', 'listDecisions']));
-    expect(opsOf('karigar_job.status_changed')).toEqual(expect.arrayContaining(['readJob', 'listDecisions', 'readMyJob']));
+    expect(opsOf('karigar_job.status_changed')).toEqual(expect.arrayContaining(['readJob', 'listDecisions', 'readMyJob', 'listKarigars', 'readKarigarScorecard']));
     expect(opsOf('parcel.handed_over')).toEqual(expect.arrayContaining(['listParcels', 'readTodayCards']));
     expect(opsOf('tag.saved')).toEqual(['readParcel']);
-    expect(opsOf('metal_pool.changed')).toEqual(['readMetalPool']);
+    expect(opsOf('metal_pool.changed')).toEqual(['readMetalPool', 'listKarigars', 'readKarigarScorecard']);
   });
 
   it('S15 AC5: another user\'s change refetches the user list; the signed-in user\'s own access event refetches nothing', () => {

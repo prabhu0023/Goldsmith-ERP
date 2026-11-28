@@ -78,7 +78,8 @@ describeDb('scales, karigars, staff and customers (EP-02-S4)', () => {
       );
     await expectPgError(addUser('karigar', randomUUID()), '23503');
     const kg = await pool.query<{ id: string }>(
-      `insert into karigars (shop_id, code, name) values ($1, 'KG-01', 'Lakshmi Devi') returning id`,
+      `insert into karigars (shop_id, code, name, email, wastage_bp)
+       values ($1, 'KG-01', 'Lakshmi Devi', 'kg-01@example.test', 70) returning id`,
       [shopId],
     );
     await expectPgError(addUser('staff', kg.rows[0].id), '23514');

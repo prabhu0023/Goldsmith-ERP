@@ -46,6 +46,11 @@ export const AUDIT_ACTIONS = [
   'user_deactivated',
   'user_reactivated',
   'karigar_linked',
+  // EP-16 karigar master.
+  'karigar_edited',
+  'karigar_wastage_changed',
+  'karigar_deactivated',
+  'karigar_reactivated',
   // EP-09 files: attach and detach on a piece, order copy, job or lead, intake, retention.
   'file_attached',
   'file_detached',
@@ -122,6 +127,10 @@ export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = {
   user_deactivated: 'User deactivated',
   user_reactivated: 'User reactivated',
   karigar_linked: 'Karigar linked',
+  karigar_edited: 'Karigar edited',
+  karigar_wastage_changed: 'Wastage allowance changed',
+  karigar_deactivated: 'Karigar deactivated',
+  karigar_reactivated: 'Karigar reactivated',
   file_attached: 'File attached',
   file_detached: 'File detached',
   po_attachment_stored: 'PO attachment stored',
@@ -211,6 +220,10 @@ export const AUDIT_ACTION_ENTITY: Record<AuditAction, AuditEntityType> = {
   user_deactivated: 'user',
   user_reactivated: 'user',
   karigar_linked: 'user',
+  karigar_edited: 'karigar',
+  karigar_wastage_changed: 'karigar',
+  karigar_deactivated: 'karigar',
+  karigar_reactivated: 'karigar',
   // A file entry is about the file's owner; the writer passes the owner's type.
   file_attached: 'piece',
   file_detached: 'piece',

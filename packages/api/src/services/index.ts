@@ -5,6 +5,7 @@
 import type { contract } from '@goldsmith/shared';
 import { listAuditEntries } from '../audit/list-audit-entries.js';
 import { readAuditEntry } from '../audit/read-audit-entry.js';
+import { createKarigarHandlers } from '../karigars/index.js';
 import { liveHandlers } from '../live/live-operations.js';
 import { readRailBadges } from '../live/read-rail-badges.js';
 import type { Handlers } from '../pipeline/registry.js';
@@ -35,5 +36,5 @@ export const handlers: Handlers<typeof contract> = {
  * and the live channel's operations (EP-07).
  */
 export function createServiceHandlers(deps: UserHandlerDeps): Handlers<typeof contract> {
-  return { ...handlers, ...createUserHandlers(deps), ...liveHandlers };
+  return { ...handlers, ...createUserHandlers(deps), ...createKarigarHandlers(deps), ...liveHandlers };
 }

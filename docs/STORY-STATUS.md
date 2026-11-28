@@ -21,7 +21,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-13](stories/EP-13-stories.md) | 14 | 0 | 0 | 13 | 1 | 0 |
 | [EP-14](stories/EP-14-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
 | [EP-15](stories/EP-15-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
-| [EP-16](stories/EP-16-stories.md) | 13 | 0 | 0 | 13 | 0 | 0 |
+| [EP-16](stories/EP-16-stories.md) | 13 | 4 | 9 | 0 | 0 | 0 |
 | [EP-17](stories/EP-17-stories.md) | 14 | 0 | 0 | 14 | 0 | 0 |
 | [EP-18](stories/EP-18-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
 | [EP-19](stories/EP-19-stories.md) | 14 | 0 | 0 | 14 | 0 | 0 |
@@ -51,7 +51,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-43](stories/EP-43-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-44](stories/EP-44-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-45](stories/EP-45-stories.md) | 9 | 0 | 0 | 9 | 0 | 0 |
-| Total | 586 | 107 | 17 | 419 | 4 | 39 |
+| Total | 586 | 111 | 26 | 406 | 4 | 39 |
 
 ## Partial stories
 
@@ -64,6 +64,15 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 - EP-07-S9 User can see rail badge counts update live: no rail badge is server-backed yet; each moves to server counts with its screen (FU-012).
 - EP-07-S11 System can carry each of the 10 catalogue events to its audience: AC4 (stock screen drops a billed piece live) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - EP-07-S12 Developer can test two browsers receiving each other's events: AC1 runs against a stand-in read until the piece read of EP-22 exists (FU-013).
+- EP-16-S1 System can store karigar records with code, phone, location, specialties, language and allowance: AC3 (specialties are stored as names; the reference to the EP-15 list is not built) (FU-028, EP-15).
+- EP-16-S3 Owner can add a karigar with the 0.6% to 1.2% allowance check: the specialty names are not checked against the active entries of the EP-15 list (FU-028, EP-15).
+- EP-16-S5 Owner can change a karigar's wastage allowance, audited: AC4 (the allowance of a job already open) needs the per-job allowance of EP-19 (FU-029, EP-19).
+- EP-16-S7 Owner can deactivate a karigar with no open jobs: AC2 (gold still with the karigar) needs the EP-18 ledger; only open jobs block a deactivation today (FU-029, EP-18).
+- EP-16-S8 Staff can pick only active karigars on the order copy and parcel forms: the picker and the active check are built but not yet used on `order-copy` and `parcel-arrival` (FU-030, EP-19, EP-21).
+- EP-16-S9 Owner can see the karigar directory worst first: gold with the karigar is summed from open jobs, not read from the EP-18 ledger (FU-029, EP-18).
+- EP-16-S10 System can compute loss %, days late and last six parcel gaps from real data (G4): G4 and G23 are open, so loss, days late and gaps use interim sources and `rating` is never returned (FU-029, EP-18, EP-19).
+- EP-16-S11 Owner can see a karigar's scorecard (G4): gold returned per job needs the EP-18 ledger and the EP-19 settlement fields (FU-029, EP-18, EP-19).
+- EP-16-S12 Karigar can see their own profile: the karigar "Me" tab that shows the profile is EP-20 (FU-031, EP-20).
 - EP-38-S1 System can take a daily database backup: the production daily schedule is the RDS backup window, not built (D1a, FU-018).
 - EP-38-S3 System can back up file storage: S3 versioning and the copy to another region or account are cloud work (D1a, FU-018).
 - EP-38-S4 System can encrypt backups and keep them apart from live data: India region, operator-only IAM access and credentials that cannot delete backups (AC2-4) are cloud work (D1a, FU-018).

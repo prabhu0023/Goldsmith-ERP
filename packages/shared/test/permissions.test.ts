@@ -20,6 +20,12 @@ const OWNER_EXTRAS = [
   'ownerScrap',
   'onboardStaff',
   'onboardKarigar',
+  'updateKarigarDetails',
+  'updateKarigarWastage',
+  'updateKarigarStatus',
+  'linkKarigarAccount',
+  'listKarigars',
+  'readKarigarScorecard',
   'upsertScale',
   'setSetting',
   'listJobRuns',
@@ -78,10 +84,10 @@ describe('permission list (EP-05-S1)', () => {
 
   it('AC4: karigar may only work their own jobs and raise a problem', () => {
     expect([...ROLE_PERMISSIONS.karigar].sort()).toEqual(
-      [...KARIGAR_OWN_JOB_OPS, ...KARIGAR_OWN_JOB_FILE_OPS, 'raiseProblem'].sort(),
+      [...KARIGAR_OWN_JOB_OPS, ...KARIGAR_OWN_JOB_FILE_OPS, 'raiseProblem', 'readMyKarigarProfile'].sort(),
     );
     const reads = ROLE_PERMISSIONS.karigar.filter((op) => /^(list|read)/.test(op));
-    expect(reads.sort()).toEqual(['listAttachments', 'listMyJobs', 'readFileLinks', 'readMyJob']);
+    expect(reads.sort()).toEqual(['listAttachments', 'listMyJobs', 'readFileLinks', 'readMyJob', 'readMyKarigarProfile']);
   });
 
   it('AC5: every contract operation has a rule', () => {
@@ -138,6 +144,9 @@ describe('permission list (EP-05-S1)', () => {
   it('answers each refusal with its sentence', () => {
     expect(refusalFor('clearMismatch')).toBe('Only the owner can clear a mismatch.');
     expect(refusalFor('createUser')).toBe('Only the owner can add staff or change a role.');
+    for (const op of ['onboardKarigar', 'updateKarigarDetails', 'updateKarigarWastage', 'updateKarigarStatus']) {
+      expect(refusalFor(op)).toBe('Only the owner can add a karigar or change their wastage allowance.');
+    }
     expect(refusalFor('listJobRuns')).toBe('Only the owner can see and retry job runs.');
     expect(refusalFor('markLeadLost')).toBe('A karigar can only work on their own jobs.');
     expect(refusalFor('listMyJobs')).toBe('Only a karigar can do this, on their own job.');

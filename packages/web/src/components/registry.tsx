@@ -1,6 +1,8 @@
 import { prototypeScreens } from '@prototype';
 import type { ComponentType } from 'react';
 import type { RouteId } from '../nav';
+import { Karigars } from './people/Karigars';
+import { OnboardKarigar } from './people/OnboardKarigar';
 import { OnboardStaff } from './people/OnboardStaff';
 import { StaffDirectory } from './people/StaffDirectory';
 import { SecurityLog } from './settings/SecurityLog';
@@ -9,6 +11,8 @@ import { NotWiredYet } from './shell/NotWiredYet';
 const wiredScreens: Partial<Record<RouteId, ComponentType>> = {
   'staff-directory': StaffDirectory,
   'staff-new': OnboardStaff,
+  karigars: Karigars,
+  'karigar-new': OnboardKarigar,
   security: SecurityLog,
 };
 /** Whether a route runs on the prototype store (and shows the demo notice). */

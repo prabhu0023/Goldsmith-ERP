@@ -24,7 +24,7 @@ Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 
 | Migration | Tables |
 | --- | --- |
 | `0001_shops_users_sessions` | `shops`, `locations` (one per shop, "Main shop", created by a trigger), `users`, `sessions`, `password_links`; function `bump_version()` |
-| `0002_master_records` | `scales`, `karigars`, `karigar_gap_history`, `staff_members`, `customers`, `customer_history`; `users.karigar_id` foreign key |
+| `0002_master_records` | `scales`, `karigars`, `karigar_gap_history`, `staff_members`, `customers`, `customer_history`; `users.karigar_id` foreign key. `karigars` is reshaped and `karigar_gap_history` dropped by `20261128T1130_ep16_karigar_master` |
 | `0003_pieces_and_edits` | `pieces`, `piece_photos`, `piece_edits` |
 | `0004_parcels` | `parcels`, `parcel_weighings`, `parcel_manifest_rows`, `parcel_qc_ticks` |
 | `0005_leads` | `leads`, `lead_items`, `lead_fields` |
@@ -39,6 +39,7 @@ Migrations `0001` to `0010`, one per story S3 to S12, then fixes from the EP-02 
 | `0014_idempotency_records` | `idempotency_records (key, operation, user_id, result_id, created_at, expires_at)`, unique `(key, operation, user_id)`: the created id of each create sent with an `Idempotency-Key` (EP-03-S8); expires after `IDEMPOTENCY_RETENTION_HOURS` (default 24) |
 | `0015_idempotency_input_hash` | `idempotency_records.input_hash`: SHA-256 of the validated input; a repeat with the same key and a different hash is refused as `conflict` (EP-03-S8, PR #3 review) |
 | `20261122T1732_ep06_audit_log` | `audit_entries` gains `entity_type`, `entity_id`, `reason`, `token_reference`; checks on entity type and the widened kind list; entity present on every new row (`not valid`, older rows keep nulls); indexes by entity, actor and kind; role `goldsmith_app` with only `SELECT, INSERT` on `audit_entries` (EP-06, [audit.md](audit.md)) |
+| `20261128T1130_ep16_karigar_master` | `karigars` gains `email`, `workshop_location`, `wastage_bp` (60 to 120), `status`, `deactivated_at`, `version`; `language` defaults to `English`; unique `(shop_id, phone)`; new `karigar_specialties`; drops `karigars.specialty`, the scorecard columns and `karigar_gap_history`; widens the audit kind check with four karigar kinds (EP-16-S1) |
 
 Conventions every table follows:
 
@@ -49,7 +50,7 @@ Conventions every table follows:
 - **Times.** `timestamptz` only, every connection runs with `TimeZone=UTC`. Calendar dates (`dob`, `anniversary`, `open_since`) are `date`.
 - **Enums.** `text` with a `check (... in (...))` constraint.
 - **Foreign keys.** A reference between two shop-scoped tables is composite, `(shop_id, x_id) references parent (shop_id, id)`, so a row cannot point at another shop's parent, scale or location (`0011`, `cross-shop.test.ts`). All are `deferrable initially immediate`: errors are immediate, and the seed defers them to load cyclic links (job ↔ order copy, job ↔ parcel).
-- **Versions.** `pieces`, `piece_edits`, `parcels`, `leads`, `lead_items`, `karigar_jobs`, `metal_pools` have `version integer not null default 1`; the `bump_version` trigger raises it on every update, so only the database sets it.
+- **Versions.** `pieces`, `piece_edits`, `parcels`, `leads`, `lead_items`, `karigar_jobs`, `metal_pools`, `karigars` have `version integer not null default 1`; the `bump_version` trigger raises it on every update, so only the database sets it.
 - **Ordered child rows.** `position integer not null`, unique per parent.
 - **People's names** from the prototype (`taggedBy`, `proposedBy`, `raisedBy`) stay `*_by_name text`, not foreign keys. Audit entries have a real `actor_id` foreign key to `users`.
 - **Secrets.** No plain-text secret: `users.password_hash`, `password_links.token_hash`, `piece_edits.token_ref`.
@@ -103,7 +104,7 @@ Test files are in `packages/api/test/db/` unless noted. "Staging" items wait on 
 | S3 | AC7 every business table has a not-null `shop_id` FK | `0001`–`0010` | `schema.test.ts` |
 | S3 | AC8 a new shop has exactly one "Main shop" location | AFTER INSERT trigger, `unique (shop_id)` | `shop-users.test.ts` |
 | S4 | AC1 Bench `1` / `6000000`, Platform `100` / `300000000` | `readability_units`, `capacity_units bigint` | `master-records.test.ts`, `seed.test.ts` |
-| S4 | AC2 karigar columns and gap child table | `karigars`, `karigar_gap_history` | `master-records.test.ts`, `seed.test.ts` (gap order) |
+| S4 | AC2 karigar columns (EP-16 reshaped them: `email`, `workshop_location`, `wastage_bp`, `status`, `version`; scorecard columns, `specialty` and `karigar_gap_history` dropped; specialties in `karigar_specialties`) | `karigars`, `karigar_specialties` | `master-records.test.ts`, `karigar-schema.test.ts`, `seed.test.ts` |
 | S4 | AC3 budget/spent nullable, no default; four groups only | `numeric(14,2)`, check | `master-records.test.ts` |
 | S4 | AC4 history pure weight in units, customer must exist | `pure_units bigint`, FK | `master-records.test.ts` |
 | S4 | AC5 karigar user with unknown karigar, or staff with a karigar id, rejected | FK + check `(role = 'karigar') = (karigar_id is not null)` | `master-records.test.ts` |

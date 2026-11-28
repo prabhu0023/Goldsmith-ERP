@@ -23,9 +23,12 @@ it('lists the operations with no required input, so a new required field joins t
   expect(NO_REQUIRED_INPUT).toEqual([
     'listAuditEntries',
     'listJobRuns',
+    'listKarigarPicker',
+    'listKarigars',
     'listMyJobs',
     'listUsers',
     'readCurrentSession',
+    'readMyKarigarProfile',
     'readRailBadges',
     'signOut',
   ]);

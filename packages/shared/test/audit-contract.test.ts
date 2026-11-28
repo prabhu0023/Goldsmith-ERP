@@ -51,6 +51,20 @@ describe('state-changing operation lists (EP-06-S2 AC4, S7 AC6)', () => {
   });
 });
 
+describe('karigar operations (EP-16)', () => {
+  it('declares the audit kinds of the four karigar writes, and onboardKarigar is no longer planned', () => {
+    expect(OPERATION_AUDIT_KINDS.onboardKarigar).toEqual(['karigar_onboarded']);
+    expect(OPERATION_AUDIT_KINDS.updateKarigarDetails).toEqual(['karigar_edited', 'user_edited']);
+    expect(OPERATION_AUDIT_KINDS.updateKarigarWastage).toEqual(['karigar_wastage_changed']);
+    expect(OPERATION_AUDIT_KINDS.updateKarigarStatus).toEqual([
+      'karigar_deactivated',
+      'karigar_reactivated',
+      'user_deactivated',
+      'sessions_ended',
+    ]);
+    expect(PLANNED_OPERATIONS as readonly string[]).not.toContain('onboardKarigar');
+  });
+});
 describe('setSetting contract (EP-06-S8)', () => {
   it('declares the six settings keys, each with a value schema', () => {
     expect([...SETTING_KEYS]).toEqual([
