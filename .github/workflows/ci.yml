@@ -119,13 +119,18 @@ jobs:
         run: npm run db:seed
       - name: Test shared
         if: ${{ !cancelled() }}
-        run: npm test -w @goldsmith/shared -- --reporter=default --reporter=github-actions
+        run: npm test -w @goldsmith/shared -- --reporter=default --reporter=github-actions --reporter=json --outputFile.json=$GITHUB_WORKSPACE/test-results/shared.json
       - name: Test web
         if: ${{ !cancelled() }}
-        run: npm test -w @goldsmith/web -- --reporter=default --reporter=github-actions
+        run: npm test -w @goldsmith/web -- --reporter=default --reporter=github-actions --reporter=json --outputFile.json=$GITHUB_WORKSPACE/test-results/web.json
       - name: Test api
         if: ${{ !cancelled() }}
-        run: npm test -w @goldsmith/api -- --reporter=default --reporter=github-actions
+        run: npm test -w @goldsmith/api -- --reporter=default --reporter=github-actions --reporter=json --outputFile.json=$GITHUB_WORKSPACE/test-results/api.json
+      # The run record (EP-40-S1 AC5, S13 AC5): commit, suite, passed, failed, skipped and duration
+      # in the job summary. Dashboard hosting is a follow-up (docs/followups.md).
+      - name: Test run record
+        if: ${{ !cancelled() }}
+        run: node scripts/test-run-record.mjs
 
   build:
     name: Build
