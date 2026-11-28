@@ -142,7 +142,7 @@ Tests are under `packages/web/src` unless a path starts with `packages/api` or `
 | S18 four screens on the data layer | `StaffDirectory.tsx`, `OnboardStaff.tsx`, `SecurityLog.tsx`, `SignInPage.tsx` | `people/people-screens.test.tsx`; `settings/security-log.test.tsx`; `auth/auth-screens.test.tsx`; `check-store-usage.test.ts`; lane-a run below |
 | S19 production bundle | `src/prototype/*`, `scripts/check-production-bundle.mjs` | `packages/api/test/scripts/check-production-bundle.test.ts`; `components/shell/AppShell.test.tsx` (S14 AC2, S19) |
 
-S19 AC3 (a staging demo) cannot be met yet: staging does not exist (EP-01-S12 waits on D1a). The lane-a run below is the demonstration. See FU-019 in docs/followups.md.
+S19 AC3 (a staging demo) cannot be met yet: staging does not exist (EP-01-S12 waits on D1a). The lane-a run below is the demonstration. See FU-020 in docs/followups.md.
 
 ## Lane-a two-browser run (EP-08-S9, S18 AC2)
 

@@ -2,7 +2,7 @@
  * The prototype seam (EP-08-S19, decision D-D). Everything that runs on the in-memory demo store is
  * reached only through this file: the unwired screens, the store provider and the phone frame.
  * `vite build` swaps it for `index.production.ts`, which holds none of them, so the production
- * bundle carries no demo data. Delete this folder with the last unwired screen (FU-019).
+ * bundle carries no demo data. Delete this folder with the last unwired screen (FU-020).
  */
 import type { ComponentType } from 'react';
 import type { RouteId } from '../nav';
