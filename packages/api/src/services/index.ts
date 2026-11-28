@@ -14,6 +14,7 @@ import { listJobRuns } from './list-job-runs.js';
 import { listMyJobs } from './list-my-jobs.js';
 import { markLeadLost } from './mark-lead-lost.js';
 import { readMyJob } from './read-my-job.js';
+import { readPiece } from './read-piece.js';
 import { retryJobRun } from './retry-job-run.js';
 
 export const handlers: Handlers<typeof contract> = {
@@ -22,6 +23,7 @@ export const handlers: Handlers<typeof contract> = {
   retryJobRun,
   listMyJobs,
   readMyJob,
+  readPiece,
   setSetting,
   listAuditEntries,
   readAuditEntry,

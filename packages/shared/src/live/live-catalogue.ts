@@ -143,7 +143,7 @@ export function liveAudienceFor(topic: string, params: object, catalogue: LiveCa
  * events go to that user only, so no operation grants them.
  */
 export const ENTITY_READ_PERMISSIONS = {
-  piece: ['stockOut'],
+  piece: ['readPiece'],
   parcel: ['saveTag'],
   piece_edit: ['proposeEdit'],
   lead: ['markLeadLost'],

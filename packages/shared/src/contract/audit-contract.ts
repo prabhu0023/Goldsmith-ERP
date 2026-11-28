@@ -91,6 +91,7 @@ export const OPERATION_AUDIT_KINDS = {
   listUsers: null,
   listMyJobs: null,
   readMyJob: null,
+  readPiece: null,
   setSetting: ['setting_changed'],
   listAuditEntries: null,
   readAuditEntry: null,
