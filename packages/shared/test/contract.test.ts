@@ -72,7 +72,7 @@ describe('operation contract (EP-03-S1)', () => {
     expect('rememberScale' in contract).toBe(false);
   });
 
-  it('lists the eight error codes', () => {
+  it('lists the ten error codes', () => {
     expect([...ERROR_CODES]).toEqual([
       'validation',
       'unauthenticated',
@@ -80,6 +80,8 @@ describe('operation contract (EP-03-S1)', () => {
       'not_found',
       'conflict',
       'rule_refused',
+      'pool_insufficient',
+      'opening_exists',
       'rate_limited',
       'internal',
     ]);

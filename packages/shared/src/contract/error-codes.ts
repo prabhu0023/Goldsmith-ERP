@@ -9,6 +9,8 @@ export const ERROR_CODES = [
   'not_found',
   'conflict',
   'rule_refused',
+  'pool_insufficient',
+  'opening_exists',
   'rate_limited',
   'internal',
 ] as const;

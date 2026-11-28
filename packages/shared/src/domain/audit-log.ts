@@ -77,6 +77,10 @@ export const AUDIT_ACTIONS = [
   'wishes_sent',
   'broadcast_sent',
   'scale_upserted',
+  // EP-18 metal pool.
+  'pool_opening_recorded',
+  'pool_return_recorded',
+  'pool_adjusted',
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
@@ -151,6 +155,9 @@ export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = {
   wishes_sent: 'Wishes sent',
   broadcast_sent: 'Broadcast sent',
   scale_upserted: 'Scale saved',
+  pool_opening_recorded: 'Pool opening recorded',
+  pool_return_recorded: 'Gold returned to the pool',
+  pool_adjusted: 'Pool adjusted',
 };
 
 /** What an entry can be about. "invoice" is not one: the app never holds invoices. */
@@ -173,6 +180,7 @@ export const AUDIT_ENTITY_TYPES = [
   'session',
   'job_run',
   'order_copy',
+  'metal_pool',
 ] as const;
 
 export type AuditEntityType = (typeof AUDIT_ENTITY_TYPES)[number];
@@ -241,6 +249,9 @@ export const AUDIT_ACTION_ENTITY: Record<AuditAction, AuditEntityType> = {
   wishes_sent: 'wish',
   broadcast_sent: 'broadcast',
   scale_upserted: 'scale',
+  pool_opening_recorded: 'metal_pool',
+  pool_return_recorded: 'metal_pool',
+  pool_adjusted: 'metal_pool',
 };
 
 /** Who can be an entry's actor: a person by role, a System job or integration, or first-time setup. */

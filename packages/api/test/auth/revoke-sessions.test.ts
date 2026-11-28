@@ -56,7 +56,7 @@ describeDb('end all sessions of a user at once (EP-04-S13)', () => {
     );
   const poolEntries = async (parcelId: string) =>
     Number(
-      (await h.pool.query('select count(*) from pool_entries where shop_id = $1 and reference = $2', [h.shop.shopId, parcelId]))
+      (await h.pool.query('select count(*) from pool_entries where shop_id = $1 and ref_id = $2', [h.shop.shopId, parcelId]))
         .rows[0].count,
     );
 

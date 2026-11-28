@@ -534,7 +534,10 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         kind: e.kind,
         delta_units: deltaUnits,
         note: e.note,
-        reference: e.ref,
+        // The prototype's "POOL" marks the opening entry: it has no reference.
+        ref_type: e.kind === 'opening' ? null : e.kind === 'recovered' ? 'piece' : 'job',
+        ref_id: e.kind === 'opening' ? null : e.ref,
+        actor_name: 'Seed',
       });
     }
 

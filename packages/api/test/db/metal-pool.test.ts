@@ -30,7 +30,7 @@ describeDb('metal pool and ledger (EP-02-S9)', () => {
 
   it('rejects an unknown entry kind', async () => {
     const shop = await newShop(pool);
-    await expectPgError(addEntry(shop, await addPool(shop.shopId), 'AU-1', 'adjustment', 1), '23514');
+    await expectPgError(addEntry(shop, await addPool(shop.shopId), 'AU-1', 'melted', 1), '23514');
   });
 
   it('stores signed deltas as integer units', async () => {

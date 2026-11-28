@@ -59,7 +59,7 @@ describeDb('one transaction per operation (EP-03-S6, S4 AC4)', () => {
       poRef: (await reader.query('select po_ref from parcels where shop_id = $1 and code = $2', [h.shop.shopId, 'BATCH-2026-T2']))
         .rows[0].po_ref,
       entries: Number(
-        (await reader.query('select count(*) from pool_entries where shop_id = $1 and reference = $2', [h.shop.shopId, 'BATCH-2026-T2']))
+        (await reader.query('select count(*) from pool_entries where shop_id = $1 and ref_id = $2', [h.shop.shopId, 'BATCH-2026-T2']))
           .rows[0].count,
       ),
     });
