@@ -59,6 +59,8 @@ const MANIFEST: Record<string, Row> = {
   createAttachment: row('files/attachments.test.ts', 'files/attachments.test.ts', 'files/attachments.test.ts'),
   deleteAttachment: row('files/attachments.test.ts', MATRIX_VALIDATION, 'files/attachments.test.ts'),
   listAttachments: row('files/attachments.test.ts', MATRIX_VALIDATION, 'files/attachments.test.ts'),
+  // Pieces
+  readPiece: row('services/read-piece.test.ts', MATRIX_VALIDATION, 'services/read-piece.test.ts'),
   // Settings and audit
   setSetting: row('audit/settings-audit.test.ts', 'audit/settings-audit.test.ts', 'audit/settings-audit.test.ts'),
   listAuditEntries: row('audit/audit-log-reads.test.ts', 'audit/audit-log-reads.test.ts', 'audit/audit-log-reads.test.ts'),
