@@ -29,7 +29,20 @@
     "db:create": "npm run db:create -w @goldsmith/api",
     "db:new": "npm run db:new -w @goldsmith/api --",
     "storage:up": "docker compose up -d --wait objectstore",
-    "storage:create": "npm run storage:create -w @goldsmith/api"
+    "storage:create": "npm run storage:create -w @goldsmith/api",
+    "backup:db": "npm run backup:db -w @goldsmith/api --",
+    "backup:list": "npm run backup:list -w @goldsmith/api --",
+    "backup:check": "npm run backup:check -w @goldsmith/api --",
+    "backup:prune": "npm run backup:prune -w @goldsmith/api --",
+    "restore:db": "npm run restore:db -w @goldsmith/api --",
+    "restore:drop": "npm run restore:drop -w @goldsmith/api --",
+    "check:audit": "npm run check:audit -w @goldsmith/api --",
+    "restore:sends": "npm run restore:sends -w @goldsmith/api --",
+    "backup:files": "npm run backup:files -w @goldsmith/api --",
+    "restore:files": "npm run restore:files -w @goldsmith/api --",
+    "check:files": "npm run check:files -w @goldsmith/api --",
+    "drill:run": "npm run drill:run -w @goldsmith/api --",
+    "drill:record": "npm run drill:record -w @goldsmith/api --"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

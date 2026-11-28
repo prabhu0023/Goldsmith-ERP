@@ -12,7 +12,8 @@ export type OutboxTopic =
   | 'karigar_job.overdue'
   | 'notify.karigar_job_overdue_reminder'
   | 'wishes.run_requested'
-  | 'user.access_changed';
+  | 'user.access_changed'
+  | 'ops.backup_failed';
 
 export async function emitOutboxEvent(
   client: pg.PoolClient,
