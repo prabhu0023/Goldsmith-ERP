@@ -50,6 +50,7 @@ The api's endpoints, error format and how to add an operation are in [docs/setup
 Background jobs (scheduler, job list, configuration, open items) are described in [docs/setup/jobs.md](docs/setup/jobs.md).
 
 File storage (EP-09): `npm run storage:up && npm run storage:create` starts the local S3-compatible store (SeaweedFS) and creates the lane's buckets; add the `STORAGE_*` lines from [docs/setup/files.md](docs/setup/files.md) to `.env`. Routes, limits, roles and open items are in that file.
+Backup and recovery (EP-38): `npm run backup:db`, `backup:files`, `restore:db`, `drill:run` and the rest are described in [docs/setup/backup.md](docs/setup/backup.md); the restore drill is in [docs/setup/restore-drill.md](docs/setup/restore-drill.md).
 
 ## Database (local)
 

@@ -11,9 +11,13 @@
  *   backup-files                             encrypted copy of every object of the lane's file bucket
  *   restore-files --backup <id|latest> --bucket <name>   restore into a new throwaway bucket
  *   check-files --target <db> --bucket <name>   every stored file of a restored database is in the restored bucket
+ *   drill-run                                time a backup, restore, audit check and a damaged copy, then drop both copies
+ *   drill-record --date <YYYY-MM-DD> --restore-point <text> --duration-minutes <n> --step <1-8>=<pass|fail> (all eight)
+ *                [--environment <name>] [--run-by <name>] [--notes <text>] [--target-minutes <n>]   append a row to docs/setup/restore-drills.md
  * Reads DATABASE_URL, APP_ENV, LANE and the BACKUP_* variables (backup-db, restore-db, backup-files and restore-files also BACKUP_ENCRYPTION_KEY; the file commands read STORAGE_*).
  * Exit code 0 on success, 1 with a one-line error otherwise.
  */
+import { userInfo } from 'node:os';
 import { parseArgs } from 'node:util';
 import { redactErrorText } from '../jobs/redact-error-text.js';
 import { checkAuditAfterRestore } from './audit-check.js';
@@ -24,6 +28,8 @@ import { LocalFolderStore } from './backup-store.js';
 import { readStorageEnv } from '../files/storage-config.js';
 import { S3Storage } from '../files/s3-storage.js';
 import { dropRestored } from './drop-restored.js';
+import { recordDrill } from './drill-record.js';
+import { runDrill } from './drill-run.js';
 import { checkFileReferences } from './files-check.js';
 import { backupFiles, openFileStores } from './files-backup.js';
 import { restoreFiles } from './files-restore.js';
@@ -46,6 +52,8 @@ const COMMANDS = [
   'backup-files',
   'restore-files',
   'check-files',
+  'drill-run',
+  'drill-record',
 ];
 const MAX_IDS_SHOWN = 20;
 function table(rows: string[][]): void {
@@ -102,6 +110,14 @@ async function main(command: string | undefined, args: string[]): Promise<void> 
       source: { type: 'boolean' },
       since: { type: 'string' },
       until: { type: 'string' },
+      date: { type: 'string' },
+      environment: { type: 'string' },
+      'restore-point': { type: 'string' },
+      'duration-minutes': { type: 'string' },
+      'target-minutes': { type: 'string' },
+      step: { type: 'string', multiple: true },
+      'run-by': { type: 'string' },
+      notes: { type: 'string' },
     },
     allowPositionals: true,
     strict: true,
@@ -239,6 +255,45 @@ async function main(command: string | undefined, args: string[]): Promise<void> 
     } finally {
       storage.close();
     }
+  } else if (command === 'drill-run') {
+    const result = await runDrill({
+      env,
+      store,
+      tools: createPgTools({ container: env.pgContainer }),
+      notifier,
+      getKey: () => readBackupKey(),
+      log: (line) => console.log(line),
+    });
+    const seconds = (ms: number): string => `${(ms / 1000).toFixed(1)} s`;
+    const t = result.timings;
+    console.log(
+      `Drill passed in ${seconds(t.totalMs)}: backup ${seconds(t.backupMs)}, restore ${seconds(t.restoreMs)}, audit check ${seconds(t.auditCheckMs)}, damaged copy check ${seconds(t.damagedCheckMs)}, drop ${seconds(t.dropMs)}.`,
+    );
+    console.log(`The damaged copy failed the check as it must (deleted audit entry ${result.damagedEntryId}); both throwaway databases are dropped.`);
+    console.log('Finish the manual steps in docs/setup/restore-drill.md, then record the drill (replace each <pass|fail> and the notes):');
+    console.log(result.recordCommand);
+  } else if (command === 'drill-record') {
+    const steps: Record<string, string> = {};
+    for (const item of values.step ?? []) {
+      const [number, ...result] = item.split('=');
+      steps[number] = result.join('=');
+    }
+    const minutes = (raw: string, flag: string): number => {
+      if (!/^\d+(\.\d+)?$/.test(raw)) throw new Error(`--${flag} must be a number of minutes, for example 12.5`);
+      return Number(raw);
+    };
+    const recorded = recordDrill({
+      date: requireOption(values, 'date', command),
+      environment: values.environment ?? env.appEnv,
+      restorePoint: requireOption(values, 'restore-point', command),
+      durationMinutes: minutes(requireOption(values, 'duration-minutes', command), 'duration-minutes'),
+      targetMinutes: values['target-minutes'] === undefined ? undefined : minutes(values['target-minutes'], 'target-minutes'),
+      steps,
+      runBy: values['run-by'] ?? userInfo().username,
+      notes: values.notes,
+    });
+    console.log(`Recorded in ${recorded.path}: ${recorded.withinTarget ? 'within' : 'over'} target${recorded.provisional ? ' (default target, provisional)' : ''}.`);
+    console.log(recorded.row);
   } else if (command === 'restore-sends') {
     const since = parseInstant(requireOption(values, 'since', command), '--since');
     const until = values.until === undefined ? undefined : parseInstant(values.until, '--until');
