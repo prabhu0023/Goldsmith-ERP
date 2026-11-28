@@ -5372,10 +5372,10 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S2: System can refuse karigar changes from anyone but the owner
 
 - **Story ID:** EP-16-S2
-- **Status:** Done
+- **Status:** Done. Update Karigar account link refuses non-owners with its own sentence, "Only the owner can give a karigar portal access.", not the shared one (same check, same order; see EP-16-S6 AC5).
 - **Title:** System can refuse karigar changes from anyone but the owner
 - **As a:** System
-- **I want:** Create Karigar, Update Karigar details, Update Karigar wastage, Update Karigar status and Update Karigar account link to check the caller's role on the server before validation, and to refuse every role other than owner with "Only the owner can add a karigar or change their wastage allowance."
+- **I want:** Create Karigar, Update Karigar details, Update Karigar wastage, Update Karigar status and Update Karigar account link to check the caller's role on the server before validation, and to refuse every role other than owner with "Only the owner can add a karigar or change their wastage allowance." (Update Karigar account link uses "Only the owner can give a karigar portal access.")
 - **So that:** the allowance every job is judged against, and the record a karigar signs in with, can only be changed by the owner (FR-16-5, BR-16-2)
 - **Acceptance criteria (Given / When / Then):**
   1. Given Rajesh Verma (Staff), when he calls Create Karigar directly with "Ravi Achari", then the server refuses with code `forbidden` and the sentence "Only the owner can add a karigar or change their wastage allowance.", and nothing is stored (epic acceptance criterion 2).
@@ -5412,7 +5412,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
   6. Given the same Create Karigar request is sent twice with one idempotency key after a network drop, when the server processes it, then only one karigar and one code are created.
 - **Rules enforced on the server:** Owner only (EP-16-S2). Name required and trimmed. At least one specialty, each an active EP-15 specialty entry (EP-15-S4). Allowance converted to basis points and checked 60 to 120. Phone required and normalised to +91 and 10 digits. The server sets id, status, language default, open since and version; the client cannot send them. Deduplicated by idempotency key (EP-03-S8). Create, code assignment and audit run in one transaction (EP-03-S6).
 - **Live events emitted / consumed:** None
-- **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_added`), after (name, phone, workshop location, specialties, wastage allowance, status). Written through EP-16-S13.
+- **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_onboarded`), after (name, phone, workshop location, specialties, wastage allowance, status). Written through EP-16-S13.
 - **Data changes:** Inserts into `karigars` and `karigar_specialties`; moves `karigar_code_counter`. Adds Create Karigar to the shared contract.
 - **UI reference:** `docs/ux/mockups/24-onboard-karigar.svg`, route `karigar-new` ("Add a karigar", "Name", "Code", "Phone · their job portal logs in with this", "Workshop location", "What they are best at", "ALLOWED LOSS", slider 0.6% to 1.2%, "On a 160 g job, that means", "Add this karigar", "Cancel"). The "Language for their phone" chips (தமிழ் / हिन्दी / English) are not shown in v1; EP-44 adds them.
 - **Non-functional checks:** Precision: the worked example is computed from integers of 0.0001 g and basis points through the EP-02-S2 helpers, never with float percentages. Personal data: the phone entered here is shown back only to the owner. Security: the slider's client limits are a convenience; the server repeats the range check. D4 is decided: one phone per karigar (phone numbers are unique) and an email is required; an empty email is refused as a validation error.
@@ -5475,7 +5475,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S6: Owner can link a karigar to a karigar user account
 
 - **Story ID:** EP-16-S6
-- **Status:** Done
+- **Status:** Done. The refusal in AC5 is "Only the owner can give a karigar portal access." (amended from the shared owner sentence). Linking an existing user (AC2) is server-only; no screen calls it (FU-032).
 - **Title:** Owner can link a karigar to a karigar user account
 - **As a:** Owner
 - **I want:** from a karigar's record, to link it to a user with role `karigar` (or create that user from the karigar's name, phone and email, which sends the activation email), and to see on the record whether it is linked
@@ -5485,7 +5485,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
   2. Given an existing karigar user with Vijay Kumar's phone and no link, when Sanjay links it to KG-04, then `users.karigarId` is KG-04, and the link uses the EP-05-S13 rules.
   3. Given KG-04 is already linked to an active user, when Sanjay links a second user to it, then the server refuses with "This karigar already has an account." (one account per karigar).
   4. Given KG-05 is deactivated, when Sanjay tries to link or create an account for him, then the server refuses with a sentence saying the karigar is deactivated.
-  5. Given Rajesh Verma (Staff), when he calls Update Karigar account link, then the server refuses with "Only the owner can add a karigar or change their wastage allowance." (EP-16-S2).
+  5. Given Rajesh Verma (Staff), when he calls Update Karigar account link, then the server refuses with "Only the owner can give a karigar portal access." (the link-specific sentence; EP-16-S2 lists the operation as owner-only).
 - **Rules enforced on the server:** Owner only. The user side is owned by EP-05: role must be `karigar`, phone unique among the shop's users, email required, one active user per karigar record (EP-05-S4, EP-05-S13). Creating the user and setting the link happen in one transaction with both audit entries (EP-03-S6). The user's phone and email must equal the karigar's, so the login stays the phone recorded here. No password is set or emailed; the activation link comes from EP-04-S10.
 - **Live events emitted / consumed:** None
 - **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_linked`), before and after user id. The user creation and `karigarId` change are audited by EP-05-S14. Written through EP-16-S13.
@@ -5627,7 +5627,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S12: Karigar can see their own profile
 
 - **Story ID:** EP-16-S12
-- **Status:** Partial: the karigar "Me" tab that shows the profile is EP-20 (FU-031, EP-20).
+- **Status:** Partial: the karigar "Me" tab that shows the profile is EP-20 (FU-031, EP-20). AC3: a karigar calling a read for another karigar's record or scorecard gets `forbidden` (403), not `not_found`. AC5: `profile: null` is unreachable today because every karigar user has a karigar record (FU-033).
 - **Title:** Karigar can see their own profile
 - **As a:** Karigar
 - **I want:** the "Me" tab on my phone to show my own name, code, phone, workshop location, specialties, wastage allowed and finished jobs, read through Read My karigar profile
@@ -5658,14 +5658,14 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 - **I want:** every add, edit, wastage change, account link, deactivation and reactivation of a karigar to write one append-only audit entry in the same transaction, with before and after values
 - **So that:** the owner can see who changed a karigar's record or allowance, when, and from what to what (FR-16-15, epic section 13 audit)
 - **Acceptance criteria (Given / When / Then):**
-  1. Given Sanjay Seth adds KG-05 Ravi Achari, when the create commits, then one entry exists with actor Sanjay, server time, entity KG-05, action `karigar_added` and the stored fields as after.
+  1. Given Sanjay Seth adds KG-05 Ravi Achari, when the create commits, then one entry exists with actor Sanjay, server time, entity KG-05, action `karigar_onboarded` and the stored fields as after.
   2. Given Sanjay changes KG-02 from 0.8% to 1.0%, when it commits, then one entry exists with action `karigar_wastage_changed`, before `wastage_bp` 80 and after 100.
   3. Given an edit that fails after the karigar row was updated, when the transaction rolls back, then neither the change nor the audit entry is stored.
   4. Given a refused request, such as Rajesh Verma calling Create Karigar, when the log is checked, then no karigar entry exists for it.
   5. Given Sanjay filters the security log by entity KG-02, when the results come back, then they list the karigar entries newest first with before and after values (EP-06-S10, EP-06-S11).
 - **Rules enforced on the server:** Audit entries are written in the same transaction as the change (EP-06-S2) and cannot be updated or deleted (EP-06-S1). Actor comes from the session and time from the server clock (EP-03-S3). Audit reads are owner-only (EP-06-S12).
 - **Live events emitted / consumed:** None
-- **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_added`, `karigar_edited`, `karigar_wastage_changed`, `karigar_linked`, `karigar_deactivated`, `karigar_reactivated`), before, after, reason where given.
+- **Audit entry written:** Yes: actor, time, entity (karigar id), action (`karigar_onboarded`, `karigar_edited`, `karigar_wastage_changed`, `karigar_linked`, `karigar_deactivated`, `karigar_reactivated`), before, after, reason where given.
 - **Data changes:** Inserts into `audit_entries` (EP-02-S11). Adds the karigar kinds to the audit kind list by migration. No other schema change.
 - **UI reference:** No screen of its own. Entries show in the security log built in EP-06 (EP-06-S9, EP-06-S10, EP-06-S11).
 - **Non-functional checks:** Audit: every karigar change writes an append-only entry, and a wastage change always holds old and new value. Personal data: phone values in before and after are visible only to the owner. Time: stored in UTC, shown in Asia/Kolkata.

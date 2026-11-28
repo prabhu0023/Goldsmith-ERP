@@ -16,7 +16,7 @@ All take the karigar code as `karigarId`. A refusal for the wrong role comes bef
 
 | Operation | Who | What it does |
 | --- | --- | --- |
-| `onboardKarigar` | owner | Creates a karigar, returns the code. Audit kind `karigar_onboarded` (the stories call it `karigar_added`). Safe to repeat with one `Idempotency-Key`. |
+| `onboardKarigar` | owner | Creates a karigar, returns the code. Audit kind `karigar_onboarded`. Safe to repeat with one `Idempotency-Key`. |
 | `updateKarigarDetails` | owner | Name, phone, email, workshop location, specialties, with `version`. Strict input: `wastageBp`, `status` and `id` keys are refused as `validation`. A linked live user gets the new phone and email in the same transaction. No change writes no entry and no new version. Kinds `karigar_edited`, `user_edited`. |
 | `updateKarigarWastage` | owner | New `wastageBp` and an optional `reason`, with `version`. Same value is a no-op. Kind `karigar_wastage_changed`. |
 | `updateKarigarStatus` | owner | `active` or `deactivated`, with `version` and an optional `reason`. Deactivating is refused while a job is not handed over. It also deactivates the linked user and ends their sessions. Reactivating leaves the user deactivated. Kinds `karigar_deactivated`, `karigar_reactivated`, `user_deactivated`, `sessions_ended`. |
@@ -30,7 +30,8 @@ All take the karigar code as `karigarId`. A refusal for the wrong role comes bef
 
 ### Sentences
 
-- "Only the owner can add a karigar or change their wastage allowance." (every owner write)
+- "Only the owner can add a karigar or change their wastage allowance." (every owner write except the account link)
+- "Only the owner can give a karigar portal access." (`linkKarigarAccount`)
 - "Add the karigar name." / "Pick at least one thing they are best at."
 - "The wastage allowance is between 0.6% and 1.2%." (a `rule_refused`; 0.705% is a `validation` refusal because it is not a whole basis point)
 - "This phone number is already used by another account."
@@ -39,6 +40,8 @@ All take the karigar code as `karigarId`. A refusal for the wrong role comes bef
 - "This karigar already has an account." / "This karigar is deactivated. Reactivate them before giving portal access."
 - "<name> is no longer active. Pick another karigar." / "Say which karigar it came from."
 
+## Before giving portal access
+The migration and seed give each existing karigar the placeholder email `<code>@example.com`. Mail sent to it goes nowhere. Correct the email before giving a karigar portal access.
 ## Interim scorecard sources
 
 EP-18 (ledger), EP-19 (per-job allowance and settlement) and EP-23 (parcel gaps) are not merged, G4 and G23 are undecided (FU-029). Figures are computed on read from existing tables, in integers.
