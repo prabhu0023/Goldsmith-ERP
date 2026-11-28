@@ -20,7 +20,7 @@ import { emitLiveEvent } from './emit-live-event.js';
 
 export const DEV_EMIT_PATH = '/api/dev/live/emit';
 
-/** The catalogue events a test may trigger; edit.applied and user.access_changed come only from real operations. */
+/** The catalogue events a test may trigger; edit.applied, user.access_changed and user.list_changed come only from real operations. */
 const DEV_EVENTS = [
   'piece.billed',
   'parcel.stopped',

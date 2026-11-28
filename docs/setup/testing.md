@@ -53,4 +53,4 @@ node scripts/test-run-record.mjs
 
 ## Not built yet
 
-See `docs/followups.md` (FU-019 to FU-025): end-to-end tests on staging, the deploy gate, service-level match and edit tests, race tests on real operations, the currency rendering test and log redaction.
+See `docs/followups.md` (FU-021 to FU-027): end-to-end tests on staging, the deploy gate, service-level match and edit tests, race tests on real operations, the currency rendering test and log redaction.

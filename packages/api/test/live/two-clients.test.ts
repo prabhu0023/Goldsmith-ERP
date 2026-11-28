@@ -141,14 +141,12 @@ describeDb('EP-07-S12 two browsers receive each other\'s events', () => {
   });
 
   it('S12 AC1: Deepak bills TAG-8841; within 1 second Rajesh gets "Piece billed" and stops showing it as available', async () => {
-    // Rajesh's stock screen: the records come from a permission-checked read (EP-22 stand-in: SQL).
+    // Rajesh's stock screen: the records come from a permission-checked read (readPiece, FU-013).
     const cache = createLiveEntityCache({
       fetchEntity: async (_type, id) => {
-        const { rows } = await h.pool.query<{ tag_no: string; version: number; status: string }>(
-          'select tag_no, version, status from pieces where shop_id = $1 and tag_no = $2',
-          [h.shop.shopId, id],
-        );
-        return rows[0] ? { tagNo: rows[0].tag_no, version: rows[0].version, status: rows[0].status } : null;
+        const res = await h.call('readPiece', { tagNo: id }, rajesh.token);
+        const piece = (res.body as { piece?: { tagNo: string; version: number; status: string } }).piece;
+        return res.status === 200 && piece ? { tagNo: piece.tagNo, version: piece.version, status: piece.status } : null;
       },
     });
     const { rows } = await h.pool.query<{ tag_no: string; version: number; status: string }>(

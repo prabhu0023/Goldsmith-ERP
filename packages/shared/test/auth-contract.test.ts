@@ -37,6 +37,8 @@ describe('auth contract (EP-04)', () => {
       user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' },
       landingRoute: 'today',
       permissions: ['markLeadLost', 'raiseProblem'],
+      shopName: 'Test shop',
+      serverTime: '2026-11-21T10:00:00.000Z',
     };
     expect(sessionResult.parse(body)).toEqual(body);
     const { permissions: _dropped, ...withoutPermissions } = body;

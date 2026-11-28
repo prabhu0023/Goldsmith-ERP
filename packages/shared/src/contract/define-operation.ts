@@ -6,6 +6,13 @@
 import type { z } from 'zod';
 import type { ErrorCode } from './error-codes.js';
 
+/**
+ * Request header the browser sends on a background refetch (a live-triggered or timed re-read).
+ * With the value `1`, a read or list operation, and `readCurrentSession`, checks and row-locks
+ * the session but does not extend its idle expiry, so an unattended tab still times out
+ * (EP-04-S12). A create or command ignores it.
+ */
+export const BACKGROUND_REFRESH_HEADER = 'X-Background-Refresh';
 export type OperationKind = 'create' | 'command' | 'read' | 'list';
 
 /** Keys the server owns; never part of an operation input. */

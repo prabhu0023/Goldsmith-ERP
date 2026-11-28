@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addUserFieldErrors, afterListAnswer, rowActions, statusLabel } from './user-rows';
+import { addUserFieldErrors, addUserRefusal, drawerNotice, rowActions, statusLabel } from './user-rows';
 import type { UserRow } from './user-rows';
 const row = (over: Partial<UserRow>): UserRow => ({
   id: 'u1',
@@ -39,29 +39,27 @@ describe('rowActions', () => {
   });
 });
 
-describe('afterListAnswer (EP-05-S11 AC3, AC4)', () => {
-  const empty = { users: [], nextCursor: null, loadError: null };
-  it('a failed load keeps the rows and shows the server message', () => {
-    const prev = { users: [row({})], nextCursor: 'c1', loadError: null };
-    const message = 'Cannot reach the server. Check the connection and try again.';
-    expect(afterListAnswer(prev, { ok: false, code: 'internal', message })).toEqual({ ...prev, loadError: message });
+describe('drawerNotice (EP-08-S9 AC3)', () => {
+  it('says nothing while the row is at the version the drawer was opened with', () => {
+    expect(drawerNotice(3, 3)).toBeNull();
   });
-  it('a retry that succeeds clears the error and replaces the list', () => {
-    const page = { ok: true as const, items: [row({ id: 'u2' })], nextCursor: null, pageSize: 50 };
-    expect(afterListAnswer({ ...empty, loadError: 'x' }, { ok: true, data: page })).toEqual({
-      users: page.items,
-      nextCursor: null,
-      loadError: null,
-    });
-  });
-  it('Load more adds the next page after the rows so far', () => {
-    const prev = { users: [row({ id: 'u1' })], nextCursor: 'c1', loadError: null };
-    const next = afterListAnswer(prev, { ok: true, data: { ok: true as const, items: [row({ id: 'u2' })], nextCursor: 'c2', pageSize: 50 } }, 'c1');
-    expect(next.users.map((u) => u.id)).toEqual(['u1', 'u2']);
-    expect(next.nextCursor).toBe('c2');
+  it('tells the owner the person was changed and the edits are kept', () => {
+    expect(drawerNotice(3, 4)).toBe('This person was changed by someone else. Your edits are kept.');
   });
 });
-
+describe('addUserRefusal (EP-08-S5 AC2, S18 AC5)', () => {
+  it('puts a validation refusal on the field the server names', () => {
+    const sentence = 'A user with this phone number already exists.';
+    expect(addUserRefusal({ code: 'validation', message: sentence, field: 'phone' })).toEqual({ field: 'phone', message: sentence });
+  });
+  it('shows any other refusal as one sentence beside the button', () => {
+    expect(addUserRefusal({ code: 'forbidden', message: 'Only the owner can add staff.' })).toEqual({ notice: 'Only the owner can add staff.' });
+    expect(addUserRefusal({ code: 'validation', message: 'Bad.', field: 'role' })).toEqual({ notice: 'Bad.' });
+  });
+  it('shows nothing without a refusal', () => {
+    expect(addUserRefusal(null)).toBeNull();
+  });
+});
 describe('addUserFieldErrors (EP-05-S4 AC5)', () => {
   const ok = { name: 'Deepak Rao', phone: '+91 90030 71145', email: 'deepak@example.com', role: 'staff' as const, karigarId: '' };
   it('accepts a complete form', () => {

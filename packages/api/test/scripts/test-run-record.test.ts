@@ -27,7 +27,9 @@ function run(files: Record<string, unknown>, env: Record<string, string> = {}) {
   for (const [name, body] of Object.entries(files)) {
     writeFileSync(join(dir, `${name}.json`), typeof body === 'string' ? body : JSON.stringify(body));
   }
-  const res = spawnSync(process.execPath, [SCRIPT, dir], { encoding: 'utf8', env: { ...process.env, GITHUB_STEP_SUMMARY: '', ...env } });
+  // CI sets GITHUB_SHA; drop it so the commit column is 'local' unless a test sets it.
+  const { GITHUB_SHA: _ignored, ...inherited } = process.env;
+  const res = spawnSync(process.execPath, [SCRIPT, dir], { encoding: 'utf8', env: { ...inherited, GITHUB_STEP_SUMMARY: '', ...env } });
   return { status: res.status, stdout: res.stdout };
 }
 describe('test run record', () => {

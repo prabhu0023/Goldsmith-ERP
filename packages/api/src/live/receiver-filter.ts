@@ -3,8 +3,8 @@
  * must be in its audience and may read the entity under the one permission list:
  * ENTITY_READ_PERMISSIONS names operations of OPERATION_RULES and roleMay answers them, for the
  * role stored now (read once per delivery batch, not the role the stream opened with). A karigar
- * reads only their own jobs (users.karigar_id = karigar_jobs.karigar_id); a user event goes only
- * to that user. A failed check drops the event for that stream silently.
+ * reads only their own jobs (users.karigar_id = karigar_jobs.karigar_id); an event about another
+ * user (`user.list_changed`) also needs the `listUsers` permission and an active account. A failed check drops the event for that stream silently.
  */
 import { ENTITY_READ_PERMISSIONS, type LiveEntityType, type RoleId, roleMay } from '@goldsmith/shared';
 import type pg from 'pg';
@@ -60,8 +60,8 @@ export async function prepareFilter(
       if (row.audience.exceptUserId === target.userId) return false;
       const user = users.get(target.userId);
       if (!user) return false;
-      // A user event is about that user's own account, also after it was deactivated (S10 AC1).
-      if (row.entityType === 'user') return row.entityId === target.userId;
+      // An event about the receiver's own account passes, also after it was deactivated (S10 AC1).
+      if (row.entityType === 'user' && row.entityId === target.userId) return true;
       if (user.status !== 'active') return false;
       const reads: readonly string[] = ENTITY_READ_PERMISSIONS[row.entityType as LiveEntityType] ?? [];
       if (!reads.some((op) => roleMay(user.role, op))) return false;

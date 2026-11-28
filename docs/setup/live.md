@@ -63,6 +63,7 @@ Each stream joins `user:<userId>` and `role:<role>` (owner, staff, karigar). The
 | `tag.saved` | Tag saved on a shared parcel | piece | `parcel:<code>` except the actor | no |
 | `metal_pool.changed` | Metal pool changed | metal_pool (id `metal-pool`) | `role:staff` + `role:owner` | no |
 | `user.access_changed` | User deactivated or role changed | user | `user:<id>` | no |
+| `user.list_changed` | User list changed | user | `role:owner` | no |
 
 Holds were removed from v1, so there is no "piece held" event. A G26 event is one more entry in the registry; the transport does not change (S11 AC5).
 
@@ -70,13 +71,13 @@ Holds were removed from v1, so there is no "piece held" event. A G26 event is on
 
 | Entity | Operations that grant it |
 | --- | --- |
-| piece | `stockOut` |
+| piece | `readPiece` (staff and owner, as `stockOut`) |
 | parcel | `saveTag` |
 | piece_edit | `proposeEdit` |
 | lead | `markLeadLost` |
 | karigar_job | `createOrderCopyAndJob`, or `readMyJob` for the karigar's own job only (`users.karigar_id = karigar_jobs.karigar_id`) |
 | metal_pool | `createOrderCopyAndJob` (the roles that open `order-copy`) |
-| user | the user themself only |
+| user | the user's own account events always pass (also when deactivated); an event about another user needs `listUsers` (owner), so `user.list_changed` reaches owners only |
 
 ## Publishing, sequence and replay
 
@@ -102,7 +103,7 @@ Presence lives in memory in the api process, keyed by stream and parcel. Joining
 
 `createLiveEntityCache` (`live-entity-cache.ts`) keeps records current: an event for a version the client already holds, or an older one, does nothing; a newer one refetches the record once and stores what the read returned, never a value from the event.
 
-**Rail badges (S9).** `useLiveRailBadges(role)` (`packages/web/src/live/rail-badges-live.ts`) reads `readRailBadges` on mount, after `refetch_all`, and once 300 ms after the last event of a burst whose catalogue entry has `refreshesBadges`. A karigar has no rail: nothing is fetched. A badge is shown from the server only once its web screen reads server data, and none does yet, so `SERVER_BACKED_BADGES` is empty and every badge keeps its in-memory value until EP-08 (FU-012); while it is empty the hook reads nothing. Leads is not server-backed either: the web Leads screen and its actions (`LeadReview`, `ConvertLead`) still run on the in-memory store and judge lateness by the demo clock, so a server Leads count would disagree with the screen. Pieces, parcels, edits, problems and scrap have no server write path yet. The server read (`readRailBadges`), the debounce and the karigar rule are in place and tested; a screen epic adds its badge key to the list. The web selector `railBadges` and the server use the same `railBadgeCounts` rule (`packages/shared/src/domain/rail-badge-rules.ts`).
+**Rail badges (S9, EP-08-S16).** `useRailBadges(role)` (`packages/web/src/shell/rail-badges.ts`) is a query of `readRailBadges` in the web query cache. The six catalogue events with `refreshesBadges` invalidate it in the event-to-query map, so a burst gives one read after the 300 ms coalescing window, and `refetch_all` refetches it. While the read loads or after it failed no badge shows (never a 0). A karigar has no rail: the query is disabled and nothing is fetched. Every rail badge now comes from the server; the in-memory `railBadges` selector is no longer used by the shell. The web selector and the server use the same `railBadgeCounts` rule (`packages/shared/src/domain/rail-badge-rules.ts`).
 
 ## Timings
 
@@ -124,7 +125,7 @@ Every process tails `outbox_events` on its own, so events fan out to every proce
 
 ## Test-event stub and demo (S12)
 
-`POST /api/dev/live/emit { event, entityId }` (`packages/api/src/live/dev-emit-router.ts`) records a catalogue event for an existing record through the outbox, exactly as a service function would. It is mounted only when `APP_ENV` is not `production`, needs a real session, refuses a karigar, and checks the entity read permission. `edit.applied` and `user.access_changed` come only from real operations.
+`POST /api/dev/live/emit { event, entityId }` (`packages/api/src/live/dev-emit-router.ts`) records a catalogue event for an existing record through the outbox, exactly as a service function would. It is mounted only when `APP_ENV` is not `production`, needs a real session, refuses a karigar, and checks the entity read permission. `edit.applied`, `user.access_changed` and `user.list_changed` come only from real operations.
 
 Demo with two signed-in clients (lane a: api on 4001, database `goldsmith_dev_a`):
 
@@ -142,9 +143,8 @@ Client 1 (Deepak) triggers "Piece billed" for TAG-8841; client 2 (Rajesh, the sh
 ## Open items
 
 - **D5** (a React web app in the phone's browser) and **D6** (online only) are decided (`docs/decisions/D5-D6-karigar-app.md`). The channel fits both: reconnect and catch-up work, there is no offline queue, and a gap longer than the replay window ends in `refetch_all` (FU-015).
-- **Session re-check:** a refused open re-checks the session through the sliding `readCurrentSession`, so a stream that keeps being refused while the session is valid keeps an idle tab signed in (FU-017).
 - **Replay window** length is not decided (5 minutes until it is).
-- **Screens:** `stock` and the other screens still read the in-memory store, so they do not consume live events yet (EP-08); no piece read operation exists for the refetch (EP-22). The tests drive the entity cache with a stand-in read.
+- **Screens:** `stock` and the other screens still read the in-memory store, so they do not consume live events yet (EP-08); the refetch has a read, `readPiece` (EP-08), which the two-clients test uses.
 - **Multi-process:** presence per process; an optional LISTEN/NOTIFY wake-up would cut cross-process latency below the 500 ms poll.
 - **Stream admission:** `GET /api/live` and the dev emit stub do not go through the rate limiter, and there is no cap on streams per session (FU-016).
 
@@ -183,13 +183,13 @@ API test paths are under `packages/api/test/live/`, shared ones under `packages/
 | S9 | 1 Decisions 3 → 4 after Parcel stopped | `read-rail-badges.ts`, `rail-badge-rules.ts` | `rail-badges.test.ts` "S9 AC1"; `shared/rail-badge-rules.test.ts` |
 | S9 | 2 stock 42 → 41 after Piece billed | `read-rail-badges.ts` | `rail-badges.test.ts` "S9 AC2" |
 | S9 | 3 owner late leads + 1, staff needing a glance | `read-rail-badges.ts` (`slaState`) | `rail-badges.test.ts` "S9 AC3" |
-| S9 | 4 karigar: no badges, no read | `startLiveRailBadges`, rule `shopFloor` | `web/rail-badges-live.test.ts` "S9 AC4"; `rail-badges.test.ts` karigar refused |
-| S9 | 5 burst of 5 → one read | `createBadgeRefresher` | `web/rail-badges-live.test.ts` "S9 AC5" |
+| S9 | 4 karigar: no badges, no read | `useRailBadges` (query disabled), rule `shopFloor` | `web/shell/rail-badges.test.tsx` "S16 AC5"; `rail-badges.test.ts` karigar refused |
+| S9 | 5 burst of 5 → one read | query-client coalescing window | `web/shell/rail-badges.test.tsx` "S9 AC5" |
 | S10 | 1 two devices get the event, then close | live channel access close | `access-close.test.ts` "S10 AC1" |
 | S10 | 2 re-role: presence gone, karigar channels | hub, presence | `access-close.test.ts` "S10 AC2" |
 | S10 | 3 deactivated reconnect refused | 401 | `access-close.test.ts` "S10 AC3" |
 | S10 | 4 only that user | `user:` audience | `access-close.test.ts` "S10 AC4" |
-| S11 | 1 the 10 names and audiences | `LIVE_CATALOGUE` | `shared/live-catalogue.test.ts` "S11 AC1" |
+| S11 | 1 the 10 names and audiences, plus `user.list_changed` (EP-08) | `LIVE_CATALOGUE` | `shared/live-catalogue.test.ts` "S11 AC1" |
 | S11 | 2 each event × 2 staff, owner, 2 karigars | full path | `catalogue-delivery.test.ts` "S11 AC2" |
 | S11 | 3 unknown name refused | `emitLiveEvent`, stamp topic filter | `outbox-publish.test.ts` "S11 AC3" |
 | S11 | 4 billed piece leaves Rajesh's list | entity cache, envelope | `shared/live-entity-cache.test.ts` "S11 AC4"; `two-clients.test.ts` "S12 AC1" |

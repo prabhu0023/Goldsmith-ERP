@@ -44,12 +44,15 @@ function apiPort(env: NodeJS.ProcessEnv): number {
   return 4000 + lane.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
 }
 
-export default defineConfig(() => {
+export default defineConfig(({ command, mode }) => {
+  // The production build swaps the prototype seam for its empty twin (EP-08-S19, decision D-D).
+  const production = command === 'build' && mode === 'production';
   return {
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
         '@': path.resolve(import.meta.dirname, '.'),
+        '@prototype': path.resolve(import.meta.dirname, production ? 'src/prototype/index.production.ts' : 'src/prototype/index.ts'),
       },
       // Resolve @goldsmith/shared to its TypeScript source, so edits in shared reload the app
       // without a separate shared build.

@@ -1,79 +1,61 @@
 import { useEffect, useState } from 'react';
-import { mergeRailBadges, useLiveRailBadges } from '../../live/rail-badges-live';
+import { KarigarFrame, PrototypeNotice } from '@prototype';
 import { navFor, routeTitles } from '../../nav';
-import { railBadges } from '../../store/selectors';
-import { useStore } from '../../store/StoreProvider';
-import { registry } from '../registry';
-import { Rail, RoleChip, TopBar, cn } from '../ui';
-import { PhoneFrame } from './PhoneFrame';
-
-function PricingToggle() {
-  const { state, actions } = useStore();
-  const on = state.settings.pricingEnabled;
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={on}
-      onClick={() => actions.setSetting('pricingEnabled', !on)}
-      className="flex min-h-9 w-full items-center justify-between rounded-lg border border-dashed border-line-2 px-3 text-[13px] text-ink-3 hover:bg-paper"
-    >
-      <span>Dev · pricing</span>
-      <span className={cn('font-bold', on ? 'text-live' : 'text-ink-4')}>{on ? 'on' : 'off'}</span>
-    </button>
-  );
-}
-
+import { useNavigation } from '../../shell/navigation';
+import { useRailBadges } from '../../shell/rail-badges';
+import { useSession } from '../../shell/session-context';
+import { isPrototypeRoute, screenFor } from '../registry';
+import { AccountMenu, ConnectionBanner, Rail, TopBar } from '../ui';
+import { RedirectNotice } from './RedirectNotice';
+/**
+ * The signed-in shell (EP-08-S13, S14). The person, role, shop name and permissions come from the
+ * session, the open screen from navigation, the rail counts from the server. The rail is exactly
+ * `navFor(role)`; the account menu is its only footer.
+ */
 export function AppShell() {
-  const { state, route, role, now, go } = useStore();
+  const { role, shopName } = useSession();
+  const { route, go, notice } = useNavigation();
+  const badges = useRailBadges(role);
   const [menuOpen, setMenuOpen] = useState(false);
-  const liveBadges = useLiveRailBadges(role);
-  const Screen = registry[route.id];
-
-  useEffect(() => setMenuOpen(false), [route.id, role]);
+  const Screen = screenFor(route.id);
+  const prototype = isPrototypeRoute(route.id);
+  useEffect(() => setMenuOpen(false), [route.id]);
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMenuOpen(false);
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
-
   if (role === 'karigar') {
-    // Slim rail with only the role switcher, then the phone.
+    // No rail: a plain column with the account menu on top. A phone frame only in dev (the seam).
     return (
-      <div className="flex min-h-screen flex-col bg-paper md:flex-row">
-        <aside className="border-b border-line bg-surface p-3 md:w-64 md:border-b-0 md:border-r">
-          <div className="mb-3 hidden items-center gap-3 md:flex">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-closed font-serif text-xl font-bold text-gold">JGD</span>
-            <span className="font-serif text-lg font-semibold text-ink">Jai Gulab Dev</span>
-          </div>
-          <RoleChip placement="down" />
-        </aside>
-        <main className="flex flex-1 items-start justify-center p-4 md:items-center md:p-8">
-          <PhoneFrame>
-            <Screen />
-          </PhoneFrame>
-        </main>
+      <div className="min-h-screen bg-paper text-[15px]">
+        <div className="mx-auto w-full max-w-md">
+          <header className="border-b border-line bg-surface p-3">
+            <AccountMenu placement="down" />
+          </header>
+          <ConnectionBanner />
+          <main className="p-4">
+            <RedirectNotice notice={notice} />
+            <KarigarFrame>
+              {prototype && <PrototypeNotice />}
+              <Screen />
+            </KarigarFrame>
+          </main>
+        </div>
       </div>
     );
   }
-
   const rail = (
     <Rail
       sections={navFor(role)}
       routeId={route.id}
-      badges={mergeRailBadges(railBadges(state, role, now), liveBadges)}
+      badges={badges}
       onNavigate={(id) => go(id)}
-      branch={role === 'owner' ? 'All branches' : 'Main showroom'}
-      footer={
-        <>
-          <PricingToggle />
-          <RoleChip />
-        </>
-      }
+      shopName={shopName}
+      footer={<AccountMenu />}
     />
   );
-
   return (
     <div className="min-h-screen bg-paper">
       <aside className="fixed inset-y-0 left-0 z-20 hidden lg:block">{rail}</aside>
@@ -85,7 +67,10 @@ export function AppShell() {
       )}
       <div className="lg:pl-64">
         <TopBar title={routeTitles[route.id]} onMenu={() => setMenuOpen(true)} />
+        <ConnectionBanner />
         <main className="mx-auto max-w-6xl p-4 sm:p-6 lg:p-8">
+          <RedirectNotice notice={notice} />
+          {prototype && <PrototypeNotice />}
           <Screen />
         </main>
       </div>

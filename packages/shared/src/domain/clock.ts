@@ -2,7 +2,9 @@
  * The demo "now": Sunday 1 November 2026, 11:06, then moving with real elapsed time since load.
  * Seed data is laid out around DEMO_BASE so the SLA and overdue states are the same every run.
  */
-export const DEMO_BASE = new Date(2026, 10, 1, 11, 6, 0).getTime();
+const localTime = (y: number, month: number, d: number, h: number, min: number, sec: number): number => new Date(y, month, d, h, min, sec).getTime();
+// Marked pure so a build that never reads the demo clock (the production web bundle) drops it.
+export const DEMO_BASE = /* @__PURE__ */ localTime(2026, 10, 1, 11, 6, 0);
 const loadedAt = Date.now();
 
 export const demoNow = (): number => DEMO_BASE + (Date.now() - loadedAt);

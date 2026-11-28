@@ -3,8 +3,9 @@
 // (packages/web/src/assets/images/) or packages/web/src/data/images.ts (EP-09-S13 AC4, EP-01-S9):
 // screens get photos from stored files through signed links, never from the bundle.
 //
-// The allow-list is the prototype that still uses them; EP-08-S19 removes those imports, and the
-// criterion is fully met once the list is empty.
+// The allow-list is the prototype that still uses them. EP-08-S19 keeps that code out of the
+// production bundle (scripts/check-production-bundle.mjs); the files themselves are deleted with
+// the last unwired screen (follow-up FU-020), and the criterion is fully met once the list is empty.
 //
 // It finds static and dynamic imports and re-exports, Vite's import.meta.glob and
 // new URL('…', import.meta.url) in scripts, and url(…) and @import in style sheets.
@@ -22,10 +23,10 @@ const IMAGES_DIR = join(src, 'assets/images');
 const IMAGES_MODULE = join(src, 'data/images');
 
 const ALLOWED = new Set([
-  'packages/web/src/data/seed.ts', // prototype, removed by EP-08-S19
-  'packages/web/src/data/images.ts', // prototype, removed by EP-08-S19
-  'packages/web/src/components/parcels/TagItem.tsx', // prototype, removed by EP-08-S19
-  'packages/web/src/components/leads/OrderCopyBuilder.tsx', // prototype, removed by EP-08-S19
+  'packages/web/src/data/seed.ts', // prototype, deleted with the last unwired screen (FU-020)
+  'packages/web/src/data/images.ts', // prototype, deleted with the last unwired screen (FU-020)
+  'packages/web/src/components/parcels/TagItem.tsx', // prototype, deleted with the last unwired screen (FU-020)
+  'packages/web/src/components/leads/OrderCopyBuilder.tsx', // prototype, deleted with the last unwired screen (FU-020)
 ]);
 
 const SCRIPT = /\.(ts|tsx|js|jsx|mjs|cjs)$/;
@@ -99,4 +100,4 @@ if (offenders.length > 0) {
   }
   process.exit(1);
 }
-console.log(`bundled image check: ok (${ALLOWED.size} prototype files allowed until EP-08-S19)`);
+console.log(`bundled image check: ok (${ALLOWED.size} prototype files allowed until FU-020)`);
