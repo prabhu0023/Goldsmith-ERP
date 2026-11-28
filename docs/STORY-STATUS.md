@@ -11,7 +11,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-03](stories/EP-03-stories.md) | 12 | 11 | 1 | 0 | 0 | 0 |
 | [EP-04](stories/EP-04-stories.md) | 14 | 14 | 0 | 0 | 0 | 0 |
 | [EP-05](stories/EP-05-stories.md) | 14 | 14 | 0 | 0 | 0 | 0 |
-| [EP-06](stories/EP-06-stories.md) | 12 | 11 | 1 | 0 | 0 | 0 |
+| [EP-06](stories/EP-06-stories.md) | 12 | 10 | 2 | 0 | 0 | 0 |
 | [EP-07](stories/EP-07-stories.md) | 12 | 8 | 4 | 0 | 0 | 0 |
 | [EP-08](stories/EP-08-stories.md) | 19 | 0 | 0 | 19 | 0 | 0 |
 | [EP-09](stories/EP-09-stories.md) | 13 | 13 | 0 | 0 | 0 | 0 |
@@ -51,7 +51,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-43](stories/EP-43-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-44](stories/EP-44-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-45](stories/EP-45-stories.md) | 9 | 0 | 0 | 9 | 0 | 0 |
-| Total | 586 | 108 | 16 | 419 | 4 | 39 |
+| Total | 586 | 107 | 17 | 419 | 4 | 39 |
 
 ## Partial stories
 
@@ -59,6 +59,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 - EP-02-S1 Developer can apply and track schema migrations in every environment: AC5 (deploy applies migrations before the api serves) waits for the staging deploy (EP-01-S12, D1a).
 - EP-03-S11 System can expose a rate-limit hook for EP-39 to fill in: the rate-limit hook is not called for GET /api/contract-version or an unknown operation name (FU-003, EP-39).
 - EP-06-S1 System can store audit entries that cannot be updated or deleted: AC5 (grants check run in CI against staging) waits for staging (FU-008, D1a).
+- EP-06-S2 System can write an audit entry in the same transaction as every state change: createUser, createFirstOwner, updateUserRole and deactivateUser write a second entry, so "exactly one entry" is not met (FU-009, EP-40).
 - EP-07-S2 System can stamp each event with a sequence number, entity id and version: AC5 (stock screen shows the refetched piece) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - EP-07-S9 User can see rail badge counts update live: no rail badge is server-backed yet; each moves to server counts with its screen (FU-012).
 - EP-07-S11 System can carry each of the 10 catalogue events to its audience: AC4 (stock screen drops a billed piece live) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).

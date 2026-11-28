@@ -34,7 +34,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S2: System can write an audit entry in the same transaction as every state change
 
 - **Story ID:** EP-06-S2
-- **Status:** Done
+- **Status:** Partial: one call writes more than one audit entry for createUser, createFirstOwner, updateUserRole and deactivateUser, so "exactly one entry" is not met (FU-009, EP-40).
 - **Title:** System can write an audit entry in the same transaction as every state change
 - **As a:** System
 - **I want:** a service-layer wrapper that every state-changing operation runs through, which appends exactly one audit entry inside the operation's transaction before it commits
