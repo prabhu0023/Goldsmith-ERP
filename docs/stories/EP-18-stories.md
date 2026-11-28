@@ -9,7 +9,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S1: System can store pool entries and a balance as integer weights
 
 - **Story ID:** EP-18-S1
-- **Status:** Not started
+- **Status:** Done
 - **Title:** System can store pool entries and a balance as integer weights
 - **As a:** System
 - **I want:** the `metal_pools` and `pool_entries` tables from EP-02-S9 extended so each entry has a kind from `opening`, `issued`, `returned`, `recovered` and `adjustment`, a signed integer delta in units of 0.0001 g, a note, a reference type and id, an actor and a server time, with one shared posting function that inserts an entry and moves the balance in the caller's transaction
@@ -35,7 +35,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S2: Owner can record the opening balance
 
 - **Story ID:** EP-18-S2
-- **Status:** Not started
+- **Status:** Done
 - **Title:** Owner can record the opening balance
 - **As a:** Owner
 - **I want:** to record the pool's opening balance once, in grams to 4 decimals with a note, through Create Opening entry
@@ -60,7 +60,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S3: System can post an issue entry inside job creation
 
 - **Story ID:** EP-18-S3
-- **Status:** Not started
+- **Status:** Partial: AC1 and AC2 need the job creation of EP-19; Post Issue is built and tested with a test caller (FU-028).
 - **Title:** System can post an issue entry inside job creation
 - **As a:** System
 - **I want:** a Post Issue function that the job-creation operation of EP-19 calls inside its own transaction, which posts an `issued` entry with a negative delta equal to the gold handed over and the job id as its reference
@@ -85,7 +85,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S4: System can refuse an issue above the balance
 
 - **Story ID:** EP-18-S4
-- **Status:** Not started
+- **Status:** Partial: AC1 and AC5 need the order-copy send of EP-19; the refusal and the balance warning are built (FU-028).
 - **Title:** System can refuse an issue above the balance
 - **As a:** System
 - **I want:** Post Issue to refuse an amount larger than the current balance with "The metal pool does not have that much gold to issue.", and to refuse a negative or zero amount, so that the job creation that called it fails and changes nothing
@@ -110,7 +110,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S5: System can stop two issues overdrawing the pool
 
 - **Story ID:** EP-18-S5
-- **Status:** Not started
+- **Status:** Done
 - **Title:** System can stop two issues overdrawing the pool
 - **As a:** System
 - **I want:** every posting that lowers the balance to take a row lock on the pool row, or to update it with a version check, before reading the balance, so that two postings at the same moment are applied one after the other
@@ -135,7 +135,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S6: System can post a recovery entry inside a scrap decision
 
 - **Story ID:** EP-18-S6
-- **Status:** Not started
+- **Status:** Partial: AC1 and AC2 need the scrap decision of EP-27; Post Recovery is built and tested with a test caller (FU-029).
 - **Title:** System can post a recovery entry inside a scrap decision
 - **As a:** System
 - **I want:** a Post Recovery function that the scrap decision of EP-27 calls inside its own transaction, which posts a `recovered` entry equal to the piece's net gold with the piece id as its reference
@@ -160,7 +160,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S7: Owner can record gold returned by a karigar
 
 - **Story ID:** EP-18-S7
-- **Status:** Not started
+- **Status:** Done
 - **Title:** Owner can record gold returned by a karigar
 - **As a:** Owner
 - **I want:** to record unused gold a karigar hands back, in grams to 4 decimals, linked to the job it was issued for, through Create Return entry
@@ -185,7 +185,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S8: Owner can post an adjustment with a reason
 
 - **Story ID:** EP-18-S8
-- **Status:** Not started
+- **Status:** Done
 - **Title:** Owner can post an adjustment with a reason
 - **As a:** Owner
 - **I want:** to post a signed adjustment in grams to 4 decimals with a reason of at least 3 characters, through Create Adjustment entry
@@ -210,7 +210,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S9: Owner can see the ledger with filters
 
 - **Story ID:** EP-18-S9
-- **Status:** Not started
+- **Status:** Done
 - **Title:** Owner can see the ledger with filters
 - **As a:** Owner
 - **I want:** to list pool entries newest first, 50 per page, through List Pool entries, filtered by kind, job, piece and date range, each row showing time, kind, signed grams, reference, actor and note
@@ -235,7 +235,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S10: Staff can see the pool balance on the order copy screen
 
 - **Story ID:** EP-18-S10
-- **Status:** Not started
+- **Status:** Partial: order-copy is still a prototype screen until EP-19; the balance line, warning and offline state are built (FU-028).
 - **Title:** Staff can see the pool balance on the order copy screen
 - **As a:** Staff
 - **I want:** to read the current pool balance through Read Pool balance and see it next to "Pure gold issued to …" on `order-copy`, with an early warning when the gold I enter is more than the balance
@@ -260,7 +260,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S11: Owner can see gold with each karigar and a custody summary
 
 - **Story ID:** EP-18-S11
-- **Status:** Not started
+- **Status:** Done
 - **Title:** Owner can see gold with each karigar and a custody summary
 - **As a:** Owner
 - **I want:** a Read Custody summary operation that returns the gold in the pool, with each karigar on open jobs (issued less returned), in parcels not yet released, in stock and gone, and a Read Gold with karigar operation that the owner can call for any karigar and a karigar can call only for themselves
@@ -285,7 +285,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S12: System can push the balance live after a change
 
 - **Story ID:** EP-18-S12
-- **Status:** Not started
+- **Status:** Done
 - **Title:** System can push the balance live after a change
 - **As a:** System
 - **I want:** to emit "Metal pool changed" after every committed pool entry, carrying the new balance, the pool version and the entry kind, to owner and staff connections only

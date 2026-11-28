@@ -1,6 +1,7 @@
 import { prototypeScreens } from '@prototype';
 import type { ComponentType } from 'react';
 import type { RouteId } from '../nav';
+import { MetalPoolPage } from './pool/MetalPoolPage';
 import { OnboardStaff } from './people/OnboardStaff';
 import { StaffDirectory } from './people/StaffDirectory';
 import { SecurityLog } from './settings/SecurityLog';
@@ -10,6 +11,7 @@ const wiredScreens: Partial<Record<RouteId, ComponentType>> = {
   'staff-directory': StaffDirectory,
   'staff-new': OnboardStaff,
   security: SecurityLog,
+  'metal-pool': MetalPoolPage,
 };
 /** Whether a route runs on the prototype store (and shows the demo notice). */
 export const isPrototypeRoute = (id: RouteId): boolean => !wiredScreens[id] && Boolean(prototypeScreens[id]);

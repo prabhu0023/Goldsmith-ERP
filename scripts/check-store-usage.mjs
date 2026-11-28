@@ -54,7 +54,6 @@ const ALLOWED = [
   'components/settings/ScalesRules.tsx',
   'components/stock/EditApply.tsx',
   'components/stock/EditPropose.tsx',
-  'components/stock/MetalPool.tsx',
   'components/stock/PieceDrawer.tsx',
   'components/stock/ScrapDecision.tsx',
   'components/stock/ShowroomStock.tsx',
