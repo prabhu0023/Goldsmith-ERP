@@ -4,7 +4,8 @@ import { fmtDateTime } from '@goldsmith/shared';
 import { fmtG, netOf, sumG } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
 import type { Piece } from '@goldsmith/shared';
-import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, ValueSlot } from '../ui';
+import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select } from '../ui';
+import { ValueSlot } from '../ui/ValueSlot';
 
 /** Screen 06: which pieces left the showcase, who sold them, and the reference from the billing book. No prices. */
 export function StockOut() {

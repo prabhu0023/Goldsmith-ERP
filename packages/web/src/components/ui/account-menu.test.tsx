@@ -1,15 +1,8 @@
 import type { RoleId } from '@goldsmith/shared';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { StoreProvider } from '../../store/StoreProvider';
-import { RoleChip } from './RoleChip';
-const signOutOk = async () => null;
-const menuFor = (name: string, role: RoleId) =>
-  renderToStaticMarkup(
-    <StoreProvider signedIn={{ name, role }} onSignOut={signOutOk}>
-      <RoleChip defaultOpen />
-    </StoreProvider>,
-  );
+import { renderAs } from '../../test-support/render-as';
+import { AccountMenu } from './AccountMenu';
+const menuFor = (name: string, role: RoleId) => renderAs(name, role, <AccountMenu defaultOpen />);
 describe('account menu (EP-05-S12)', () => {
   it('AC1: a staff member sees their name, the Staff label and Sign out', () => {
     const html = menuFor('Rajesh Verma', 'staff');
@@ -34,9 +27,17 @@ describe('account menu (EP-05-S12)', () => {
     expect(html).toContain('>Owner<');
     expect(html).toContain('Sign out');
   });
-  it('shows the session name even when the prototype has no such person', () => {
+  it('shows the session name and initials', () => {
     const html = menuFor('Meera Iyer', 'staff');
     expect(html).toContain('Meera Iyer');
     expect(html).toContain('>MI<');
+  });
+  it('EP-08-S14 AC1: the menu holds the name, the role label and Sign out only', () => {
+    const html = menuFor('Lakshmi Devi', 'karigar');
+    expect(html).toContain('Lakshmi Devi');
+    expect(html).toContain('>Karigar<');
+    expect(html.match(/role="menuitem"/g)).toHaveLength(1);
+    expect(html).not.toContain('Dev · pricing');
+    expect(html).not.toContain('Not signed in.');
   });
 });

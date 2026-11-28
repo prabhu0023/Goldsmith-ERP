@@ -28,6 +28,10 @@ export const sessionResult = z.object({
   landingRoute: z.enum(['today', 'decisions', 'k-jobs']),
   /** The role's permission list (EP-05-S12 AC5); the web hides what the role may not do. */
   permissions: z.array(z.string()),
+  /** The shop's name, for the shell header (EP-08-S12). */
+  shopName: z.string(),
+  /** The server's time (ISO), so the web can show shop-day dates without trusting the device clock (EP-08-S14). */
+  serverTime: z.iso.datetime(),
 });
 const passwordLinkInput = z.object({ token: z.string().min(1), password: z.string() });
 export const authContract = {

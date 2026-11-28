@@ -33,7 +33,7 @@ const envelope = {
 };
 
 describe('live-event catalogue (EP-07-S11)', () => {
-  it('S11 AC1: exactly the 10 names and audiences of PRODUCTION-SCOPE §1', () => {
+  it('S11 AC1: exactly the 10 names and audiences of PRODUCTION-SCOPE §1 plus user.list_changed (EP-08)', () => {
     const audiences = Object.values(LIVE_CATALOGUE).map((e) => [
       e.name,
       e.audience({
@@ -55,6 +55,7 @@ describe('live-event catalogue (EP-07-S11)', () => {
       ['Tag saved on a shared parcel', { channels: ['parcel:BATCH-2026-044'], exceptUserId: 'u-actor' }],
       ['Metal pool changed', { channels: [STAFF, OWNER] }],
       ['User deactivated or role changed', { channels: [userChannel('u-target')] }],
+      ['User list changed', { channels: [OWNER] }],
     ]);
     // Each entry is keyed by its own topic.
     for (const [topic, e] of Object.entries(LIVE_CATALOGUE)) expect(e.topic).toBe(topic);
@@ -76,7 +77,10 @@ describe('live-event catalogue (EP-07-S11)', () => {
       .filter(([, ops]) => (ops as readonly string[]).some((op) => roleMay('karigar', op)))
       .map(([entity]) => entity);
     expect(karigarReads).toEqual(['karigar_job']);
-    expect(ENTITY_READ_PERMISSIONS.user).toEqual([]);
+    // Events about other users (user.list_changed) need listUsers, so only the owner reads them;
+    // a user's own account events pass in the receiver filter regardless.
+    expect(ENTITY_READ_PERMISSIONS.user).toEqual(['listUsers']);
+    expect(ENTITY_READ_PERMISSIONS.piece).toEqual(['readPiece']);
   });
 
   it('S2 rule: the envelope schema refuses an extra field', () => {

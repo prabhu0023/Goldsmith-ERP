@@ -7,6 +7,7 @@ import type { contract } from '@goldsmith/shared';
 import { updateVersioned } from '../db/versioned.js';
 import type { Handler } from '../pipeline/registry.js';
 import { writeUserLifecycleAudit } from './user-audit.js';
+import { emitUserListChanged } from './user-live.js';
 import { assertPhoneFree, loadUserForUpdate, lockShopForUsers, withUniqueViolations } from './user-store.js';
 
 export const updateUserProfile: Handler<typeof contract.updateUserProfile> = async (tx, ctx, input) => {
@@ -30,5 +31,6 @@ export const updateUserProfile: Handler<typeof contract.updateUserProfile> = asy
     before: { name: user.name, phone: user.phone, email: user.email },
     after: { name: input.name, phone: input.phone, email: input.email },
   });
+  await emitUserListChanged(tx, ctx, user.id);
   return { ok: true };
 };

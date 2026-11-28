@@ -23,9 +23,11 @@ export function gateFromLocation(pathname: string, hash: string): GateState {
 /** After the first Read Current session: the app when signed in, else the sign-in screen. */
 export const gateAfterCheck = (answer: AuthAnswer<'readCurrentSession'>): GateState =>
   answer.ok ? { kind: 'signed-in', session: answer.data } : signedOut();
+/** The sign-in screen with the session-ended sentence (a 401, a closed live stream, own access change; EP-08-S15). */
+export const gateAfterEnd = (): GateState => signedOut(AUTH_MESSAGES.sessionEnded);
 /** After a re-check while signed in: the session-ended sentence on `unauthenticated`, else no change. */
 export const gateAfterRecheck = (answer: AuthAnswer<'readCurrentSession'>): GateState | null =>
-  !answer.ok && answer.code === 'unauthenticated' ? signedOut(AUTH_MESSAGES.sessionEnded) : null;
+  !answer.ok && answer.code === 'unauthenticated' ? gateAfterEnd() : null;
 /**
  * After Sign out (S11): the sign-in screen once the server ended the session, or when it had already
  * ended (`unauthenticated`). Any other failure keeps the app open: the HttpOnly cookie cannot be

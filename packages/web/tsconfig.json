@@ -16,6 +16,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@prototype": [
+        "./src/prototype/index.ts"
       ]
     },
     "allowImportingTsExtensions": true,

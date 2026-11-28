@@ -26,7 +26,7 @@ import express, { type Request, type Response, type Router } from 'express';
 import type pg from 'pg';
 import { ApiError, type ErrorLog, RateLimitedError, UnauthenticatedError } from '../pipeline/api-errors.js';
 import type { RateLimiter } from '../pipeline/hooks.js';
-import { clientAddressOf } from '../pipeline/operation-router.js';
+import { clientAddressOf, isBackgroundRefresh } from '../pipeline/operation-router.js';
 import { runInTransaction } from '../pipeline/operation-transaction.js';
 import type { Clock } from '../pipeline/server-clock.js';
 import type { Session, SessionResolver } from '../pipeline/session-resolver.js';
@@ -86,12 +86,19 @@ function deviceLabelOf(req: Request, typed: string | undefined): string {
   return agent || 'unknown device';
 }
 
-const sessionResultFor = (user: Pick<Session, 'userId' | 'name' | 'role'>) => ({
+const sessionResultFor = (user: Pick<Session, 'userId' | 'name' | 'role'>, shopName: string, at: Date) => ({
   ok: true as const,
   user: { userId: user.userId, name: user.name, role: user.role },
   landingRoute: LANDING_ROUTES[user.role],
   permissions: [...permissionsFor(user.role)],
+  shopName,
+  serverTime: at.toISOString(),
 });
+
+async function shopNameOf(db: pg.Pool | pg.PoolClient, shopId: string): Promise<string> {
+  const { rows } = await db.query<{ name: string }>('select name from shops where id = $1', [shopId]);
+  return rows[0]?.name ?? '';
+}
 
 export function createAuthRouter(deps: AuthRouterDeps): Router {
   const { pool, sessions, clock, rateLimiter, log, maxBodyBytes, auth } = deps;
@@ -134,18 +141,19 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
         throw new DomainError(`${AUTH_MESSAGES.lockedPrefix}${kolkataTime(outcome.lockedUntil)}.`);
       }
       setSessionCookie(res, outcome.token, { secure: auth.secureCookies });
-      res.json(sessionResultFor(outcome.user));
+      res.json(sessionResultFor(outcome.user, await shopNameOf(pool, shopId), at));
     },
 
-    async readCurrentSession({ res, pool, session, at }) {
+    async readCurrentSession({ req, res, pool, session, at }) {
       const current = requireSession(session);
+      const extend = !isBackgroundRefresh(req);
       const live = await runInTransaction(
         pool,
-        async (tx) => (sessions.confirm ? sessions.confirm(tx.client, current, at) : true),
+        async (tx) => (sessions.confirm ? sessions.confirm(tx.client, current, at, { extend }) : true),
         log,
       );
       if (!live) throw new UnauthenticatedError();
-      res.json(sessionResultFor(current));
+      res.json(sessionResultFor(current, await shopNameOf(pool, current.shopId), at));
     },
 
     async signOut({ res, pool, session, at }) {

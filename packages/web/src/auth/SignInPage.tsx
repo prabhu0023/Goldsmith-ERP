@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import type { FormEvent, ReactNode } from 'react';
 import type { AuthResult } from '@goldsmith/shared';
-import { Button, Field, Notice } from '../components/ui';
-import { authCall } from './auth-api';
+import { ActionButton, ActionError, Button, Field, Notice } from '../components/ui';
+import { defineAuthAction } from '../query/action-controller';
+import { useAction } from '../query/use-action';
 import { isSignInFormValid, validateSignInForm } from './sign-in-form';
 import type { SignInFormErrors } from './sign-in-form';
 /** The centred card every sign-in screen sits in; it fits a karigar's phone. */
@@ -27,29 +28,25 @@ interface Props {
   onSignedIn: (session: AuthResult<'signIn'>) => void;
   onForgot: () => void;
 }
+const signIn = defineAuthAction({ op: 'signIn' });
 /** Phone and password sign-in (EP-04-S3); the server's sentence is shown as is. */
 export function SignInPage({ notice, onSignedIn, onForgot }: Props) {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<SignInFormErrors>({});
-  const [serverError, setServerError] = useState<string>();
-  const [busy, setBusy] = useState(false);
+  const action = useAction(signIn);
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     const found = validateSignInForm({ phone, password });
     setErrors(found);
-    setServerError(undefined);
     if (!isSignInFormValid(found)) return;
-    setBusy(true);
-    const answer = await authCall('signIn', { phone, password });
-    setBusy(false);
+    const answer = await action.run({ phone, password });
     if (answer.ok) {
       onSignedIn(answer.data);
       return;
     }
     setPassword('');
     if (answer.field === 'phone') setErrors({ phoneError: answer.message });
-    else setServerError(answer.message);
   };
   return (
     <AuthFrame title="Sign in" subtitle="Use the phone number the shop registered for you.">
@@ -77,10 +74,10 @@ export function SignInPage({ notice, onSignedIn, onForgot }: Props) {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Field>
-        {serverError && <Notice tone="stop">{serverError}</Notice>}
-        <Button type="submit" variant="primary" size="lg" block disabled={busy}>
+        <ActionError refusal={action.refusal?.field === 'phone' ? null : action.refusal} />
+        <ActionButton type="submit" variant="primary" size="lg" block busy={action.busy}>
           Sign in
-        </Button>
+        </ActionButton>
       </form>
       <Button variant="quiet" size="lg" block onClick={onForgot}>
         Forgot password

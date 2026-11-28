@@ -1,6 +1,5 @@
 import { normaliseIndianMobile } from '@goldsmith/shared';
 import type { OperationResult, RoleId } from '@goldsmith/shared';
-import type { OpsAnswer } from '../../api/ops-client';
 /** One row of the server's user directory (listUsers). */
 export type UserRow = OperationResult<'listUsers'>['items'][number];
 export type RowAction = 'resend' | 'deactivate' | 'reactivate' | 'unlock';
@@ -20,26 +19,12 @@ export function rowActions(user: Pick<UserRow, 'status' | 'role' | 'lockedUntilL
   return actions;
 }
 
-/** The directory's list state: the rows so far, the next page cursor and a load error. */
-export interface DirectoryList {
-  users: UserRow[];
-  nextCursor: string | null;
-  loadError: string | null;
+/** The sentence over a drawer whose person was changed by someone else since it was opened (EP-08-S9 AC3). */
+export const DRAWER_CHANGED_NOTICE = 'This person was changed by someone else. Your edits are kept.';
+/** The drawer keeps what was typed and the version it was opened with; a newer row version shows the notice. */
+export function drawerNotice(openedVersion: number, currentVersion: number): string | null {
+  return currentVersion > openedVersion ? DRAWER_CHANGED_NOTICE : null;
 }
-
-/**
- * The list after a listUsers answer (EP-05-S11 AC3, AC4): a page is added after "Load more" or
- * replaces the list; a failure keeps the rows and shows the server's message (with Retry).
- */
-export function afterListAnswer(prev: DirectoryList, answer: OpsAnswer<'listUsers'>, cursor?: string): DirectoryList {
-  if (!answer.ok) return { ...prev, loadError: answer.message };
-  return {
-    users: cursor ? [...prev.users, ...answer.data.items] : answer.data.items,
-    nextCursor: answer.data.nextCursor,
-    loadError: null,
-  };
-}
-
 export type AddUserField = 'name' | 'phone' | 'email' | 'karigarId';
 
 /** The add form's own checks before it calls createUser (EP-05-S4 AC5). */
@@ -56,4 +41,20 @@ export function addUserFieldErrors(form: {
   if (!form.email.trim()) found.email = 'Add the email address. The activation link goes there.';
   if (form.role === 'karigar' && !form.karigarId.trim()) found.karigarId = 'Add the karigar code, e.g. KG-04.';
   return found;
+}
+
+const ADD_USER_FIELDS: readonly string[] = ['name', 'phone', 'email', 'karigarId'];
+/**
+ * Where a refusal of createUser is shown: on its field when the server names one of the form's
+ * fields with a validation refusal (the duplicate-phone sentence sits on the phone), else as one
+ * sentence beside the button. What was typed is never touched (EP-08-S5 AC2, S18 AC5).
+ */
+export function addUserRefusal(
+  refusal: { code: string; message: string; field?: string } | null,
+): { field: AddUserField; message: string } | { notice: string } | null {
+  if (!refusal) return null;
+  if (refusal.code === 'validation' && refusal.field && ADD_USER_FIELDS.includes(refusal.field)) {
+    return { field: refusal.field as AddUserField, message: refusal.message };
+  }
+  return { notice: refusal.message };
 }

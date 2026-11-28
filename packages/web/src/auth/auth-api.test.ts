@@ -7,7 +7,7 @@ afterEach(() => {
 });
 describe('authCall', () => {
   it('posts JSON to /api/auth/<op> on the same origin and returns the data', async () => {
-    const data = { ok: true, user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' }, landingRoute: 'today', permissions: ['markLeadLost'] };
+    const data = { ok: true, user: { userId: 'u1', name: 'Rajesh Verma', role: 'staff' }, landingRoute: 'today', permissions: ['markLeadLost'], shopName: 'Test shop', serverTime: '2026-11-21T10:00:00.000Z' };
     const fetchStub = reply(200, data);
     vi.stubGlobal('fetch', fetchStub);
     const answer = await authCall('signIn', { phone: '98410 11111', password: 'counter-2026' });
@@ -44,5 +44,18 @@ describe('authCall', () => {
     const answer = await authCall('readCurrentSession', {});
     expect(answer.ok).toBe(false);
     if (!answer.ok) expect(answer.code).toBe('internal');
+  });
+  it('adds the background header only when asked (the live client session check)', async () => {
+    const fetchStub = reply(200, { ok: true });
+    vi.stubGlobal('fetch', fetchStub);
+    await authCall('readCurrentSession', {});
+    await authCall('readCurrentSession', {}, { background: true });
+    const headers = fetchStub.mock.calls.map((c) => ((c as unknown as [string, RequestInit])[1].headers ?? {}) as Record<string, string>);
+    expect(headers[0]).not.toHaveProperty('X-Background-Refresh');
+    expect(headers[1]).toMatchObject({ 'X-Background-Refresh': '1' });
+  });
+  it('flags a lost connection as a network failure', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => Promise.reject(new TypeError('Failed to fetch'))));
+    expect(await authCall('readCurrentSession', {})).toMatchObject({ ok: false, code: 'internal', network: true });
   });
 });

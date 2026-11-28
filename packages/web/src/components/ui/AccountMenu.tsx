@@ -1,7 +1,7 @@
 import { ROLE_INFO } from '@goldsmith/shared';
 import { ChevronsUpDown, LogOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { useStore } from '../../store/StoreProvider';
+import { useSession } from '../../shell/session-context';
 import { cn } from './cn';
 interface Props {
   /** Which way the menu opens. The rail foot opens upward. */
@@ -10,14 +10,21 @@ interface Props {
   /** Start with the menu open (static renders in tests). */
   defaultOpen?: boolean;
 }
+const initialsOf = (name: string): string =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
 /**
- * The account menu (EP-05-S12): the signed-in person's name and role label, and a menu holding
- * only "Sign out" (EP-04-S6). If signing out fails the menu stays open with the error so the
- * person can try again (EP-04-S11). Without a session (prototype renders) it shows the identity
- * and offers nothing to pick.
+ * The account menu (EP-05-S12, EP-08-S14): the signed-in person's name and role label, and a menu
+ * holding only "Sign out" (EP-04-S6). If signing out fails the menu stays open with the error so
+ * the person can try again (EP-04-S11). It reads the session; there is nothing to switch.
  */
-export function RoleChip({ placement = 'up', className, defaultOpen = false }: Props) {
-  const { identity, signOut } = useStore();
+export function AccountMenu({ placement = 'up', className, defaultOpen = false }: Props) {
+  const { user, role, signOut } = useSession();
   const [open, setOpen] = useState(defaultOpen);
   const [signOutError, setSignOutError] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
@@ -32,7 +39,7 @@ export function RoleChip({ placement = 'up', className, defaultOpen = false }: P
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);
-  const roleLabel = ROLE_INFO.find((r) => r.id === identity.role)?.label ?? identity.role;
+  const roleLabel = ROLE_INFO.find((r) => r.id === role)?.label ?? role;
   return (
     <div ref={ref} className={cn('relative', className)}>
       <button
@@ -45,9 +52,9 @@ export function RoleChip({ placement = 'up', className, defaultOpen = false }: P
         }}
         className="flex w-full min-h-14 items-center gap-3 rounded-xl border border-line bg-surface p-2.5 text-left hover:bg-paper"
       >
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-closed text-sm font-bold text-white">{identity.initials}</span>
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-closed text-sm font-bold text-white">{initialsOf(user.name)}</span>
         <span className="min-w-0 flex-1">
-          <span className="block truncate text-sm font-semibold text-ink">{identity.name}</span>
+          <span className="block truncate text-sm font-semibold text-ink">{user.name}</span>
           <span className="block truncate text-[13px] text-ink-3">{roleLabel}</span>
         </span>
         <ChevronsUpDown size={16} className="shrink-0 text-ink-4" />
@@ -60,28 +67,22 @@ export function RoleChip({ placement = 'up', className, defaultOpen = false }: P
             placement === 'up' ? 'bottom-full mb-2' : 'top-full mt-2',
           )}
         >
-          {signOut ? (
-            <>
-              <button
-                type="button"
-                role="menuitem"
-                onClick={() => {
-                  setSignOutError(null);
-                  void signOut().then(setSignOutError);
-                }}
-                className="flex min-h-14 w-full items-center gap-3 rounded-lg px-2 text-left text-sm font-semibold text-ink hover:bg-paper"
-              >
-                <LogOut size={16} className="shrink-0 text-ink-3" />
-                Sign out
-              </button>
-              {signOutError && (
-                <p role="alert" className="px-2 py-1 text-sm font-semibold text-stop">
-                  {signOutError}
-                </p>
-              )}
-            </>
-          ) : (
-            <p className="px-2 py-1 text-sm text-ink-3">Not signed in.</p>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setSignOutError(null);
+              void signOut().then(setSignOutError);
+            }}
+            className="flex min-h-14 w-full items-center gap-3 rounded-lg px-2 text-left text-sm font-semibold text-ink hover:bg-paper"
+          >
+            <LogOut size={16} className="shrink-0 text-ink-3" />
+            Sign out
+          </button>
+          {signOutError && (
+            <p role="alert" className="px-2 py-1 text-sm font-semibold text-stop">
+              {signOutError}
+            </p>
           )}
         </div>
       )}

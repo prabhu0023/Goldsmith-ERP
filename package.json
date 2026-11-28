@@ -14,7 +14,8 @@
   "scripts": {
     "dev": "concurrently --names web,api --prefix-colors cyan,magenta --kill-others \"npm run dev -w @goldsmith/web\" \"npm run dev -w @goldsmith/api\"",
     "build": "npm run build --workspaces",
-    "lint": "biome lint && node scripts/check-shared-duplicates.mjs && node scripts/check-bundled-images.mjs",
+    "lint": "biome lint && node scripts/check-shared-duplicates.mjs && node scripts/check-bundled-images.mjs && node scripts/check-store-usage.mjs",
+    "check:bundle": "node scripts/check-production-bundle.mjs",
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm run test --workspaces",
     "clean": "npm run clean --workspaces",

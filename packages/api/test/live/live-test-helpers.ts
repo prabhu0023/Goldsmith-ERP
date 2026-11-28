@@ -230,7 +230,19 @@ export interface LiveHarness {
   /** Record a live event in its own committed transaction, as a service function would. */
   emit<T extends LiveTopic>(topic: T, event: Omit<LiveEmit<T>, 'at'> & { at?: Date }): Promise<void>;
   /** POST /api/ops/<op> with the session cookie. */
-  call(op: string, body: unknown, token?: string): Promise<{ status: number; body: Record<string, unknown> }>;
+  call(
+    op: string,
+    body: unknown,
+    token?: string,
+    headers?: Record<string, string>,
+  ): Promise<{ status: number; body: Record<string, unknown> }>;
+  /** POST /api/auth/<op> with the session cookie. */
+  auth(
+    op: string,
+    body: unknown,
+    token?: string,
+    headers?: Record<string, string>,
+  ): Promise<{ status: number; body: Record<string, unknown> }>;
   /** POST /api/dev/live/emit with the session cookie. */
   devEmit(body: unknown, token?: string): Promise<{ status: number; body: Record<string, unknown> }>;
   close(): Promise<void>;
@@ -291,8 +303,8 @@ export async function startLiveHarness(opts: LiveHarnessOptions = {}): Promise<L
   const base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   if (start) live.start();
   const clients: LiveTestClient[] = [];
-  const post = async (path: string, body: unknown, token?: string) => {
-    const headers: Record<string, string> = { 'content-type': 'application/json' };
+  const post = async (path: string, body: unknown, token?: string, extra: Record<string, string> = {}) => {
+    const headers: Record<string, string> = { 'content-type': 'application/json', ...extra };
     if (token !== undefined) headers.cookie = sessionCookie(token);
     const res = await fetch(`${base}${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
     return { status: res.status, body: (await res.json()) as Record<string, unknown> };
@@ -323,7 +335,8 @@ export async function startLiveHarness(opts: LiveHarnessOptions = {}): Promise<L
         await emitLiveEvent(tx, ctx, topic, { at: clock.now(), ...event } as LiveEmit<typeof topic>);
       });
     },
-    call: (op, body, token) => post(`/api/ops/${op}`, body, token),
+    call: (op, body, token, headers) => post(`/api/ops/${op}`, body, token, headers),
+    auth: (op, body, token, headers) => post(`/api/auth/${op}`, body, token, headers),
     devEmit: (body, token) => post('/api/dev/live/emit', body, token),
     async close() {
       for (const c of clients) c.close();

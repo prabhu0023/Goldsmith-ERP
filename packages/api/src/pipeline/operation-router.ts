@@ -13,14 +13,15 @@
  *   (f) one transaction (EP-03-S6): shop context, ctx { by, at, shop } from the session and the
  *       server clock, session confirm (extends and row-locks it; ended or expired since (b) ->
  *       unauthenticated, EP-04-S12, S13; an operation with `extendsSession: false`, such as the
- *       live channel's background calls, is checked and locked without extending), idempotency claim for a create with a key
+ *       live channel's background calls, and a read or list sent with `X-Background-Refresh: 1`
+ *       are checked and locked without extending), idempotency claim for a create with a key
  *       (EP-03-S8; a replay answers the stored id without running the service function; the
  *       same key with a different input answers conflict),
  *       service function, store the created id with the claim
  *   (g) answer the service function's result
  * Every error goes to the app's error middleware (toErrorResponse).
  */
-import { CONTRACT_VERSION } from '@goldsmith/shared';
+import { BACKGROUND_REFRESH_HEADER, CONTRACT_VERSION } from '@goldsmith/shared';
 import express, { type Request, type Router } from 'express';
 import type pg from 'pg';
 import { loadShopContext } from '../db/shop-context.js';
@@ -48,6 +49,8 @@ export interface OperationRouterDeps {
 
 export const clientAddressOf = (req: Request): string => req.ip ?? req.socket.remoteAddress ?? '';
 
+/** True when the browser marked the call a background refresh (the header is `1`). */
+export const isBackgroundRefresh = (req: Request): boolean => req.get(BACKGROUND_REFRESH_HEADER) === '1';
 export const IDEMPOTENCY_HEADER = 'idempotency-key';
 export const IDEMPOTENCY_KEY = /^[\x20-\x7e]{1,200}$/;
 /**
@@ -119,6 +122,7 @@ export function createOperationRouter(deps: OperationRouterDeps): Router {
       // (e)
       const input = parseInput(op.def.input, req.body);
       const key = idempotencyKeyOf(req, op);
+      const background = isBackgroundRefresh(req);
       const idempotency = key === undefined ? undefined : { key, retentionHours: idempotencyRetentionHours };
       // (f)
       if (!pool) throw new Error('No database is configured (DATABASE_URL is not set)');
@@ -131,7 +135,7 @@ export function createOperationRouter(deps: OperationRouterDeps): Router {
             at: clock.now(),
             shop,
           };
-          const extend = op.def.extendsSession !== false;
+          const extend = op.def.extendsSession !== false && !(background && (op.def.kind === 'read' || op.def.kind === 'list'));
           if (sessions.confirm && !(await sessions.confirm(tx.client, session, ctx.at, { extend }))) {
             throw new UnauthenticatedError();
           }

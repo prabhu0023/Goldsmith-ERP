@@ -1,30 +1,30 @@
+import type { RailBadgeKey } from '@goldsmith/shared';
 import type { ReactNode } from 'react';
 import { isActive } from '../../nav';
 import type { NavSection, RouteId } from '../../nav';
-import type { BadgeKey } from '../../store/selectors';
 import { cn } from './cn';
 
 interface Props {
   sections: NavSection[];
   routeId: RouteId;
-  badges: Partial<Record<BadgeKey, number>>;
+  badges: Partial<Record<RailBadgeKey, number>>;
   onNavigate: (id: RouteId) => void;
-  /** The branch line under the brand. */
-  branch: string;
-  /** RoleChip and the dev toggle. */
+  /** The shop's name from the session, under the brand. */
+  shopName: string;
+  /** The account menu. */
   footer?: ReactNode;
   className?: string;
 }
 
 /** The left rail. AppShell shows it fixed from lg up and as a drawer below. */
-export function Rail({ sections, routeId, badges, onNavigate, branch, footer, className }: Props) {
+export function Rail({ sections, routeId, badges, onNavigate, shopName, footer, className }: Props) {
   return (
     <nav aria-label="Main" className={cn('flex h-full w-64 flex-col border-r border-line bg-surface', className)}>
       <div className="flex items-center gap-3 border-b border-line p-4">
         <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-closed font-serif text-xl font-bold text-gold">JGD</span>
         <div className="min-w-0">
           <p className="truncate font-serif text-lg font-semibold leading-tight text-ink">Jai Gulab Dev</p>
-          <p className="truncate text-[13px] text-ink-3">{branch}</p>
+          <p className="truncate text-[13px] text-ink-3">{shopName}</p>
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-3 py-4">

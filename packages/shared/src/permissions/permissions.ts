@@ -100,6 +100,8 @@ export const OPERATION_RULES = {
   releaseParcel: shopFloor,
   proposeEdit: shopFloor,
   stockOut: shopFloor,
+  // A permission-checked read of one piece, for the web's live entity cache (EP-08, FU-013).
+  readPiece: shopFloor,
   requestScrap: shopFloor,
   onboardCustomer: shopFloor,
   sendWishes: shopFloor,

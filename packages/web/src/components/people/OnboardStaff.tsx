@@ -3,17 +3,21 @@ import type { RoleId } from '@goldsmith/shared';
 import { Check, X } from 'lucide-react';
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { opsCall } from '../../api/ops-client';
-import { useStore } from '../../store/StoreProvider';
-import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, cn } from '../ui';
-import { firstName } from '../home/util';
-import { addUserFieldErrors } from './user-rows';
+import { defineAction } from '../../query/action-controller';
+import { useAction } from '../../query/use-action';
+import { useNavigation } from '../../shell/navigation';
+import { useSession } from '../../shell/session-context';
+import { ActionButton, ActionError, Button, Card, Field, Input, PageHeader, SectionLabel, cn } from '../ui';
+import { firstName } from './util';
+import { addUserFieldErrors, addUserRefusal } from './user-rows';
 import type { AddUserField } from './user-rows';
 type FieldName = AddUserField;
+/** The new person shows in the staff list, which is read again once they are saved (S7, S18 AC2). */
+export const createUser = defineAction({ op: 'createUser', affects: () => [{ op: 'listUsers' }] });
 const ROLE_ORDER: RoleId[] = ['staff', 'karigar', 'owner'];
 /** Screen 25. Owner only (EP-05-S4). The role fixes the permission list; nobody ticks boxes. */
 export function OnboardStaff() {
-  const { can } = useStore();
+  const { can } = useSession();
   if (!can('createUser')) {
     return (
       <div>
@@ -27,51 +31,49 @@ export function OnboardStaff() {
   return <AddUserForm />;
 }
 function AddUserForm() {
-  const { go } = useStore();
+  const { go } = useNavigation();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<RoleId>('staff');
   const [karigarId, setKarigarId] = useState('');
   const [errors, setErrors] = useState<Partial<Record<FieldName, string>>>({});
-  const [notice, setNotice] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  // One key per form, so a resend after a lost answer cannot add the person twice (EP-03-S8).
-  const [idempotencyKey] = useState(() => crypto.randomUUID());
+  // The action keeps one key across "Try again" after a lost answer, so the person is added once (EP-03-S8, EP-08-S6).
+  const create = useAction(createUser);
+  const refused = addUserRefusal(create.refusal);
   const info = ROLE_INFO.find((r) => r.id === role) ?? ROLE_INFO[0];
   const who = name.trim() ? firstName(name.trim()) : 'They';
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    setNotice(null);
     const found = addUserFieldErrors({ name, phone, email, role, karigarId });
     setErrors(found);
     if (Object.keys(found).length > 0) return;
-    setBusy(true);
-    const answer = await opsCall(
-      'createUser',
-      { name: name.trim(), phone, email: email.trim(), role, ...(role === 'karigar' ? { karigarId: karigarId.trim() } : {}) },
-      { idempotencyKey },
-    );
-    setBusy(false);
-    if (answer.ok) return go('staff-directory');
-    const field = answer.field as FieldName | undefined;
-    if (answer.code === 'validation' && field && ['name', 'phone', 'email', 'karigarId'].includes(field)) {
-      return setErrors({ [field]: answer.message });
-    }
-    setNotice(answer.message);
+    const answer = await create.run({
+      name: name.trim(),
+      phone,
+      email: email.trim(),
+      role,
+      ...(role === 'karigar' ? { karigarId: karigarId.trim() } : {}),
+    });
+    if (answer.ok) go('staff-directory');
   };
+  const retry = async () => {
+    const answer = await create.retry();
+    if (answer.ok) go('staff-directory');
+  };
+  const fieldError = (f: FieldName): string | undefined => errors[f] ?? (refused && 'field' in refused && refused.field === f ? refused.message : undefined);
   return (
     <form onSubmit={(e) => void submit(e)} className="mx-auto max-w-2xl">
       <PageHeader title="Add a staff member" subtitle="Their role decides what they land on and what they may do. They get an email to set their password." />
       <Card className="mb-4 space-y-4">
         <SectionLabel>Who they are</SectionLabel>
-        <Field label="Name" error={errors.name}>
+        <Field label="Name" error={fieldError('name')}>
           <Input value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" />
         </Field>
-        <Field label="Phone · they sign in with this number" error={errors.phone}>
+        <Field label="Phone · they sign in with this number" error={fieldError('phone')}>
           <Input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" placeholder="+91 90030 71145" />
         </Field>
-        <Field label="Email · the activation link goes here" error={errors.email}>
+        <Field label="Email · the activation link goes here" error={fieldError('email')}>
           <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" autoComplete="off" />
         </Field>
       </Card>
@@ -96,7 +98,7 @@ function AddUserForm() {
             ))}
         </div>
         {role === 'karigar' && (
-          <Field label="Karigar code · the karigar record they are" hint="For example KG-04." error={errors.karigarId}>
+          <Field label="Karigar code · the karigar record they are" hint="For example KG-04." error={fieldError('karigarId')}>
             <Input value={karigarId} onChange={(e) => setKarigarId(e.target.value)} autoComplete="off" />
           </Field>
         )}
@@ -121,15 +123,18 @@ function AddUserForm() {
         </ul>
         <p className="mt-3 text-[13px] text-ink-3">The list is fixed by the role; you do not tick boxes.</p>
       </Card>
-      {notice && (
-        <div className="mb-4">
-          <Notice tone="stop">{notice}</Notice>
-        </div>
-      )}
-      <div className="flex flex-wrap gap-2">
-        <Button type="submit" variant="primary" disabled={busy}>
+      <div className="mb-4">
+        <ActionError
+          refusal={refused && 'notice' in refused ? { message: refused.notice } : null}
+          maybeNotSaved={create.maybeNotSaved}
+          onRetry={() => void retry()}
+          busy={create.busy}
+        />
+      </div>
+      <div className="flex flex-wrap items-start gap-2">
+        <ActionButton type="submit" variant="primary" busy={create.busy}>
           Add this staff member
-        </Button>
+        </ActionButton>
         <Button onClick={() => go('staff-directory')}>Cancel</Button>
       </div>
       <p className="mt-3 text-[13px] text-ink-3">Only the owner can add staff or change a role.</p>

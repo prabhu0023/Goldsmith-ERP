@@ -61,6 +61,8 @@ describeDb('sign in with phone and password (EP-04-S3, S5, S14 AC1)', () => {
         user: { userId: rajesh, name: 'Rajesh Verma', role: 'staff' },
         landingRoute: 'today',
         permissions: [...permissionsFor('staff')],
+        shopName: 'Test shop',
+        serverTime: START.toISOString(),
       });
       expect(tokenFrom(res.setCookie)).toMatch(/^[A-Za-z0-9_-]{43}$/);
     }

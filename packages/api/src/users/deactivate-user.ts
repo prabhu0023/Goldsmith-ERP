@@ -9,6 +9,7 @@ import { updateVersioned } from '../db/versioned.js';
 import type { Handler } from '../pipeline/registry.js';
 import { endUserAccess } from './end-access.js';
 import { writeUserLifecycleAudit } from './user-audit.js';
+import { emitUserListChanged } from './user-live.js';
 import { loadUserForUpdate, lockShopForUsers } from './user-store.js';
 
 export const deactivateUser: Handler<typeof contract.deactivateUser> = async (tx, ctx, input) => {
@@ -32,5 +33,6 @@ export const deactivateUser: Handler<typeof contract.deactivateUser> = async (tx
     after: { status: 'deactivated' },
     reason: input.reason || undefined,
   });
+  await emitUserListChanged(tx, ctx, user.id);
   return { ok: true };
 };

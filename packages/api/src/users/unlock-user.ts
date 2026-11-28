@@ -6,10 +6,12 @@ import type { contract } from '@goldsmith/shared';
 import { unlockAccount } from '../auth/lockout.js';
 import type { Handler } from '../pipeline/registry.js';
 import { loadUserForUpdate, lockShopForUsers } from './user-store.js';
+import { emitUserListChanged } from './user-live.js';
 
 export const unlockUser: Handler<typeof contract.unlockUser> = async (tx, ctx, input) => {
   await lockShopForUsers(tx, ctx.shop);
   const user = await loadUserForUpdate(tx, ctx.shop, input.userId);
   await unlockAccount(tx.client, { shopId: ctx.shop.shopId, userId: user.id, by: { kind: 'user', ...ctx.by }, at: ctx.at });
+  await emitUserListChanged(tx, ctx, user.id);
   return { ok: true };
 };

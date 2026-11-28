@@ -4,7 +4,8 @@ import { fmtG, netOf, sumG } from '@goldsmith/shared';
 import { inStockPieces } from '../../store/selectors';
 import { useStore } from '../../store/StoreProvider';
 import type { CustomerGroup } from '@goldsmith/shared';
-import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, ValueSlot, cn } from '../ui';
+import { Button, Card, Field, Input, Notice, PageHeader, SectionLabel, Select, cn } from '../ui';
+import { ValueSlot } from '../ui/ValueSlot';
 import { GROUPS, reachable } from './util';
 
 type Audience = CustomerGroup | 'All';

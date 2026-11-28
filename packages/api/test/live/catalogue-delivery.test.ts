@@ -17,7 +17,7 @@ import { addJob, addParcel, karigarOf, type LiveHarness, type LiveTestClient, sl
 type Person = { id: string; token: string };
 const PARCEL = 'BATCH-2026-044';
 
-describeDb('EP-07-S11 AC2 the 10 catalogue events', () => {
+describeDb('EP-07-S11 AC2 the 10 catalogue events plus user.list_changed', () => {
   let h: LiveHarness;
   const people: Record<string, Person> = {};
   const streams: Record<string, LiveTestClient> = {};
@@ -44,7 +44,7 @@ describeDb('EP-07-S11 AC2 the 10 catalogue events', () => {
     await h?.close();
   });
 
-  it('S11 AC2: each of the 10 events, published once, reaches exactly its audience once', async () => {
+  it('S11 AC2: each of the 11 events, published once, reaches exactly its audience once', async () => {
     const { deepak, lakshmi, mahesh } = people;
     await h.emit('piece.billed', { entityId: 'TAG-8841', entityVersion: 8, actorUserId: deepak.id });
     await h.emit('parcel.stopped', { entityId: PARCEL, entityVersion: 3 });
@@ -56,6 +56,7 @@ describeDb('EP-07-S11 AC2 the 10 catalogue events', () => {
     await h.emit('tag.saved', { entityId: 'TAG-8842', entityVersion: 1, actorUserId: deepak.id, parcelId: PARCEL });
     await h.emit('metal_pool.changed', { entityId: 'metal-pool', entityVersion: 5 });
     await h.emit('user.access_changed', { entityId: mahesh.id, entityVersion: 2, userId: mahesh.id });
+    await h.emit('user.list_changed', { entityId: mahesh.id, entityVersion: 2 });
     await streams.mahesh.ended;
     await streams.rajesh.waitFor((m) => m.type === 'event' && m.event.name === 'Metal pool changed');
     await sleep(200);
@@ -82,6 +83,7 @@ describeDb('EP-07-S11 AC2 the 10 catalogue events', () => {
       'Lead arrived / passed its SLA',
       'Karigar job status changed',
       'Metal pool changed',
+      'User list changed',
     ]);
     expect(got('lakshmi')).toEqual(['Karigar job status changed']);
     expect(got('mahesh')).toEqual(['User deactivated or role changed']);
