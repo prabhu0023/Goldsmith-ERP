@@ -9,7 +9,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S1: System can store karigar records with code, phone, location, specialties, language and allowance
 
 - **Story ID:** EP-16-S1
-- **Status:** Not started
+- **Status:** Partial: AC3 (specialties are stored as names; the reference to the EP-15 `specialties` list is not built) (FU-028, EP-15).
 - **Title:** System can store karigar records with code, phone, location, specialties, language and allowance
 - **As a:** System
 - **I want:** the `karigars` table from EP-02-S4 extended with workshop location, status (`active` or `deactivated`), deactivated at, wastage allowance as an integer in basis points, language with default `English`, open since and version, a `karigar_specialties` child table so one karigar can hold several specialties, and a counter that hands out the next `KG-NN` code
@@ -35,7 +35,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S2: System can refuse karigar changes from anyone but the owner
 
 - **Story ID:** EP-16-S2
-- **Status:** Not started
+- **Status:** Done
 - **Title:** System can refuse karigar changes from anyone but the owner
 - **As a:** System
 - **I want:** Create Karigar, Update Karigar details, Update Karigar wastage, Update Karigar status and Update Karigar account link to check the caller's role on the server before validation, and to refuse every role other than owner with "Only the owner can add a karigar or change their wastage allowance."
@@ -61,7 +61,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S3: Owner can add a karigar with the 0.6% to 1.2% allowance check
 
 - **Story ID:** EP-16-S3
-- **Status:** Not started
+- **Status:** Partial: the specialty names are not checked against the active entries of the EP-15 list (FU-028, EP-15).
 - **Title:** Owner can add a karigar with the 0.6% to 1.2% allowance check
 - **As a:** Owner
 - **I want:** to add a karigar on `karigar-new` with name, phone, email, workshop location, one or more specialties and a wastage allowance, through a Create Karigar operation that assigns the next `KG-NN` code and returns it
@@ -87,7 +87,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S4: Owner can edit a karigar's details
 
 - **Story ID:** EP-16-S4
-- **Status:** Not started
+- **Status:** Done
 - **Title:** Owner can edit a karigar's details
 - **As a:** Owner
 - **I want:** to change a karigar's name, phone, workshop location and specialties through Update Karigar details, saving with the version I last read
@@ -113,7 +113,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S5: Owner can change a karigar's wastage allowance, audited
 
 - **Story ID:** EP-16-S5
-- **Status:** Not started
+- **Status:** Partial: AC4 (the allowance of a job already open) needs the per-job allowance of EP-19 (FU-029, EP-19).
 - **Title:** Owner can change a karigar's wastage allowance, audited
 - **As a:** Owner
 - **I want:** a separate Update Karigar wastage operation that changes a karigar's allowance within 0.6% to 1.2% and records the old and new value, with an optional reason
@@ -138,7 +138,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S6: Owner can link a karigar to a karigar user account
 
 - **Story ID:** EP-16-S6
-- **Status:** Not started
+- **Status:** Done
 - **Title:** Owner can link a karigar to a karigar user account
 - **As a:** Owner
 - **I want:** from a karigar's record, to link it to a user with role `karigar` (or create that user from the karigar's name, phone and email, which sends the activation email), and to see on the record whether it is linked
@@ -163,7 +163,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S7: Owner can deactivate a karigar with no open jobs
 
 - **Story ID:** EP-16-S7
-- **Status:** Not started
+- **Status:** Partial: AC2 (gold still with the karigar) needs the EP-18 ledger; only open jobs block a deactivation today (FU-029, EP-18).
 - **Title:** Owner can deactivate a karigar with no open jobs
 - **As a:** Owner
 - **I want:** to deactivate or reactivate a karigar through Update Karigar status, with the server refusing deactivation while the karigar has an open job or gold issued and not returned, and naming the jobs
@@ -188,7 +188,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S8: Staff can pick only active karigars on the order copy and parcel forms
 
 - **Story ID:** EP-16-S8
-- **Status:** Not started
+- **Status:** Partial: the picker and the active check are built but not yet used on `order-copy` and `parcel-arrival` (FU-030, EP-19, EP-21).
 - **Title:** Staff can pick only active karigars on the order copy and parcel forms
 - **As a:** Staff
 - **I want:** a karigar picker on `order-copy` and `parcel-arrival` that lists only active karigars with name, code, specialties and allowance, and no phone, location or scorecard, plus a shared server check that refuses an inactive or unknown karigar on those forms
@@ -213,7 +213,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S9: Owner can see the karigar directory worst first
 
 - **Story ID:** EP-16-S9
-- **Status:** Not started
+- **Status:** Partial: gold with the karigar is summed from open jobs, not read from the EP-18 ledger (FU-029, EP-18).
 - **Title:** Owner can see the karigar directory worst first
 - **As a:** Owner
 - **I want:** the `karigars` screen to list every karigar from the server, ordered by metal loss minus allowance from highest to lowest, with code, specialties, open jobs, gold with them in grams, allowance and status
@@ -239,7 +239,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S10: System can compute loss %, days late and last six parcel gaps from real data (G4)
 
 - **Story ID:** EP-16-S10
-- **Status:** Not started
+- **Status:** Partial: G4 and G23 are open, so loss, days late and gaps use interim sources and `rating` is never returned (FU-029, EP-18, EP-19).
 - **Title:** System can compute loss %, days late and last six parcel gaps from real data (G4)
 - **As a:** System
 - **I want:** a scorecard computation per karigar that derives metal loss %, days late, finished jobs and the last six parcel gold gaps from settled jobs, agreed dates and released parcels, and keeps the rating empty until its formula is decided
@@ -265,7 +265,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S11: Owner can see a karigar's scorecard (G4)
 
 - **Story ID:** EP-16-S11
-- **Status:** Not started
+- **Status:** Partial: gold returned per job needs the EP-18 ledger and the EP-19 settlement fields (FU-029, EP-18, EP-19).
 - **Title:** Owner can see a karigar's scorecard (G4)
 - **As a:** Owner
 - **I want:** to open one karigar from `karigars` and see their measured metal loss against allowance, days late, finished jobs, last six parcel gold gaps with their average, and their job ledger, read through Read Karigar scorecard
@@ -290,7 +290,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S12: Karigar can see their own profile
 
 - **Story ID:** EP-16-S12
-- **Status:** Not started
+- **Status:** Partial: the karigar "Me" tab that shows the profile is EP-20 (FU-031, EP-20).
 - **Title:** Karigar can see their own profile
 - **As a:** Karigar
 - **I want:** the "Me" tab on my phone to show my own name, code, phone, workshop location, specialties, wastage allowed and finished jobs, read through Read My karigar profile
@@ -315,7 +315,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S13: System can audit every karigar change
 
 - **Story ID:** EP-16-S13
-- **Status:** Not started
+- **Status:** Done
 - **Title:** System can audit every karigar change
 - **As a:** System
 - **I want:** every add, edit, wastage change, account link, deactivation and reactivation of a karigar to write one append-only audit entry in the same transaction, with before and after values
