@@ -54,6 +54,7 @@ export function QueryBoundary({
     return (
       <div className="space-y-3">
         <ReadError
+          label={label}
           message={query.error?.message ?? 'The data could not be read.'}
           code={query.error?.code as ErrorCode | undefined}
           onRetry={() => void query.refetch()}

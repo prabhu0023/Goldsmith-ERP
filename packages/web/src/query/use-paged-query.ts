@@ -95,3 +95,17 @@ export function usePagedQuery<N extends PagedOperationName>(args: { op: N; input
     refetch,
   };
 }
+/**
+ * The first page's state in the shape a `QueryBoundary` takes. The rows count as data once the first
+ * page answered or any row is held, so a failed first page shows the error and no empty sentence.
+ */
+export function pagedBoundaryQuery<N extends PagedOperationName>(list: PagedQueryResult<N>) {
+  const settled = list.status === 'ready' || list.status === 'possibly_stale';
+  return {
+    status: list.status,
+    data: list.items.length > 0 || settled ? list.items : undefined,
+    error: list.error,
+    refreshing: false,
+    refetch: list.refetch,
+  };
+}

@@ -1,17 +1,11 @@
-import type { RoleId } from '@goldsmith/shared';
-import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { StoreProvider } from '../../store/StoreProvider';
-import { afterAuditAnswer, auditListInput, NO_FILTERS, securityLogNotice } from './security-log-state';
+import { createQueryClient, defineQuery } from '../../query/query-client';
+import { fakeApi, fakeTimers, flush, networkFail, ok } from '../../query/test-support';
+import { renderAs } from '../../test-support/render-as';
+import { auditListInput, NO_FILTERS } from './security-log-state';
 import type { AuditEntry, AuditListItem } from './security-log-state';
-import { AuditEntries, AuditEntryDetail, AuditGroupButtons, AuditLogRow, SecurityLog, SecurityLogStatus } from './SecurityLog';
-const as = (name: string, role: RoleId, screen: ReactElement) =>
-  renderToStaticMarkup(
-    <StoreProvider signedIn={{ name, role }} onSignOut={async () => null}>
-      {screen}
-    </StoreProvider>,
-  );
+import { AuditEntries, AuditEntryDetail, AuditGroupButtons, AuditLogRow, SecurityLog } from './SecurityLog';
 const item: AuditListItem = {
   id: '6f1c2a34-0b6e-4c9a-9d3e-2f5b8a7c1d10',
   at: '2026-11-22T09:02:00.000Z',
@@ -35,11 +29,23 @@ const entry: AuditEntry = {
   tokenReference: 'TK-2026-0042',
   corrects: null,
 };
-const page = (items: AuditListItem[], nextCursor: string | null) =>
-  ({ ok: true, data: { ok: true, items, nextCursor, pageSize: 50 } }) as const;
+const page = (items: AuditListItem[], nextCursor: string | null) => ok({ ok: true, items, nextCursor, pageSize: 50 });
+const logQuery = defineQuery({ op: 'listAuditEntries', input: {} });
+/** A cache whose security-log read answers as `answers` says, one answer per read, already asked once. */
+async function cacheWith(...answers: Array<ReturnType<typeof ok>>) {
+  const fake = fakeApi();
+  const clock = fakeTimers();
+  const queries = createQueryClient({ api: fake.api, now: clock.now, timers: clock.timers });
+  let n = 0;
+  fake.on('listAuditEntries', () => answers[Math.min(n++, answers.length - 1)]);
+  fake.on('listUsers', () => ok({ ok: true, items: [], nextCursor: null, pageSize: 200 }));
+  queries.subscribe(logQuery, () => {});
+  await flush();
+  return queries;
+}
 describe('security log screen (EP-06-S9 to S12)', () => {
   it('S9 AC1: the owner sees the title, subtitle and the log loading from the server', () => {
-    const html = as('Sanjay Seth', 'owner', <SecurityLog />);
+    const html = renderAs('Sanjay Seth', 'owner', <SecurityLog />);
     expect(html).toContain('Security log');
     expect(html).toContain('Everything that changed the books and who did it. Entries are never edited or removed.');
     expect(html).toContain('Loading the security log…');
@@ -51,36 +57,34 @@ describe('security log screen (EP-06-S9 to S12)', () => {
       expect(html).toContain(text);
     }
   });
-  it('S9 AC4: loading, a failed load with Retry, and reconnecting while offline', () => {
-    expect(securityLogNotice({ loading: true, error: null, online: true })).toBe('loading');
-    expect(securityLogNotice({ loading: false, error: 'Cannot reach the server.', online: true })).toBe('error');
-    expect(securityLogNotice({ loading: true, error: 'Cannot reach the server.', online: false })).toBe('reconnecting');
-    expect(securityLogNotice({ loading: false, error: null, online: true })).toBeNull();
-    const status = (notice: 'loading' | 'error' | 'reconnecting', message: string | null = null) =>
-      renderToStaticMarkup(<SecurityLogStatus notice={notice} message={message} onRetry={() => {}} />);
-    expect(status('loading')).toContain('Loading the security log…');
-    const failed = status('error', 'Cannot reach the server. Check the connection and try again.');
-    expect(failed).toContain('Cannot reach the server. Check the connection and try again.');
-    expect(failed).toMatch(/<button[^>]*>Retry<\/button>/);
-    expect(status('reconnecting')).toContain('Reconnecting…');
+  it('S9 AC3: rows from the server show with their action, ref and actor', async () => {
+    const queries = await cacheWith(page([item], null));
+    const html = renderAs('Sanjay Seth', 'owner', <SecurityLog />, { queries });
+    expect(html).toContain('TAG-8841');
+    expect(html).toContain('Sanjay Seth (owner)');
+    expect(html).not.toContain('Loading the security log');
   });
-  it('S9 AC3, AC4: Load more adds a page; a failure keeps the rows and shows the message', () => {
-    const second = { ...item, id: 'b2', ref: 'TAG-1001' };
-    const first = afterAuditAnswer({ entries: [], nextCursor: null, loadError: null }, page([item], 'c1'));
-    expect(first).toEqual({ entries: [item], nextCursor: 'c1', loadError: null });
-    const more = afterAuditAnswer(first, page([second], null), 'c1');
-    expect(more.entries.map((e) => e.id)).toEqual([item.id, 'b2']);
-    const failed = afterAuditAnswer(more, { ok: false, code: 'internal', message: 'Try again.' });
-    expect(failed).toEqual({ ...more, loadError: 'Try again.' });
-    expect(afterAuditAnswer(more, page([second], null)).entries).toEqual([second]);
+  it('S4 AC1, S18 AC4: an unreachable server says the log could not be loaded and offers Try again', async () => {
+    const queries = await cacheWith(networkFail());
+    const html = renderAs('Sanjay Seth', 'owner', <SecurityLog />, { queries });
+    expect(html).toContain('The security log could not be loaded.');
+    expect(html).toContain('Cannot reach the server. Check the connection and try again.');
+    expect(html).toMatch(/<button[^>]*>Try again<\/button>/);
+    expect(html).not.toContain('Nothing has been logged');
   });
-  it('S9 AC5: a finished load with no entries shows the empty sentence', () => {
-    const empty = afterAuditAnswer({ entries: [item], nextCursor: null, loadError: null }, page([], null));
-    const html = renderToStaticMarkup(<AuditEntries entries={empty.entries} settled onOpen={() => {}} />);
-    expect(html).toContain('Nothing has been logged under this heading.');
-    const loading = renderToStaticMarkup(<AuditEntries entries={[]} settled={false} onOpen={() => {}} />);
-    expect(loading).not.toContain('Nothing has been logged');
-    expect(renderToStaticMarkup(<AuditEntries entries={[item]} settled onOpen={() => {}} />)).toContain('TAG-8841');
+  it('S4 AC2: Try again loads the log once the server is back, without a reload', async () => {
+    const queries = await cacheWith(networkFail(), page([item], null));
+    expect(renderAs('Sanjay Seth', 'owner', <SecurityLog />, { queries })).toContain('could not be loaded');
+    expect(await queries.refetch(logQuery)).toBe(true);
+    const html = renderAs('Sanjay Seth', 'owner', <SecurityLog />, { queries });
+    expect(html).toContain('TAG-8841');
+    expect(html).not.toContain('could not be loaded');
+  });
+  it('S9 AC5: a finished read with no entries shows the empty sentence; a pending one does not', async () => {
+    const queries = await cacheWith(page([], null));
+    expect(renderAs('Sanjay Seth', 'owner', <SecurityLog />, { queries })).toContain('Nothing has been logged under this heading.');
+    expect(renderAs('Sanjay Seth', 'owner', <SecurityLog />)).not.toContain('Nothing has been logged');
+    expect(renderToStaticMarkup(<AuditEntries entries={[item]} onOpen={() => {}} />)).toContain('TAG-8841');
   });
   it('S10 AC1: the pressed group is marked and becomes the group filter', () => {
     const html = renderToStaticMarkup(<AuditGroupButtons group="edits" onChange={() => {}} />);
@@ -89,9 +93,12 @@ describe('security log screen (EP-06-S9 to S12)', () => {
     expect(html).toMatch(/aria-pressed="false"[^>]*>Everything</);
     expect(auditListInput({ ...NO_FILTERS, group: 'edits' })).toEqual({ group: 'edits' });
     expect(auditListInput(NO_FILTERS)).toEqual({});
-    expect(
-      auditListInput({ group: 'all', entity: ' TAG-8841 ', actor: 'system', from: '2026-03-01', to: '2026-03-07' }, 'c1'),
-    ).toEqual({ entity: 'TAG-8841', actorRole: 'system', from: '2026-03-01', to: '2026-03-07', cursor: 'c1' });
+    expect(auditListInput({ group: 'all', entity: ' TAG-8841 ', actor: 'system', from: '2026-03-01', to: '2026-03-07' })).toEqual({
+      entity: 'TAG-8841',
+      actorRole: 'system',
+      from: '2026-03-01',
+      to: '2026-03-07',
+    });
     expect(auditListInput({ ...NO_FILTERS, actor: item.actorId ?? '' })).toEqual({ actorId: item.actorId });
   });
   it('S11 AC1, AC3: the detail shows weights to four decimals and "Token used", never the token reference', () => {
@@ -152,17 +159,13 @@ describe('security log screen (EP-06-S9 to S12)', () => {
       ['Rajesh Verma', 'staff'],
       ['Lakshmi Devi', 'karigar'],
     ] as const) {
-      const html = as(name, role, <SecurityLog />);
+      const html = renderAs(name, role, <SecurityLog />);
       expect(html).toContain('Only the owner can read the security log.');
       expect(html).not.toContain('Loading the security log');
     }
   });
   it('the session permissions decide, not the role alone', () => {
-    const html = renderToStaticMarkup(
-      <StoreProvider signedIn={{ name: 'Sanjay Seth', role: 'owner' }} permissions={[]} onSignOut={async () => null}>
-        <SecurityLog />
-      </StoreProvider>,
-    );
+    const html = renderAs('Sanjay Seth', 'owner', <SecurityLog />, { permissions: [] });
     expect(html).toContain('Only the owner can read the security log.');
   });
 });

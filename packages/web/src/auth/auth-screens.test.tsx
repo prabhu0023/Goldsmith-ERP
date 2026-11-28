@@ -3,6 +3,8 @@ import type { RoleId } from '@goldsmith/shared';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { AccountMenu } from '../components/ui/AccountMenu';
+import { createConnectionStore } from '../query/connection';
+import { ConnectionProvider } from '../query/use-connection';
 import { useNavigation } from '../shell/navigation';
 import { useSession } from '../shell/session-context';
 import { StoreProvider, useStore } from '../store/StoreProvider';
@@ -32,6 +34,19 @@ describe('sign-in screens (EP-04-S3, S7, S12)', () => {
       expect(tags.length).toBeGreaterThanOrEqual(3);
       for (const tag of tags) expect(tag).toMatch(/class="[^"]*\bmin-h-14\b/);
     }
+  });
+  it('EP-08-S11 AC1: while the connection is down the sign-in button is disabled and says why', () => {
+    const connection = createConnectionStore({ windowLike: null });
+    connection.setLiveStatus('reconnecting');
+    const html = renderToStaticMarkup(
+      <ConnectionProvider store={connection}>
+        <SignInPage onSignedIn={noop} onForgot={noop} />
+      </ConnectionProvider>,
+    );
+    const button = targets(html).find((t) => t.includes('type="submit"'));
+    expect(button).toContain('disabled=""');
+    expect(html).toContain('Reconnecting to the server. Try again when the connection is back.');
+    for (const tag of targets(html)) expect(tag).toMatch(/class="[^"]*\bmin-h-14\b/);
   });
   it('S3: the password field is masked and never prefilled', () => {
     const password = targets(renderToStaticMarkup(<SignInPage onSignedIn={noop} onForgot={noop} />)).find((t) =>

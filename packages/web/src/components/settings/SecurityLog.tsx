@@ -1,16 +1,17 @@
 import { AUDIT_ACTION_LABELS, AUDIT_GROUPS, auditActorLabel, auditFieldRows, fmtAuditTime } from '@goldsmith/shared';
-import type { AuditGroupId, OperationResult } from '@goldsmith/shared';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import type { AuditGroupId } from '@goldsmith/shared';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { opsCall } from '../../api/ops-client';
-import { useStore } from '../../store/StoreProvider';
-import { Button, Card, DetailDrawer, Field, Input, Notice, PageHeader, Pill, Select, cn } from '../ui';
-import { afterAuditAnswer, auditListInput, NO_FILTERS, securityLogNotice, SYSTEM_ACTOR } from './security-log-state';
-import type { AuditEntry, AuditFilters, AuditList, AuditListItem, SecurityLogNotice } from './security-log-state';
-type UserOption = Pick<OperationResult<'listUsers'>['items'][number], 'id' | 'name'>;
+import { defineQuery } from '../../query/query-client';
+import { useQuery } from '../../query/use-query';
+import { pagedBoundaryQuery, usePagedQuery } from '../../query/use-paged-query';
+import { useSession } from '../../shell/session-context';
+import { Button, Card, DetailDrawer, Field, Input, PageHeader, Pill, QueryBoundary, ReadError, Select, cn } from '../ui';
+import { auditListInput, NO_FILTERS, SYSTEM_ACTOR } from './security-log-state';
+import type { AuditEntry, AuditFilters, AuditListItem } from './security-log-state';
 /** Owner only (EP-06-S9 to S12). Every entry from the server: who, when, what and why. */
 export function SecurityLog() {
-  const { can } = useStore();
+  const { can } = useSession();
   if (!can('listAuditEntries')) {
     return (
       <div>
@@ -23,57 +24,20 @@ export function SecurityLog() {
   }
   return <AuditLog />;
 }
-const isOnline = () => typeof navigator === 'undefined' || navigator.onLine !== false;
+/** The people in the "Who" filter: one read of up to 200 users. */
+const usersQuery = defineQuery({ op: 'listUsers', input: { pageSize: 200 } });
 function AuditLog() {
   const [filters, setFilters] = useState<AuditFilters>(NO_FILTERS);
   const [entityText, setEntityText] = useState('');
-  const [list, setList] = useState<AuditList>({ entries: [], nextCursor: null, loadError: null });
-  const [loading, setLoading] = useState(true);
-  const [online, setOnline] = useState(isOnline);
-  const [users, setUsers] = useState<UserOption[]>([]);
   const [openId, setOpenId] = useState<string | null>(null);
-  // Only the newest request may change the list: an answer for older filters is dropped.
-  const request = useRef(0);
-  const load = useCallback(
-    async (cursor?: string) => {
-      const mine = ++request.current;
-      setLoading(true);
-      setList((prev) => ({ ...prev, loadError: null }));
-      const answer = await opsCall('listAuditEntries', auditListInput(filters, cursor));
-      if (mine !== request.current) return;
-      setLoading(false);
-      setList((prev) => afterAuditAnswer(prev, answer, cursor));
-    },
-    [filters],
-  );
-  useEffect(() => {
-    void load();
-  }, [load]);
-  useEffect(() => {
-    const offline = () => setOnline(false);
-    const back = () => {
-      setOnline(true);
-      void load();
-    };
-    window.addEventListener('offline', offline);
-    window.addEventListener('online', back);
-    return () => {
-      window.removeEventListener('offline', offline);
-      window.removeEventListener('online', back);
-    };
-  }, [load]);
-  useEffect(() => {
-    void opsCall('listUsers', { pageSize: 200 }).then((answer) => {
-      if (answer.ok) setUsers(answer.data.items.map(({ id, name }) => ({ id, name })));
-    });
-  }, []);
+  // A changed filter is a new input, so a new chain of pages: an answer for older filters is never shown.
+  const list = usePagedQuery({ op: 'listAuditEntries', input: auditListInput(filters) });
+  const users = useQuery(usersQuery).data?.items ?? [];
   const change = (next: Partial<AuditFilters>) => setFilters((prev) => ({ ...prev, ...next }));
   const findEntity = (e: FormEvent) => {
     e.preventDefault();
     change({ entity: entityText });
   };
-  const { entries, nextCursor, loadError } = list;
-  const notice = securityLogNotice({ loading, error: loadError, online });
   return (
     <div>
       <PageHeader title="Security log" subtitle="Everything that changed the books and who did it. Entries are never edited or removed." />
@@ -103,11 +67,18 @@ function AuditLog() {
           <Input type="date" value={filters.to} onChange={(e) => change({ to: e.target.value })} />
         </Field>
       </div>
-      <SecurityLogStatus notice={notice} message={loadError} onRetry={() => void load()} />
-      <AuditEntries entries={entries} settled={!loading && !loadError} onOpen={setOpenId} />
-      {!loading && nextCursor && (
+      <QueryBoundary label="security log" query={pagedBoundaryQuery(list)}>
+        <AuditEntries entries={list.items} onOpen={setOpenId} />
+      </QueryBoundary>
+      {list.loadMoreError && (
+        <div className="mt-3">
+          <ReadError label="security log" message={list.loadMoreError.message} code={list.loadMoreError.code} onRetry={list.loadMore} />
+        </div>
+      )}
+      {list.loadingMore && <p className="mt-3 text-sm text-ink-3">Loading the security log…</p>}
+      {list.hasMore && !list.loadingMore && !list.loadMoreError && (
         <div className="mt-4">
-          <Button onClick={() => void load(nextCursor)}>Load more</Button>
+          <Button onClick={list.loadMore}>Load more</Button>
         </div>
       )}
       {openId && <AuditEntryDrawer key={openId} id={openId} onOpen={setOpenId} onClose={() => setOpenId(null)} />}
@@ -135,46 +106,9 @@ export function AuditGroupButtons({ group, onChange }: { group: AuditGroupId; on
     </div>
   );
 }
-/** Loading, a failed load with Retry, or reconnecting while offline (EP-06-S9 AC4). */
-export function SecurityLogStatus({
-  notice,
-  message,
-  onRetry,
-}: {
-  notice: SecurityLogNotice;
-  message: string | null;
-  onRetry: () => void;
-}) {
-  if (notice === 'loading') return <p className="mb-3 text-sm text-ink-3">Loading the security log…</p>;
-  if (notice === 'reconnecting') {
-    return (
-      <div className="mb-4">
-        <Notice tone="wait">Reconnecting…</Notice>
-      </div>
-    );
-  }
-  if (notice === 'error') {
-    return (
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <Notice tone="stop">{message}</Notice>
-        <Button onClick={onRetry}>Retry</Button>
-      </div>
-    );
-  }
-  return null;
-}
-/** The loaded rows, or the empty sentence once a load finished with none (EP-06-S9 AC5). */
-export function AuditEntries({
-  entries,
-  settled,
-  onOpen,
-}: {
-  entries: AuditListItem[];
-  /** True when the last load finished without an error. */
-  settled: boolean;
-  onOpen: (id: string) => void;
-}) {
-  if (settled && entries.length === 0) {
+/** The loaded rows, or the empty sentence when the read finished with none (EP-06-S9 AC5). The boundary above it shows loading and errors. */
+export function AuditEntries({ entries, onOpen }: { entries: AuditListItem[]; onOpen: (id: string) => void }) {
+  if (entries.length === 0) {
     return (
       <Card>
         <p className="text-[15px] text-ink-2">Nothing has been logged under this heading.</p>
@@ -208,17 +142,8 @@ export function AuditLogRow({ entry, onOpen }: { entry: AuditListItem; onOpen: (
 }
 /** Loads one entry and shows it in the drawer (EP-06-S11). */
 function AuditEntryDrawer({ id, onOpen, onClose }: { id: string; onOpen: (id: string) => void; onClose: () => void }) {
-  const [entry, setEntry] = useState<AuditEntry | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const load = useCallback(async () => {
-    setError(null);
-    const answer = await opsCall('readAuditEntry', { id });
-    if (answer.ok) setEntry(answer.data.entry);
-    else setError(answer.message);
-  }, [id]);
-  useEffect(() => {
-    void load();
-  }, [load]);
+  const query = useQuery(defineQuery({ op: 'readAuditEntry', input: { id } }));
+  const entry: AuditEntry | undefined = query.data?.entry;
   return (
     <DetailDrawer
       open
@@ -226,9 +151,9 @@ function AuditEntryDrawer({ id, onOpen, onClose }: { id: string; onOpen: (id: st
       title={entry ? AUDIT_ACTION_LABELS[entry.kind] : 'Security log entry'}
       subtitle={entry ? fmtAuditTime(entry.at) : undefined}
     >
-      {error && <SecurityLogStatus notice="error" message={error} onRetry={() => void load()} />}
-      {!entry && !error && <p className="text-sm text-ink-3">Loading the entry…</p>}
-      {entry && <AuditEntryDetail entry={entry} onOpenEntry={onOpen} />}
+      <QueryBoundary label="entry" query={query}>
+        {entry && <AuditEntryDetail entry={entry} onOpenEntry={onOpen} />}
+      </QueryBoundary>
     </DetailDrawer>
   );
 }

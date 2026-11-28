@@ -1,16 +1,18 @@
 import { ROLE_INFO } from '@goldsmith/shared';
 import type { RoleId } from '@goldsmith/shared';
 import { Plus } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { opsCall } from '../../api/ops-client';
-import type { OpsAnswer } from '../../api/ops-client';
-import { useStore } from '../../store/StoreProvider';
-import { initialsOf } from '../../store/selectors';
-import { Button, Card, DetailDrawer, Field, Input, Notice, PageHeader, Select, StatusChip } from '../ui';
+import { type ActionDef, defineAction } from '../../query/action-controller';
+import { useAction } from '../../query/use-action';
+import { pagedBoundaryQuery, usePagedQuery } from '../../query/use-paged-query';
+import { useNavigation } from '../../shell/navigation';
+import { useSession } from '../../shell/session-context';
+import { ActionButton, ActionError, Button, Card, DetailDrawer, Field, Input, Notice, PageHeader, QueryBoundary, ReadError, Select, StatusChip } from '../ui';
 import type { Tone } from '../ui';
-import { afterListAnswer, rowActions, statusLabel } from './user-rows';
-import type { DirectoryList, RowAction, UserRow } from './user-rows';
+import { initialsOf } from './util';
+import { drawerNotice, rowActions, statusLabel } from './user-rows';
+import type { RowAction, UserRow } from './user-rows';
 const roleLabel = (role: RoleId): string => ROLE_INFO.find((r) => r.id === role)?.label ?? role;
 const ACTION_LABEL: Record<RowAction, string> = {
   resend: 'Resend activation link',
@@ -20,31 +22,42 @@ const ACTION_LABEL: Record<RowAction, string> = {
 };
 const statusTone = (u: UserRow): Tone =>
   u.status === 'deactivated' ? 'closed' : u.lockedUntilLocal ? 'stop' : u.status === 'pending_activation' ? 'wait' : 'live';
-function runAction(action: RowAction, u: UserRow): Promise<OpsAnswer<'resendActivation'>> {
-  switch (action) {
-    case 'resend':
-      return opsCall('resendActivation', { userId: u.id });
-    case 'deactivate':
-      return opsCall('deactivateUser', { userId: u.id, version: u.version });
-    case 'reactivate':
-      return opsCall('reactivateUser', { userId: u.id, version: u.version });
-    case 'unlock':
-      return opsCall('unlockUser', { userId: u.id });
-  }
-}
-/** The directory's load failure (EP-05-S11 AC4): the server's message and a Retry button. */
-export function DirectoryLoadError({ message, onRetry }: { message: string; onRetry: () => void }) {
+/** Every write here changes the user list, so the list is read again from the server after it (S7). */
+const affectsList = () => [{ op: 'listUsers' }];
+const resendActivation = defineAction({ op: 'resendActivation', affects: affectsList });
+const deactivateUser = defineAction({ op: 'deactivateUser', affects: affectsList });
+const reactivateUser = defineAction({ op: 'reactivateUser', affects: affectsList });
+const unlockUser = defineAction({ op: 'unlockUser', affects: affectsList });
+const updateUserProfile = defineAction({ op: 'updateUserProfile', affects: affectsList });
+const updateUserRole = defineAction({ op: 'updateUserRole', affects: affectsList });
+const linkKarigar = defineAction({ op: 'linkKarigar', affects: affectsList });
+/** One row button with its own action, so a refusal shows under the button that caused it. */
+function RowActionButton<I, R>({ def, input, action }: { def: ActionDef<I, R>; input: I; action: RowAction }) {
+  const handle = useAction(def);
   return (
-    <div className="mb-4 flex flex-wrap items-center gap-3">
-      <Notice tone="stop">{message}</Notice>
-      <Button onClick={onRetry}>Retry</Button>
+    <div className="flex flex-col items-start gap-1">
+      <ActionButton size="sm" variant={action === 'deactivate' ? 'danger' : 'secondary'} busy={handle.busy} onClick={() => void handle.run(input)}>
+        {ACTION_LABEL[action]}
+      </ActionButton>
+      <ActionError refusal={handle.refusal} maybeNotSaved={handle.maybeNotSaved} onRetry={() => void handle.retry()} busy={handle.busy} />
     </div>
   );
 }
-
+function RowActionFor({ action, u }: { action: RowAction; u: UserRow }) {
+  switch (action) {
+    case 'resend':
+      return <RowActionButton def={resendActivation} input={{ userId: u.id }} action={action} />;
+    case 'deactivate':
+      return <RowActionButton def={deactivateUser} input={{ userId: u.id, version: u.version }} action={action} />;
+    case 'reactivate':
+      return <RowActionButton def={reactivateUser} input={{ userId: u.id, version: u.version }} action={action} />;
+    case 'unlock':
+      return <RowActionButton def={unlockUser} input={{ userId: u.id }} action={action} />;
+  }
+}
 /** Owner only (EP-05-S11). Every user of the shop from the server, their role, status and actions. */
 export function StaffDirectory() {
-  const { can } = useStore();
+  const { can } = useSession();
   if (!can('listUsers')) {
     return (
       <div>
@@ -58,31 +71,10 @@ export function StaffDirectory() {
   return <UserDirectory />;
 }
 function UserDirectory() {
-  const { go } = useStore();
-  const [list, setList] = useState<DirectoryList>({ users: [], nextCursor: null, loadError: null });
-  const { users, nextCursor, loadError } = list;
-  const [loading, setLoading] = useState(true);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const { go } = useNavigation();
+  const list = usePagedQuery({ op: 'listUsers', input: {} });
   const [openId, setOpenId] = useState<string | null>(null);
-  const load = useCallback(async (cursor?: string) => {
-    setLoading(true);
-    setList((prev) => ({ ...prev, loadError: null }));
-    const answer = await opsCall('listUsers', cursor ? { cursor } : {});
-    setLoading(false);
-    setList((prev) => afterListAnswer(prev, answer, cursor));
-  }, []);
-  useEffect(() => {
-    void load();
-  }, [load]);
-  const act = async (action: RowAction, u: UserRow) => {
-    setBusy(true);
-    setActionError(null);
-    const answer = await runAction(action, u);
-    setBusy(false);
-    if (!answer.ok) return setActionError(answer.message);
-    await load();
-  };
+  const users = list.items;
   const open = users.find((u) => u.id === openId) ?? null;
   return (
     <div>
@@ -95,115 +87,116 @@ function UserDirectory() {
           </Button>
         }
       />
-      {actionError && (
-        <div className="mb-4">
-          <Notice tone="stop">{actionError}</Notice>
+      <QueryBoundary label="staff list" query={pagedBoundaryQuery(list)}>
+        {users.length === 0 ? (
+          <Card>
+            <p className="text-[15px] text-ink-2">No staff yet. Add the first person.</p>
+          </Card>
+        ) : (
+          <ul className="space-y-3">
+            {users.map((u) => (
+              <li key={u.id}>
+                <Card className="flex flex-wrap items-center gap-4">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-closed text-sm font-bold text-white" aria-hidden>
+                    {initialsOf(u.name)}
+                  </span>
+                  <div className="min-w-[12rem] flex-1">
+                    <p className="text-[15px] font-semibold text-ink">{u.name}</p>
+                    <p className="text-sm text-ink-3">
+                      {u.phone} · {u.email}
+                      {u.karigarId ? ` · ${u.karigarId}` : ''}
+                    </p>
+                  </div>
+                  <StatusChip tone={u.role === 'owner' ? 'closed' : 'live'} label={roleLabel(u.role)} />
+                  <StatusChip tone={statusTone(u)} label={statusLabel(u)} />
+                  <div className="flex flex-wrap items-start gap-2">
+                    {rowActions(u).map((a) => (
+                      <RowActionFor key={a} action={a} u={u} />
+                    ))}
+                    <Button size="sm" variant="ghost" onClick={() => setOpenId(u.id)}>
+                      Open
+                    </Button>
+                  </div>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )}
+      </QueryBoundary>
+      {list.loadMoreError && (
+        <div className="mt-3">
+          <ReadError message={list.loadMoreError.message} code={list.loadMoreError.code} onRetry={list.loadMore} />
         </div>
       )}
-      {loadError && <DirectoryLoadError message={loadError} onRetry={() => void load()} />}
-      <ul className="space-y-3">
-        {users.map((u) => (
-          <li key={u.id}>
-            <Card className="flex flex-wrap items-center gap-4">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-closed text-sm font-bold text-white" aria-hidden>
-                {initialsOf(u.name)}
-              </span>
-              <div className="min-w-[12rem] flex-1">
-                <p className="text-[15px] font-semibold text-ink">{u.name}</p>
-                <p className="text-sm text-ink-3">
-                  {u.phone} · {u.email}
-                  {u.karigarId ? ` · ${u.karigarId}` : ''}
-                </p>
-              </div>
-              <StatusChip tone={u.role === 'owner' ? 'closed' : 'live'} label={roleLabel(u.role)} />
-              <StatusChip tone={statusTone(u)} label={statusLabel(u)} />
-              <div className="flex flex-wrap gap-2">
-                {rowActions(u).map((a) => (
-                  <Button key={a} size="sm" variant={a === 'deactivate' ? 'danger' : 'secondary'} disabled={busy} onClick={() => void act(a, u)}>
-                    {ACTION_LABEL[a]}
-                  </Button>
-                ))}
-                <Button size="sm" variant="ghost" onClick={() => setOpenId(u.id)}>
-                  Open
-                </Button>
-              </div>
-            </Card>
-          </li>
-        ))}
-      </ul>
-      {loading && <p className="mt-3 text-sm text-ink-3">Loading the staff list…</p>}
-      {!loading && nextCursor && (
+      {list.loadingMore && <p className="mt-3 text-sm text-ink-3">Loading the staff list…</p>}
+      {list.hasMore && !list.loadingMore && !list.loadMoreError && (
         <div className="mt-4">
-          <Button onClick={() => void load(nextCursor)}>Load more</Button>
+          <Button onClick={list.loadMore}>Load more</Button>
         </div>
       )}
-      {open && (
-        <UserDrawer
-          key={`${open.id}:${open.version}`}
-          user={open}
-          onClose={() => setOpenId(null)}
-          onSaved={async () => {
-            setOpenId(null);
-            await load();
-          }}
-        />
-      )}
+      {open && <UserDrawer key={open.id} user={open} onClose={() => setOpenId(null)} />}
     </div>
   );
 }
-/** Edit one user: name, phone, email (S5), role (S6) and the karigar link (S13). */
-function UserDrawer({ user, onClose, onSaved }: { user: UserRow; onClose: () => void; onSaved: () => Promise<void> }) {
+const DRAWER_FIELDS = ['name', 'phone', 'email', 'karigarId'];
+type Refusal = { message: string; field?: string } | null;
+const onField = (refusal: Refusal, field: string) => (refusal?.field === field ? refusal.message : undefined);
+/** A refusal that names a form field shows on that field; any other shows beside the form's button. */
+const besideButton = (refusal: Refusal) => (refusal && !DRAWER_FIELDS.includes(refusal.field ?? '') ? refusal : null);
+/**
+ * Edit one user: name, phone, email (S5), role (S6) and the karigar link (S13). The drawer is keyed
+ * by the user's id only. It keeps what was typed and sends the version it was opened with, so a
+ * change by someone else gets the server's conflict sentence and a refetched row (EP-08-S9 AC3).
+ */
+function UserDrawer({ user, onClose }: { user: UserRow; onClose: () => void }) {
+  const [openedVersion] = useState(user.version);
   const [name, setName] = useState(user.name);
   const [phone, setPhone] = useState(user.phone);
   const [email, setEmail] = useState(user.email);
   const [role, setRole] = useState<RoleId>(user.role);
   const [roleKarigar, setRoleKarigar] = useState('');
   const [linkCode, setLinkCode] = useState(user.karigarId ?? '');
-  const [error, setError] = useState<{ message: string; field?: string } | null>(null);
-  const [busy, setBusy] = useState(false);
-  const run = async (call: () => Promise<OpsAnswer<'updateUserProfile'>>) => {
-    setBusy(true);
-    setError(null);
-    const answer = await call();
-    setBusy(false);
-    if (!answer.ok) return setError({ message: answer.message, field: answer.field });
-    await onSaved();
+  const profile = useAction(updateUserProfile);
+  const roleChange = useAction(updateUserRole);
+  const link = useAction(linkKarigar);
+  const closeWhenSaved = (result: { ok: boolean }) => {
+    if (result.ok) onClose();
   };
   const saveProfile = (e: FormEvent) => {
     e.preventDefault();
-    void run(() => opsCall('updateUserProfile', { userId: user.id, version: user.version, name, phone, email }));
+    void profile.run({ userId: user.id, version: openedVersion, name, phone, email }).then(closeWhenSaved);
   };
   const saveRole = (e: FormEvent) => {
     e.preventDefault();
     const karigarId = role === 'karigar' && roleKarigar.trim() ? { karigarId: roleKarigar.trim() } : {};
-    void run(() => opsCall('updateUserRole', { userId: user.id, version: user.version, role, ...karigarId }));
+    void roleChange.run({ userId: user.id, version: openedVersion, role, ...karigarId }).then(closeWhenSaved);
   };
   const saveLink = (e: FormEvent) => {
     e.preventDefault();
-    void run(() => opsCall('linkKarigar', { userId: user.id, version: user.version, karigarId: linkCode.trim() }));
+    void link.run({ userId: user.id, version: openedVersion, karigarId: linkCode.trim() }).then(closeWhenSaved);
   };
-  const fieldError = (f: string) => (error?.field === f ? error.message : undefined);
-  const otherError = error && !['name', 'phone', 'email', 'karigarId'].includes(error.field ?? '') ? error.message : null;
+  const changed = drawerNotice(openedVersion, user.version);
   return (
     <DetailDrawer open onClose={onClose} title={user.name} subtitle={`${roleLabel(user.role)} · ${statusLabel(user)}`}>
-      {otherError && (
+      {changed && (
         <div className="mb-4">
-          <Notice tone="stop">{otherError}</Notice>
+          <Notice tone="wait">{changed}</Notice>
         </div>
       )}
       <form onSubmit={saveProfile} className="mb-6 space-y-3">
-        <Field label="Name" error={fieldError('name')}>
+        <Field label="Name" error={onField(profile.refusal, 'name')}>
           <Input value={name} onChange={(e) => setName(e.target.value)} autoComplete="off" />
         </Field>
-        <Field label="Phone" error={fieldError('phone')}>
+        <Field label="Phone" error={onField(profile.refusal, 'phone')}>
           <Input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" />
         </Field>
-        <Field label="Email" error={fieldError('email')}>
+        <Field label="Email" error={onField(profile.refusal, 'email')}>
           <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" autoComplete="off" />
         </Field>
-        <Button type="submit" variant="primary" disabled={busy}>
+        <ActionButton type="submit" variant="primary" busy={profile.busy}>
           Save details
-        </Button>
+        </ActionButton>
+        <ActionError refusal={besideButton(profile.refusal)} maybeNotSaved={profile.maybeNotSaved} onRetry={() => void profile.retry().then(closeWhenSaved)} busy={profile.busy} />
       </form>
       <form onSubmit={saveRole} className="mb-6 space-y-3">
         <Field label="Role">
@@ -216,22 +209,24 @@ function UserDrawer({ user, onClose, onSaved }: { user: UserRow; onClose: () => 
           </Select>
         </Field>
         {role === 'karigar' && user.role !== 'karigar' && (
-          <Field label="Karigar code" hint="The karigar record this user is, e.g. KG-04." error={fieldError('karigarId')}>
+          <Field label="Karigar code" hint="The karigar record this user is, e.g. KG-04." error={onField(roleChange.refusal, 'karigarId')}>
             <Input value={roleKarigar} onChange={(e) => setRoleKarigar(e.target.value)} autoComplete="off" />
           </Field>
         )}
-        <Button type="submit" disabled={busy || role === user.role}>
+        <ActionButton type="submit" busy={roleChange.busy} disabled={role === user.role}>
           Change the role
-        </Button>
+        </ActionButton>
+        <ActionError refusal={besideButton(roleChange.refusal)} maybeNotSaved={roleChange.maybeNotSaved} onRetry={() => void roleChange.retry().then(closeWhenSaved)} busy={roleChange.busy} />
       </form>
       {user.role === 'karigar' && (
         <form onSubmit={saveLink} className="space-y-3">
-          <Field label="Linked karigar code" error={fieldError('karigarId')}>
+          <Field label="Linked karigar code" error={onField(link.refusal, 'karigarId')}>
             <Input value={linkCode} onChange={(e) => setLinkCode(e.target.value)} autoComplete="off" />
           </Field>
-          <Button type="submit" disabled={busy || !linkCode.trim()}>
+          <ActionButton type="submit" busy={link.busy} disabled={!linkCode.trim()}>
             Link karigar
-          </Button>
+          </ActionButton>
+          <ActionError refusal={besideButton(link.refusal)} maybeNotSaved={link.maybeNotSaved} onRetry={() => void link.retry().then(closeWhenSaved)} busy={link.busy} />
         </form>
       )}
     </DetailDrawer>

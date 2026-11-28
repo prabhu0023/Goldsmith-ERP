@@ -28,3 +28,12 @@ export const takenHomeG = (c: Customer): number => sumG(c.history.map((h) => h.p
 
 /** Loose phone check: 10 digits at least, once the +91 and spaces are ignored. */
 export const phoneLooksValid = (phone: string): boolean => phone.replace(/\D/g, '').length >= 10;
+/** The first letters of the first two words of a name, for the round avatar. */
+export const initialsOf = (name: string): string =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();

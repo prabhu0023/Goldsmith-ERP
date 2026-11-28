@@ -82,6 +82,10 @@ describe('read errors (S4)', () => {
     expect(html).not.toContain('No staff yet');
     noSmallText(html);
   });
+  it('AC1: the area says what could not be loaded, then the server sentence', () => {
+    const html = boundary(query('failed', { error: { code: 'internal', message: 'Cannot reach the server.' } }), 'security log');
+    expect(html).toContain('The security log could not be loaded. Cannot reach the server.');
+  });
   it('AC4: a refused read says so and has no Try again', () => {
     const html = boundary(query('failed', { error: { code: 'forbidden', message: 'Your role may not run this.' } }));
     expect(html).toContain('You may not see this.');
