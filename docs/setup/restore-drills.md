@@ -4,3 +4,4 @@ One row per restore drill, added by `npm run drill:record` after the drill in [r
 
 | Date | Environment | Restore point | Duration (min) | Against target | Steps | Run by | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-11-28 | development | backup db-20261128T085924Z-eab6 taken 2026-11-28T08:59:24Z | 2 | within 60 min (provisional) | 8 of 8 pass | prabhu.govindaraj (lane c) | Lane c, seeded plus one API upload (FILE-2026-00005); damaged copy failed the check as it must; smoke test as owner passed after drill doc fixes; owner approval = this task |

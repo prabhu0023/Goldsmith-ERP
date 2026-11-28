@@ -51,7 +51,7 @@ Start the api on lane c's port 4003 against the copy. `APP_DATABASE_URL` points 
 
 ```sh
 export COPY=postgres://postgres:postgres@localhost:5432/goldsmith_restore_c
-DATABASE_URL=$COPY npm run db:dev-password -- "Rajesh Verma" "counter-2026"   # sets the password in the copy only
+DATABASE_URL=$COPY npm run db:dev-password -- "Sanjay Seth" "counter-2026"   # the owner; sets the password in the copy only
 DATABASE_URL=$COPY APP_DATABASE_URL=postgres://goldsmith_app:localapp@localhost:5432/goldsmith_restore_c \
   STORAGE_BUCKET=goldsmith-restore-c JOBS_ENABLED=false npm run dev -w @goldsmith/api
 ```
@@ -61,17 +61,17 @@ In a second terminal, sign in, read, and open a restored file (`localhost:4003`,
 ```sh
 curl -s localhost:4003/health
 curl -s -c /tmp/jar-restore -X POST localhost:4003/api/auth/signIn \
-  -H 'content-type: application/json' -d '{"phone":"98410 11111","password":"counter-2026"}'
+  -H 'content-type: application/json' -d '{"phone":"98410 33333","password":"counter-2026"}'
 curl -s -b /tmp/jar-restore -X POST localhost:4003/api/ops/listAuditEntries \
   -H 'content-type: application/json' -d '{"pageSize":5}'
 docker exec goldsmith-erp-postgres-1 psql -U postgres -d goldsmith_restore_c -Atc \
-  "select code from stored_files where removed_at is null limit 1"
+  "select s.code from stored_files s where s.removed_at is null and exists (select 1 from attachments a where a.file_id = s.id) order by s.code limit 1"
 curl -s -b /tmp/jar-restore -X POST localhost:4003/api/ops/readFileLinks \
   -H 'content-type: application/json' -d '{"files":[{"fileId":"<FILE code from the line above>","size":"thumbnail"}]}'
-curl -s -o /dev/null -w '%{http_code} %{content_type}\n' '<url from readFileLinks>'     # expect: 200 image/...
+curl -s -o /dev/null -w '%{http_code} %{content_type}\n' 'localhost:4003<url from readFileLinks>'     # the url is a path starting /api/files/; expect: 200 image/...
 ```
 
-Pass means: health answers, sign-in answers `ok`, `listAuditEntries` returns entries, and the signed link answers 200 with an image type. Stop the api with Ctrl+C, then `rm /tmp/jar-restore`.
+Sign in as the owner: only the owner can read the security log, so a staff sign-in gets `forbidden` on `listAuditEntries`. Pass means: health answers, sign-in answers `ok`, `listAuditEntries` returns entries, and the signed link answers 200 with an image type. Use an attached file (the query above): an unattached file is readable only by its uploader, so another user gets `not_found`. Stop the api with Ctrl+C, then `rm /tmp/jar-restore`.
 
 ## Drop the copy
 
