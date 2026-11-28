@@ -131,6 +131,11 @@ const AUDIT_CASES: Record<StateChangingOperation, AuditCase> = {
     await addKarigar(h.pool, h.shop, 'KG-73');
     return () => h.asOwner('updateKarigarStatus', { karigarId: 'KG-73', version: 1, status: 'deactivated' });
   },
+  async linkKarigarAccount(h) {
+    await addKarigar(h.pool, h.shop, 'KG-74');
+    await h.pool.query("update karigars set phone = '+919740074074' where shop_id = $1 and code = 'KG-74'", [h.shop.shopId]);
+    return () => h.asOwner('linkKarigarAccount', { karigarId: 'KG-74' });
+  },
   async setSetting(h) {
     return () => h.asOwner('setSetting', { key: 'autoSendWishes', value: true });
   },

@@ -86,6 +86,7 @@ const usersRule = ownerOnly(USERS_REFUSED);
 /** Adding a karigar and changing the record or allowance (EP-16-S2); the sentence is KARIGAR_MESSAGES.ownerOnly. */
 const karigarWrites = ownerOnly('Only the owner can add a karigar or change their wastage allowance.');
 
+const karigarAccess = ownerOnly('Only the owner can give a karigar portal access.');
 export const OPERATION_RULES = {
   // Staff and owner.
   createLead: shopFloor,
@@ -103,6 +104,7 @@ export const OPERATION_RULES = {
   stockOut: shopFloor,
   // A permission-checked read of one piece, for the web's live entity cache (EP-08, FU-013).
   readPiece: shopFloor,
+  listKarigarPicker: shopFloor,
   requestScrap: shopFloor,
   onboardCustomer: shopFloor,
   sendWishes: shopFloor,
@@ -133,6 +135,7 @@ export const OPERATION_RULES = {
   addBenchPhoto: karigarOnly,
   markJobReady: karigarOnly,
   handOver: karigarOnly,
+  readMyKarigarProfile: { roles: KARIGAR, refusal: 'Only a karigar can read their own profile.' },
   // Owner only.
   clearMismatch: ownerOnly('Only the owner can clear a mismatch.'),
   ownerSendBack: ownerOnly('Only the owner can send a parcel back.'),
@@ -148,6 +151,9 @@ export const OPERATION_RULES = {
   updateKarigarDetails: karigarWrites,
   updateKarigarWastage: karigarWrites,
   updateKarigarStatus: karigarWrites,
+  linkKarigarAccount: karigarAccess,
+  listKarigars: ownerOnly('Only the owner can see the karigar directory.'),
+  readKarigarScorecard: ownerOnly('Only the owner can see the karigar scorecard.'),
   onboardStaff: ownerOnly('Only the owner can onboard staff.'),
   upsertScale: ownerOnly('Only the owner can change the scales.'),
   setSetting: ownerOnly(RULES_REFUSED),

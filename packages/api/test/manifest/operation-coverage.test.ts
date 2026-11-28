@@ -56,6 +56,11 @@ const MANIFEST: Record<string, Row> = {
   updateKarigarDetails: row('karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts'),
   updateKarigarWastage: row('karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts', 'karigars/karigar-writes.test.ts'),
   updateKarigarStatus: row('karigars/karigar-writes.test.ts', MATRIX_VALIDATION, 'karigars/karigar-writes.test.ts'),
+  linkKarigarAccount: row('karigars/karigar-link.test.ts', 'karigars/karigar-link.test.ts', 'karigars/karigar-link.test.ts'),
+  listKarigars: row('karigars/directory.test.ts', 'karigars/directory.test.ts', 'karigars/directory.test.ts'),
+  listKarigarPicker: row('karigars/picker-and-profile.test.ts', MATRIX_VALIDATION, 'karigars/picker-and-profile.test.ts'),
+  readKarigarScorecard: row('karigars/scorecard.test.ts', MATRIX_VALIDATION, 'karigars/scorecard.test.ts'),
+  readMyKarigarProfile: row('karigars/picker-and-profile.test.ts', { na: ok }, 'karigars/picker-and-profile.test.ts'),
   // Karigar jobs
   listMyJobs: row('permissions/karigar-scope.test.ts', 'permissions/karigar-scope.test.ts', 'permissions/karigar-scope.test.ts'),
   readMyJob: row('permissions/karigar-scope.test.ts', MATRIX_VALIDATION, 'permissions/karigar-scope.test.ts'),

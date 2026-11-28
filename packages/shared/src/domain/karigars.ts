@@ -22,6 +22,8 @@ export const KARIGAR_MESSAGES = {
   alreadyActive: 'This karigar is already active.',
   noKarigar: 'Say which karigar it came from.',
   deactivatedLoginFirst: 'This karigar is deactivated. Reactivate them before giving portal access.',
+  phoneMissing: 'Add the karigar phone number before giving portal access.',
+  userPhoneDiffers: "This user's phone number is not the karigar's phone number.",
 } as const;
 
 /** "Ravi Achari is no longer active. Pick another karigar." */

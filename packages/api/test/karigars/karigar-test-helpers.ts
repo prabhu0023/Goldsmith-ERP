@@ -22,7 +22,7 @@ export interface KarigarHarness extends UsersHarness {
   ids: Record<string, string>;
 }
 
-async function seedKarigar(
+export async function seedKarigar(
   h: UsersHarness,
   code: string,
   name: string,
@@ -30,6 +30,7 @@ async function seedKarigar(
   wastageBp: number,
   specialties: string[],
   workshopLocation: string | null,
+  status: 'active' | 'deactivated' = 'active',
 ): Promise<string> {
   const row = await insertScoped<{ id: string }>(h.pool, h.shop, 'karigars', {
     code,
@@ -38,6 +39,8 @@ async function seedKarigar(
     email: `${code.toLowerCase()}@example.com`,
     wastage_bp: wastageBp,
     workshop_location: workshopLocation,
+    status,
+    ...(status === 'deactivated' ? { deactivated_at: new Date('2026-11-01T00:00:00Z') } : {}),
   });
   for (const [position, specialty] of specialties.entries()) {
     await insertScoped(h.pool, h.shop, 'karigar_specialties', { karigar_id: row.id, specialty, position });
@@ -136,3 +139,82 @@ export const KARIGAR_AUDIT_KINDS = [
   'karigar_deactivated',
   'karigar_reactivated',
 ];
+
+/** Weights below are integer units of 0.0001 g (4_473_000 = 447.3000 g). */
+export interface JobFixture {
+  code: string;
+  karigarId: string;
+  issuedUnits: number;
+  status?: 'sent' | 'accepted' | 'on_bench' | 'ready' | 'handed_over';
+  /** A finished job has `settledAt`. */
+  settledAt?: string | null;
+  dueDate?: string | null;
+  confirmedDate?: string | null;
+  title?: string;
+}
+/** Insert a job; returns its id. */
+export async function addJob(h: UsersHarness, job: JobFixture): Promise<string> {
+  const row = await insertScoped<{ id: string }>(h.pool, h.shop, 'karigar_jobs', {
+    code: job.code,
+    title: job.title ?? null,
+    karigar_id: job.karigarId,
+    status: job.status ?? (job.settledAt ? 'handed_over' : 'on_bench'),
+    due_date: job.dueDate ? new Date(job.dueDate) : null,
+    confirmed_date: job.confirmedDate ? new Date(job.confirmedDate) : null,
+    settled_at: job.settledAt ? new Date(job.settledAt) : null,
+    target_gross_units: job.issuedUnits,
+    target_net_units: job.issuedUnits,
+    tolerance_units: 1,
+    gold_issued_units: job.issuedUnits,
+  });
+  return row.id;
+}
+export interface ParcelFixture {
+  code: string;
+  karigarId: string;
+  jobId?: string | null;
+  status?: 'open' | 'stopped' | 'released';
+  arrivedAt?: string | null;
+  releasedAt?: string | null;
+  gapUnits?: number | null;
+  lossUnits?: number | null;
+}
+export async function addParcel(h: UsersHarness, parcel: ParcelFixture): Promise<string> {
+  const row = await insertScoped<{ id: string }>(h.pool, h.shop, 'parcels', {
+    code: parcel.code,
+    karigar_id: parcel.karigarId,
+    job_id: parcel.jobId ?? null,
+    status: parcel.status ?? 'released',
+    arrived_at: parcel.arrivedAt ? new Date(parcel.arrivedAt) : null,
+    released_at: parcel.releasedAt ? new Date(parcel.releasedAt) : null,
+    gap_net_units: parcel.gapUnits ?? null,
+    loss_units: parcel.lossUnits ?? null,
+  });
+  return row.id;
+}
+/** A finished job with one released parcel carrying `lossUnits`. */
+export async function addFinishedJob(
+  h: UsersHarness,
+  job: Omit<JobFixture, 'settledAt'> & { settledAt: string; lossUnits: number; arrivedAt?: string },
+): Promise<string> {
+  const jobId = await addJob(h, job);
+  await addParcel(h, {
+    code: `P-${job.code}`,
+    karigarId: job.karigarId,
+    jobId,
+    arrivedAt: job.arrivedAt ?? job.settledAt,
+    releasedAt: job.settledAt,
+    lossUnits: job.lossUnits,
+  });
+  return jobId;
+}
+/** Every key of a JSON value, at any depth. */
+export function keysOf(value: unknown): string[] {
+  if (Array.isArray(value)) return value.flatMap(keysOf);
+  if (value !== null && typeof value === 'object') {
+    return Object.entries(value).flatMap(([key, child]) => [key, ...keysOf(child)]);
+  }
+  return [];
+}
+/** Keys no karigar read may carry: a rating or any money figure. */
+export const FORBIDDEN_KEY = /rating|price|rate|amount|inr|rupee|money|cost|language/i;
