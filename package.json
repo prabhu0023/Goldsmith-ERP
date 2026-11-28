@@ -33,7 +33,11 @@
     "backup:db": "npm run backup:db -w @goldsmith/api --",
     "backup:list": "npm run backup:list -w @goldsmith/api --",
     "backup:check": "npm run backup:check -w @goldsmith/api --",
-    "backup:prune": "npm run backup:prune -w @goldsmith/api --"
+    "backup:prune": "npm run backup:prune -w @goldsmith/api --",
+    "restore:db": "npm run restore:db -w @goldsmith/api --",
+    "restore:drop": "npm run restore:drop -w @goldsmith/api --",
+    "check:audit": "npm run check:audit -w @goldsmith/api --",
+    "restore:sends": "npm run restore:sends -w @goldsmith/api --"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.6.8",

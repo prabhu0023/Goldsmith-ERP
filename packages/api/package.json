@@ -25,6 +25,10 @@
     "backup:list": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts backup-list",
     "backup:check": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts backup-check",
     "backup:prune": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts backup-prune",
+    "restore:db": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts restore-db",
+    "restore:drop": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts restore-drop",
+    "check:audit": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts check-audit",
+    "restore:sends": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx src/ops/cli.ts restore-sends",
     "live:demo": "node --conditions=@goldsmith/source --env-file-if-exists=../../.env --import tsx scripts/live-demo.ts"
   },
   "dependencies": {
