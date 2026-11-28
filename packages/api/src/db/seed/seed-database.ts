@@ -14,7 +14,14 @@
  */
 import { createHash, randomUUID } from 'node:crypto';
 import { readdir, readFile } from 'node:fs/promises';
-import { AUDIT_ACTION_ENTITY, DEMO_BASE, type FileOwnerType, type FileRole, gramsToUnits } from '@goldsmith/shared';
+import {
+  AUDIT_ACTION_ENTITY,
+  DEMO_BASE,
+  type FileOwnerType,
+  type FileRole,
+  gramsToUnits,
+  normaliseCustomerPhone,
+} from '@goldsmith/shared';
 import type pg from 'pg';
 import type { AppEnv } from '../../config.js';
 import type { ObjectStorage } from '../../files/object-storage.js';
@@ -37,6 +44,7 @@ export const SEEDED_TABLES = [
   'karigar_gap_history',
   'staff_members',
   'users',
+  'consent_events',
   'customers',
   'customer_history',
   'stock_outs',
@@ -271,7 +279,7 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         id: customerId,
         code: c.id,
         name: c.name,
-        phone: c.phone,
+        phone: normaliseCustomerPhone(c.phone) ?? c.phone,
         city: c.city,
         customer_group: c.group,
         dob: c.dob,
@@ -281,6 +289,10 @@ export async function seedPrototype(pool: pg.Pool, options: SeedOptions): Promis
         budget_inr: c.budgetINR,
         spent_inr: c.spentINR,
       });
+      // Opt-ins the prototype already holds have no recorded event: one import event each, at the seed time.
+      if (c.optedIn) {
+        await ins('consent_events', { customer_id: customerId, kind: 'opt_in', source: 'import', recorded_by: null, at: now });
+      }
       for (const [position, h] of c.history.entries()) {
         await ins('customer_history', {
           customer_id: customerId,

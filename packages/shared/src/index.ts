@@ -15,6 +15,7 @@ export * from './contract/users-contract.js';
 export * from './contract/files-contract.js';
 export * from './domain/audit-log.js';
 export * from './domain/clock.js';
+export * from './domain/customer-rules.js';
 export * from './domain/domain-error.js';
 export * from './domain/edits.js';
 export * from './domain/job-timers.js';

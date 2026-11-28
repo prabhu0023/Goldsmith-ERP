@@ -77,6 +77,12 @@ export const AUDIT_ACTIONS = [
   'wishes_sent',
   'broadcast_sent',
   'scale_upserted',
+  // EP-17 customers.
+  'customer_added',
+  'customer_edited',
+  'customer_consent_recorded',
+  'customer_opted_out',
+  'customer_erased',
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
@@ -151,6 +157,11 @@ export const AUDIT_ACTION_LABELS: Record<AuditAction, string> = {
   wishes_sent: 'Wishes sent',
   broadcast_sent: 'Broadcast sent',
   scale_upserted: 'Scale saved',
+  customer_added: 'Customer added',
+  customer_edited: 'Customer edited',
+  customer_consent_recorded: 'Consent recorded',
+  customer_opted_out: 'Customer opted out',
+  customer_erased: 'Customer erased',
 };
 
 /** What an entry can be about. "invoice" is not one: the app never holds invoices. */
@@ -241,6 +252,11 @@ export const AUDIT_ACTION_ENTITY: Record<AuditAction, AuditEntityType> = {
   wishes_sent: 'wish',
   broadcast_sent: 'broadcast',
   scale_upserted: 'scale',
+  customer_added: 'customer',
+  customer_edited: 'customer',
+  customer_consent_recorded: 'customer',
+  customer_opted_out: 'customer',
+  customer_erased: 'customer',
 };
 
 /** Who can be an entry's actor: a person by role, a System job or integration, or first-time setup. */
