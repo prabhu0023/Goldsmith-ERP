@@ -2,7 +2,8 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useStore } from '../../store/StoreProvider';
 import type { CustomerGroup } from '@goldsmith/shared';
-import { Button, Card, Field, Input, Notice, PageHeader, Select, SectionLabel, ValueSlot, cn } from '../ui';
+import { Button, Card, Field, Input, Notice, PageHeader, Select, SectionLabel, cn } from '../ui';
+import { ValueSlot } from '../ui/ValueSlot';
 import { MONTHS, daysInMonth, dayMonthToIso, phoneLooksValid } from './util';
 
 const GROUPS: CustomerGroup[] = ['VIP Bridal', 'High net worth', 'Regular', 'Wholesale'];

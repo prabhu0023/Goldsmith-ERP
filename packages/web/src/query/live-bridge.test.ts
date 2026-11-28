@@ -1,59 +1,9 @@
-import type { LiveClient, LiveEnvelope, LiveStatus } from '@goldsmith/shared';
-import { LIVE_CATALOGUE } from '@goldsmith/shared';
+import type { LiveStatus } from '@goldsmith/shared';
 import { describe, expect, it, vi } from 'vitest';
 import { createConnectionStore, type WindowLike } from './connection';
 import { connectLiveBridge } from './live-bridge';
 import { createQueryClient, defineQuery } from './query-client';
-import { deferred, fakeApi, fakeTimers, flush, ok } from './test-support';
-
-/** A live client stand-in whose status and events the test drives. */
-function fakeLive(initial: LiveStatus = 'open') {
-  let status = initial;
-  const statusFns = new Set<(s: LiveStatus) => void>();
-  const eventFns = new Set<(e: LiveEnvelope) => void>();
-  const refetchFns = new Set<() => void>();
-  const live: Pick<LiveClient, 'status' | 'onStatus' | 'onEvent' | 'onRefetchAll'> = {
-    status: () => status,
-    onStatus: (fn) => {
-      statusFns.add(fn);
-      return () => void statusFns.delete(fn);
-    },
-    onEvent: (fn) => {
-      eventFns.add(fn);
-      return () => void eventFns.delete(fn);
-    },
-    onRefetchAll: (fn) => {
-      refetchFns.add(fn);
-      return () => void refetchFns.delete(fn);
-    },
-  };
-  let seq = 0;
-  return {
-    live,
-    counts: () => ({ status: statusFns.size, event: eventFns.size, refetch: refetchFns.size }),
-    setStatus(next: LiveStatus) {
-      status = next;
-      for (const fn of [...statusFns]) fn(next);
-    },
-    push(topic: keyof typeof LIVE_CATALOGUE, over: Partial<LiveEnvelope> = {}) {
-      seq += 1;
-      const e: LiveEnvelope = {
-        seq,
-        name: LIVE_CATALOGUE[topic].name,
-        entityType: LIVE_CATALOGUE[topic].entityType,
-        entityId: 'u-other',
-        entityVersion: seq,
-        emittedAt: '2026-11-21T10:00:00.000Z',
-        audience: { channels: ['role:owner'] },
-        ...over,
-      };
-      for (const fn of [...eventFns]) fn(e);
-    },
-    refetchAll() {
-      for (const fn of [...refetchFns]) fn();
-    },
-  };
-}
+import { deferred, fakeApi, fakeLive, fakeTimers, flush, ok } from './test-support';
 
 const listUsers = defineQuery({ op: 'listUsers', input: {} });
 const emptyWindow: WindowLike = { navigator: { onLine: true }, addEventListener: () => {}, removeEventListener: () => {} };

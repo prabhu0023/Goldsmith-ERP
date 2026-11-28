@@ -1,4 +1,4 @@
-import { useStore } from '../../store/StoreProvider';
+import { usePricingEnabled } from '../../shell/pricing';
 import { cn } from './cn';
 
 interface Props {
@@ -15,8 +15,7 @@ const inr = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR',
  * space. Nothing else in the app may print a currency symbol.
  */
 export function ValueSlot({ value, label, className }: Props) {
-  const { state } = useStore();
-  if (!state.settings.pricingEnabled) return null;
+  if (!usePricingEnabled()) return null;
   return (
     <div className={cn('text-sm text-ink-2', className)}>
       {label && <span className="mr-1.5 text-ink-3">{label}</span>}

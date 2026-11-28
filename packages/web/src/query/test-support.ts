@@ -2,7 +2,7 @@
  * Test doubles for the query layer: a fake api whose answers a test controls, and timers moved
  * by hand. Used by the query tests only; nothing in the app imports this file.
  */
-import type { LiveTimers } from '@goldsmith/shared';
+import { LIVE_CATALOGUE, type LiveClient, type LiveEnvelope, type LiveStatus, type LiveTimers } from '@goldsmith/shared';
 import type { ApiClient } from '../api/api-client';
 
 type AnyAnswer = { ok: true; data: unknown } | { ok: false; code: string; message: string; field?: string; network?: true };
@@ -90,6 +90,60 @@ export function fakeTimers() {
       }
       now = end;
       await flush();
+    },
+  };
+}
+
+/** A live client stand-in whose status and events the test drives. */
+export function fakeLive(initial: LiveStatus = 'open') {
+  let status = initial;
+  const statusFns = new Set<(s: LiveStatus) => void>();
+  const eventFns = new Set<(e: LiveEnvelope) => void>();
+  const refetchFns = new Set<() => void>();
+  let stops = 0;
+  const live: Pick<LiveClient, 'status' | 'onStatus' | 'onEvent' | 'onRefetchAll'> & { stop(): void } = {
+    stop: () => {
+      stops += 1;
+    },
+    status: () => status,
+    onStatus: (fn) => {
+      statusFns.add(fn);
+      return () => void statusFns.delete(fn);
+    },
+    onEvent: (fn) => {
+      eventFns.add(fn);
+      return () => void eventFns.delete(fn);
+    },
+    onRefetchAll: (fn) => {
+      refetchFns.add(fn);
+      return () => void refetchFns.delete(fn);
+    },
+  };
+  let seq = 0;
+  return {
+    live,
+    stops: () => stops,
+    counts: () => ({ status: statusFns.size, event: eventFns.size, refetch: refetchFns.size }),
+    setStatus(next: LiveStatus) {
+      status = next;
+      for (const fn of [...statusFns]) fn(next);
+    },
+    push(topic: keyof typeof LIVE_CATALOGUE, over: Partial<LiveEnvelope> = {}) {
+      seq += 1;
+      const e: LiveEnvelope = {
+        seq,
+        name: LIVE_CATALOGUE[topic].name,
+        entityType: LIVE_CATALOGUE[topic].entityType,
+        entityId: 'u-other',
+        entityVersion: seq,
+        emittedAt: '2026-11-21T10:00:00.000Z',
+        audience: { channels: ['role:owner'] },
+        ...over,
+      };
+      for (const fn of [...eventFns]) fn(e);
+    },
+    refetchAll() {
+      for (const fn of [...refetchFns]) fn();
     },
   };
 }

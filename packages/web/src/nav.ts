@@ -16,8 +16,7 @@ import {
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { LANDING_ROUTES } from '@goldsmith/shared';
-import type { RoleId } from '@goldsmith/shared';
-import type { BadgeKey } from './store/selectors';
+import type { RailBadgeKey, RoleId } from '@goldsmith/shared';
 
 /** Every screen has one id. FEAT-002 onwards replace the placeholder behind an id in components/registry.tsx. */
 export type RouteId =
@@ -61,7 +60,7 @@ export interface NavItem {
   id: RouteId;
   label: string;
   icon: LucideIcon;
-  badge?: BadgeKey;
+  badge?: RailBadgeKey;
   /** Other routes that keep this item highlighted. */
   also?: RouteId[];
 }
@@ -164,3 +163,35 @@ export const routeTitles: Record<RouteId, string> = {
   'k-jobs': 'My jobs',
 };
 
+
+/** Every route a rail reaches: its items and the routes that keep an item highlighted. */
+function closure(sections: NavSection[]): Set<RouteId> {
+  const ids = new Set<RouteId>();
+  for (const section of sections) {
+    for (const item of section.items) {
+      ids.add(item.id);
+      for (const also of item.also ?? []) ids.add(also);
+    }
+  }
+  return ids;
+}
+const staffRoutes = closure(staffNav);
+/** Routes only the owner reaches: the owner's rail minus the staff rail (decisions, karigars, staff, scales, security). */
+export const ownerOnlyRoutes: ReadonlySet<RouteId> = new Set([...closure(ownerNav)].filter((id) => !staffRoutes.has(id)));
+/**
+ * Whether a role may open a screen. The server refuses the operations anyway (EP-05); this keeps
+ * the screen from opening. The karigar opens only `k-jobs`, which only the karigar opens; the
+ * owner-only routes are the owner's rail minus the staff rail. Nothing else is closed.
+ */
+export function canOpenRoute(role: RoleId, id: RouteId): boolean {
+  if (role === 'karigar') return id === 'k-jobs';
+  if (id === 'k-jobs') return false;
+  if (role === 'staff') return !ownerOnlyRoutes.has(id);
+  return true;
+}
+/** The screen a request opens: the request when the role may open it, else the role's landing route. */
+export function resolveRoute(role: RoleId, requested: RouteId): { id: RouteId; redirected: boolean } {
+  return canOpenRoute(role, requested) ? { id: requested, redirected: false } : { id: landingRoute[role], redirected: true };
+}
+/** Whether a text is a route id (a deep link such as /security). */
+export const isRouteId = (text: string): text is RouteId => Object.hasOwn(routeTitles, text);

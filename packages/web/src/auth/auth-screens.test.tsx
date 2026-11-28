@@ -2,15 +2,23 @@ import { AUTH_MESSAGES } from '@goldsmith/shared';
 import type { RoleId } from '@goldsmith/shared';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
-import { RoleChip } from '../components/ui/RoleChip';
+import { AccountMenu } from '../components/ui/AccountMenu';
+import { useNavigation } from '../shell/navigation';
+import { useSession } from '../shell/session-context';
 import { StoreProvider, useStore } from '../store/StoreProvider';
+import { renderAs } from '../test-support/render-as';
 import { ForgotPasswordPage } from './ForgotPasswordPage';
 import { SignInPage } from './SignInPage';
 const noop = () => {};
-const signOutOk = async () => null;
 /** Every `<input …>` and `<button …>` tag in rendered markup. */
 const targets = (html: string) => html.match(/<(input|button)\b[^>]*>/g) ?? [];
 function Probe() {
+  const { route } = useNavigation();
+  const { user } = useSession();
+  return <p>{`${route.id}|${user.name}|${user.role}`}</p>;
+}
+/** The prototype store inside the shell: its route is the shell's, not its own. */
+function StoreProbe() {
   const { route, identity } = useStore();
   return <p>{`${route.id}|${identity.name}|${identity.role}`}</p>;
 }
@@ -44,26 +52,23 @@ describe('after sign-in (EP-04-S6)', () => {
     ['Rajesh Verma', 'staff', 'today'],
     ['Lakshmi Devi', 'karigar', 'k-jobs'],
   ] as Array<[string, RoleId, string]>)('S6 AC1-3: %s (%s) opens route %s as that person', (name, role, route) => {
-    const html = renderToStaticMarkup(
-      <StoreProvider signedIn={{ name, role }} onSignOut={signOutOk}>
-        <Probe />
-      </StoreProvider>,
-    );
+    const html = renderAs(name, role, <Probe />);
     expect(html).toBe(`<p>${route}|${name}|${role}</p>`);
   });
-  it('S6: with a real session the account chip offers no identity switch', () => {
-    const signedIn = renderToStaticMarkup(
-      <StoreProvider signedIn={{ name: 'Rajesh Verma', role: 'staff' }} onSignOut={signOutOk}>
-        <RoleChip />
+  it('the prototype store takes the shell route and the session person', () => {
+    const html = renderAs(
+      'Rajesh Verma',
+      'staff',
+      <StoreProvider signedIn={{ name: 'Rajesh Verma', role: 'staff' }} onSignOut={async () => null}>
+        <StoreProbe />
       </StoreProvider>,
+      { path: '/stock' },
     );
-    expect(signedIn).toContain('Rajesh Verma');
-    expect(signedIn).not.toContain('switch');
-    const prototype = renderToStaticMarkup(
-      <StoreProvider>
-        <RoleChip />
-      </StoreProvider>,
-    );
-    expect(prototype).not.toContain('switch');
+    expect(html).toBe('<p>stock|Rajesh Verma|staff</p>');
+  });
+  it('S6: with a real session the account menu offers no identity switch', () => {
+    const html = renderAs('Rajesh Verma', 'staff', <AccountMenu />);
+    expect(html).toContain('Rajesh Verma');
+    expect(html).not.toContain('switch');
   });
 });

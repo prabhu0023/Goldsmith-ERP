@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { authCall } from './auth-api';
 import { ForgotPasswordPage } from './ForgotPasswordPage';
-import { gateAfterCheck, gateAfterRecheck, gateAfterSignOut, gateFromLocation, signedOut } from './gate-state';
+import { gateAfterCheck, gateAfterEnd, gateAfterRecheck, gateAfterSignOut, gateFromLocation, signedOut } from './gate-state';
 import type { CurrentSession, GateState } from './gate-state';
 import { SetPasswordPage } from './SetPasswordPage';
 import { SignInPage } from './SignInPage';
@@ -17,6 +17,13 @@ function stateFromLocation(): GateState {
 export type SignOut = () => Promise<string | null>;
 /** Asks the server whether the session still lives; shows sign-in with the session-ended sentence when not. */
 export type Recheck = () => void;
+/** What the signed-in app can ask of the gate. */
+export interface GateActions {
+  signOut: SignOut;
+  recheck: Recheck;
+  /** The session is over (a 401, a closed live stream, the person's own access change): back to sign-in with the session-ended sentence. */
+  endSession: () => void;
+}
 /**
  * Shows the app only to a signed-in person (EP-04-S6, S11, S12). Without a session it shows sign-in;
  * when the session ends while the app is open, it says so on the next focus, or when the live
@@ -25,7 +32,7 @@ export type Recheck = () => void;
 export function AuthGate({
   children,
 }: {
-  children: (session: CurrentSession, signOut: SignOut, recheck: Recheck) => ReactNode;
+  children: (session: CurrentSession, actions: GateActions) => ReactNode;
 }) {
   const [state, setState] = useState<GateState>(stateFromLocation);
   const signedIn = state.kind === 'signed-in';
@@ -66,6 +73,11 @@ export function AuthGate({
     window.history.replaceState(null, '', '/');
     return null;
   }, []);
+  const endSession = useCallback(() => {
+    window.history.replaceState(null, '', '/');
+    setState(gateAfterEnd());
+  }, []);
+  const actions = useMemo<GateActions>(() => ({ signOut, recheck, endSession }), [signOut, recheck, endSession]);
   const toSignIn = useCallback(() => {
     window.history.replaceState(null, '', '/');
     setState(signedOut());
@@ -76,7 +88,7 @@ export function AuthGate({
     case 'link':
       return <SetPasswordPage purpose={state.purpose} token={state.token} onDone={toSignIn} />;
     case 'signed-in':
-      return children(state.session, signOut, recheck);
+      return children(state.session, actions);
     case 'signed-out':
       return state.view === 'forgot' ? (
         <ForgotPasswordPage onBack={toSignIn} />

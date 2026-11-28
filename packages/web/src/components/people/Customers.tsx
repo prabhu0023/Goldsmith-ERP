@@ -4,7 +4,8 @@ import { fmtDate } from '@goldsmith/shared';
 import { fmtG } from '@goldsmith/shared';
 import { useStore } from '../../store/StoreProvider';
 import type { Customer, CustomerGroup } from '@goldsmith/shared';
-import { Button, Card, DetailDrawer, DrawerSection, Input, PageHeader, Pill, SectionLabel, StatusChip, ValueSlot, WeightReadout, cn } from '../ui';
+import { Button, Card, DetailDrawer, DrawerSection, Input, PageHeader, Pill, SectionLabel, StatusChip, WeightReadout, cn } from '../ui';
+import { ValueSlot } from '../ui/ValueSlot';
 import { dayMonthLabel, takenHomeG } from './util';
 
 const GROUPS: CustomerGroup[] = ['VIP Bridal', 'High net worth', 'Regular', 'Wholesale'];

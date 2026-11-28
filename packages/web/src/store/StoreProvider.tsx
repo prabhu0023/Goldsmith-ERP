@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { initialState } from '../data/seed';
 import { ROLE_INFO, demoNow, permissionsFor } from '@goldsmith/shared';
 import { landingRoute } from '../nav';
+import { useOptionalNavigation } from '../shell/navigation';
 import type { Route, RouteId } from '../nav';
 import type { Actor, AppState, ErrorCode, Identity, OperationInput, RoleId, Settings } from '@goldsmith/shared';
 import { actorOf, identities as identitiesOf, initialsOf } from './selectors';
@@ -116,7 +117,8 @@ export function StoreProvider({ children, signedIn, permissions, onSignOut }: St
   const [state, setState] = useState<AppState>(initialState);
   const stateRef = useRef(state);
   const [identityId] = useState(() => (signedIn && identityFor(signedIn)?.id) || 'ST-01');
-  const [route, setRoute] = useState<Route>(() => ({ id: signedIn ? landingRoute[signedIn.role] : 'today' }));
+  const navigation = useOptionalNavigation();
+  const [ownRoute, setRoute] = useState<Route>(() => ({ id: signedIn ? landingRoute[signedIn.role] : 'today' }));
   const [now, setNow] = useState(demoNow);
 
   const allIdentities = useMemo(() => identitiesOf(state), [state]);
@@ -168,10 +170,13 @@ export function StoreProvider({ children, signedIn, permissions, onSignOut }: St
     return buildActions(run, () => ({ by: actorOf(identityRef.current), at: demoNow() }));
   }, []);
 
-  const go = useCallback((id: RouteId, params?: Record<string, string>) => {
+  const ownGo = useCallback((id: RouteId, params?: Record<string, string>) => {
     setRoute({ id, params });
     window.scrollTo({ top: 0 });
   }, []);
+  // Inside the signed-in shell the shell's navigation owns the route (and its role guard).
+  const route = navigation ? navigation.route : ownRoute;
+  const go = navigation ? navigation.go : ownGo;
 
   const allowed = useMemo(() => new Set<string>(permissions ?? permissionsFor(identity.role)), [permissions, identity.role]);
   const can = useCallback((op: string) => allowed.has(op), [allowed]);

@@ -1,17 +1,5 @@
 import { AuthGate } from './auth/AuthGate';
-import { AppShell } from './components/shell/AppShell';
-import { LiveProvider } from './live/LiveProvider';
-import { StoreProvider } from './store/StoreProvider';
+import { SignedInApp } from './shell/SignedInApp';
 export default function App() {
-  return (
-    <AuthGate>
-      {(s, signOut, recheck) => (
-        <LiveProvider key={s.user.userId} onSignedOut={recheck}>
-          <StoreProvider signedIn={s.user} permissions={s.permissions} onSignOut={signOut}>
-            <AppShell />
-          </StoreProvider>
-        </LiveProvider>
-      )}
-    </AuthGate>
-  );
+  return <AuthGate>{(session, actions) => <SignedInApp key={session.user.userId} session={session} actions={actions} />}</AuthGate>;
 }

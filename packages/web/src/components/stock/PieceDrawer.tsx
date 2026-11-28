@@ -7,7 +7,8 @@ import { useStore } from '../../store/StoreProvider';
 import type { EditableField, Piece } from '@goldsmith/shared';
 import { ProblemBanner } from '../problems/ProblemBanner';
 import { RaiseProblem } from '../problems/RaiseProblem';
-import { Button, DetailDrawer, DrawerSection, Modal, Notice, StatusChip, Textarea, ValueSlot, WeightReadout } from '../ui';
+import { Button, DetailDrawer, DrawerSection, Modal, Notice, StatusChip, Textarea, WeightReadout } from '../ui';
+import { ValueSlot } from '../ui/ValueSlot';
 
 export const fieldWords: Record<EditableField, string> = {
   grossG: 'weight on the scale',

@@ -103,7 +103,7 @@ Presence lives in memory in the api process, keyed by stream and parcel. Joining
 
 `createLiveEntityCache` (`live-entity-cache.ts`) keeps records current: an event for a version the client already holds, or an older one, does nothing; a newer one refetches the record once and stores what the read returned, never a value from the event.
 
-**Rail badges (S9).** `useLiveRailBadges(role)` (`packages/web/src/live/rail-badges-live.ts`) reads `readRailBadges` on mount, after `refetch_all`, and once 300 ms after the last event of a burst whose catalogue entry has `refreshesBadges`. A karigar has no rail: nothing is fetched. A badge is shown from the server only once its web screen reads server data, and none does yet, so `SERVER_BACKED_BADGES` is empty and every badge keeps its in-memory value until EP-08 (FU-012); while it is empty the hook reads nothing. Leads is not server-backed either: the web Leads screen and its actions (`LeadReview`, `ConvertLead`) still run on the in-memory store and judge lateness by the demo clock, so a server Leads count would disagree with the screen. Pieces, parcels, edits, problems and scrap have no server write path yet. The server read (`readRailBadges`), the debounce and the karigar rule are in place and tested; a screen epic adds its badge key to the list. The web selector `railBadges` and the server use the same `railBadgeCounts` rule (`packages/shared/src/domain/rail-badge-rules.ts`).
+**Rail badges (S9, EP-08-S16).** `useRailBadges(role)` (`packages/web/src/shell/rail-badges.ts`) is a query of `readRailBadges` in the web query cache. The six catalogue events with `refreshesBadges` invalidate it in the event-to-query map, so a burst gives one read after the 300 ms coalescing window, and `refetch_all` refetches it. While the read loads or after it failed no badge shows (never a 0). A karigar has no rail: the query is disabled and nothing is fetched. Every rail badge now comes from the server; the in-memory `railBadges` selector is no longer used by the shell. The web selector and the server use the same `railBadgeCounts` rule (`packages/shared/src/domain/rail-badge-rules.ts`).
 
 ## Timings
 
@@ -183,8 +183,8 @@ API test paths are under `packages/api/test/live/`, shared ones under `packages/
 | S9 | 1 Decisions 3 → 4 after Parcel stopped | `read-rail-badges.ts`, `rail-badge-rules.ts` | `rail-badges.test.ts` "S9 AC1"; `shared/rail-badge-rules.test.ts` |
 | S9 | 2 stock 42 → 41 after Piece billed | `read-rail-badges.ts` | `rail-badges.test.ts` "S9 AC2" |
 | S9 | 3 owner late leads + 1, staff needing a glance | `read-rail-badges.ts` (`slaState`) | `rail-badges.test.ts` "S9 AC3" |
-| S9 | 4 karigar: no badges, no read | `startLiveRailBadges`, rule `shopFloor` | `web/rail-badges-live.test.ts` "S9 AC4"; `rail-badges.test.ts` karigar refused |
-| S9 | 5 burst of 5 → one read | `createBadgeRefresher` | `web/rail-badges-live.test.ts` "S9 AC5" |
+| S9 | 4 karigar: no badges, no read | `useRailBadges` (query disabled), rule `shopFloor` | `web/shell/rail-badges.test.tsx` "S16 AC5"; `rail-badges.test.ts` karigar refused |
+| S9 | 5 burst of 5 → one read | query-client coalescing window | `web/shell/rail-badges.test.tsx` "S9 AC5" |
 | S10 | 1 two devices get the event, then close | live channel access close | `access-close.test.ts` "S10 AC1" |
 | S10 | 2 re-role: presence gone, karigar channels | hub, presence | `access-close.test.ts` "S10 AC2" |
 | S10 | 3 deactivated reconnect refused | 401 | `access-close.test.ts` "S10 AC3" |
