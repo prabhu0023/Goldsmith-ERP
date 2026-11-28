@@ -60,6 +60,23 @@ describeDb('prototype seed (EP-02-S13)', () => {
     ]);
   });
 
+  it('seeds customers with normalised phones, status active and no money (EP-17-S1, S2)', async () => {
+    const rows = await codes(
+      'select code, phone, status, version, budget_inr, spent_inr from customers order by code',
+    );
+    expect(rows).toHaveLength(state.customers.length);
+    for (const row of rows) {
+      expect(row.phone).toMatch(/^\+91[0-9]{10}$/);
+      expect(row).toMatchObject({ status: 'active', version: 1, budget_inr: null, spent_inr: null });
+    }
+    const events = await codes(
+      `select c.code, e.kind, e.source, e.recorded_by, e.at from consent_events e
+         join customers c on c.id = e.customer_id order by c.code`,
+    );
+    const optedIn = state.customers.filter((c) => c.optedIn).map((c) => c.id);
+    expect(events.map((e) => e.code)).toEqual(optedIn.sort());
+    for (const e of events) expect(e).toMatchObject({ kind: 'opt_in', source: 'import', recorded_by: null, at: NOW });
+  });
   it('counts one row per prototype record', () => {
     const childCount = <T>(list: T[], of: (x: T) => unknown[]) => list.reduce((n, x) => n + of(x).length, 0);
     expect(counts).toMatchObject({
@@ -72,6 +89,7 @@ describeDb('prototype seed (EP-02-S13)', () => {
       staff_members: 3,
       users: 6,
       customers: 8,
+      consent_events: state.customers.filter((c) => c.optedIn).length,
       customer_history: childCount(state.customers, (c) => c.history),
       pieces: 92,
       piece_edits: state.edits.length,

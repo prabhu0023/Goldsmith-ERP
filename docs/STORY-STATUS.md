@@ -22,7 +22,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-14](stories/EP-14-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
 | [EP-15](stories/EP-15-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
 | [EP-16](stories/EP-16-stories.md) | 13 | 0 | 0 | 13 | 0 | 0 |
-| [EP-17](stories/EP-17-stories.md) | 14 | 0 | 0 | 14 | 0 | 0 |
+| [EP-17](stories/EP-17-stories.md) | 14 | 9 | 5 | 0 | 0 | 0 |
 | [EP-18](stories/EP-18-stories.md) | 12 | 0 | 0 | 12 | 0 | 0 |
 | [EP-19](stories/EP-19-stories.md) | 14 | 0 | 0 | 14 | 0 | 0 |
 | [EP-20](stories/EP-20-stories.md) | 15 | 0 | 0 | 13 | 2 | 0 |
@@ -51,7 +51,7 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 | [EP-43](stories/EP-43-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-44](stories/EP-44-stories.md) | 12 | 0 | 0 | 0 | 0 | 12 |
 | [EP-45](stories/EP-45-stories.md) | 9 | 0 | 0 | 9 | 0 | 0 |
-| Total | 586 | 107 | 17 | 419 | 4 | 39 |
+| Total | 586 | 116 | 22 | 405 | 4 | 39 |
 
 ## Partial stories
 
@@ -64,6 +64,11 @@ Values: Done means the acceptance criteria are met on `main`. Partial means the 
 - EP-07-S9 User can see rail badge counts update live: no rail badge is server-backed yet; each moves to server counts with its screen (FU-012).
 - EP-07-S11 System can carry each of the 10 catalogue events to its audience: AC4 (stock screen drops a billed piece live) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - EP-07-S12 Developer can test two browsers receiving each other's events: AC1 runs against a stand-in read until the piece read of EP-22 exists (FU-013).
+- EP-17-S4 System can warn about a duplicate phone on add and edit: a duplicate phone is a `validation` refusal on field `phone`, not a `duplicate_phone` code, and AC6 (shared phones) does not apply under the one-phone-per-customer rule (FU-033).
+- EP-17-S6 Staff can record a customer's WhatsApp consent: AC3 (the next birthday is eligible for the 9 am auto-send) waits for the wishes send of EP-33 (FU-028).
+- EP-17-S7 Staff can record a customer's opt-out: AC1 and AC5 wait for EP-33 and EP-34, AC2 for EP-12-S5, AC3 (the STOP handler calls the consent service) for EP-12-S10 (FU-028).
+- EP-17-S11 System can keep budget and spend dark behind the pricing switch: AC5 (sockets render when pricing is on) waits for the pricing flag of EP-13-S9 (FU-030).
+- EP-17-S14 System can audit customer changes without copying erased values: AC6 (filter the security log by entity type customer) is not met; the log filters by entity id or reference (FU-032).
 - EP-38-S1 System can take a daily database backup: the production daily schedule is the RDS backup window, not built (D1a, FU-018).
 - EP-38-S3 System can back up file storage: S3 versioning and the copy to another region or account are cloud work (D1a, FU-018).
 - EP-38-S4 System can encrypt backups and keep them apart from live data: India region, operator-only IAM access and credentials that cannot delete backups (AC2-4) are cloud work (D1a, FU-018).

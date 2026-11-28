@@ -7,7 +7,7 @@
 import type pg from 'pg';
 import { assertIdentifier, type ShopContext } from './shop-context.js';
 
-/** The eight versioned tables and the entity name used in conflict messages. */
+/** The versioned tables and the entity name used in conflict messages. */
 export const VERSIONED_ENTITIES = {
   pieces: 'Piece',
   parcels: 'Parcel',
@@ -17,6 +17,7 @@ export const VERSIONED_ENTITIES = {
   piece_edits: 'PieceEdit',
   metal_pools: 'MetalPool',
   users: 'User',
+  customers: 'Customer',
 } as const;
 
 export type VersionedTable = keyof typeof VERSIONED_ENTITIES;

@@ -87,7 +87,7 @@ describeDb('versioned updates and stale-write conflicts (EP-02-S14)', () => {
     expect(rows[0]).toEqual({ version: 4, note: 'from A', stone_count: 5 });
   });
 
-  it('throws the same error for each of the eight versioned tables', async () => {
+  it('throws the same error for each versioned table', async () => {
     const shop = await newShop(pool);
     const karigarId = await addKarigar(pool, shop);
     const pieceId = await addPiece(pool, shop, 'TAG-1');
@@ -142,6 +142,17 @@ describeDb('versioned updates and stale-write conflicts (EP-02-S14)', () => {
           })
         ).id,
         set: { name: 'Rajesh V' },
+      },
+      customers: {
+        id: (
+          await insertScoped<{ id: string }>(pool, shop, 'customers', {
+            code: 'CU-1',
+            name: 'Meera Iyer',
+            phone: '+919884021107',
+            customer_group: 'Regular',
+          })
+        ).id,
+        set: { city: 'Chennai' },
       },
     };
     for (const [table, entity] of Object.entries(VERSIONED_ENTITIES) as [VersionedTable, string][]) {

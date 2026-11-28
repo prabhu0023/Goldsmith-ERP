@@ -103,6 +103,13 @@ export const OPERATION_RULES = {
   // A permission-checked read of one piece, for the web's live entity cache (EP-08, FU-013).
   readPiece: shopFloor,
   requestScrap: shopFloor,
+  // The customer master (EP-17); a karigar never sees a customer (S12). Erase is below.
+  createCustomer: shopFloor,
+  updateCustomer: shopFloor,
+  listCustomers: shopFloor,
+  readCustomer: shopFloor,
+  findCustomerByPhone: shopFloor,
+  recordConsent: shopFloor,
   onboardCustomer: shopFloor,
   sendWishes: shopFloor,
   sendBroadcast: shopFloor,
@@ -144,6 +151,7 @@ export const OPERATION_RULES = {
   ownerScrap: ownerOnly('Only the owner can mark a piece as scrap.'),
   ownerDeclineScrap: ownerOnly('Only the owner can decline a scrap request.'),
   onboardKarigar: ownerOnly('Only the owner can add a karigar.'),
+  eraseCustomer: ownerOnly('Only the owner can erase a customer.'),
   onboardStaff: ownerOnly('Only the owner can onboard staff.'),
   upsertScale: ownerOnly('Only the owner can change the scales.'),
   setSetting: ownerOnly(RULES_REFUSED),

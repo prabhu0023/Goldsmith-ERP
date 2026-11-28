@@ -14,6 +14,7 @@ import { editTokenExpiryJob } from '../../src/jobs/handlers/edit-token-expiry.js
 import { karigarOverdueJob } from '../../src/jobs/handlers/karigar-overdue.js';
 import { leadSlaBreachJob, leadSlaTimersJob } from '../../src/jobs/handlers/lead-sla.js';
 import { productionJobs } from '../../src/jobs/production-jobs.js';
+import { addCustomer } from '../customers/customer-test-helpers.js';
 import { addKarigar, addPiece, addStoredFile, describeDb, newShop, testPool } from '../db/db-test-helpers.js';
 import {
   addKarigarJob,
@@ -100,6 +101,27 @@ const AUDIT_CASES: Record<StateChangingOperation, AuditCase> = {
     const { id, version } = await userWith(h, { name: 'Gopal Das', role: 'karigar' });
     await addKarigar(h.pool, h.shop, 'KG-62');
     return () => h.asOwner('linkKarigar', { userId: id, version, karigarId: 'KG-62' });
+  },
+  async createCustomer(h) {
+    return () => h.call('createCustomer', { name: 'Meera Iyer', phone: phone(), group: 'VIP Bridal' }, { session: h.session });
+  },
+  async updateCustomer(h) {
+    const { code } = await addCustomer(h, { name: 'Priya Malhotra', phone: '+919800000701', city: 'Chennai' });
+    return () =>
+      h.call(
+        'updateCustomer',
+        { customerId: code, version: 1, name: 'Priya Malhotra', phone: '98000 00701', city: 'Pune', group: 'Regular' },
+        { session: h.session },
+      );
+  },
+  async recordConsent(h) {
+    const { code } = await addCustomer(h, { name: 'Ravi Shankar', phone: '+919800000702' });
+    return () => h.call('recordConsent', { customerId: code, kind: 'opt_in', source: 'counter' }, { session: h.session });
+  },
+  async eraseCustomer(h) {
+    const { code } = await addCustomer(h, { name: 'Anita Rao', phone: '+919800000703' });
+    return () =>
+      h.asOwner('eraseCustomer', { customerId: code, version: 1, deletionRequestRef: 'DPDP-2026-0801', reason: 'Asked in writing' });
   },
   async setSetting(h) {
     return () => h.asOwner('setSetting', { key: 'autoSendWishes', value: true });

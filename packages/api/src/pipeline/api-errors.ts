@@ -90,6 +90,7 @@ const NOUNS: Record<string, string> = {
   PieceEdit: 'edit',
   MetalPool: 'metal pool',
   User: 'user',
+  Customer: 'customer',
 };
 
 const nounOf = (entity: string): string => NOUNS[entity] ?? 'record';

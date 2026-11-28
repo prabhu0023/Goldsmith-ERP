@@ -74,7 +74,7 @@ describe('audit action list', () => {
   });
   it('kinds are unique, use only a-z and _, and each has a label and an entity type', () => {
     expect(new Set(AUDIT_ACTIONS).size).toBe(AUDIT_ACTIONS.length);
-    expect(AUDIT_ACTIONS).toHaveLength(61);
+    expect(AUDIT_ACTIONS).toHaveLength(66);
     for (const kind of AUDIT_ACTIONS) {
       expect(kind).toMatch(/^[a-z_]+$/);
       expect(AUDIT_ACTION_LABELS[kind]).toBeTruthy();
