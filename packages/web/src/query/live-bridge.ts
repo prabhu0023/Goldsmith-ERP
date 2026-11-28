@@ -7,8 +7,9 @@
  * - A catalogue event invalidates the reads `EVENT_QUERIES` names for it (coalesced, S8 AC5). The
  *   signed-in user's own `user.access_changed` ends the session instead (S15 AC1-2).
  * - `refetch_all` (the gap was too long to replay): every observed read is refetched.
- * - When the connection returns, actions are enabled at once; the "possibly out of date" mark is
- *   removed only after the catch-up refetches have settled (S10 AC2, S11 AC4).
+ * - When the connection returns, actions are enabled at once; reads that failed during the cut are
+ *   fetched again, and the "possibly out of date" mark is removed only after the catch-up
+ *   refetches have settled (S10 AC2, S11 AC4).
  */
 import type { LiveClient, LiveTimers } from '@goldsmith/shared';
 import type { ConnectionStore } from './connection';
@@ -17,7 +18,7 @@ import { DEFAULT_COALESCE_MS, type QueryClient } from './query-client';
 
 export interface LiveBridgeOptions {
   live: Pick<LiveClient, 'status' | 'onStatus' | 'onEvent' | 'onRefetchAll'>;
-  queries: Pick<QueryClient, 'invalidate' | 'markPossiblyStale' | 'markFresh' | 'refetchAllObserved' | 'whenIdle'>;
+  queries: Pick<QueryClient, 'invalidate' | 'markPossiblyStale' | 'markFresh' | 'refetchFailedObserved' | 'refetchAllObserved' | 'whenIdle'>;
   connection: Pick<ConnectionStore, 'setLiveStatus' | 'subscribe' | 'getSnapshot'>;
   me: EventMe;
   onSessionEnded: () => void;
@@ -42,6 +43,7 @@ export function connectLiveBridge(opts: LiveBridgeOptions): () => void {
 
   const catchUp = async () => {
     const mine = round;
+    queries.refetchFailedObserved();
     await queries.whenIdle();
     await wait(coalesceMs);
     // Events replayed after the reconnect start their own coalescing timers; wait for those too.

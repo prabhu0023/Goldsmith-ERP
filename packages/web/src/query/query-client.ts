@@ -84,6 +84,8 @@ export interface QueryClient {
   invalidate(refs: readonly QueryRef[], opts?: { entity?: EntityVersion }): void;
   markPossiblyStale(): void;
   markFresh(): void;
+  /** The connection is back: refetch every observed read whose last fetch failed. */
+  refetchFailedObserved(): void;
   /** A gap too long to replay: refetch every observed read, mark the others stale. */
   refetchAllObserved(): Promise<void>;
   clear(): void;
@@ -343,6 +345,13 @@ export function createQueryClient(options: QueryClientOptions): QueryClient {
         if (e.status !== 'possibly_stale') continue;
         e.status = 'ready';
         publish(e);
+      }
+    },
+    refetchFailedObserved() {
+      for (const e of entries.values()) {
+        if (e.status !== 'failed' || !observed(e)) continue;
+        cancelTimer(e);
+        void force(e, true);
       }
     },
     async refetchAllObserved() {

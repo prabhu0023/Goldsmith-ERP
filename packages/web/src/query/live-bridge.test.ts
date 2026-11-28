@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createConnectionStore, type WindowLike } from './connection';
 import { connectLiveBridge } from './live-bridge';
 import { createQueryClient, defineQuery } from './query-client';
-import { deferred, fakeApi, fakeLive, fakeTimers, flush, ok } from './test-support';
+import { deferred, fakeApi, fakeLive, fakeTimers, flush, networkFail, ok } from './test-support';
 
 const listUsers = defineQuery({ op: 'listUsers', input: {} });
 const emptyWindow: WindowLike = { navigator: { onLine: true }, addEventListener: () => {}, removeEventListener: () => {} };
@@ -86,6 +86,22 @@ describe('live bridge (S8, S9, S10, S11 AC4)', () => {
     expect(fake.callsOf('listUsers')).toHaveLength(2);
   });
 
+  it('S10 AC2: a read that failed during the cut is fetched again when the connection returns', async () => {
+    const { fake, clock, queries, l } = setup();
+    fake.on('listUsers', () => ok({ ok: true, items: ['a'] }));
+    queries.subscribe(listUsers, () => {});
+    await flush();
+    l.setStatus('reconnecting');
+    fake.on('listUsers', () => networkFail());
+    queries.invalidate([{ op: 'listUsers' }]);
+    await clock.advance(300);
+    expect(queries.getSnapshot(listUsers).status).toBe('failed');
+    fake.on('listUsers', () => ok({ ok: true, items: ['b'] }));
+    l.setStatus('open');
+    await clock.advance(300);
+    await clock.advance(300);
+    expect(queries.getSnapshot(listUsers)).toMatchObject({ status: 'ready', data: { items: ['b'] } });
+  });
   it('a second drop during the catch-up cancels it: nothing is marked fresh', async () => {
     const { fake, clock, queries, l } = setup();
     fake.on('listUsers', () => ok({ ok: true, items: [] }));

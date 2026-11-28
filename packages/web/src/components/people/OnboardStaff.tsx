@@ -13,7 +13,7 @@ import { addUserFieldErrors, addUserRefusal } from './user-rows';
 import type { AddUserField } from './user-rows';
 type FieldName = AddUserField;
 /** The new person shows in the staff list, which is read again once they are saved (S7, S18 AC2). */
-const createUser = defineAction({ op: 'createUser', affects: () => [{ op: 'listUsers' }] });
+export const createUser = defineAction({ op: 'createUser', affects: () => [{ op: 'listUsers' }] });
 const ROLE_ORDER: RoleId[] = ['staff', 'karigar', 'owner'];
 /** Screen 25. Owner only (EP-05-S4). The role fixes the permission list; nobody ticks boxes. */
 export function OnboardStaff() {

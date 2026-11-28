@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
+import { createActionController } from '../../query/action-controller';
 import { createConnectionStore } from '../../query/connection';
 import { createQueryClient, defineQuery } from '../../query/query-client';
 import { fail, fakeApi, fakeTimers, flush, networkFail, ok } from '../../query/test-support';
 import { renderAs } from '../../test-support/render-as';
-import { OnboardStaff } from './OnboardStaff';
+import { createUser, OnboardStaff } from './OnboardStaff';
 import { StaffDirectory } from './StaffDirectory';
-import type { UserRow } from './user-rows';
+import { addUserRefusal, type UserRow } from './user-rows';
 const row = (over: Partial<UserRow>): UserRow => ({
   id: 'u1',
   name: 'Deepak Rao',
@@ -88,5 +89,40 @@ describe('people screens (EP-05-S4, S11, EP-08-S18)', () => {
   it('the session permissions decide, not the role alone', () => {
     const html = renderAs('Sanjay Seth', 'owner', <StaffDirectory />, { permissions: [] });
     expect(html).toContain('Only the owner sees the staff list.');
+  });
+});
+
+describe('adding a user, with the real createUser action (S5 AC2, S7, S18 AC2, AC5)', () => {
+  const listUsers = defineQuery({ op: 'listUsers', input: {} });
+  const newPerson = { name: 'Deepak Rao', phone: '+919003071145', email: 'deepak@example.com', role: 'staff' as const };
+  async function setup() {
+    const fake = fakeApi();
+    const clock = fakeTimers();
+    const queries = createQueryClient({ api: fake.api, now: clock.now, timers: clock.timers });
+    let rows: UserRow[] = [];
+    fake.on('listUsers', () => ok({ ok: true, items: rows, nextCursor: null, pageSize: 50 }));
+    queries.subscribe(listUsers, () => {});
+    await flush();
+    const controller = createActionController({ def: createUser, api: fake.api, queries, newKey: () => 'key-1' });
+    return { fake, queries, controller, setRows: (next: UserRow[]) => (rows = next) };
+  }
+  it('S7 and S18 AC2: after the user is added the staff list is read again and shows them', async () => {
+    const { fake, queries, controller, setRows } = await setup();
+    fake.on('createUser', () => {
+      setRows([row({})]);
+      return ok({ ok: true });
+    });
+    expect((await controller.run(newPerson)).ok).toBe(true);
+    await flush();
+    expect(fake.callsOf('listUsers')).toHaveLength(2);
+    expect(queries.getSnapshot(listUsers).data).toMatchObject({ items: [{ name: 'Deepak Rao' }] });
+  });
+  it('S5 AC2 and S18 AC5: a duplicate phone is refused on the phone field, with nothing read again', async () => {
+    const { fake, controller } = await setup();
+    const sentence = 'That phone number already belongs to a user.';
+    fake.on('createUser', () => fail('validation', sentence, { field: 'phone' }));
+    expect(await controller.run(newPerson)).toMatchObject({ ok: false, code: 'validation', field: 'phone' });
+    expect(addUserRefusal(controller.getSnapshot().refusal)).toEqual({ field: 'phone', message: sentence });
+    expect(fake.callsOf('listUsers')).toHaveLength(1);
   });
 });

@@ -1,13 +1,14 @@
 import { TriangleAlert } from 'lucide-react';
 import { MAYBE_NOT_SAVED_MESSAGE } from '../../query/action-controller';
-import { Button } from './Button';
+import { ActionButton } from './ActionButton';
 import { cn } from './cn';
 import { type StateSize, stateText } from './textSize';
 
 /**
  * The outcome of a refused or unconfirmed action, beside the button that ran it (EP-08-S5, S6):
  * the server's sentence for a refusal; "It may not have been saved…" with "Try again" when the
- * connection failed after sending. Nothing is shown otherwise.
+ * connection failed after sending. "Try again" is disabled with the connection's reason while
+ * actions are blocked (D6). Nothing is shown otherwise.
  */
 export function ActionError({
   refusal,
@@ -30,9 +31,9 @@ export function ActionError({
       <TriangleAlert aria-hidden="true" className="size-4 shrink-0" />
       <span>{maybeNotSaved ? MAYBE_NOT_SAVED_MESSAGE : refusal?.message}</span>
       {maybeNotSaved && onRetry && (
-        <Button size="sm" onClick={onRetry} disabled={busy}>
+        <ActionButton size="sm" onClick={onRetry} disabled={busy}>
           {busy ? 'Trying again…' : 'Try again'}
-        </Button>
+        </ActionButton>
       )}
     </div>
   );

@@ -136,6 +136,20 @@ describe('action outcome (S5, S6)', () => {
     expect(html).toContain('It may not have been saved. Check the connection and try again.');
     expect(html).toContain('Try again');
   });
+  it('S11 AC1 and S6: while reconnecting, Try again is disabled and the connection reason is shown beside it', () => {
+    const store = createConnectionStore({ windowLike: null });
+    store.setLiveStatus('reconnecting');
+    const html = renderToStaticMarkup(
+      <ConnectionProvider store={store}>
+        <ActionError refusal={null} maybeNotSaved onRetry={() => {}} />
+      </ConnectionProvider>,
+    );
+    expect(html).toContain('It may not have been saved. Check the connection and try again.');
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Try again<\/button>/);
+    expect(html).toContain('Reconnecting to the server. Try again when the connection is back.');
+    expect(html).toMatch(/aria-describedby="[^"]+"/);
+    noSmallText(html);
+  });
   it('shows nothing when there is nothing to say', () => {
     expect(renderToStaticMarkup(<ActionError refusal={null} />)).toBe('');
   });
