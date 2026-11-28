@@ -9,6 +9,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S1: System can write structured logs with a request id across services
 
 - **Story ID:** EP-37-S1
+- **Status:** Not started
 - **Title:** System can write structured logs with a request id across services
 - **As a:** System
 - **I want:** every API request, background job run, notification delivery, WhatsApp send and live-channel publish to write structured log lines that share one request id
@@ -33,6 +34,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S2: System can redact passwords, links, tokens, phones and names from every log line
 
 - **Story ID:** EP-37-S2
+- **Status:** Not started
 - **Title:** System can redact passwords, links, tokens, phones and names from every log line
 - **As a:** System
 - **I want:** the logger itself to remove passwords, activation and reset links, edit tokens, session secrets, phone numbers, email addresses and customer names from every log line, by field name and by pattern, before the line leaves the process
@@ -57,6 +59,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S3: System can report web, portal and API errors to error tracking
 
 - **Story ID:** EP-37-S3
+- **Status:** Not started
 - **Title:** System can report web, portal and API errors to error tracking
 - **As a:** System
 - **I want:** every unhandled error in the web app, the karigar portal and the API to be reported to error tracking with time, service, release version, request id, message, stack and user role
@@ -81,6 +84,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S4: System can run uptime checks against the health check
 
 - **Story ID:** EP-37-S4
+- **Status:** Not started
 - **Title:** System can run uptime checks against the health check
 - **As a:** System
 - **I want:** an uptime checker outside the main app to call Read Health on staging and production at a set interval and alert the operator after the agreed number of failures in a row
@@ -105,6 +109,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S5: Operator can receive an alert when a WhatsApp send fails after retries
 
 - **Story ID:** EP-37-S5
+- **Status:** Not started
 - **Title:** Operator can receive an alert when a WhatsApp send fails after retries
 - **As a:** Developer
 - **I want:** an alert when a WhatsApp send has failed after its last retry, naming the message kind (edit token, wish, broadcast, alert)
@@ -129,6 +134,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S6: Operator can receive an alert when a background job fails or does not run
 
 - **Story ID:** EP-37-S6
+- **Status:** Not started
 - **Title:** Operator can receive an alert when a background job fails or does not run
 - **As a:** Developer
 - **I want:** an alert when a background job fails after its last retry, and when a scheduled job does not start by its time plus a grace period
@@ -153,6 +159,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S7: System can measure live-event delivery time against the 1-second target
 
 - **Story ID:** EP-37-S7
+- **Status:** Not started
 - **Title:** System can measure live-event delivery time against the 1-second target
 - **As a:** System
 - **I want:** to measure the time from publishing each catalogue event to its arrival in a client, and alert when the median passes 1 second over the agreed window
@@ -177,6 +184,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S8: System can measure screen load time against the 2-second target
 
 - **Story ID:** EP-37-S8
+- **Status:** Not started
 - **Title:** System can measure screen load time against the 2-second target
 - **As a:** System
 - **I want:** the web app and karigar portal to report how long each route takes to show its data on real shop devices, and to show it against the 2-second target
@@ -201,6 +209,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S9: Operator can see request, error, job and send dashboards
 
 - **Story ID:** EP-37-S9
+- **Status:** Not started
 - **Title:** Operator can see request, error, job and send dashboards
 - **As a:** Developer
 - **I want:** dashboards of request rate, error rate, job runs and send success for the last 24 hours and the last 30 days, for staging and production
@@ -226,6 +235,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S10: Operator can acknowledge an alert
 
 - **Story ID:** EP-37-S10
+- **Status:** Not started
 - **Title:** Operator can acknowledge an alert
 - **As a:** Developer
 - **I want:** to list open and recent alerts and acknowledge one, recording who acknowledged it and when
@@ -250,6 +260,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S11: System can delete logs after the retention period
 
 - **Story ID:** EP-37-S11
+- **Status:** Not started
 - **Title:** System can delete logs after the retention period
 - **As a:** System
 - **I want:** log lines, error reports, uptime results and client timing data to be deleted once they pass the agreed retention period

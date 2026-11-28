@@ -9,6 +9,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S1: Developer can run unit tests for the shared package in one command
 
 - **Story ID:** EP-40-S1
+- **Status:** Not started
 - **Title:** Developer can run unit tests for the shared package in one command
 - **As a:** Developer
 - **I want:** the test runner from EP-01-S8 set up in the shared package and the server service layer, with one command that runs every unit test in one run and exits non-zero on any failure
@@ -33,6 +34,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S2: Developer can run weight and ceiling unit tests on integer units
 
 - **Story ID:** EP-40-S2
+- **Status:** Not started
 - **Title:** Developer can run weight and ceiling unit tests on integer units
 - **As a:** Developer
 - **I want:** unit tests for the shared weight helpers (gram text to integer units and back, net, sum) and for the ceiling function, all asserting integer equality
@@ -58,6 +60,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S3: Developer can run the rewritten match and gate tests (G11)
 
 - **Story ID:** EP-40-S3
+- **Status:** Not started
 - **Title:** Developer can run the rewritten match and gate tests (G11)
 - **As a:** Developer
 - **I want:** the deleted prototype match assertions rewritten as unit tests on the shared `evaluateParcel` and as service tests on the release and clear rules, using the cases recorded in `.agents/tasks/jgd-redesign/review.md`
@@ -83,6 +86,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S4: Developer can run the rewritten edit, scrap, stop and stock-out rule tests (G11)
 
 - **Story ID:** EP-40-S4
+- **Status:** Not started
 - **Title:** Developer can run the rewritten edit, scrap, stop and stock-out rule tests (G11)
 - **As a:** Developer
 - **I want:** the remaining recorded prototype assertions rewritten as unit and service tests: problems and stops, edit tokens, scrap, stock-out, owner-only onboarding and scale changes
@@ -108,6 +112,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S5: Developer can run API tests against a fresh seeded database
 
 - **Story ID:** EP-40-S5
+- **Status:** Not started
 - **Title:** Developer can run API tests against a fresh seeded database
 - **As a:** Developer
 - **I want:** an API test suite that creates a fresh test database, runs every migration, loads the fixture seed, signs fixture users in through a test-only session operation, calls each API operation and drops the database afterwards
@@ -135,6 +140,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S6: Developer can run permission tests generated from the permission matrix
 
 - **Story ID:** EP-40-S6
+- **Status:** Not started
 - **Title:** Developer can run permission tests generated from the permission matrix
 - **As a:** Developer
 - **I want:** a permission test suite generated from the permission list in the shared package (EP-05-S1), which calls every operation as Owner, Staff and Karigar and checks the result against the matrix, plus a test that an operation missing from the matrix is denied
@@ -160,6 +166,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S7: Developer can run concurrency tests for double-sell and double-routing
 
 - **Story ID:** EP-40-S7
+- **Status:** Not started
 - **Title:** Developer can run concurrency tests for double-sell and double-routing
 - **As a:** Developer
 - **I want:** concurrency tests against the real database engine that send two or more stock-outs of one piece, two lead-line routings of one line, and two owner clearances of one parcel at the same moment from different sessions
@@ -184,6 +191,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S8: Developer can run a concurrency test for two staff tagging one parcel
 
 - **Story ID:** EP-40-S8
+- **Status:** Not started
 - **Title:** Developer can run a concurrency test for two staff tagging one parcel
 - **As a:** Developer
 - **I want:** a concurrency test where two staff sessions save the same tag on a shared parcel at the same moment, and another where a tag save races a release
@@ -207,6 +215,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S9: Developer can run live-event delivery and audience tests
 
 - **Story ID:** EP-40-S9
+- **Status:** Not started
 - **Title:** Developer can run live-event delivery and audience tests
 - **As a:** Developer
 - **I want:** tests that open live connections as Owner, Staff and Karigar, trigger each catalogue event's operation, and check the event arrives only after the commit and only to the allowed audience
@@ -232,6 +241,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S10: Developer can run a test that no currency shows while pricing is off
 
 - **Story ID:** EP-40-S10
+- **Status:** Not started
 - **Title:** Developer can run a test that no currency shows while pricing is off
 - **As a:** Developer
 - **I want:** a rendering test that opens every route with each fixture identity and sample parameters, with the pricing flag off, and fails if any rendered screen contains a currency sign or rupee figure
@@ -255,6 +265,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S11: Developer can run a test that passwords, links and edit tokens never reach logs or audit
 
 - **Story ID:** EP-40-S11
+- **Status:** Not started
 - **Title:** Developer can run a test that passwords, links and edit tokens never reach logs or audit
 - **As a:** Developer
 - **I want:** a security test that runs an activation, a password sign-in with one wrong password first, a password reset, an edit token request and an edit apply, captures the passwords used, the links from the account-email stub and the issued codes, and searches audit entries, application logs, error reports and stored messages for them
@@ -279,6 +290,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S12: Developer can run end-to-end tests of the main flows on staging
 
 - **Story ID:** EP-40-S12
+- **Status:** Not started
 - **Title:** Developer can run end-to-end tests of the main flows on staging
 - **As a:** Developer
 - **I want:** end-to-end tests that drive the web app and the karigar portal in real browsers on staging through each main flow in FR-40-11
@@ -303,6 +315,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S13: System can block a merge or deploy when any test fails
 
 - **Story ID:** EP-40-S13
+- **Status:** Not started
 - **Title:** System can block a merge or deploy when any test fails
 - **As a:** System
 - **I want:** CI to run the unit, API, permission, concurrency, live-event, rendering and security suites on every push, the end-to-end suite before every staging promotion to production, and to block the merge or deploy on any failure

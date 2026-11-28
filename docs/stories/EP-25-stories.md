@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S1: System can store edit proposals with their states
 
 - **Story ID:** EP-25-S1
+- **Status:** Not started
 - **Title:** System can store edit proposals with their states
 - **As a:** System
 - **I want:** the `piece_edits` table from EP-02-S5 to hold one proposal per row with piece id, field (`grossG`, `stoneG`, `stoneCount`, `purity`, `huid`, `name`), from value, to value, reason, proposed by, proposed at, status (`proposed`, `token_sent`, `applied`, `refused`, `void`), decided by, decided at and void reason (`sold` or `scrapped`), with weights as integers in units of 0.0001 g
@@ -33,6 +34,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S2: Staff can propose a change to one field of an in-stock piece
 
 - **Story ID:** EP-25-S2
+- **Status:** Not started
 - **Title:** Staff can propose a change to one field of an in-stock piece
 - **As a:** Staff
 - **I want:** an "Edit tag" button in the piece drawer on `stock` that opens `edit-propose` for that piece, where I pick "What should change?", see "From" with the current value, type "To", write "Why? The owner will read this." and press "Send to the owner"
@@ -57,6 +59,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S3: System can validate the proposed value for its field
 
 - **Story ID:** EP-25-S3
+- **Status:** Not started
 - **Title:** System can validate the proposed value for its field
 - **As a:** System
 - **I want:** one shared check per editable field that runs on propose and again on apply: `grossG` and `stoneG` are positive integers in units of 0.0001 g, `stoneG` never exceeds `grossG`, `stoneCount` is a whole number of 0 or more, `purity` is an active purity in reference data, `huid` passes the HUID rule and is not on another piece, and `name` is non-empty text
@@ -81,6 +84,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S4: Owner can see open proposals with old value, new value and reason
 
 - **Story ID:** EP-25-S4
+- **Status:** Not started
 - **Title:** Owner can see open proposals with old value, new value and reason
 - **As a:** Owner
 - **I want:** a List Open edit proposals read and a Read Edit proposal read that give, for each proposal, the tag number and piece name, the field, old and new values, the change in mg for weights, net gold before and after, the proposer, the reason and the time asked, feeding the "STAFF WANTS A CODE" card on `decisions` and the owner panel on `edit-apply`
@@ -105,6 +109,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S5: Owner can agree and receive a token on WhatsApp
 
 - **Story ID:** EP-25-S5
+- **Status:** Not started
 - **Title:** Owner can agree and receive a token on WhatsApp
 - **As a:** Owner
 - **I want:** to press "Yes, send me a token" on `edit-apply` (or "Send the code" on the Decisions card) so the server issues a 6-digit token and sends it as a WhatsApp message to my registered mobile number as "JGD: confirm edit to TAG-8841. Token 480 913"
@@ -129,6 +134,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S6: System can store the token hashed with a 10-minute expiry
 
 - **Story ID:** EP-25-S6
+- **Status:** Not started
 - **Title:** System can store the token hashed with a 10-minute expiry
 - **As a:** System
 - **I want:** an `edit_tokens` table with edit id, token hash, issued at, expires at (issued at plus 10 minutes), used at, attempts count and sent message id, and a generator that makes the 6 digits from a secure random source and keeps the plain value only in memory until it is handed to EP-12
@@ -152,6 +158,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S7: Owner can apply a change with the token
 
 - **Story ID:** EP-25-S7
+- **Status:** Not started
 - **Title:** Owner can apply a change with the token
 - **As a:** Owner
 - **I want:** to type the 6 digits into "Enter the token sent to your WhatsApp" and press "Apply the change", so the field on the piece changes, the proposal becomes `applied`, and the new net gold is shown
@@ -176,6 +183,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S8: System can reject a wrong, expired or reused token
 
 - **Story ID:** EP-25-S8
+- **Status:** Not started
 - **Title:** System can reject a wrong, expired or reused token
 - **As a:** System
 - **I want:** a token check used by apply that compares the hash in constant time and returns `ok`, `wrong`, `expired`, `used` or `none`, and that only accepts the token issued for this proposal
@@ -200,6 +208,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S9: System can rate-limit token requests and attempts
 
 - **Story ID:** EP-25-S9
+- **Status:** Not started
 - **Title:** System can rate-limit token requests and attempts
 - **As a:** System
 - **I want:** limits on how many tokens an owner can request per period, how many tokens one proposal can have issued, and how many wrong attempts one token allows before it is burnt, filled into the EP-03-S11 rate-limit hook
@@ -223,6 +232,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S10: Owner can refuse a proposal
 
 - **Story ID:** EP-25-S10
+- **Status:** Not started
 - **Title:** Owner can refuse a proposal
 - **As a:** Owner
 - **I want:** to press "Refuse" on `edit-apply` or on the Decisions card, without a token, so the proposal becomes `refused` and the piece keeps its value
@@ -246,6 +256,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S11: System can void open proposals when a piece is sold or scrapped
 
 - **Story ID:** EP-25-S11
+- **Status:** Not started
 - **Title:** System can void open proposals when a piece is sold or scrapped
 - **As a:** System
 - **I want:** a shared service function, Void open edits on a piece, that the sale and scrap operations call inside their own transaction to set every `proposed` or `token_sent` proposal on the piece to `void` with void reason `sold` or `scrapped` and burn its token
@@ -270,6 +281,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S12: Staff can see the applied change live on stock screens
 
 - **Story ID:** EP-25-S12
+- **Status:** Not started
 - **Title:** Staff can see the applied change live on stock screens
 - **As a:** Staff
 - **I want:** the new value on the stock list, search results, piece drawer and pure-gold total to appear within about 1 second of the owner applying, and my own proposal to show "Applied by Sanjay Seth"
@@ -294,6 +306,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S13: Staff can see a piece's edit history
 
 - **Story ID:** EP-25-S13
+- **Status:** Not started
 - **Title:** Staff can see a piece's edit history
 - **As a:** Staff
 - **I want:** an "Edit history · N entries" section in the piece drawer that lists every applied and refused proposal on the piece, newest first, with field, old and new value, proposer, reason, decision, who decided and when
@@ -318,6 +331,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S14: System can audit every step without the plain token
 
 - **Story ID:** EP-25-S14
+- **Status:** Not started
 - **Title:** System can audit every step without the plain token
 - **As a:** System
 - **I want:** propose, token request, apply, refuse and void to each write one audit entry in the same transaction, with the kinds `edit_proposed`, `edit_token_sent`, `edit_applied`, `edit_refused` and `edit_voided`, and a token reference that is the token record id, never the 6 digits

@@ -9,6 +9,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S1: System can define the fixed permission list for each of the three roles in the shared package
 
 - **Story ID:** EP-05-S1
+- **Status:** Done
 - **Title:** System can define the fixed permission list for each of the three roles in the shared package
 - **As a:** System
 - **I want:** one permission matrix in the shared package that maps each role (`owner`, `staff`, `karigar`) to the list of operation names that role may call, built from `ROLES` in `src/components/people/permissions.ts` and the CAN, CANNOT and NEVER SEES lists on mockup 11
@@ -33,6 +34,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S2: System can refuse any operation the caller's role does not allow
 
 - **Story ID:** EP-05-S2
+- **Status:** Done
 - **Title:** System can refuse any operation the caller's role does not allow
 - **As a:** System
 - **I want:** the permission hook in the API pipeline to look up the caller's role from the session and the operation name in the matrix, and refuse the call before the service function runs if the role does not allow it
@@ -57,6 +59,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S3: System can limit a karigar's reads to their own jobs
 
 - **Story ID:** EP-05-S3
+- **Status:** Done
 - **Title:** System can limit a karigar's reads to their own jobs
 - **As a:** System
 - **I want:** every read a karigar session makes to be filtered to jobs whose `karigarId` equals the `karigarId` on that user, and to the reference images of those jobs only
@@ -81,6 +84,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S4: Owner can add a user with name, phone and role
 
 - **Story ID:** EP-05-S4
+- **Status:** Done
 - **Title:** Owner can add a user with name, phone and role
 - **As a:** Owner
 - **I want:** to fill in Name, Phone (the number they sign in with), Email and the role picker (Staff or Karigar) on the Add a staff member screen and press "Add this staff member", and to resend the activation email if it was lost
@@ -107,6 +111,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S5: Owner can edit a user's name and phone
 
 - **Story ID:** EP-05-S5
+- **Status:** Done
 - **Title:** Owner can edit a user's name and phone
 - **As a:** Owner
 - **I want:** to open a user from the directory and change their Name, Phone or Email and save
@@ -131,6 +136,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S6: Owner can change a user's role
 
 - **Story ID:** EP-05-S6
+- **Status:** Done
 - **Title:** Owner can change a user's role
 - **As a:** Owner
 - **I want:** to pick a different role (Staff or Karigar) for an existing user and save
@@ -155,6 +161,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S7: Owner can deactivate a user
 
 - **Story ID:** EP-05-S7
+- **Status:** Done
 - **Title:** Owner can deactivate a user
 - **As a:** Owner
 - **I want:** a "Deactivate" action on a user that stops them signing in and ends their open sessions
@@ -179,6 +186,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S8: Owner can reactivate a user
 
 - **Story ID:** EP-05-S8
+- **Status:** Done
 - **Title:** Owner can reactivate a user
 - **As a:** Owner
 - **I want:** a "Reactivate" action on a deactivated user
@@ -203,6 +211,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S9: System can refuse to remove the last active owner
 
 - **Story ID:** EP-05-S9
+- **Status:** Done
 - **Title:** System can refuse to remove the last active owner
 - **As a:** System
 - **I want:** a guard that keeps exactly one active owner per shop, checked inside the same transaction as any add, deactivation or role change, refusing a change that would leave the shop with no owner or with two
@@ -226,6 +235,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S10: System can end a user's sessions live when they are deactivated or re-roled
 
 - **Story ID:** EP-05-S10
+- **Status:** Done
 - **Title:** System can end a user's sessions live when they are deactivated or re-roled
 - **As a:** System
 - **I want:** deactivation and role change to call Delete All sessions (EP-04-S13) in the same transaction and to emit "User deactivated or role changed" with the user id and reason after commit
@@ -250,6 +260,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S11: Owner can see the user directory with role and status
 
 - **Story ID:** EP-05-S11
+- **Status:** Done
 - **Title:** Owner can see the user directory with role and status
 - **As a:** Owner
 - **I want:** the `staff-directory` screen to list every user with name, phone, email, role and status (Awaiting activation, Active, Locked or Deactivated), with a way to open one user and an "Unlock" action on a locked account
@@ -276,6 +287,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S12: User can open an account menu that replaces the role switcher
 
 - **Story ID:** EP-05-S12
+- **Status:** Done
 - **Title:** User can open an account menu that replaces the role switcher
 - **As a:** Staff
 - **I want:** the chip at the foot of the rail to open an account menu with my name, my role and "Sign out", and nothing that lets me become someone else
@@ -300,6 +312,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S13: Owner can link a karigar user to a karigar record
 
 - **Story ID:** EP-05-S13
+- **Status:** Done
 - **Title:** Owner can link a karigar user to a karigar record
 - **As a:** Owner
 - **I want:** to set the `karigarId` of a user with role `karigar` to one Karigar record, such as KG-04
@@ -324,6 +337,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S14: System can audit every user lifecycle change
 
 - **Story ID:** EP-05-S14
+- **Status:** Done
 - **Title:** System can audit every user lifecycle change
 - **As a:** System
 - **I want:** add, edit, role change, deactivate, reactivate and karigar link to each write an audit entry with actor, time, user id, action and before and after values, in the same transaction as the change

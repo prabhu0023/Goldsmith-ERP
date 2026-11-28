@@ -9,6 +9,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S1: System can store a problem against a parcel, job or piece
 
 - **Story ID:** EP-24-S1
+- **Status:** Not started
 - **Title:** System can store a problem against a parcel, job or piece
 - **As a:** System
 - **I want:** a Problem record with id (`PR-` prefix), target kind `parcel`, `job` or `piece`, target id, text, raised by, raiser role, raised at, status `open` or `cleared`, cleared by and cleared at, plus a shared read "open problems on a target" that every other epic can call
@@ -33,6 +34,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S2: System can refuse every transition on a stopped target
 
 - **Story ID:** EP-24-S2
+- **Status:** Not started
 - **Title:** System can refuse every transition on a stopped target
 - **As a:** System
 - **I want:** one shared stopped guard in the server transition layer that every parcel, job and piece operation calls on its locked row, refusing with "This {parcel|job|piece} is stopped. Only the owner can start it again."
@@ -57,6 +59,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S3: Staff can raise a problem on a parcel
 
 - **Story ID:** EP-24-S3
+- **Status:** Not started
 - **Title:** Staff can raise a problem on a parcel
 - **As a:** Staff
 - **I want:** a "Stop the line" composer on the parcel screens (`parcel-match`, and `parcel-tag` once designed) that shows the parcel id and piece count, "Nothing moves until the owner clears it", a "What is wrong?" box and the buttons "Tell the owner" and "Cancel"
@@ -81,6 +84,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S4: Staff can raise a problem on a piece
 
 - **Story ID:** EP-24-S4
+- **Status:** Not started
 - **Title:** Staff can raise a problem on a piece
 - **As a:** Staff
 - **I want:** a "Stop the line" action in the piece drawer on `stock` that uses the same composer as the parcel, and moves the piece to `stopped` while keeping its previous status
@@ -105,6 +109,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S5: Karigar can raise a problem on his own job
 
 - **Story ID:** EP-24-S5
+- **Status:** Not started
 - **Title:** Karigar can raise a problem on his own job
 - **As a:** Karigar
 - **I want:** the "Raise a problem" button on my job sheet (`k-jobs`, built in EP-20-S8) to call the same shared Create Problem operation as staff, so my job stops and the owner hears about it
@@ -129,6 +134,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S6: System can refuse a karigar's problem on someone else's job
 
 - **Story ID:** EP-24-S6
+- **Status:** Not started
 - **Title:** System can refuse a karigar's problem on someone else's job
 - **As a:** System
 - **I want:** to refuse any Create Problem from a karigar whose target is a job assigned to another karigar, a parcel or a piece, without saying whether that target exists
@@ -152,6 +158,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S7: System can refuse a problem on a billed or scrapped piece
 
 - **Story ID:** EP-24-S7
+- **Status:** Not started
 - **Title:** System can refuse a problem on a billed or scrapped piece
 - **As a:** System
 - **I want:** Create Problem on a piece to refuse a piece whose status is `billed` or `scrapped` with "A closed piece cannot be stopped."
@@ -175,6 +182,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S8: Owner can see open problems as blocking cards
 
 - **Story ID:** EP-24-S8
+- **Status:** Not started
 - **Title:** Owner can see open problems as blocking cards
 - **As a:** Owner
 - **I want:** a List Open problems read, oldest first, with raiser, role, target and text, that feeds one blocking card per open problem in "NOTHING MOVES UNTIL YOU ANSWER" on `decisions`, and a Read Problems on a target that feeds the problem banner on `parcel-match`, `parcel-clear`, `stock` and `k-jobs`
@@ -199,6 +207,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S9: Owner can clear a problem and restore the previous state
 
 - **Story ID:** EP-24-S9
+- **Status:** Not started
 - **Title:** Owner can clear a problem and restore the previous state
 - **As a:** Owner
 - **I want:** to press "Clear it and start again" on a Decisions card or the clear button on a problem banner, so the problem is marked cleared and, if it was the last open one, the target goes back to where it was
@@ -223,6 +232,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S10: System can keep a target stopped while another problem is open
 
 - **Story ID:** EP-24-S10
+- **Status:** Not started
 - **Title:** System can keep a target stopped while another problem is open
 - **As a:** System
 - **I want:** the clear operation to count the open problems left on the target after the clear, and restore the target only when that count is 0
@@ -246,6 +256,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S11: System can push a raised stop to the owner and to open screens
 
 - **Story ID:** EP-24-S11
+- **Status:** Not started
 - **Title:** System can push a raised stop to the owner and to open screens
 - **As a:** System
 - **I want:** after each raise commits, to publish "Parcel stopped (mismatch or raised problem)" for a parcel target, or "Problem raised on a job or piece" (proposed, G26) for a job or piece, to the owner, the staff working that target and, for a job, the karigar's phone, and to hand the event to EP-11 for the owner's notice
@@ -270,6 +281,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S12: System can push a clearance so the target unfreezes everywhere
 
 - **Story ID:** EP-24-S12
+- **Status:** Not started
 - **Title:** System can push a clearance so the target unfreezes everywhere
 - **As a:** System
 - **I want:** after each clear commits, to publish "Problem cleared" (proposed, G26) with the problem id, target, the target's new state and the number of open problems left, to the same audience that received the raise
@@ -294,6 +306,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S13: System can audit every raise and every clear
 
 - **Story ID:** EP-24-S13
+- **Status:** Not started
 - **Title:** System can audit every raise and every clear
 - **As a:** System
 - **I want:** every raise to write a `problem_raised` entry and every clear a `problem_cleared` entry, in the same transaction, with actor, role, target, text, before and after state and time, and a CI test that fails if any raise or clear path writes none
@@ -318,6 +331,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S14: System can serialise a raise against a transition in flight
 
 - **Story ID:** EP-24-S14
+- **Status:** Not started
 - **Title:** System can serialise a raise against a transition in flight
 - **As a:** System
 - **I want:** a raise and any other transition on the same target to take the same row lock, so whichever commits first decides and the other sees its result

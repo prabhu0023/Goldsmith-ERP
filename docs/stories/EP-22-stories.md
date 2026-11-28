@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S1: System can store pieces with state, version and integer weights
 
 - **Story ID:** EP-22-S1
+- **Status:** Not started
 - **Title:** System can store pieces with state, version and integer weights
 - **As a:** System
 - **I want:** the piece lifecycle fields on top of the EP-02 and EP-21 piece table: `status` limited to the six states, `prevStatus`, `inStockAt`, `soldAt`, `stockOutId`, `version`, gross and stone weights as integers in units of 0.0001 g, the nullable value socket, and a `piece_state_transitions` table, with no held-for or hold-expiry field
@@ -34,6 +35,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S2: System can enforce the six-state transition table
 
 - **Story ID:** EP-22-S2
+- **Status:** Not started
 - **Title:** System can enforce the six-state transition table
 - **As a:** System
 - **I want:** one server module, Update Piece state, that holds the transition table, locks or version-checks the piece, refuses any change not in the table, sets the state fields, writes the transition row and publishes events after commit, and that every other epic calls instead of setting `status` itself
@@ -58,6 +60,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S3: Staff can see the in-stock list with counts
 
 - **Story ID:** EP-22-S3
+- **Status:** Not started
 - **Title:** Staff can see the in-stock list with counts
 - **As a:** Staff
 - **I want:** the "Showroom stock" screen (`stock`) to load piece cards from the server with name, tag, purity, style, "Pure gold", "Gross · stones" and a state word, the chips "Can sell", "With QC", "Sold out" and "Billed" with counts, and "Newest first" order
@@ -82,6 +85,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S4: Staff can search stock by tag, HUID, name or collection
 
 - **Story ID:** EP-22-S4
+- **Status:** Not started
 - **Title:** Staff can search stock by tag, HUID, name or collection
 - **As a:** Staff
 - **I want:** to type in "Search tag, HUID, name or collection" on `stock` and get matching pieces from the server within the selected chip
@@ -106,6 +110,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S5: Staff can open a piece and see its facts and history
 
 - **Story ID:** EP-22-S5
+- **Status:** Not started
 - **Title:** Staff can open a piece and see its facts and history
 - **As a:** Staff
 - **I want:** to open a card into the piece drawer and see "PURE GOLD IN THIS PIECE" as the lead figure, the gross and stones line, "THE FACTS" (Tag, BIS hallmark, Made by, Came in with, Days in stock, Reordered before), "Weight breakdown", "Edit history", "Description and photos" and the state history, all read from the server
@@ -130,6 +135,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S6: System can refuse a second sale of the same piece with "already taken"
 
 - **Story ID:** EP-22-S6
+- **Status:** Not started
 - **Title:** System can refuse a second sale of the same piece with "already taken"
 - **As a:** System
 - **I want:** the `in_stock` to `billed` transition to lock the piece row or check its version, let exactly one sale win, refuse every other with an "already taken" sentence, and publish "Piece billed by one staff member" after the winner commits
@@ -154,6 +160,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S7: Staff can see a piece disappear live when billed elsewhere
 
 - **Story ID:** EP-22-S7
+- **Status:** Not started
 - **Title:** Staff can see a piece disappear live when billed elsewhere
 - **As a:** Staff
 - **I want:** a piece billed or scrapped by someone else to leave my "Can sell" list, search results and counts within about a second, and an open drawer for it to show it is gone
@@ -178,6 +185,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S8: System can freeze stopped and billed pieces
 
 - **Story ID:** EP-22-S8
+- **Status:** Not started
 - **Title:** System can freeze stopped and billed pieces
 - **As a:** System
 - **I want:** to refuse any sale of a `stopped` piece, any state or weight change to a `billed` piece, and any weight change to a `stopped` piece, and to show both as frozen on open stock screens when the state changes
@@ -202,6 +210,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S9: Staff can see sold-out designs with a reorder pointer (G3)
 
 - **Story ID:** EP-22-S9
+- **Status:** Not started
 - **Title:** Staff can see sold-out designs with a reorder pointer (G3)
 - **As a:** Staff
 - **I want:** the "Sold out" chip on `stock` to list designs with no piece in stock, each card showing the design name, last tag, purity and style, "Asked for N times since <month>" and "Order another from <karigar>"
@@ -226,6 +235,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S10: Owner can see pure gold on the floor
 
 - **Story ID:** EP-22-S10
+- **Status:** Not started
 - **Title:** Owner can see pure gold on the floor
 - **As a:** Owner
 - **I want:** a Stock totals read that returns the count of `in_stock` pieces and the sum of their pure gold, shown in the `stock` header as "42 pieces you can sell · 1,847.2000 g pure gold on the floor" and available to the Decisions home
@@ -250,6 +260,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S11: System can audit every state transition
 
 - **Story ID:** EP-22-S11
+- **Status:** Not started
 - **Title:** System can audit every state transition
 - **As a:** System
 - **I want:** every accepted call to Update Piece state to write one `piece_state_changed` audit entry and one `piece_state_transitions` row in the same transaction, with actor, time, from and to states, reason and the calling operation

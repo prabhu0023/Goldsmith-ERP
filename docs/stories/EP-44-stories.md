@@ -9,6 +9,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S1: System can store languages, message catalogues and per-user language preferences
 
 - **Story ID:** EP-44-S1
+- **Status:** Later
 - **Title:** System can store languages, message catalogues and per-user language preferences
 - **As a:** System
 - **I want:** tables for languages (code, display name in its own script, enabled flag), message catalogue entries (language, key, text with parameters, updated at, translated by), per-user language preference (user id, language code, default English) and locale format rules per language, with the karigar's stored language from EP-16 moved into the user preference
@@ -33,6 +34,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S2: Developer can extract every string of a screen into the English catalogue
 
 - **Story ID:** EP-44-S2
+- **Status:** Later
 - **Title:** Developer can extract every string of a screen into the English catalogue
 - **As a:** Developer
 - **I want:** a documented way to replace each inline English string of one screen with a catalogue key, add the English text to the catalogue, and render it through one translation helper, starting with `k-jobs` (`KarigarPhone.tsx`)
@@ -57,6 +59,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S3: System can fall back to English and report missing translations
 
 - **Story ID:** EP-44-S3
+- **Status:** Later
 - **Title:** System can fall back to English and report missing translations
 - **As a:** System
 - **I want:** the translation helper to show the English text when a key has no text in the user's language, report each missing key once to error tracking, and a build check that lists every key missing for each enabled language on each in-scope screen
@@ -81,6 +84,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S4: System can return refusal sentences as message keys with parameters
 
 - **Story ID:** EP-44-S4
+- **Status:** Later
 - **Title:** System can return refusal sentences as message keys with parameters
 - **As a:** System
 - **I want:** every rule refusal and error from the server to carry a message key and its parameters next to the English sentence, so the screen shows the sentence from the catalogue in the user's language
@@ -105,6 +109,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S5: System can format dates and numbers per locale with weights in grams to four decimals
 
 - **Story ID:** EP-44-S5
+- **Status:** Later
 - **Title:** System can format dates and numbers per locale with weights in grams to four decimals
 - **As a:** System
 - **I want:** one set of formatting helpers in the shared package that format counts, percentages, dates, month names and weekday names per the user's locale in Asia/Kolkata time, and format weights from integer units of 0.0001 g as grams to 4 decimals in every language
@@ -129,6 +134,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S6: Owner can set a karigar's language on the onboarding and edit forms
 
 - **Story ID:** EP-44-S6
+- **Status:** Later
 - **Title:** Owner can set a karigar's language on the onboarding and edit forms
 - **As a:** Owner
 - **I want:** the "Language for their phone" chips on `karigar-new` and on the karigar edit form, listing the enabled languages in their own script, with my choice saved as the karigar's language preference
@@ -153,6 +159,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S7: Karigar can see the phone app in their language
 
 - **Story ID:** EP-44-S7
+- **Status:** Later
 - **Title:** Karigar can see the phone app in their language
 - **As a:** Karigar
 - **I want:** the phone app to open in the language stored on my record, with every label, status, button and refusal in that language and my weights in grams to 4 decimals
@@ -177,6 +184,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S8: Karigar can switch the app language with the toggle
 
 - **Story ID:** EP-44-S8
+- **Status:** Later
 - **Title:** Karigar can switch the app language with the toggle
 - **As a:** Karigar
 - **I want:** to tap the language chip in the phone header (the हिन्दी chip on mockup 09), pick one of the enabled languages, and see the app switch at once and stay switched
@@ -201,6 +209,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S9: Staff can choose their own language for staff screens
 
 - **Story ID:** EP-44-S9
+- **Status:** Later
 - **Title:** Staff can choose their own language for staff screens
 - **As a:** Staff
 - **I want:** a language choice in the account menu that saves my own preference, so the shell and every in-scope staff screen open in that language after sign-in
@@ -225,6 +234,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S10: Owner can register a WhatsApp template in another language
 
 - **Story ID:** EP-44-S10
+- **Status:** Later
 - **Title:** Owner can register a WhatsApp template in another language
 - **As a:** Owner
 - **I want:** to add a translation of an existing WhatsApp template (owner edit code, job alert, wish, broadcast or catalogue share) in an enabled language, have it registered with the provider through EP-12, and see its approval status per language
@@ -249,6 +259,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S11: System can send each WhatsApp message in the recipient's language
 
 - **Story ID:** EP-44-S11
+- **Status:** Later
 - **Title:** System can send each WhatsApp message in the recipient's language
 - **As a:** System
 - **I want:** every WhatsApp send through EP-12-S3 to pick the approved template in the recipient's language, and to use the approved English template when none exists in that language
@@ -273,6 +284,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S12: System can audit language changes and translation loads
 
 - **Story ID:** EP-44-S12
+- **Status:** Later
 - **Title:** System can audit language changes and translation loads
 - **As a:** System
 - **I want:** an audit entry for every change of a user's language and every load or correction of catalogue rows, written in the same transaction, with the owner able to filter the log by these kinds

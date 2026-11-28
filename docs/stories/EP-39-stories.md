@@ -9,6 +9,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S1: System can store a consent ledger per customer
 
 - **Story ID:** EP-39-S1
+- **Status:** Not started
 - **Title:** System can store a consent ledger per customer
 - **As a:** System
 - **I want:** the `consent_events` table from EP-17-S2 to become the full consent ledger, with a `channel` column (WhatsApp in v1) and an `evidence_ref` column (the inbound message id for a reply), and a List Consent history operation that returns a customer's entries newest first
@@ -33,6 +34,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S2: System can rate-limit sign-in, reset-link and edit-token requests and entries
 
 - **Story ID:** EP-39-S2
+- **Status:** Not started
 - **Title:** System can rate-limit sign-in, reset-link and edit-token requests and entries
 - **As a:** System
 - **I want:** one shared rate-limit counter store, keyed by phone, user or address and by operation, that the sign-in and reset-link limits (EP-04-S8, EP-04-S9) and the edit-token limits (EP-25-S9) all use, with the limit values set in configuration, plus an end-to-end review of the D4 password and link rules
@@ -58,6 +60,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S3: System can apply a general request limit per user and address
 
 - **Story ID:** EP-39-S3
+- **Status:** Not started
 - **Title:** System can apply a general request limit per user and address
 - **As a:** System
 - **I want:** to fill the rate-limit hook from EP-03-S11 with a general limit on every operation, counted per signed-in user and per address, using the store from EP-39-S2
@@ -82,6 +85,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S4: Staff can record a customer's consent or opt-out at the counter
 
 - **Story ID:** EP-39-S4
+- **Status:** Not started
 - **Title:** Staff can record a customer's consent or opt-out at the counter
 - **As a:** Staff
 - **I want:** to record a customer's WhatsApp consent or opt-out at the counter, from the "Send wishes on WhatsApp" control on `customer-new` and from the consent panel on `customers`, each write going into the consent ledger with source `counter` or `form`
@@ -106,6 +110,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S5: System can withdraw consent from a WhatsApp opt-out reply
 
 - **Story ID:** EP-39-S5
+- **Status:** Not started
 - **Title:** System can withdraw consent from a WhatsApp opt-out reply
 - **As a:** System
 - **I want:** an inbound WhatsApp message that matches a configured opt-out word to write an `opt_out` ledger entry for the matching customer with source `whatsapp_reply`, recorded by System, and the inbound message id as `evidence_ref`, at the moment it is received
@@ -130,6 +135,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S6: System can check consent at send time for wishes and broadcasts
 
 - **Story ID:** EP-39-S6
+- **Status:** Not started
 - **Title:** System can check consent at send time for wishes and broadcasts
 - **As a:** System
 - **I want:** every outbound customer message (a wish, a broadcast message or a one-person showcase) to read the customer's current consent from the ledger just before it is handed to the WhatsApp provider, and to skip the send if consent is withdrawn
@@ -154,6 +160,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S7: Staff can record a customer's deletion request
 
 - **Story ID:** EP-39-S7
+- **Status:** Not started
 - **Title:** Staff can record a customer's deletion request
 - **As a:** Staff
 - **I want:** to record a deletion request a customer makes in person, with how it was received and when, so it waits for the owner's decision
@@ -178,6 +185,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S8: Owner can approve or refuse a deletion request
 
 - **Story ID:** EP-39-S8
+- **Status:** Not started
 - **Title:** Owner can approve or refuse a deletion request
 - **As a:** Owner
 - **I want:** to see open deletion requests and approve or refuse each one with a reason
@@ -202,6 +210,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S9: System can erase a customer's personal data across records and files
 
 - **Story ID:** EP-39-S9
+- **Status:** Not started
 - **Title:** System can erase a customer's personal data across records and files
 - **As a:** System
 - **I want:** an approved deletion request to run a deletion that calls the customer erase from EP-17-S13, clears the customer's name and phone from leads linked to them, deletes their PO attachments and other stored files, records the scope erased and marks the request `done`
@@ -227,6 +236,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S10: System can write token references instead of token values in audit
 
 - **Story ID:** EP-39-S10
+- **Status:** Not started
 - **Title:** System can write token references instead of token values in audit
 - **As a:** System
 - **I want:** a check at audit write time that refuses any audit entry whose fields contain an edit-token value, a password or an activation or reset link, plus a test that walks every token and password flow and scans audit entries, logs and stored messages for them
@@ -250,6 +260,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S11: System can enforce owner-only settings on the server (G12)
 
 - **Story ID:** EP-39-S11
+- **Status:** Not started
 - **Title:** System can enforce owner-only settings on the server (G12)
 - **As a:** System
 - **I want:** an automated test that calls the settings change operation as Staff and as Karigar for every setting EP-13 names owner-only, including `pricingEnabled` and `autoSendWishes`, and expects a refusal each time, with the guard fixed where it fails
@@ -274,6 +285,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S12: Owner can run an access review and deactivate users from it
 
 - **Story ID:** EP-39-S12
+- **Status:** Not started
 - **Title:** Owner can run an access review and deactivate users from it
 - **As a:** Owner
 - **I want:** an access review list of every active user with name, role, last sign-in and created date, a way to deactivate any of them from the list, a "Mark review done" action that records the review, and a reminder when the next review is due
@@ -299,6 +311,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S13: Operator can rotate secrets by a written procedure
 
 - **Story ID:** EP-39-S13
+- **Status:** Not started
 - **Title:** Operator can rotate secrets by a written procedure
 - **As a:** Developer
 - **I want:** a written rotation procedure for each secret (WhatsApp provider token, email provider key, LLM key, file storage keys, database credentials and the session signing key) that swaps the secret without downtime, plus a SecretRotation record of each rotation
@@ -323,6 +336,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S14: Owner can sign off the public catalogue link review (G9)
 
 - **Story ID:** EP-39-S14
+- **Status:** Not started
 - **Title:** Owner can sign off the public catalogue link review (G9)
 - **As a:** Owner
 - **I want:** a security review of the public showcase link from EP-34 against a fixed checklist, run as automated tests in staging, and to sign off the result or have the link switched off
@@ -347,6 +361,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S15: Owner can accept or close each penetration test finding
 
 - **Story ID:** EP-39-S15
+- **Status:** Not started
 - **Title:** Owner can accept or close each penetration test finding
 - **As a:** Owner
 - **I want:** to approve the scope of an external penetration test on staging, have each finding recorded with severity and summary, and mark each one fixed or accept it in writing

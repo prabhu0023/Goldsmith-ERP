@@ -9,6 +9,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S1: Developer can clone one product repository rooted at the project, not the parent folder
 
 - **Story ID:** EP-01-S1
+- **Status:** Done
 - **Title:** Developer can clone one product repository rooted at the project, not the parent folder
 - **As a:** Developer
 - **I want:** a dedicated git repository whose root is the `jewelops---jewellery-enterprise-suite` project folder
@@ -33,6 +34,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S2: Developer can install and build the web, api and shared packages from the root
 
 - **Story ID:** EP-01-S2
+- **Status:** Done
 - **Title:** Developer can install and build the web, api and shared packages from the root
 - **As a:** Developer
 - **I want:** a monorepo with three packages, `web`, `api` and `shared`, that install with one command and build with one command from the repository root
@@ -57,6 +59,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S3: Developer can import domain rules and types from the shared package in web
 
 - **Story ID:** EP-01-S3
+- **Status:** Done
 - **Title:** Developer can import domain rules and types from the shared package in web
 - **As a:** Developer
 - **I want:** `src/domain/{weights,match,leads,edits,clock}.ts` and the types in `src/types/jewellery.ts` moved into the `shared` package, with `web` importing them from `shared`
@@ -81,6 +84,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S4: Developer can import the same shared package in api
 
 - **Story ID:** EP-01-S4
+- **Status:** Done
 - **Title:** Developer can import the same shared package in api
 - **As a:** Developer
 - **I want:** the `api` package to import domain rules and types from `shared`, the same package `web` uses
@@ -104,6 +108,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S5: Developer can start web and api together with one dev command
 
 - **Story ID:** EP-01-S5
+- **Status:** Done
 - **Title:** Developer can start web and api together with one dev command
 - **As a:** Developer
 - **I want:** one root command that starts `web` and `api` together for local development
@@ -127,6 +132,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S6: Developer can configure each environment from environment variables only
 
 - **Story ID:** EP-01-S6
+- **Status:** Partial: AC3-5 (staging and production values, production database access, hidden production secrets) need the cloud environments (D1a).
 - **Title:** Developer can configure each environment from environment variables only
 - **As a:** Developer
 - **I want:** development, staging and production to read all configuration and secrets from environment variables, with an example file that lists every variable name and no real values
@@ -152,6 +158,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S7: System can run lint and typecheck on every push
 
 - **Story ID:** EP-01-S7
+- **Status:** Done
 - **Title:** System can run lint and typecheck on every push
 - **As a:** System
 - **I want:** the CI service to run lint and typecheck for `web`, `api` and `shared` on every push to any branch
@@ -175,6 +182,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S8: System can run tests on every push
 
 - **Story ID:** EP-01-S8
+- **Status:** Done
 - **Title:** System can run tests on every push
 - **As a:** System
 - **I want:** a test runner and a `test` script in every package, run by CI on every push
@@ -198,6 +206,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S9: System can run the build for every package on every push
 
 - **Story ID:** EP-01-S9
+- **Status:** Done
 - **Title:** System can run the build for every package on every push
 - **As a:** System
 - **I want:** CI to build `shared`, `web` and `api` on every push and keep the build output of main-branch runs
@@ -221,6 +230,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S10: System can fail a run that contains a committed secret
 
 - **Story ID:** EP-01-S10
+- **Status:** Done
 - **Title:** System can fail a run that contains a committed secret
 - **As a:** System
 - **I want:** a secret-scanning step in CI that fails the run when a commit contains a secret value
@@ -244,6 +254,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S11: System can block a merge into main without a green run
 
 - **Story ID:** EP-01-S11
+- **Status:** Done
 - **Title:** System can block a merge into main without a green run
 - **As a:** System
 - **I want:** branch protection on the main branch that requires the latest CI run on the incoming branch to be green
@@ -268,6 +279,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S12: System can deploy a green main build to staging
 
 - **Story ID:** EP-01-S12
+- **Status:** Not started
 - **Title:** System can deploy a green main build to staging
 - **As a:** System
 - **I want:** CI to deploy the `web` and `api` artefacts of every green main-branch run to staging with no manual steps
@@ -292,6 +304,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S13: Developer can promote a staging build to production
 
 - **Story ID:** EP-01-S13
+- **Status:** Not started
 - **Title:** Developer can promote a staging build to production
 - **As a:** Developer
 - **I want:** an explicit promotion step that releases the exact build already running on staging to production

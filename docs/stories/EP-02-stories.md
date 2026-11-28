@@ -9,6 +9,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S1: Developer can apply and track schema migrations in every environment
 
 - **Story ID:** EP-02-S1
+- **Status:** Partial: AC5 (deploy applies migrations before the api serves) waits for the staging deploy (EP-01-S12, D1a).
 - **Title:** Developer can apply and track schema migrations in every environment
 - **As a:** Developer
 - **I want:** a migrations tool in the `api` package that applies numbered, forward-only schema migrations to development, staging and production, and records which migrations ran where
@@ -34,6 +35,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S2: Developer can convert grams to integer units of 0.0001 g and back in the shared package
 
 - **Story ID:** EP-02-S2
+- **Status:** Done
 - **Title:** Developer can convert grams to integer units of 0.0001 g and back in the shared package
 - **As a:** Developer
 - **I want:** helpers in `shared/weights.ts` that turn a grams string typed or read from a scale into an integer of 0.0001 g units, and turn a stored integer back into a grams string with exactly four decimals
@@ -58,6 +60,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S3: System can store the shop, users and sessions
 
 - **Story ID:** EP-02-S3
+- **Status:** Done
 - **Title:** System can store the shop, users and sessions
 - **As a:** System
 - **I want:** tables for Shop (id, name, address, GSTIN, logo key, setup completed at), User (id, shop ID, name, phone, email, role, karigarId, status) and Session (id, shop ID, userId, created, expires, ended), and the rule that every business table carries a shop ID
@@ -85,6 +88,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S4: System can store master records: scales, karigars, staff and customers
 
 - **Story ID:** EP-02-S4
+- **Status:** Done
 - **Title:** System can store master records: scales, karigars, staff and customers
 - **As a:** System
 - **I want:** tables for Scale, Karigar (with a child table for `gapsMg`), StaffMember, Customer and HistoryRow, with integer weight columns and nullable money sockets
@@ -110,6 +114,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S5: System can store pieces and piece edits with version checks
 
 - **Story ID:** EP-02-S5
+- **Status:** Done
 - **Title:** System can store pieces and piece edits with version checks
 - **As a:** System
 - **I want:** a `pieces` table with a child table for photos, and a `piece_edits` table, both with a version column
@@ -136,6 +141,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S6: System can store parcels with weighings, manifest rows and QC ticks as child rows
 
 - **Story ID:** EP-02-S6
+- **Status:** Done
 - **Title:** System can store parcels with weighings, manifest rows and QC ticks as child rows
 - **As a:** System
 - **I want:** a `parcels` table with a version column, and child tables for weighings, manifest rows and QC ticks
@@ -162,6 +168,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S7: System can store leads with their items and parsed fields
 
 - **Story ID:** EP-02-S7
+- **Status:** Done
 - **Title:** System can store leads with their items and parsed fields
 - **As a:** System
 - **I want:** a `leads` table and child tables for lead items and lead fields, with version columns on leads and lead items
@@ -186,6 +193,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S8: System can store order copies and karigar jobs
 
 - **Story ID:** EP-02-S8
+- **Status:** Done
 - **Title:** System can store order copies and karigar jobs
 - **As a:** System
 - **I want:** an `order_copies` table with a child table for reference images, and a `karigar_jobs` table with a version column
@@ -210,6 +218,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S9: System can store the metal pool balance and its ledger entries
 
 - **Story ID:** EP-02-S9
+- **Status:** Done
 - **Title:** System can store the metal pool balance and its ledger entries
 - **As a:** System
 - **I want:** a `metal_pools` table holding the balance with a version column, and a `pool_entries` ledger table with signed integer deltas
@@ -234,6 +243,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S10: System can store problems, scrap requests and stock-out records
 
 - **Story ID:** EP-02-S10
+- **Status:** Done
 - **Title:** System can store problems, scrap requests and stock-out records
 - **As a:** System
 - **I want:** tables for Problem, ScrapRequest and StockOutRecord, with a child table for the pieces in each stock-out
@@ -258,6 +268,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S11: System can store audit entries
 
 - **Story ID:** EP-02-S11
+- **Status:** Done
 - **Title:** System can store audit entries
 - **As a:** System
 - **I want:** an `audit_entries` table with actor, role, kind, summary, detail, reference and time
@@ -281,6 +292,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S12: System can store broadcasts, wishes and settings
 
 - **Story ID:** EP-02-S12
+- **Status:** Done
 - **Title:** System can store broadcasts, wishes and settings
 - **As a:** System
 - **I want:** a `broadcasts` table with child tables for recipients and shared pieces, a `wishes` table, and a `settings` table
@@ -304,6 +316,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S13: Developer can load the prototype seed into an empty dev or staging database
 
 - **Story ID:** EP-02-S13
+- **Status:** Done
 - **Title:** Developer can load the prototype seed into an empty dev or staging database
 - **As a:** Developer
 - **I want:** a seed command that loads the content of `src/data/seed.ts` and `src/data/seedRows.ts` into an empty development or staging database
@@ -329,6 +342,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S14: System can reject a stale write on a versioned record
 
 - **Story ID:** EP-02-S14
+- **Status:** Done
 - **Title:** System can reject a stale write on a versioned record
 - **As a:** System
 - **I want:** every update to Piece, Parcel, Lead, LeadItem, KarigarJob, PieceEdit and MetalPool to succeed only when the version it read is still current, and to increase the version by 1 when it succeeds

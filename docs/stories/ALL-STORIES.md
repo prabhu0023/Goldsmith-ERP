@@ -13,6 +13,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S1: Developer can clone one product repository rooted at the project, not the parent folder
 
 - **Story ID:** EP-01-S1
+- **Status:** Done
 - **Title:** Developer can clone one product repository rooted at the project, not the parent folder
 - **As a:** Developer
 - **I want:** a dedicated git repository whose root is the `jewelops---jewellery-enterprise-suite` project folder
@@ -37,6 +38,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S2: Developer can install and build the web, api and shared packages from the root
 
 - **Story ID:** EP-01-S2
+- **Status:** Done
 - **Title:** Developer can install and build the web, api and shared packages from the root
 - **As a:** Developer
 - **I want:** a monorepo with three packages, `web`, `api` and `shared`, that install with one command and build with one command from the repository root
@@ -61,6 +63,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S3: Developer can import domain rules and types from the shared package in web
 
 - **Story ID:** EP-01-S3
+- **Status:** Done
 - **Title:** Developer can import domain rules and types from the shared package in web
 - **As a:** Developer
 - **I want:** `src/domain/{weights,match,leads,edits,clock}.ts` and the types in `src/types/jewellery.ts` moved into the `shared` package, with `web` importing them from `shared`
@@ -85,6 +88,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S4: Developer can import the same shared package in api
 
 - **Story ID:** EP-01-S4
+- **Status:** Done
 - **Title:** Developer can import the same shared package in api
 - **As a:** Developer
 - **I want:** the `api` package to import domain rules and types from `shared`, the same package `web` uses
@@ -108,6 +112,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S5: Developer can start web and api together with one dev command
 
 - **Story ID:** EP-01-S5
+- **Status:** Done
 - **Title:** Developer can start web and api together with one dev command
 - **As a:** Developer
 - **I want:** one root command that starts `web` and `api` together for local development
@@ -131,6 +136,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S6: Developer can configure each environment from environment variables only
 
 - **Story ID:** EP-01-S6
+- **Status:** Partial: AC3-5 (staging and production values, production database access, hidden production secrets) need the cloud environments (D1a).
 - **Title:** Developer can configure each environment from environment variables only
 - **As a:** Developer
 - **I want:** development, staging and production to read all configuration and secrets from environment variables, with an example file that lists every variable name and no real values
@@ -156,6 +162,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S7: System can run lint and typecheck on every push
 
 - **Story ID:** EP-01-S7
+- **Status:** Done
 - **Title:** System can run lint and typecheck on every push
 - **As a:** System
 - **I want:** the CI service to run lint and typecheck for `web`, `api` and `shared` on every push to any branch
@@ -179,6 +186,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S8: System can run tests on every push
 
 - **Story ID:** EP-01-S8
+- **Status:** Done
 - **Title:** System can run tests on every push
 - **As a:** System
 - **I want:** a test runner and a `test` script in every package, run by CI on every push
@@ -202,6 +210,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S9: System can run the build for every package on every push
 
 - **Story ID:** EP-01-S9
+- **Status:** Done
 - **Title:** System can run the build for every package on every push
 - **As a:** System
 - **I want:** CI to build `shared`, `web` and `api` on every push and keep the build output of main-branch runs
@@ -225,6 +234,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S10: System can fail a run that contains a committed secret
 
 - **Story ID:** EP-01-S10
+- **Status:** Done
 - **Title:** System can fail a run that contains a committed secret
 - **As a:** System
 - **I want:** a secret-scanning step in CI that fails the run when a commit contains a secret value
@@ -248,6 +258,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S11: System can block a merge into main without a green run
 
 - **Story ID:** EP-01-S11
+- **Status:** Done
 - **Title:** System can block a merge into main without a green run
 - **As a:** System
 - **I want:** branch protection on the main branch that requires the latest CI run on the incoming branch to be green
@@ -272,6 +283,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S12: System can deploy a green main build to staging
 
 - **Story ID:** EP-01-S12
+- **Status:** Not started
 - **Title:** System can deploy a green main build to staging
 - **As a:** System
 - **I want:** CI to deploy the `web` and `api` artefacts of every green main-branch run to staging with no manual steps
@@ -296,6 +308,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-01-S13: Developer can promote a staging build to production
 
 - **Story ID:** EP-01-S13
+- **Status:** Not started
 - **Title:** Developer can promote a staging build to production
 - **As a:** Developer
 - **I want:** an explicit promotion step that releases the exact build already running on staging to production
@@ -341,6 +354,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S1: Developer can apply and track schema migrations in every environment
 
 - **Story ID:** EP-02-S1
+- **Status:** Partial: AC5 (deploy applies migrations before the api serves) waits for the staging deploy (EP-01-S12, D1a).
 - **Title:** Developer can apply and track schema migrations in every environment
 - **As a:** Developer
 - **I want:** a migrations tool in the `api` package that applies numbered, forward-only schema migrations to development, staging and production, and records which migrations ran where
@@ -366,6 +380,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S2: Developer can convert grams to integer units of 0.0001 g and back in the shared package
 
 - **Story ID:** EP-02-S2
+- **Status:** Done
 - **Title:** Developer can convert grams to integer units of 0.0001 g and back in the shared package
 - **As a:** Developer
 - **I want:** helpers in `shared/weights.ts` that turn a grams string typed or read from a scale into an integer of 0.0001 g units, and turn a stored integer back into a grams string with exactly four decimals
@@ -390,6 +405,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S3: System can store the shop, users and sessions
 
 - **Story ID:** EP-02-S3
+- **Status:** Done
 - **Title:** System can store the shop, users and sessions
 - **As a:** System
 - **I want:** tables for Shop (id, name, address, GSTIN, logo key, setup completed at), User (id, shop ID, name, phone, email, role, karigarId, status) and Session (id, shop ID, userId, created, expires, ended), and the rule that every business table carries a shop ID
@@ -417,6 +433,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S4: System can store master records: scales, karigars, staff and customers
 
 - **Story ID:** EP-02-S4
+- **Status:** Done
 - **Title:** System can store master records: scales, karigars, staff and customers
 - **As a:** System
 - **I want:** tables for Scale, Karigar (with a child table for `gapsMg`), StaffMember, Customer and HistoryRow, with integer weight columns and nullable money sockets
@@ -442,6 +459,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S5: System can store pieces and piece edits with version checks
 
 - **Story ID:** EP-02-S5
+- **Status:** Done
 - **Title:** System can store pieces and piece edits with version checks
 - **As a:** System
 - **I want:** a `pieces` table with a child table for photos, and a `piece_edits` table, both with a version column
@@ -468,6 +486,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S6: System can store parcels with weighings, manifest rows and QC ticks as child rows
 
 - **Story ID:** EP-02-S6
+- **Status:** Done
 - **Title:** System can store parcels with weighings, manifest rows and QC ticks as child rows
 - **As a:** System
 - **I want:** a `parcels` table with a version column, and child tables for weighings, manifest rows and QC ticks
@@ -494,6 +513,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S7: System can store leads with their items and parsed fields
 
 - **Story ID:** EP-02-S7
+- **Status:** Done
 - **Title:** System can store leads with their items and parsed fields
 - **As a:** System
 - **I want:** a `leads` table and child tables for lead items and lead fields, with version columns on leads and lead items
@@ -518,6 +538,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S8: System can store order copies and karigar jobs
 
 - **Story ID:** EP-02-S8
+- **Status:** Done
 - **Title:** System can store order copies and karigar jobs
 - **As a:** System
 - **I want:** an `order_copies` table with a child table for reference images, and a `karigar_jobs` table with a version column
@@ -542,6 +563,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S9: System can store the metal pool balance and its ledger entries
 
 - **Story ID:** EP-02-S9
+- **Status:** Done
 - **Title:** System can store the metal pool balance and its ledger entries
 - **As a:** System
 - **I want:** a `metal_pools` table holding the balance with a version column, and a `pool_entries` ledger table with signed integer deltas
@@ -566,6 +588,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S10: System can store problems, scrap requests and stock-out records
 
 - **Story ID:** EP-02-S10
+- **Status:** Done
 - **Title:** System can store problems, scrap requests and stock-out records
 - **As a:** System
 - **I want:** tables for Problem, ScrapRequest and StockOutRecord, with a child table for the pieces in each stock-out
@@ -590,6 +613,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S11: System can store audit entries
 
 - **Story ID:** EP-02-S11
+- **Status:** Done
 - **Title:** System can store audit entries
 - **As a:** System
 - **I want:** an `audit_entries` table with actor, role, kind, summary, detail, reference and time
@@ -613,6 +637,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S12: System can store broadcasts, wishes and settings
 
 - **Story ID:** EP-02-S12
+- **Status:** Done
 - **Title:** System can store broadcasts, wishes and settings
 - **As a:** System
 - **I want:** a `broadcasts` table with child tables for recipients and shared pieces, a `wishes` table, and a `settings` table
@@ -636,6 +661,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S13: Developer can load the prototype seed into an empty dev or staging database
 
 - **Story ID:** EP-02-S13
+- **Status:** Done
 - **Title:** Developer can load the prototype seed into an empty dev or staging database
 - **As a:** Developer
 - **I want:** a seed command that loads the content of `src/data/seed.ts` and `src/data/seedRows.ts` into an empty development or staging database
@@ -661,6 +687,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-02-S14: System can reject a stale write on a versioned record
 
 - **Story ID:** EP-02-S14
+- **Status:** Done
 - **Title:** System can reject a stale write on a versioned record
 - **As a:** System
 - **I want:** every update to Piece, Parcel, Lead, LeadItem, KarigarJob, PieceEdit and MetalPool to succeed only when the version it read is still current, and to increase the version by 1 when it succeeds
@@ -707,6 +734,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S1: Developer can define an operation once in the shared contract and use it in web and api
 
 - **Story ID:** EP-03-S1
+- **Status:** Done
 - **Title:** Developer can define an operation once in the shared contract and use it in web and api
 - **As a:** Developer
 - **I want:** a contract module in the `shared` package, built from `src/types/jewellery.ts`, where each operation is declared once with its name, input shape, result shape and error codes, and imported by both `web` and `api`
@@ -732,6 +760,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S2: System can validate every request against the contract at the trust boundary
 
 - **Story ID:** EP-03-S2
+- **Status:** Done
 - **Title:** System can validate every request against the contract at the trust boundary
 - **As a:** System
 - **I want:** every incoming request checked against its operation's input shape in the contract before any service function runs
@@ -756,6 +785,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S3: System can set the actor from the session and the time from the server clock
 
 - **Story ID:** EP-03-S3
+- **Status:** Done
 - **Title:** System can set the actor from the session and the time from the server clock
 - **As a:** System
 - **I want:** the request pipeline to build the `Ctx {by, at}` passed to every service function, with `by` taken from the authenticated session and `at` taken from the server clock in UTC
@@ -780,6 +810,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S4: System can return a rule refusal with a code and the DomainError sentence
 
 - **Story ID:** EP-03-S4
+- **Status:** Done
 - **Title:** System can return a rule refusal with a code and the DomainError sentence
 - **As a:** System
 - **I want:** a `DomainError` thrown by a service function to become an error response with code `rule_refused` and the same sentence the prototype shows
@@ -804,6 +835,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S5: System can return not-found, validation and conflict errors in the same format
 
 - **Story ID:** EP-03-S5
+- **Status:** Done
 - **Title:** System can return not-found, validation and conflict errors in the same format
 - **As a:** System
 - **I want:** missing records, invalid fields, stale versions, missing sessions and forbidden calls all returned in the same `{code, message, field?}` shape as rule refusals
@@ -828,6 +860,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S6: System can run each operation in one transaction
 
 - **Story ID:** EP-03-S6
+- **Status:** Done
 - **Title:** System can run each operation in one transaction
 - **As a:** System
 - **I want:** the request pipeline to open one database transaction per operation, run the service function inside it, and commit only if the function returns without error
@@ -852,6 +885,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S7: System can return the created id from a create operation
 
 - **Story ID:** EP-03-S7
+- **Status:** Done
 - **Title:** System can return the created id from a create operation
 - **As a:** System
 - **I want:** every create operation to return a success result holding the id of the record it created, with the id generated by the database
@@ -875,6 +909,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S8: System can deduplicate a create operation by idempotency key
 
 - **Story ID:** EP-03-S8
+- **Status:** Done
 - **Title:** System can deduplicate a create operation by idempotency key
 - **As a:** System
 - **I want:** create operations to accept an idempotency key and store it with the result id, so a retried request returns the first result instead of creating a second record
@@ -899,6 +934,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S9: System can page long lists with a cursor
 
 - **Story ID:** EP-03-S9
+- **Status:** Done
 - **Title:** System can page long lists with a cursor
 - **As a:** System
 - **I want:** a list template that returns one page of items, the page size and a next cursor, with a maximum page size enforced on the server
@@ -923,6 +959,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S10: System can report API and database health
 
 - **Story ID:** EP-03-S10
+- **Status:** Done
 - **Title:** System can report API and database health
 - **As a:** System
 - **I want:** a Read Health endpoint that anyone can call and that reports whether the API is running and whether the database is reachable
@@ -947,6 +984,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S11: System can expose a rate-limit hook for EP-39 to fill in
 
 - **Story ID:** EP-03-S11
+- **Status:** Partial: the rate-limit hook is not called for GET /api/contract-version or an unknown operation name (FU-003, EP-39).
 - **Title:** System can expose a rate-limit hook for EP-39 to fill in
 - **As a:** System
 - **I want:** a named step in the request pipeline, before validation, where a rate limiter can count requests per caller and operation and refuse extra ones
@@ -970,6 +1008,7 @@ Role note: this is a layer A infrastructure epic with no end user. Stories use "
 ## EP-03-S12: Developer can port one prototype transition as the reference service function
 
 - **Story ID:** EP-03-S12
+- **Status:** Done
 - **Title:** Developer can port one prototype transition as the reference service function
 - **As a:** Developer
 - **I want:** `markLeadLost` from `src/store/transitions.ts` ported to `api` as a service function that runs through the full pipeline, without the hold release the prototype does
@@ -1016,6 +1055,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S1: System can create the first owner once when the shop has no owner
 
 - **Story ID:** EP-04-S1
+- **Status:** Done
 - **Title:** System can create the first owner once when the shop has no owner
 - **As a:** System
 - **I want:** a one-time Create First owner operation that makes one user with role `owner`, a name, a phone and an email, status `pending_activation` and no password, only while the shop holds no owner, and that is called only by the first-run setup wizard (EP-45)
@@ -1040,6 +1080,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S2: System can store and check passwords as salted hashes
 
 - **Story ID:** EP-04-S2
+- **Status:** Done
 - **Title:** System can store and check passwords as salted hashes
 - **As a:** System
 - **I want:** a server module that turns a password into a salted hash with a modern password-hashing algorithm, refuses passwords shorter than 8 characters, and checks a submitted password against the stored hash with the results `ok` or `wrong`
@@ -1064,6 +1105,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S3: User can sign in with phone number and password
 
 - **Story ID:** EP-04-S3
+- **Status:** Done
 - **Title:** User can sign in with phone number and password
 - **As a:** Staff
 - **I want:** to type my phone number and my password on the sign-in screen and tap "Sign in"
@@ -1088,6 +1130,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S4: System can send account emails through a stub until email is live
 
 - **Story ID:** EP-04-S4
+- **Status:** Done
 - **Title:** System can send account emails through a stub until email is live
 - **As a:** System
 - **I want:** an account-email delivery interface (activation and reset emails) with one stub implementation that, in development and staging only, shows the email and its link in a developer mailbox page and the developer console
@@ -1111,6 +1154,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S5: User can get a session after entering the right password
 
 - **Story ID:** EP-04-S5
+- **Status:** Done
 - **Title:** User can get a session after entering the right password
 - **As a:** Staff
 - **I want:** to be signed in as soon as my phone number and password are accepted
@@ -1135,6 +1179,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S6: User can land on their role's home after sign-in
 
 - **Story ID:** EP-04-S6
+- **Status:** Done
 - **Title:** User can land on their role's home after sign-in
 - **As a:** Owner
 - **I want:** to arrive on my own home screen straight after sign-in, and the app to know my name and role from a Read Current session call
@@ -1159,6 +1204,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S7: User can reset a forgotten password from an emailed link
 
 - **Story ID:** EP-04-S7
+- **Status:** Done
 - **Title:** User can reset a forgotten password from an emailed link
 - **As a:** Karigar
 - **I want:** a "Forgot password" link on the sign-in screen where I enter my phone number, and an email with a link that lets me set a new password
@@ -1183,6 +1229,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S8: System can lock out a phone after repeated failed attempts
 
 - **Story ID:** EP-04-S8
+- **Status:** Done
 - **Title:** System can lock out a phone after repeated failed attempts
 - **As a:** System
 - **I want:** to count wrong passwords per account and lock the account for 15 minutes once 5 wrong passwords are entered in a row, with an Unlock operation the owner can call sooner (EP-05)
@@ -1208,6 +1255,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S9: System can rate-limit sign-in attempts and reset-link requests per phone and device
 
 - **Story ID:** EP-04-S9
+- **Status:** Done
 - **Title:** System can rate-limit sign-in attempts and reset-link requests per phone and device
 - **As a:** System
 - **I want:** the EP-03-S11 rate-limit hook filled in for the sign-in and reset-link operations, counting requests per phone and per device
@@ -1232,6 +1280,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S10: User can set their first password from an activation link
 
 - **Story ID:** EP-04-S10
+- **Status:** Done
 - **Title:** User can set their first password from an activation link
 - **As a:** Staff
 - **I want:** to open the activation link in the email the shop sent me, choose my own password and then sign in
@@ -1256,6 +1305,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S11: User can sign out
 
 - **Story ID:** EP-04-S11
+- **Status:** Done
 - **Title:** User can sign out
 - **As a:** Staff
 - **I want:** a "Sign out" action that ends my session on this device straight away
@@ -1279,6 +1329,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S12: System can expire idle sessions
 
 - **Story ID:** EP-04-S12
+- **Status:** Done
 - **Title:** System can expire idle sessions
 - **As a:** System
 - **I want:** every session to carry an `expires at` time, and requests after that time to be refused as unauthenticated
@@ -1302,6 +1353,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S13: System can end all sessions of a deactivated or re-roled user at once
 
 - **Story ID:** EP-04-S13
+- **Status:** Done
 - **Title:** System can end all sessions of a deactivated or re-roled user at once
 - **As a:** System
 - **I want:** a Delete All sessions of a user operation that ends every open session of one user, called when "User deactivated or role changed" happens, and the user's open screens sent back to sign-in
@@ -1326,6 +1378,7 @@ Decision note: D4 is decided ([decision record](../decisions/D4-sign-in.md)). Us
 ## EP-04-S14: System can audit sign-in, failure, lockout and sign-out without the password
 
 - **Story ID:** EP-04-S14
+- **Status:** Done
 - **Title:** System can audit sign-in, failure, lockout and sign-out without the password
 - **As a:** System
 - **I want:** one helper that writes an audit entry for every sign-in event (signed in, sign-in failed, locked, unlocked, signed out, sessions ended, first owner created, activation link sent, password set, password reset requested, password reset) with actor and time, and with the password and link secret always left out
@@ -1370,6 +1423,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S1: System can define the fixed permission list for each of the three roles in the shared package
 
 - **Story ID:** EP-05-S1
+- **Status:** Done
 - **Title:** System can define the fixed permission list for each of the three roles in the shared package
 - **As a:** System
 - **I want:** one permission matrix in the shared package that maps each role (`owner`, `staff`, `karigar`) to the list of operation names that role may call, built from `ROLES` in `src/components/people/permissions.ts` and the CAN, CANNOT and NEVER SEES lists on mockup 11
@@ -1394,6 +1448,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S2: System can refuse any operation the caller's role does not allow
 
 - **Story ID:** EP-05-S2
+- **Status:** Done
 - **Title:** System can refuse any operation the caller's role does not allow
 - **As a:** System
 - **I want:** the permission hook in the API pipeline to look up the caller's role from the session and the operation name in the matrix, and refuse the call before the service function runs if the role does not allow it
@@ -1418,6 +1473,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S3: System can limit a karigar's reads to their own jobs
 
 - **Story ID:** EP-05-S3
+- **Status:** Done
 - **Title:** System can limit a karigar's reads to their own jobs
 - **As a:** System
 - **I want:** every read a karigar session makes to be filtered to jobs whose `karigarId` equals the `karigarId` on that user, and to the reference images of those jobs only
@@ -1442,6 +1498,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S4: Owner can add a user with name, phone and role
 
 - **Story ID:** EP-05-S4
+- **Status:** Done
 - **Title:** Owner can add a user with name, phone and role
 - **As a:** Owner
 - **I want:** to fill in Name, Phone (the number they sign in with), Email and the role picker (Staff or Karigar) on the Add a staff member screen and press "Add this staff member", and to resend the activation email if it was lost
@@ -1468,6 +1525,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S5: Owner can edit a user's name and phone
 
 - **Story ID:** EP-05-S5
+- **Status:** Done
 - **Title:** Owner can edit a user's name and phone
 - **As a:** Owner
 - **I want:** to open a user from the directory and change their Name, Phone or Email and save
@@ -1492,6 +1550,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S6: Owner can change a user's role
 
 - **Story ID:** EP-05-S6
+- **Status:** Done
 - **Title:** Owner can change a user's role
 - **As a:** Owner
 - **I want:** to pick a different role (Staff or Karigar) for an existing user and save
@@ -1516,6 +1575,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S7: Owner can deactivate a user
 
 - **Story ID:** EP-05-S7
+- **Status:** Done
 - **Title:** Owner can deactivate a user
 - **As a:** Owner
 - **I want:** a "Deactivate" action on a user that stops them signing in and ends their open sessions
@@ -1540,6 +1600,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S8: Owner can reactivate a user
 
 - **Story ID:** EP-05-S8
+- **Status:** Done
 - **Title:** Owner can reactivate a user
 - **As a:** Owner
 - **I want:** a "Reactivate" action on a deactivated user
@@ -1564,6 +1625,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S9: System can refuse to remove the last active owner
 
 - **Story ID:** EP-05-S9
+- **Status:** Done
 - **Title:** System can refuse to remove the last active owner
 - **As a:** System
 - **I want:** a guard that keeps exactly one active owner per shop, checked inside the same transaction as any add, deactivation or role change, refusing a change that would leave the shop with no owner or with two
@@ -1587,6 +1649,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S10: System can end a user's sessions live when they are deactivated or re-roled
 
 - **Story ID:** EP-05-S10
+- **Status:** Done
 - **Title:** System can end a user's sessions live when they are deactivated or re-roled
 - **As a:** System
 - **I want:** deactivation and role change to call Delete All sessions (EP-04-S13) in the same transaction and to emit "User deactivated or role changed" with the user id and reason after commit
@@ -1611,6 +1674,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S11: Owner can see the user directory with role and status
 
 - **Story ID:** EP-05-S11
+- **Status:** Done
 - **Title:** Owner can see the user directory with role and status
 - **As a:** Owner
 - **I want:** the `staff-directory` screen to list every user with name, phone, email, role and status (Awaiting activation, Active, Locked or Deactivated), with a way to open one user and an "Unlock" action on a locked account
@@ -1637,6 +1701,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S12: User can open an account menu that replaces the role switcher
 
 - **Story ID:** EP-05-S12
+- **Status:** Done
 - **Title:** User can open an account menu that replaces the role switcher
 - **As a:** Staff
 - **I want:** the chip at the foot of the rail to open an account menu with my name, my role and "Sign out", and nothing that lets me become someone else
@@ -1661,6 +1726,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S13: Owner can link a karigar user to a karigar record
 
 - **Story ID:** EP-05-S13
+- **Status:** Done
 - **Title:** Owner can link a karigar user to a karigar record
 - **As a:** Owner
 - **I want:** to set the `karigarId` of a user with role `karigar` to one Karigar record, such as KG-04
@@ -1685,6 +1751,7 @@ Role note: stories where the owner manages people use "Owner". Stories that desc
 ## EP-05-S14: System can audit every user lifecycle change
 
 - **Story ID:** EP-05-S14
+- **Status:** Done
 - **Title:** System can audit every user lifecycle change
 - **As a:** System
 - **I want:** add, edit, role change, deactivate, reactivate and karigar link to each write an audit entry with actor, time, user id, action and before and after values, in the same transaction as the change
@@ -1731,6 +1798,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S1: System can store audit entries that cannot be updated or deleted
 
 - **Story ID:** EP-06-S1
+- **Status:** Partial: AC5 (grants check run in CI against staging) waits for staging (FU-008, D1a).
 - **Title:** System can store audit entries that cannot be updated or deleted
 - **As a:** System
 - **I want:** the `audit_entries` table from EP-02-S11 extended with entity type, entity id, before, after, reason and token reference columns, and locked so the application's database role can only insert and select rows
@@ -1755,6 +1823,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S2: System can write an audit entry in the same transaction as every state change
 
 - **Story ID:** EP-06-S2
+- **Status:** Done
 - **Title:** System can write an audit entry in the same transaction as every state change
 - **As a:** System
 - **I want:** a service-layer wrapper that every state-changing operation runs through, which appends exactly one audit entry inside the operation's transaction before it commits
@@ -1779,6 +1848,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S3: System can record before and after values for each change
 
 - **Story ID:** EP-06-S3
+- **Status:** Done
 - **Title:** System can record before and after values for each change
 - **As a:** System
 - **I want:** the audit writer to take the row as it was read and the row as it will be saved, and store only the fields that changed in `before` and `after`
@@ -1803,6 +1873,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S4: System can record a token reference instead of the token value
 
 - **Story ID:** EP-06-S4
+- **Status:** Done
 - **Title:** System can record a token reference instead of the token value
 - **As a:** System
 - **I want:** operations that use a one-time token (applying an edit with the owner edit code) to store the id of the hashed token record in `token reference`, and never the 6-digit value
@@ -1826,6 +1897,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S5: System can record weights in entries as integer units of 0.0001 g
 
 - **Story ID:** EP-06-S5
+- **Status:** Done
 - **Title:** System can record weights in entries as integer units of 0.0001 g
 - **As a:** System
 - **I want:** every weight inside before and after (for example `grossG`, `stoneG`, `lossG`, `gapNetG`, `deltaG`) stored as an integer in units of 0.0001 g using the shared conversion from EP-02-S2, and shown at four decimals
@@ -1849,6 +1921,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S6: System can record actions taken by the scheduler and integrations
 
 - **Story ID:** EP-06-S6
+- **Status:** Done
 - **Title:** System can record actions taken by the scheduler and integrations
 - **As a:** System
 - **I want:** a System actor for changes made with no signed-in user, with a name that says which part acted, such as "Scheduler" or "WhatsApp intake"
@@ -1872,6 +1945,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S7: System can audit lead, job, parcel, problem, edit-proposal and onboarding transitions not audited today
 
 - **Story ID:** EP-06-S7
+- **Status:** Done
 - **Title:** System can audit lead, job, parcel, problem, edit-proposal and onboarding transitions not audited today
 - **As a:** System
 - **I want:** an action kind in the shared action list for every transition that the prototype does not audit, so that each one writes an entry when its feature epic ports it
@@ -1897,6 +1971,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S8: System can audit the pricing flag and every other setting change
 
 - **Story ID:** EP-06-S8
+- **Status:** Done
 - **Title:** System can audit the pricing flag and every other setting change
 - **As a:** System
 - **I want:** every setting change, including `pricingEnabled`, to write a `setting_changed` entry with the setting key in ref and the old and new values in before and after
@@ -1921,6 +1996,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S9: Owner can list audit entries newest first, one page at a time
 
 - **Story ID:** EP-06-S9
+- **Status:** Done
 - **Title:** Owner can list audit entries newest first, one page at a time
 - **As a:** Owner
 - **I want:** the Security log on route `security` to load entries from the server newest first, a page at a time, each row showing the kind label, ref, time in Asia/Kolkata, actor name and role, and summary
@@ -1946,6 +2022,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S10: Owner can filter the log by kind group, entity, actor and date
 
 - **Story ID:** EP-06-S10
+- **Status:** Done
 - **Title:** Owner can filter the log by kind group, entity, actor and date
 - **As a:** Owner
 - **I want:** to narrow the Security log by kind group (Everything, Tag edits, Parcels and losses, Problems, Scrap, Stock-out, Rules), by entity such as TAG-8841 or BATCH-2026-044, by actor, and by a date range
@@ -1970,6 +2047,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S11: Owner can open one entry and see before and after values
 
 - **Story ID:** EP-06-S11
+- **Status:** Done
 - **Title:** Owner can open one entry and see before and after values
 - **As a:** Owner
 - **I want:** to open a row on the Security log and see the full entry: actor, role, time, entity, action, reason, token reference marker, and each changed field with its before and after value
@@ -1994,6 +2072,7 @@ Role note: stories where the server writes, protects or filters audit entries on
 ## EP-06-S12: System can refuse audit reads by staff and karigars
 
 - **Story ID:** EP-06-S12
+- **Status:** Done
 - **Title:** System can refuse audit reads by staff and karigars
 - **As a:** System
 - **I want:** List Audit entries and Read Audit entry to be in the owner's permission list only, so the permission hook refuses any staff or karigar call
@@ -2038,6 +2117,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S1: System can publish an event only after its operation's transaction commits
 
 - **Story ID:** EP-07-S1
+- **Status:** Done
 - **Title:** System can publish an event only after its operation's transaction commits
 - **As a:** System
 - **I want:** service functions to record each event they cause in an outbox row inside the operation's transaction, and a publisher to send the event to the live channel only once that transaction has committed
@@ -2062,6 +2142,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S2: System can stamp each event with a sequence number, entity id and version
 
 - **Story ID:** EP-07-S2
+- **Status:** Partial: AC5 (stock screen shows the refetched piece) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - **Title:** System can stamp each event with a sequence number, entity id and version
 - **As a:** System
 - **I want:** every published event to carry one envelope: sequence number, event name, entity type, entity id, entity version, emitted at (UTC) and audience, and no business values
@@ -2086,6 +2167,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S3: User can open an authenticated live connection
 
 - **Story ID:** EP-07-S3
+- **Status:** Done
 - **Title:** User can open an authenticated live connection
 - **As a:** Staff
 - **I want:** my browser to open one live connection when I sign in, authenticated with my session, and keep it open while any screen is open
@@ -2110,6 +2192,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S4: System can subscribe a connection to its user and role channels
 
 - **Story ID:** EP-07-S4
+- **Status:** Done
 - **Title:** System can subscribe a connection to its user and role channels
 - **As a:** System
 - **I want:** each new connection to join its user channel and its role channel automatically, and to join or leave an entity channel (for example one parcel) when the client asks
@@ -2134,6 +2217,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S5: System can filter every event by the receiver's permissions
 
 - **Story ID:** EP-07-S5
+- **Status:** Done
 - **Title:** System can filter every event by the receiver's permissions
 - **As a:** System
 - **I want:** the channel to check, for each event and each subscribed connection, that the receiving user may read the entity under EP-05 before delivering it
@@ -2157,6 +2241,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S6: Karigar can receive only events about their own jobs
 
 - **Story ID:** EP-07-S6
+- **Status:** Done
 - **Title:** Karigar can receive only events about their own jobs
 - **As a:** Karigar
 - **I want:** my phone to get live updates only for jobs issued to me and for my own account
@@ -2181,6 +2266,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S7: User can reconnect and catch up from the last sequence number
 
 - **Story ID:** EP-07-S7
+- **Status:** Done
 - **Title:** User can reconnect and catch up from the last sequence number
 - **As a:** Staff
 - **I want:** my browser to reconnect on its own after the connection drops, send the last sequence number it received, and get every event it missed in order
@@ -2205,6 +2291,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S8: Staff can see who else is working on the same parcel
 
 - **Story ID:** EP-07-S8
+- **Status:** Done
 - **Title:** Staff can see who else is working on the same parcel
 - **As a:** Staff
 - **I want:** to see the names of the other staff who have the same parcel open on `parcel-tag` or `parcel-match`, updated live as they join and leave
@@ -2229,6 +2316,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S9: User can see rail badge counts update live
 
 - **Story ID:** EP-07-S9
+- **Status:** Partial: no rail badge is server-backed yet; each moves to server counts with its screen (FU-012).
 - **Title:** User can see rail badge counts update live
 - **As a:** Owner
 - **I want:** the counts on the rail items (Decisions, Leads, Parcels in, Showroom stock) to change within about a second of a relevant event, recomputed from server data
@@ -2253,6 +2341,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S10: System can close a user's connections when they are deactivated or re-roled
 
 - **Story ID:** EP-07-S10
+- **Status:** Done
 - **Title:** System can close a user's connections when they are deactivated or re-roled
 - **As a:** System
 - **I want:** the channel to consume "User deactivated or role changed", deliver it to that user's open connections, then close them and drop their subscriptions and presence
@@ -2276,6 +2365,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S11: System can carry each of the 10 catalogue events to its audience
 
 - **Story ID:** EP-07-S11
+- **Status:** Partial: AC4 (stock screen drops a billed piece live) needs the piece read of EP-22 and a live stock screen (FU-012, FU-013).
 - **Title:** System can carry each of the 10 catalogue events to its audience
 - **As a:** System
 - **I want:** the 10 catalogue events registered in the shared package with their entity type and audience channels, so that an emitting epic only names the event and the channel routes it
@@ -2300,6 +2390,7 @@ Role note: stories where the server publishes, filters, buffers or closes connec
 ## EP-07-S12: Developer can test two browsers receiving each other's events
 
 - **Story ID:** EP-07-S12
+- **Status:** Partial: AC1 runs against a stand-in read until the piece read of EP-22 exists (FU-013).
 - **Title:** Developer can test two browsers receiving each other's events
 - **As a:** Developer
 - **I want:** an automated test that signs in two browsers as different staff on staging, makes a change in one and checks the other receives the event and refetches, plus a short manual demo script
@@ -2345,6 +2436,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S1: Developer can call every API operation through one typed client built from the contract
 
 - **Story ID:** EP-08-S1
+- **Status:** Not started
 - **Title:** Developer can call every API operation through one typed client built from the contract
 - **As a:** Developer
 - **I want:** one API client in `web`, typed from the EP-03 shared contract, that attaches the session, adds an idempotency key to every action, and turns the EP-03 error format into a code and a sentence a person can read
@@ -2369,6 +2461,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S2: System can cache server reads and share them between screens
 
 - **Story ID:** EP-08-S2
+- **Status:** Not started
 - **Title:** System can cache server reads and share them between screens
 - **As a:** System
 - **I want:** a query cache keyed by operation and parameters, so each screen declares the reads it needs (for example "in-stock pieces", "parcel BATCH-2026-044", "Today cards") and screens that need the same read share one request and one result
@@ -2393,6 +2486,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S3: User can see a loading state while a screen's data arrives
 
 - **Story ID:** EP-08-S3
+- **Status:** Not started
 - **Title:** User can see a loading state while a screen's data arrives
 - **As a:** Staff
 - **I want:** a screen, card or list that is waiting for its first data to show a loading state in place of its content
@@ -2417,6 +2511,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S4: User can see a read error with "Try again" when data cannot be loaded
 
 - **Story ID:** EP-08-S4
+- **Status:** Not started
 - **Title:** User can see a read error with "Try again" when data cannot be loaded
 - **As a:** Owner
 - **I want:** an area whose read failed to say what could not be loaded and offer "Try again", while the rest of the screen keeps working
@@ -2441,6 +2536,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S5: User can see the server's sentence when an action is refused
 
 - **Story ID:** EP-08-S5
+- **Status:** Not started
 - **Title:** User can see the server's sentence when an action is refused
 - **As a:** Staff
 - **I want:** a refused action to show the server's sentence at the place I took the action, and keep what I typed
@@ -2465,6 +2561,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S6: User can retry an action after a network failure without applying it twice
 
 - **Story ID:** EP-08-S6
+- **Status:** Not started
 - **Title:** User can retry an action after a network failure without applying it twice
 - **As a:** Staff
 - **I want:** an action that fails on the network to say it may not have been saved and offer a retry that reuses the same idempotency key
@@ -2489,6 +2586,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S7: System can refetch the affected reads after the user's own action
 
 - **Story ID:** EP-08-S7
+- **Status:** Not started
 - **Title:** System can refetch the affected reads after the user's own action
 - **As a:** System
 - **I want:** each action to declare the query keys it affects, and those reads to be refetched after the action succeeds, before the screen shows new values
@@ -2513,6 +2611,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S8: System can keep one live connection per signed-in client and map every catalogue event to reads
 
 - **Story ID:** EP-08-S8
+- **Status:** Not started
 - **Title:** System can keep one live connection per signed-in client and map every catalogue event to reads
 - **As a:** System
 - **I want:** the shell to open one EP-07 live connection after sign-in, and one event-to-query map, kept next to the catalogue, that names the query keys each event invalidates
@@ -2537,6 +2636,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S9: User can see a screen update by itself when someone else changes something
 
 - **Story ID:** EP-08-S9
+- **Status:** Not started
 - **Title:** User can see a screen update by itself when someone else changes something
 - **As a:** Staff
 - **I want:** my open screen to change within about a second when another person changes data it shows, without me reloading
@@ -2561,6 +2661,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S10: User can see "Reconnecting…" when the connection drops and catch up when it returns
 
 - **Story ID:** EP-08-S10
+- **Status:** Not started
 - **Title:** User can see "Reconnecting…" when the connection drops and catch up when it returns
 - **As a:** Staff
 - **I want:** every open screen to show "Reconnecting…" and mark its data as possibly out of date when the live connection or the network drops, and to catch up and clear the banner when it returns
@@ -2585,6 +2686,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S11: User can see an offline state with server actions disabled
 
 - **Story ID:** EP-08-S11
+- **Status:** Not started
 - **Title:** User can see an offline state with server actions disabled
 - **As a:** Staff
 - **I want:** the web app to say it is offline when there is no network, and disable every action that needs the server with a reason
@@ -2609,6 +2711,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S12: User can open the app to sign-in and land on their role's home in a signed-in shell
 
 - **Story ID:** EP-08-S12
+- **Status:** Not started
 - **Title:** User can open the app to sign-in and land on their role's home in a signed-in shell
 - **As a:** Owner
 - **I want:** the app to open on sign-in when I have no session, and after sign-in to open my home inside the signed-in shell with my name, role and server time available to every screen
@@ -2633,6 +2736,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S13: User can see only the routes their role may open
 
 - **Story ID:** EP-08-S13
+- **Status:** Not started
 - **Title:** User can see only the routes their role may open
 - **As a:** Staff
 - **I want:** the rail and the shell to show only the routes my role may open, and to send me to my landing route if I reach one I may not open
@@ -2657,6 +2761,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S14: User can use the account menu in place of the role switcher
 
 - **Story ID:** EP-08-S14
+- **Status:** Not started
 - **Title:** User can use the account menu in place of the role switcher
 - **As a:** Staff
 - **I want:** the rail foot and the karigar shell to show the EP-05 account menu with my name, role and "Sign out", where `RoleChip` is today, and no identity switch or pricing dev switch anywhere
@@ -2681,6 +2786,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S15: User can be returned to sign-in when the session ends or is ended
 
 - **Story ID:** EP-08-S15
+- **Status:** Not started
 - **Title:** User can be returned to sign-in when the session ends or is ended
 - **As a:** Staff
 - **I want:** the shell to clear every cached read and return me to sign-in when my session expires, or when "User deactivated or role changed" arrives for me
@@ -2705,6 +2811,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S16: User can see rail badge counts from the server update live
 
 - **Story ID:** EP-08-S16
+- **Status:** Not started
 - **Title:** User can see rail badge counts from the server update live
 - **As a:** Owner
 - **I want:** the rail to read its badge counts from the EP-07 badge-count read instead of the `railBadges` selector, and refresh them through the event-to-query map
@@ -2729,6 +2836,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S17: Developer can move a screen from `useStore()` onto the data layer by a documented pattern
 
 - **Story ID:** EP-08-S17
+- **Status:** Not started
 - **Title:** Developer can move a screen from `useStore()` onto the data layer by a documented pattern
 - **As a:** Developer
 - **I want:** one written pattern, with a worked example, for replacing a screen's `useStore()` reads and actions with queries, actions, loading, error and live updates
@@ -2752,6 +2860,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S18: Developer can move the sign-in, staff and security log screens onto the data layer
 
 - **Story ID:** EP-08-S18
+- **Status:** Not started
 - **Title:** Developer can move the sign-in, staff and security log screens onto the data layer
 - **As a:** Developer
 - **I want:** the sign-in screen (EP-04), `staff-directory` and `staff-new` (EP-05), and `security` (EP-06) to use the data layer by the EP-08-S17 pattern
@@ -2776,6 +2885,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S19: Developer can ship production builds without the in-memory store, seed, demo clock and identity switch
 
 - **Story ID:** EP-08-S19
+- **Status:** Not started
 - **Title:** Developer can ship production builds without the in-memory store, seed, demo clock and identity switch
 - **As a:** Developer
 - **I want:** production builds of `web` to leave out the `StoreProvider` state, `src/data/seed.ts`, `demoNow()` and its 30-second interval, `switchIdentity` and `RoleChip`
@@ -2821,6 +2931,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S1: System can store a file in object storage with a database record
 
 - **Story ID:** EP-09-S1
+- **Status:** Done
 - **Title:** System can store a file in object storage with a database record
 - **As a:** System
 - **I want:** every stored file to be written to a private object storage bucket under a generated storage key, with one StoredFile row in the database that describes it
@@ -2845,6 +2956,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S2: Staff can upload an image and get a file id
 
 - **Story ID:** EP-09-S2
+- **Status:** Done
 - **Title:** Staff can upload an image and get a file id
 - **As a:** Staff
 - **I want:** to upload an image through the API and get back a file id I can then attach to a piece, order copy or lead
@@ -2869,6 +2981,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S3: System can reject files that are too large or of a type not allowed
 
 - **Story ID:** EP-09-S3
+- **Status:** Done
 - **Title:** System can reject files that are too large or of a type not allowed
 - **As a:** System
 - **I want:** to refuse any upload above the size limit or whose content, read from the file bytes, is not on the allowed type list, with a sentence that names the limit
@@ -2893,6 +3006,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S4: System can make thumbnail and display-size copies of an image
 
 - **Story ID:** EP-09-S4
+- **Status:** Done
 - **Title:** System can make thumbnail and display-size copies of an image
 - **As a:** System
 - **I want:** every stored image to get a thumbnail copy and a display-size copy, with their keys, width and height on the StoredFile row, and an original that stays usable if resizing fails
@@ -2917,6 +3031,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S5: System can serve a file through a signed, expiring link
 
 - **Story ID:** EP-09-S5
+- **Status:** Done
 - **Title:** System can serve a file through a signed, expiring link
 - **As a:** System
 - **I want:** Read File link to return a signed link for one file and one size (thumbnail, display or original) that stops working after a set time
@@ -2941,6 +3056,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S6: System can check a file request against the owning entity and the caller's role
 
 - **Story ID:** EP-09-S6
+- **Status:** Done
 - **Title:** System can check a file request against the owning entity and the caller's role
 - **As a:** System
 - **I want:** every link request to find what the file is attached to (piece, order copy, job or lead) and allow it only if the caller's role may read that entity
@@ -2965,6 +3081,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S7: Staff can attach photos to a piece
 
 - **Story ID:** EP-09-S7
+- **Status:** Done
 - **Title:** Staff can attach photos to a piece
 - **As a:** Staff
 - **I want:** to attach uploaded photos to a piece in a set order, and remove one I attached by mistake
@@ -2989,6 +3106,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S8: Staff can attach reference images to an order copy
 
 - **Story ID:** EP-09-S8
+- **Status:** Done
 - **Title:** Staff can attach reference images to an order copy
 - **As a:** Staff
 - **I want:** to attach chosen images to an order copy as reference images, picking each one explicitly from the lead's files, the catalogue or a new photo
@@ -3013,6 +3131,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S9: Karigar can see only the reference images of their own jobs
 
 - **Story ID:** EP-09-S9
+- **Status:** Done
 - **Title:** Karigar can see only the reference images of their own jobs
 - **As a:** Karigar
 - **I want:** to open the reference images of the jobs issued to me on my phone
@@ -3037,6 +3156,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S10: Karigar can upload a bench photo to their own job
 
 - **Story ID:** EP-09-S10
+- **Status:** Done
 - **Title:** Karigar can upload a bench photo to their own job
 - **As a:** Karigar
 - **I want:** to take a photo of my bench work and attach it to one of my own jobs
@@ -3061,6 +3181,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S11: System can store an inbound PO attachment and link it to its lead
 
 - **Story ID:** EP-09-S11
+- **Status:** Done
 - **Title:** System can store an inbound PO attachment and link it to its lead
 - **As a:** System
 - **I want:** an internal Create Inbound file operation that the email and WhatsApp intake can call to store an attachment and link it to the lead it creates, with role PO
@@ -3085,6 +3206,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S12: System can apply the retention rule to stored files
 
 - **Story ID:** EP-09-S12
+- **Status:** Done
 - **Title:** System can apply the retention rule to stored files
 - **As a:** System
 - **I want:** an internal Run Retention operation that finds files past the keep period of their retention class and removes the original, thumbnail and display copies together, or keeps them where the rule says so
@@ -3109,6 +3231,7 @@ Role note: stories about uploading or seeing a file use Staff, Owner or Karigar.
 ## EP-09-S13: Developer can load the four bundled images as dev seed files
 
 - **Story ID:** EP-09-S13
+- **Status:** Done
 - **Title:** Developer can load the four bundled images as dev seed files
 - **As a:** Developer
 - **I want:** the dev and staging seed to store the four JPEGs in `src/assets/images/` as StoredFile rows and attach them to the seeded pieces, order copies and jobs that used them
@@ -3153,6 +3276,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S1: System can register and run scheduled and delayed jobs on the server clock
 
 - **Story ID:** EP-10-S1
+- **Status:** Done
 - **Title:** System can register and run scheduled and delayed jobs on the server clock
 - **As a:** System
 - **I want:** a scheduler that holds JobDefinition records (name, schedule, handler, max attempts) and runs each job at a set time, after a delay, or on a repeat, using the server clock
@@ -3177,6 +3301,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S2: System can record a run history for each job
 
 - **Story ID:** EP-10-S2
+- **Status:** Done
 - **Title:** System can record a run history for each job
 - **As a:** System
 - **I want:** one JobRun row per run, with job name, idempotency key, scheduled at, started at, finished at, attempts, result (ok, retrying, failed) and error text
@@ -3201,6 +3326,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S3: System can retry a failed job with backoff and mark it failed after the last attempt
 
 - **Story ID:** EP-10-S3
+- **Status:** Done
 - **Title:** System can retry a failed job with backoff and mark it failed after the last attempt
 - **As a:** System
 - **I want:** a failed run to be tried again with a longer wait each time, up to the job's max attempts, and then marked failed with its error
@@ -3225,6 +3351,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S4: System can act once per idempotency key
 
 - **Story ID:** EP-10-S4
+- **Status:** Done
 - **Title:** System can act once per idempotency key
 - **As a:** System
 - **I want:** each trigger to carry an idempotency key, such as the lead id plus "sla-breach", that is claimed inside the handler's transaction, so a second run with the same key does nothing
@@ -3249,6 +3376,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S5: System can mark a lead late when its SLA passes and emit the passed-SLA event
 
 - **Story ID:** EP-10-S5
+- **Status:** Done
 - **Title:** System can mark a lead late when its SLA passes and emit the passed-SLA event
 - **As a:** System
 - **I want:** a delayed job, scheduled when a lead arrives, that checks the lead at `arrivedAt` plus `settings.leadSlaHours` and, if it is still `needs_glance` or `opened`, sets SLA breached at and emits the passed-SLA event
@@ -3273,6 +3401,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S6: System can cancel a lead's SLA timer when staff start working it
 
 - **Story ID:** EP-10-S6
+- **Status:** Done
 - **Title:** System can cancel a lead's SLA timer when staff start working it
 - **As a:** System
 - **I want:** the lead's pending SLA job to be cancelled in the same transaction that moves the lead out of `needs_glance` or `opened`
@@ -3297,6 +3426,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S7: System can mark a karigar job overdue past its agreed date
 
 - **Story ID:** EP-10-S7
+- **Status:** Done
 - **Title:** System can mark a karigar job overdue past its agreed date
 - **As a:** System
 - **I want:** a daily job that finds karigar jobs not `handed_over` whose agreed date (`confirmedDate ?? dueDate`) is before today in Asia/Kolkata, sets overdue since, and hands one reminder per job per day to EP-11
@@ -3321,6 +3451,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S8: System can expire edit tokens after 10 minutes
 
 - **Story ID:** EP-10-S8
+- **Status:** Done
 - **Title:** System can expire edit tokens after 10 minutes
 - **As a:** System
 - **I want:** a sweep that runs every minute and sets expired at on every PieceEdit token (the owner edit code) issued more than 10 minutes ago and not yet used
@@ -3345,6 +3476,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S9: System can start the 9 am wishes run when auto-send is on
 
 - **Story ID:** EP-10-S9
+- **Status:** Done
 - **Title:** System can start the 9 am wishes run when auto-send is on
 - **As a:** System
 - **I want:** a daily job at 9 am Asia/Kolkata that reads `settings.autoSendWishes` and, when it is on, hands that day's birthday and anniversary queue to EP-33 once
@@ -3369,6 +3501,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S10: System can compute day boundaries and 9 am in Asia/Kolkata
 
 - **Story ID:** EP-10-S10
+- **Status:** Done
 - **Title:** System can compute day boundaries and 9 am in Asia/Kolkata
 - **As a:** System
 - **I want:** shared functions that give the start of the day, the date and 09:00 in Asia/Kolkata for any UTC instant, used by the overdue and wishes jobs
@@ -3393,6 +3526,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S11: System can run missed jobs after downtime
 
 - **Story ID:** EP-10-S11
+- **Status:** Done
 - **Title:** System can run missed jobs after downtime
 - **As a:** System
 - **I want:** the scheduler, on start, to run every delayed job whose due time passed while it was down, and to run each missed daily job for today only
@@ -3417,6 +3551,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S12: System can audit job-made changes with a System actor
 
 - **Story ID:** EP-10-S12
+- **Status:** Done
 - **Title:** System can audit job-made changes with a System actor
 - **As a:** System
 - **I want:** every state change made by a job handler to write an audit entry whose actor is the System actor named after the job, in the same transaction as the change
@@ -3441,6 +3576,7 @@ Role note: this is a layer A platform epic. Most stories use "System" for the sc
 ## EP-10-S13: Owner can see recent job runs and failures
 
 - **Story ID:** EP-10-S13
+- **Status:** Done
 - **Title:** Owner can see recent job runs and failures
 - **As a:** Owner
 - **I want:** to list recent job runs newest first, filter to failed ones, and retry a failed run
@@ -3485,6 +3621,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S1: System can store a notification per recipient and channel with a dedupe key
 
 - **Story ID:** EP-11-S1
+- **Status:** Not started
 - **Title:** System can store a notification per recipient and channel with a dedupe key
 - **As a:** System
 - **I want:** one Notification row per recipient per channel, with kind, group, source event name, entity type and id, template id, variables, channel, status, attempts and a dedupe key built from the source event, the recipient and the channel
@@ -3509,6 +3646,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S2: System can render a notification from a template with variables
 
 - **Story ID:** EP-11-S2
+- **Status:** Not started
 - **Title:** System can render a notification from a template with variables
 - **As a:** System
 - **I want:** a Template per notification kind, with text holding named variables (for example batch id, grams, karigar name), filled from the notification's variables, with the same content used for app, WhatsApp and email
@@ -3533,6 +3671,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S3: System can pick recipients for each consumed event by role and setting
 
 - **Story ID:** EP-11-S3
+- **Status:** Not started
 - **Title:** System can pick recipients for each consumed event by role and setting
 - **As a:** System
 - **I want:** one recipient rule per consumed event kind that picks active users by role (EP-05) and reads `settings.lateLeadAudience`, then passes each recipient to channel routing
@@ -3557,6 +3696,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S4: Owner can get notified when a parcel is stopped
 
 - **Story ID:** EP-11-S4
+- **Status:** Not started
 - **Title:** Owner can get notified when a parcel is stopped
 - **As a:** Owner
 - **I want:** a notice in the "your signature" group whenever a parcel is stopped on a mismatch or because someone raised a problem
@@ -3581,6 +3721,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S5: Owner can get notified when an edit is proposed
 
 - **Story ID:** EP-11-S5
+- **Status:** Not started
 - **Title:** Owner can get notified when an edit is proposed
 - **As a:** Owner
 - **I want:** a notice in the "your signature" group when staff propose an edit to a tag in stock, naming the piece, the field and the proposer
@@ -3605,6 +3746,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S6: Staff can get notified first about a late lead
 
 - **Story ID:** EP-11-S6
+- **Status:** Not started
 - **Title:** Staff can get notified first about a late lead
 - **As a:** Staff
 - **I want:** a notice when a lead passes its SLA while `lateLeadAudience` is `staff_then_owner`, before the owner hears about it
@@ -3629,6 +3771,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S7: System can escalate a late-lead notice to the owner after a wait
 
 - **Story ID:** EP-11-S7
+- **Status:** Not started
 - **Title:** System can escalate a late-lead notice to the owner after a wait
 - **As a:** System
 - **I want:** an EscalationTimer per late lead that, after the escalation wait, checks the lead's state and notifies the owner only if nobody has acted
@@ -3653,6 +3796,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S8: Karigar can get notified about changes and reminders on their own jobs
 
 - **Story ID:** EP-11-S8
+- **Status:** Not started
 - **Title:** Karigar can get notified about changes and reminders on their own jobs
 - **As a:** Karigar
 - **I want:** a notice when the status of one of my jobs changes from the desk side, and a reminder when my job passes its agreed date
@@ -3677,6 +3821,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S9: System can route owner notifications to the channels he enabled
 
 - **Story ID:** EP-11-S9
+- **Status:** Not started
 - **Title:** System can route owner notifications to the channels he enabled
 - **As a:** System
 - **I want:** each owner recipient to get one Notification row per channel switched on in `settings.notifyChannels` (whatsapp, app, email), read when the event is processed
@@ -3701,6 +3846,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S10: User can see an in-app notification list and mark items read
 
 - **Story ID:** EP-11-S10
+- **Status:** Not started
 - **Title:** User can see an in-app notification list and mark items read
 - **As a:** Staff (also Owner and Karigar, each seeing only their own)
 - **I want:** a list of my in-app notifications, newest first, with an unread count, that updates live and lets me mark an item read
@@ -3725,6 +3871,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S11: Owner can see notifications grouped by the kind of answer needed
 
 - **Story ID:** EP-11-S11
+- **Status:** Not started
 - **Title:** Owner can see notifications grouped by the kind of answer needed
 - **As a:** Owner
 - **I want:** my notification list split into four groups: your signature, someone stopped the line, running late, and for information
@@ -3749,6 +3896,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S12: System can send notifications by email
 
 - **Story ID:** EP-11-S12
+- **Status:** Not started
 - **Title:** System can send notifications by email
 - **As a:** System
 - **I want:** an email sender that takes each queued email Notification, renders it from its template, sends it to the recipient's email address and records sent or failed with the time, and that also sends the EP-04 account emails (activation link and password-reset link) to the address on the user record, whatever `notifyChannels` says
@@ -3775,6 +3923,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S13: System can hand WhatsApp notifications to the WhatsApp integration and record status
 
 - **Story ID:** EP-11-S13
+- **Status:** Not started
 - **Title:** System can hand WhatsApp notifications to the WhatsApp integration and record status
 - **As a:** System
 - **I want:** queued whatsapp Notification rows handed to a WhatsApp send interface with the recipient's phone, template reference and variables, and Update Delivery status called from its receipts
@@ -3799,6 +3948,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S14: System can retry failed deliveries and report final failures
 
 - **Story ID:** EP-11-S14
+- **Status:** Not started
 - **Title:** System can retry failed deliveries and report final failures
 - **As a:** System
 - **I want:** a failed WhatsApp or email send to be retried with backoff, and after the last attempt marked failed and passed to the alerting hook that EP-37 fills in
@@ -3847,6 +3997,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S1: System can connect to the WhatsApp provider with credentials from environment configuration
 
 - **Story ID:** EP-12-S1
+- **Status:** Not started
 - **Title:** System can connect to the WhatsApp provider with credentials from environment configuration
 - **As a:** System
 - **I want:** one internal WhatsApp provider interface with a real provider client that reads its account id, access token, webhook secret, verify token and sender numbers from environment variables only, chosen by the delivery mode variable in place of a development stub that shows messages in the simulated WhatsApp bubble
@@ -3871,6 +4022,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S2: Owner can register a message template and see its approval status
 
 - **Story ID:** EP-12-S2
+- **Status:** Not started
 - **Title:** Owner can register a message template and see its approval status
 - **As a:** Owner
 - **I want:** to register a WhatsApp template with a name, purpose, English body with numbered variables, and then see whether the provider has it as pending, approved or rejected
@@ -3895,6 +4047,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S3: System can send an approved template message with variables
 
 - **Story ID:** EP-12-S3
+- **Status:** Not started
 - **Title:** System can send an approved template message with variables
 - **As a:** System
 - **I want:** an internal Send Template message operation that takes a template name, a recipient (user or customer, with phone), a sender identity and variables, sends it through the provider and stores an OutboundMessage with the provider message id
@@ -3920,6 +4073,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S4: System can send a session message inside an open conversation window
 
 - **Story ID:** EP-12-S4
+- **Status:** Not started
 - **Title:** System can send a session message inside an open conversation window
 - **As a:** System
 - **I want:** an internal Send Session message operation that sends free text, without a template, to a phone whose conversation window is still open according to the latest InboundMessage's "conversation window ends at"
@@ -3943,6 +4097,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S5: System can refuse a customer message when consent is off
 
 - **Story ID:** EP-12-S5
+- **Status:** Not started
 - **Title:** System can refuse a customer message when consent is off
 - **As a:** System
 - **I want:** every template or session send to a recipient of type customer to read that customer's `optedIn` at the moment of sending and refuse the send when it is false
@@ -3966,6 +4121,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S6: System can verify and accept inbound webhook calls
 
 - **Story ID:** EP-12-S6
+- **Status:** Not started
 - **Title:** System can verify and accept inbound webhook calls
 - **As a:** System
 - **I want:** one inbound webhook endpoint that checks the provider signature on every call against the webhook secret, answers the provider's subscription check only with the configured verify token, and hands each verified message or receipt to processing
@@ -3990,6 +4146,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S7: System can store an inbound message once and hand it to lead intake
 
 - **Story ID:** EP-12-S7
+- **Status:** Not started
 - **Title:** System can store an inbound message once and hand it to lead intake
 - **As a:** System
 - **I want:** each verified inbound message stored as one InboundMessage keyed by its provider message id, with sender phone, text, received at and conversation window ends at, and then handed to the EP-29 intake interface with sender phone, text and media file ids
@@ -4015,6 +4172,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S8: System can store inbound media through file storage
 
 - **Story ID:** EP-12-S8
+- **Status:** Not started
 - **Title:** System can store inbound media through file storage
 - **As a:** System
 - **I want:** each media item on an inbound message downloaded from the provider and handed to EP-09 Create Inbound file, with the returned file id added to the InboundMessage media file ids before the handoff to lead intake
@@ -4039,6 +4197,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S9: System can record delivery, read and failure receipts
 
 - **Story ID:** EP-12-S9
+- **Status:** Not started
 - **Title:** System can record delivery, read and failure receipts
 - **As a:** System
 - **I want:** each verified receipt matched to its OutboundMessage by provider message id, moving its status forward to delivered, read or failed with the time and any failure reason, passed on to EP-11 Update Delivery status for notification messages, and readable through Read Message status
@@ -4064,6 +4223,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S10: System can switch off a customer's consent on an opt-out keyword
 
 - **Story ID:** EP-12-S10
+- **Status:** Not started
 - **Title:** System can switch off a customer's consent on an opt-out keyword
 - **As a:** System
 - **I want:** an inbound message whose whole text, trimmed and in any letter case, is a configured opt-out keyword to set the matching customer's `optedIn` to false with changed at and changed by System, and to write an audit entry
@@ -4088,6 +4248,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S11: System can keep owner edit codes and other secret values out of logs and stored messages
 
 - **Story ID:** EP-12-S11
+- **Status:** Not started
 - **Title:** System can keep owner edit codes and other secret values out of logs and stored messages
 - **As a:** System
 - **I want:** template variables marked secret (the owner edit code, also called the edit token) to be stored on OutboundMessage only as a reference to the token record, and redacted from request logs, provider client logs and error reports
@@ -4111,6 +4272,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S12: System can report failed sends for retry and alerting
 
 - **Story ID:** EP-12-S12
+- **Status:** Not started
 - **Title:** System can report failed sends for retry and alerting
 - **As a:** System
 - **I want:** a send that the provider refuses, times out on, or later reports as failed to be marked failed with its reason, reported to EP-11 so it can retry, and after the last attempt passed to the alerting hook that EP-37 fills in
@@ -4157,6 +4319,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S1: System can store shop settings with seed defaults
 
 - **Story ID:** EP-13-S1
+- **Status:** Not started
 - **Title:** System can store shop settings with seed defaults
 - **As a:** System
 - **I want:** one typed settings record for the shop, keyed by its shop ID, created with the seed defaults when the shop is created (`pricingEnabled` false, `leadSlaHours` 8, `requireEditToken` true, `notifyChannels` WhatsApp on, app on, email off, `lateLeadAudience` `staff_then_owner`, `autoSendWishes` false, `wishSendTime` 09:00, `ageingThresholdDays` empty), and a Read Settings operation that owner and staff screens and background jobs can call
@@ -4182,6 +4345,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S2: System can refuse a settings change from a role not allowed to make it
 
 - **Story ID:** EP-13-S2
+- **Status:** Not started
 - **Title:** System can refuse a settings change from a role not allowed to make it
 - **As a:** System
 - **I want:** one Update Setting operation that takes a key, a new value and the version the caller last read, checks the caller's role against the permission matrix for that key before anything else, and refuses with "Only the owner can change the shop rules." when the role is not allowed
@@ -4207,6 +4371,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S3: System can audit every settings change with old and new value
 
 - **Story ID:** EP-13-S3
+- **Status:** Not started
 - **Title:** System can audit every settings change with old and new value
 - **As a:** System
 - **I want:** every accepted Update Setting, for every key including `pricingEnabled`, to write a `setting_changed` audit entry in the same transaction, with the key, old value, new value, actor and time, and a List Setting changes operation for the owner that reads those entries
@@ -4231,6 +4396,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S4: Owner can change the lead SLA hours
 
 - **Story ID:** EP-13-S4
+- **Status:** Not started
 - **Title:** Owner can change the lead SLA hours
 - **As a:** Owner
 - **I want:** to change the number of hours after which a lead counts as late, from the "A lead is late after … hours" field in the rules panel
@@ -4255,6 +4421,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S5: Owner can set who hears about a late lead first
 
 - **Story ID:** EP-13-S5
+- **Status:** Not started
 - **Title:** Owner can set who hears about a late lead first
 - **As a:** Owner
 - **I want:** to choose "Staff first, then me" (`staff_then_owner`) or "Only me" (`owner_only`) under "Who hears about a late lead"
@@ -4278,6 +4445,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S6: Owner can switch notification channels on and off
 
 - **Story ID:** EP-13-S6
+- **Status:** Not started
 - **Title:** Owner can switch notification channels on and off
 - **As a:** Owner
 - **I want:** three switches under "How it reaches me" for WhatsApp, In the app and Email, each stored in `notifyChannels`
@@ -4301,6 +4469,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S7: Owner can switch auto-send wishes and set the send time
 
 - **Story ID:** EP-13-S7
+- **Status:** Not started
 - **Title:** Owner can switch auto-send wishes and set the send time
 - **As a:** Owner
 - **I want:** to switch "Send wishes automatically at 9 am" on or off on `wishes` and set the daily send time `wishSendTime`, with the change checked and audited on the server
@@ -4325,6 +4494,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S8: Owner can set the ageing threshold for gold sitting too long (G5)
 
 - **Story ID:** EP-13-S8
+- **Status:** Not started
 - **Title:** Owner can set the ageing threshold for gold sitting too long (G5)
 - **As a:** Owner
 - **I want:** to set `ageingThresholdDays`, the number of days a piece may sit unsold before the "GOLD SITTING TOO LONG" alert counts it
@@ -4348,6 +4518,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S9: Owner can switch the pricing flag, owner-only and audited
 
 - **Story ID:** EP-13-S9
+- **Status:** Not started
 - **Title:** Owner can switch the pricing flag, owner-only and audited
 - **As a:** Owner
 - **I want:** the "Pricing" switch, owner-level and off by default, moved from the AppShell dev switch to the settings page, with the change checked on the server and audited like every other setting
@@ -4371,6 +4542,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S10: Owner can set the edit-token rule (after G18 is answered)
 
 - **Story ID:** EP-13-S10
+- **Status:** Not started
 - **Title:** Owner can set the edit-token rule (after G18 is answered)
 - **As a:** Owner
 - **I want:** the "YOUR RULE · Code before a tag edit" switch to set `requireEditToken`, within whatever limit the G18 answer sets
@@ -4395,6 +4567,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S11: Owner can enter shop hours and holidays for the lead timer
 
 - **Story ID:** EP-13-S11
+- **Status:** Not started
 - **Title:** Owner can enter shop hours and holidays for the lead timer
 - **As a:** Owner
 - **I want:** to enter an opening and closing time for each weekday, mark a weekday closed, and add holidays with a date and label, through Read Shop hours and Update Shop hours
@@ -4420,6 +4593,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S12: Owner can create, rename and close branches (Deferred: no branches in v1, D7)
 
 - **Story ID:** EP-13-S12
+- **Status:** Deferred: no branches in v1 (D7).
 - **Title:** Owner can create, rename and close branches (Deferred: no branches in v1, D7)
 - **As a:** Owner
 - **I want:** Deferred: no branches in v1 (D7). Nothing is built for this story in v1. Was: Create Branch, Update Branch and List Branches operations over branch records
@@ -4442,6 +4616,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S13: Owner can see all settings on one settings page
 
 - **Story ID:** EP-13-S13
+- **Status:** Not started
 - **Title:** Owner can see all settings on one settings page
 - **As a:** Owner
 - **I want:** one shop settings page that loads every setting from the server and lets me change the lead timer, late-lead audience, channels, auto-send wishes and send time, ageing threshold, pricing switch, edit-token rule and, where built, shop hours, with loading, error and refusal states
@@ -4466,6 +4641,7 @@ Role note: stories where the server stores, checks, audits or pushes settings on
 ## EP-13-S14: System can push a changed setting to open screens live
 
 - **Story ID:** EP-13-S14
+- **Status:** Not started
 - **Title:** System can push a changed setting to open screens live
 - **As a:** System
 - **I want:** every accepted settings, shop-hours or holiday change to publish a "Setting changed" event after its transaction commits, carrying the key, the new value and the version, to every open owner and staff connection, and to clear any cached settings read
@@ -4515,6 +4691,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S1: System can store scales with readability and capacity as integer weights
 
 - **Story ID:** EP-14-S1
+- **Status:** Not started
 - **Title:** System can store scales with readability and capacity as integer weights
 - **As a:** System
 - **I want:** the `scales` table from EP-02-S4 extended with status (`active` or `retired`), counter key (nullable), shop ID (D7), created at, retired at and version, with readability and capacity kept as integers in units of 0.0001 g, plus a List Scales operation that returns active scales by default and all scales when asked
@@ -4540,6 +4717,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S2: System can seed the bench balance and platform scale for dev
 
 - **Story ID:** EP-14-S2
+- **Status:** Not started
 - **Title:** System can seed the bench balance and platform scale for dev
 - **As a:** System
 - **I want:** the dev and staging seed to create two active scales, "Bench balance" reading to 0.0001 g up to 600 g and "Platform scale" reading to 0.01 g up to 30 kg, with the new registry columns filled
@@ -4563,6 +4741,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S3: Owner can register a scale
 
 - **Story ID:** EP-14-S3
+- **Status:** Not started
 - **Title:** Owner can register a scale
 - **As a:** Owner
 - **I want:** to add a scale on `scales` with a name, a smallest step in grams and a heaviest load in grams, through a Create Scale operation that returns the new id
@@ -4588,6 +4767,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S4: System can refuse scale changes from anyone but the owner
 
 - **Story ID:** EP-14-S4
+- **Status:** Not started
 - **Title:** System can refuse scale changes from anyone but the owner
 - **As a:** System
 - **I want:** Create Scale, Update Scale, Update Scale status and Update Scale assignment to check the caller's role on the server before validation, and refuse every role other than owner with "Only the owner can change the scales."
@@ -4612,6 +4792,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S5: Owner can edit a scale's name, readability and capacity
 
 - **Story ID:** EP-14-S5
+- **Status:** Not started
 - **Title:** Owner can edit a scale's name, readability and capacity
 - **As a:** Owner
 - **I want:** to open a scale on `scales` and change its name, smallest step or heaviest load, saving with the version I last read
@@ -4636,6 +4817,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S6: System can apply the decided rule when a scale used by open parcels is edited
 
 - **Story ID:** EP-14-S6
+- **Status:** Not started
 - **Title:** System can apply the decided rule when a scale used by open parcels is edited
 - **As a:** System
 - **I want:** an Update Scale that changes readability to first find the open parcels (not yet released) with weighings on that scale, and then apply one decided rule: either each weighing keeps the readability it was taken with, or the edit is refused while the scale is in use
@@ -4660,6 +4842,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S7: Owner can retire a scale
 
 - **Story ID:** EP-14-S7
+- **Status:** Not started
 - **Title:** Owner can retire a scale
 - **As a:** Owner
 - **I want:** to retire a scale that is no longer used, and reactivate it if I retired it by mistake, through Update Scale status
@@ -4684,6 +4867,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S8: Owner can assign a scale to a counter
 
 - **Story ID:** EP-14-S8
+- **Status:** Not started
 - **Title:** Owner can assign a scale to a counter
 - **As a:** Owner
 - **I want:** to set which counter a scale sits at, through Update Scale assignment
@@ -4708,6 +4892,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S9: Staff can have their last scale remembered for the session
 
 - **Story ID:** EP-14-S9
+- **Status:** Not started
 - **Title:** Staff can have their last scale remembered for the session
 - **As a:** Staff
 - **I want:** the scale picker on `parcel-arrival` and `parcel-tag` to default to the scale I picked last in this session, stored on the server per user, and cleared when I sign out
@@ -4732,6 +4917,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S10: System can compute the ceiling server-side from the registry
 
 - **Story ID:** EP-14-S10
+- **Status:** Not started
 - **Title:** System can compute the ceiling server-side from the registry
 - **As a:** System
 - **I want:** one ceiling function in the shared package, `ceiling = Σ ½ × readability` over every weighing, that reads each weighing's scale from the registry, returns rows per scale with count and subtotal, the total and a plain line, and runs on the server as the authority while the client runs the same code for instant feedback
@@ -4757,6 +4943,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S11: Staff can see a warning when a weight is above the scale's capacity
 
 - **Story ID:** EP-14-S11
+- **Status:** Not started
 - **Title:** Staff can see a warning when a weight is above the scale's capacity
 - **As a:** Staff
 - **I want:** a warning beside the weight field, naming the capacity, as soon as I type a weight above the chosen scale's heaviest load, and the same warning returned by the server when the weighing is saved
@@ -4781,6 +4968,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-14-S12: System can audit every scale change
 
 - **Story ID:** EP-14-S12
+- **Status:** Not started
 - **Title:** System can audit every scale change
 - **As a:** System
 - **I want:** every committed add, edit, retire, reactivate and assignment of a scale to write an audit entry in the same transaction, with actor, time, scale id, action and before and after values
@@ -4828,6 +5016,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S1: System can store categories, styles, purities, inclusion types and specialties as lists
 
 - **Story ID:** EP-15-S1
+- **Status:** Not started
 - **Title:** System can store categories, styles, purities, inclusion types and specialties as lists
 - **As a:** System
 - **I want:** five owner-maintained list tables, `categories`, `styles`, `purities`, `inclusion_types` and `specialties`, each entry with id, name, status (`active` or `retired`), sort order, created at and version, plus a List Reference operation that returns active entries in sort order by default and all entries when asked, and references from pieces, manifest rows, order copies, lead items and karigars to these entries in place of free text
@@ -4853,6 +5042,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S2: System can seed the lists from the prototype values
 
 - **Story ID:** EP-15-S2
+- **Status:** Not started
 - **Title:** System can seed the lists from the prototype values
 - **As a:** System
 - **I want:** the dev and staging seed to fill the five lists from the prototype values and map the seeded free-text kinds, styles and purities on pieces, manifest rows, order copies and karigars to the new list entries
@@ -4878,6 +5068,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S3: Owner can add, rename, reorder and retire a list entry
 
 - **Story ID:** EP-15-S3
+- **Status:** Not started
 - **Title:** Owner can add, rename, reorder and retire a list entry
 - **As a:** Owner
 - **I want:** to add an entry to any of the five lists, rename it, move it up or down, retire it and reactivate it, through Create Reference entry and Update Reference entry, saving with the version I last read
@@ -4904,6 +5095,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S4: System can reject a stored value that is not an active list entry
 
 - **Story ID:** EP-15-S4
+- **Status:** Not started
 - **Title:** System can reject a stored value that is not an active list entry
 - **As a:** System
 - **I want:** one shared server check that every new manifest row, tag and order copy names an active category, style and purity, that keeps a retired entry valid on a record that already holds it, and that lets a lead item hold free-text style until the item is routed
@@ -4928,6 +5120,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S5: Staff can pick categories, styles and purities from server lists on every form
 
 - **Story ID:** EP-15-S5
+- **Status:** Not started
 - **Title:** Staff can pick categories, styles and purities from server lists on every form
 - **As a:** Staff
 - **I want:** one shared picker for each list, loaded through the EP-08 data layer from List Reference, that offers active entries in the owner's sort order, shows purities as "22K (916)", and stores the entry id
@@ -4952,6 +5145,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S6: System can generate the next tag number in the decided format without duplicates
 
 - **Story ID:** EP-15-S6
+- **Status:** Not started
 - **Title:** System can generate the next tag number in the decided format without duplicates
 - **As a:** System
 - **I want:** a Reserve Next tag number operation backed by one counter row that is incremented atomically, formatted by the decided pattern, and never hands the same number to two callers
@@ -4977,6 +5171,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S7: System can reject a tag number used on another piece
 
 - **Story ID:** EP-15-S7
+- **Status:** Not started
 - **Title:** System can reject a tag number used on another piece
 - **As a:** System
 - **I want:** every tag save to check the tag number, trimmed and upper-cased, against all pieces in every parcel and status, and refuse a used one with "`<tag>` is already used on another piece."
@@ -5001,6 +5196,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S8: System can check HUID format and uniqueness
 
 - **Story ID:** EP-15-S8
+- **Status:** Not started
 - **Title:** System can check HUID format and uniqueness
 - **As a:** System
 - **I want:** a Check HUID operation and the same check on every tag save, which trims and upper-cases the HUID, checks it against the stored HUID rule (6 characters, letters A to Z and digits 0 to 9), and, if HUID uniqueness is confirmed, refuses one already used on another piece
@@ -5025,6 +5221,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S9: System can record an inclusion's unit as grams or carats
 
 - **Story ID:** EP-15-S9
+- **Status:** Not started
 - **Title:** System can record an inclusion's unit as grams or carats
 - **As a:** System
 - **I want:** itemised inclusion rows on a piece, each pointing at an inclusion type, holding its weight as an integer in units of 0.0001 g and, for types recorded in carats, the carat figure stored alongside the gram figure
@@ -5049,6 +5246,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S10: Owner can keep a design master that pieces point to (G3)
 
 - **Story ID:** EP-15-S10
+- **Status:** Not started
 - **Title:** Owner can keep a design master that pieces point to (G3)
 - **As a:** Owner
 - **I want:** to create, rename and retire designs, each with a name, a category, a style, an optional maker karigar and reference images, and to set which design a piece belongs to
@@ -5074,6 +5272,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S11: Staff can see a design marked sold out when none is in stock (G3)
 
 - **Story ID:** EP-15-S11
+- **Status:** Not started
 - **Title:** Staff can see a design marked sold out when none is in stock (G3)
 - **As a:** Staff
 - **I want:** Read Design to return, per design, the count of pieces in stock, pieces billed and times asked for, and to derive "Sold out" when no piece of the design is in stock, plus a count of sold-out designs for the stock screen
@@ -5099,6 +5298,7 @@ Role note: stories where the server stores, checks, generates or audits on its o
 ## EP-15-S12: System can audit changes to reference lists
 
 - **Story ID:** EP-15-S12
+- **Status:** Not started
 - **Title:** System can audit changes to reference lists
 - **As a:** System
 - **I want:** every add, rename, reorder, retire and reactivate of a list entry, every change to the tag format or HUID rule, and every design change to write one audit entry in the same transaction, with before and after values
@@ -5146,6 +5346,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S1: System can store karigar records with code, phone, location, specialties, language and allowance
 
 - **Story ID:** EP-16-S1
+- **Status:** Not started
 - **Title:** System can store karigar records with code, phone, location, specialties, language and allowance
 - **As a:** System
 - **I want:** the `karigars` table from EP-02-S4 extended with workshop location, status (`active` or `deactivated`), deactivated at, wastage allowance as an integer in basis points, language with default `English`, open since and version, a `karigar_specialties` child table so one karigar can hold several specialties, and a counter that hands out the next `KG-NN` code
@@ -5171,6 +5372,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S2: System can refuse karigar changes from anyone but the owner
 
 - **Story ID:** EP-16-S2
+- **Status:** Not started
 - **Title:** System can refuse karigar changes from anyone but the owner
 - **As a:** System
 - **I want:** Create Karigar, Update Karigar details, Update Karigar wastage, Update Karigar status and Update Karigar account link to check the caller's role on the server before validation, and to refuse every role other than owner with "Only the owner can add a karigar or change their wastage allowance."
@@ -5196,6 +5398,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S3: Owner can add a karigar with the 0.6% to 1.2% allowance check
 
 - **Story ID:** EP-16-S3
+- **Status:** Not started
 - **Title:** Owner can add a karigar with the 0.6% to 1.2% allowance check
 - **As a:** Owner
 - **I want:** to add a karigar on `karigar-new` with name, phone, email, workshop location, one or more specialties and a wastage allowance, through a Create Karigar operation that assigns the next `KG-NN` code and returns it
@@ -5221,6 +5424,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S4: Owner can edit a karigar's details
 
 - **Story ID:** EP-16-S4
+- **Status:** Not started
 - **Title:** Owner can edit a karigar's details
 - **As a:** Owner
 - **I want:** to change a karigar's name, phone, workshop location and specialties through Update Karigar details, saving with the version I last read
@@ -5246,6 +5450,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S5: Owner can change a karigar's wastage allowance, audited
 
 - **Story ID:** EP-16-S5
+- **Status:** Not started
 - **Title:** Owner can change a karigar's wastage allowance, audited
 - **As a:** Owner
 - **I want:** a separate Update Karigar wastage operation that changes a karigar's allowance within 0.6% to 1.2% and records the old and new value, with an optional reason
@@ -5270,6 +5475,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S6: Owner can link a karigar to a karigar user account
 
 - **Story ID:** EP-16-S6
+- **Status:** Not started
 - **Title:** Owner can link a karigar to a karigar user account
 - **As a:** Owner
 - **I want:** from a karigar's record, to link it to a user with role `karigar` (or create that user from the karigar's name, phone and email, which sends the activation email), and to see on the record whether it is linked
@@ -5294,6 +5500,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S7: Owner can deactivate a karigar with no open jobs
 
 - **Story ID:** EP-16-S7
+- **Status:** Not started
 - **Title:** Owner can deactivate a karigar with no open jobs
 - **As a:** Owner
 - **I want:** to deactivate or reactivate a karigar through Update Karigar status, with the server refusing deactivation while the karigar has an open job or gold issued and not returned, and naming the jobs
@@ -5318,6 +5525,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S8: Staff can pick only active karigars on the order copy and parcel forms
 
 - **Story ID:** EP-16-S8
+- **Status:** Not started
 - **Title:** Staff can pick only active karigars on the order copy and parcel forms
 - **As a:** Staff
 - **I want:** a karigar picker on `order-copy` and `parcel-arrival` that lists only active karigars with name, code, specialties and allowance, and no phone, location or scorecard, plus a shared server check that refuses an inactive or unknown karigar on those forms
@@ -5342,6 +5550,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S9: Owner can see the karigar directory worst first
 
 - **Story ID:** EP-16-S9
+- **Status:** Not started
 - **Title:** Owner can see the karigar directory worst first
 - **As a:** Owner
 - **I want:** the `karigars` screen to list every karigar from the server, ordered by metal loss minus allowance from highest to lowest, with code, specialties, open jobs, gold with them in grams, allowance and status
@@ -5367,6 +5576,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S10: System can compute loss %, days late and last six parcel gaps from real data (G4)
 
 - **Story ID:** EP-16-S10
+- **Status:** Not started
 - **Title:** System can compute loss %, days late and last six parcel gaps from real data (G4)
 - **As a:** System
 - **I want:** a scorecard computation per karigar that derives metal loss %, days late, finished jobs and the last six parcel gold gaps from settled jobs, agreed dates and released parcels, and keeps the rating empty until its formula is decided
@@ -5392,6 +5602,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S11: Owner can see a karigar's scorecard (G4)
 
 - **Story ID:** EP-16-S11
+- **Status:** Not started
 - **Title:** Owner can see a karigar's scorecard (G4)
 - **As a:** Owner
 - **I want:** to open one karigar from `karigars` and see their measured metal loss against allowance, days late, finished jobs, last six parcel gold gaps with their average, and their job ledger, read through Read Karigar scorecard
@@ -5416,6 +5627,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S12: Karigar can see their own profile
 
 - **Story ID:** EP-16-S12
+- **Status:** Not started
 - **Title:** Karigar can see their own profile
 - **As a:** Karigar
 - **I want:** the "Me" tab on my phone to show my own name, code, phone, workshop location, specialties, wastage allowed and finished jobs, read through Read My karigar profile
@@ -5440,6 +5652,7 @@ Role note: stories where the server stores, checks, computes or audits on its ow
 ## EP-16-S13: System can audit every karigar change
 
 - **Story ID:** EP-16-S13
+- **Status:** Not started
 - **Title:** System can audit every karigar change
 - **As a:** System
 - **I want:** every add, edit, wastage change, account link, deactivation and reactivation of a karigar to write one append-only audit entry in the same transaction, with before and after values
@@ -5485,6 +5698,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S1: System can store customers with normalised phones and nullable value sockets
 
 - **Story ID:** EP-17-S1
+- **Status:** Not started
 - **Title:** System can store customers with normalised phones and nullable value sockets
 - **As a:** System
 - **I want:** the `customers` table from EP-02-S4 extended with a normalised phone, optional address, status (`active` or `erased`), created at, created by and version, a shared phone normaliser that turns any typed phone into digits with the country code, and the budget and spend columns kept nullable with no default
@@ -5510,6 +5724,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S2: System can store consent as events with time, source and recorder
 
 - **Story ID:** EP-17-S2
+- **Status:** Not started
 - **Title:** System can store consent as events with time, source and recorder
 - **As a:** System
 - **I want:** a `consent_events` table where each row is one opt-in or opt-out with its source, the user who recorded it and the server time, the customer's current consent derived from the latest event, and the existing `optedIn` column kept as a copy of that latest event, written in the same transaction
@@ -5534,6 +5749,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S3: Staff can add a customer at the counter
 
 - **Story ID:** EP-17-S3
+- **Status:** Not started
 - **Title:** Staff can add a customer at the counter
 - **As a:** Staff
 - **I want:** to add a customer on `customer-new` with name, phone, city, optional address, group, birthday, anniversary and notes, through a Create Customer operation that returns the new `CU-NNN` id
@@ -5559,6 +5775,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S4: System can warn about a duplicate phone on add and edit
 
 - **Story ID:** EP-17-S4
+- **Status:** Not started
 - **Title:** System can warn about a duplicate phone on add and edit
 - **As a:** System
 - **I want:** Create Customer and Update Customer to compare the normalised phone with every active customer, and when it matches, to return a `duplicate_phone` warning naming the existing customer instead of writing, unless the decided duplicate rule allows the save
@@ -5584,6 +5801,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S5: Staff can edit a customer's details
 
 - **Story ID:** EP-17-S5
+- **Status:** Not started
 - **Title:** Staff can edit a customer's details
 - **As a:** Staff
 - **I want:** to change a customer's name, phone, city, address, group, birthday, anniversary and notes through Update Customer, saving with the version I last read
@@ -5609,6 +5827,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S6: Staff can record a customer's WhatsApp consent
 
 - **Story ID:** EP-17-S6
+- **Status:** Not started
 - **Title:** Staff can record a customer's WhatsApp consent
 - **As a:** Staff
 - **I want:** ticking "Send wishes on WhatsApp" when adding a customer, or choosing to record consent on an existing customer, to write an `opt_in` consent event with source, my user and the server time, through Create Consent event
@@ -5633,6 +5852,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S7: Staff can record a customer's opt-out
 
 - **Story ID:** EP-17-S7
+- **Status:** Not started
 - **Title:** Staff can record a customer's opt-out
 - **As a:** Staff
 - **I want:** to record that a customer withdrew consent, through Create Consent event with kind `opt_out`, effective at once, and the WhatsApp opt-out keyword path from EP-12-S10 to write the same event with source `whatsapp_reply` and recorder System
@@ -5657,6 +5877,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S8: Staff can search and filter the customer directory
 
 - **Story ID:** EP-17-S8
+- **Status:** Not started
 - **Title:** Staff can search and filter the customer directory
 - **As a:** Staff
 - **I want:** the `customers` screen to load customers from the server through List Customers, search by name, phone (spaces ignored) or city, filter by group, and page through long results
@@ -5682,6 +5903,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S9: Staff can see a customer's piece history by tag and grams
 
 - **Story ID:** EP-17-S9
+- **Status:** Not started
 - **Title:** Staff can see a customer's piece history by tag and grams
 - **As a:** Staff
 - **I want:** to open a customer from `customers` and see, through Read Customer, their details, current consent and the pieces they have taken home, each with piece name, tag, pure gold grams and date, newest first, with the count and total grams taken home
@@ -5706,6 +5928,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S10: System can match a phone to a known customer for leads and POs (G7)
 
 - **Story ID:** EP-17-S10
+- **Status:** Not started
 - **Title:** System can match a phone to a known customer for leads and POs (G7)
 - **As a:** System
 - **I want:** a Find Customer by phone operation that normalises a given phone and returns the one active customer who holds it (id, name, city, group), or none, callable from the lead form, the PO intake and server code
@@ -5731,6 +5954,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S11: System can keep budget and spend dark behind the pricing switch
 
 - **Story ID:** EP-17-S11
+- **Status:** Not started
 - **Title:** System can keep budget and spend dark behind the pricing switch
 - **As a:** System
 - **I want:** the customer service to refuse any write to `budgetINR` or `spentINR`, the customer responses to carry them only as null, and every screen to render them only through `ValueSlot`, which draws nothing while the pricing flag is off
@@ -5755,6 +5979,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S12: System can refuse every customer operation from a karigar
 
 - **Story ID:** EP-17-S12
+- **Status:** Not started
 - **Title:** System can refuse every customer operation from a karigar
 - **As a:** System
 - **I want:** Create Customer, Update Customer, List Customers, Read Customer, Find Customer by phone, Create Consent event and Erase Customer personal data to refuse a karigar caller with `forbidden` before any read or validation
@@ -5779,6 +6004,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S13: Owner can carry out an approved deletion request on a customer
 
 - **Story ID:** EP-17-S13
+- **Status:** Not started
 - **Title:** Owner can carry out an approved deletion request on a customer
 - **As a:** Owner
 - **I want:** an Erase Customer personal data operation that, for an approved deletion request, clears the customer's name, phone, address, birthday and anniversary, sets status `erased`, and keeps their piece history by tag, grams and date without the personal fields
@@ -5804,6 +6030,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S14: System can audit customer changes without copying erased values
 
 - **Story ID:** EP-17-S14
+- **Status:** Not started
 - **Title:** System can audit customer changes without copying erased values
 - **As a:** System
 - **I want:** every add, edit, consent change and erase of a customer to write one append-only audit entry in the same transaction, with before and after for changed fields, and the erase entry to name the erased fields without their values
@@ -5852,6 +6079,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S1: System can store pool entries and a balance as integer weights
 
 - **Story ID:** EP-18-S1
+- **Status:** Not started
 - **Title:** System can store pool entries and a balance as integer weights
 - **As a:** System
 - **I want:** the `metal_pools` and `pool_entries` tables from EP-02-S9 extended so each entry has a kind from `opening`, `issued`, `returned`, `recovered` and `adjustment`, a signed integer delta in units of 0.0001 g, a note, a reference type and id, an actor and a server time, with one shared posting function that inserts an entry and moves the balance in the caller's transaction
@@ -5877,6 +6105,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S2: Owner can record the opening balance
 
 - **Story ID:** EP-18-S2
+- **Status:** Not started
 - **Title:** Owner can record the opening balance
 - **As a:** Owner
 - **I want:** to record the pool's opening balance once, in grams to 4 decimals with a note, through Create Opening entry
@@ -5901,6 +6130,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S3: System can post an issue entry inside job creation
 
 - **Story ID:** EP-18-S3
+- **Status:** Not started
 - **Title:** System can post an issue entry inside job creation
 - **As a:** System
 - **I want:** a Post Issue function that the job-creation operation of EP-19 calls inside its own transaction, which posts an `issued` entry with a negative delta equal to the gold handed over and the job id as its reference
@@ -5925,6 +6155,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S4: System can refuse an issue above the balance
 
 - **Story ID:** EP-18-S4
+- **Status:** Not started
 - **Title:** System can refuse an issue above the balance
 - **As a:** System
 - **I want:** Post Issue to refuse an amount larger than the current balance with "The metal pool does not have that much gold to issue.", and to refuse a negative or zero amount, so that the job creation that called it fails and changes nothing
@@ -5949,6 +6180,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S5: System can stop two issues overdrawing the pool
 
 - **Story ID:** EP-18-S5
+- **Status:** Not started
 - **Title:** System can stop two issues overdrawing the pool
 - **As a:** System
 - **I want:** every posting that lowers the balance to take a row lock on the pool row, or to update it with a version check, before reading the balance, so that two postings at the same moment are applied one after the other
@@ -5973,6 +6205,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S6: System can post a recovery entry inside a scrap decision
 
 - **Story ID:** EP-18-S6
+- **Status:** Not started
 - **Title:** System can post a recovery entry inside a scrap decision
 - **As a:** System
 - **I want:** a Post Recovery function that the scrap decision of EP-27 calls inside its own transaction, which posts a `recovered` entry equal to the piece's net gold with the piece id as its reference
@@ -5997,6 +6230,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S7: Owner can record gold returned by a karigar
 
 - **Story ID:** EP-18-S7
+- **Status:** Not started
 - **Title:** Owner can record gold returned by a karigar
 - **As a:** Owner
 - **I want:** to record unused gold a karigar hands back, in grams to 4 decimals, linked to the job it was issued for, through Create Return entry
@@ -6021,6 +6255,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S8: Owner can post an adjustment with a reason
 
 - **Story ID:** EP-18-S8
+- **Status:** Not started
 - **Title:** Owner can post an adjustment with a reason
 - **As a:** Owner
 - **I want:** to post a signed adjustment in grams to 4 decimals with a reason of at least 3 characters, through Create Adjustment entry
@@ -6045,6 +6280,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S9: Owner can see the ledger with filters
 
 - **Story ID:** EP-18-S9
+- **Status:** Not started
 - **Title:** Owner can see the ledger with filters
 - **As a:** Owner
 - **I want:** to list pool entries newest first, 50 per page, through List Pool entries, filtered by kind, job, piece and date range, each row showing time, kind, signed grams, reference, actor and note
@@ -6069,6 +6305,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S10: Staff can see the pool balance on the order copy screen
 
 - **Story ID:** EP-18-S10
+- **Status:** Not started
 - **Title:** Staff can see the pool balance on the order copy screen
 - **As a:** Staff
 - **I want:** to read the current pool balance through Read Pool balance and see it next to "Pure gold issued to …" on `order-copy`, with an early warning when the gold I enter is more than the balance
@@ -6093,6 +6330,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S11: Owner can see gold with each karigar and a custody summary
 
 - **Story ID:** EP-18-S11
+- **Status:** Not started
 - **Title:** Owner can see gold with each karigar and a custody summary
 - **As a:** Owner
 - **I want:** a Read Custody summary operation that returns the gold in the pool, with each karigar on open jobs (issued less returned), in parcels not yet released, in stock and gone, and a Read Gold with karigar operation that the owner can call for any karigar and a karigar can call only for themselves
@@ -6117,6 +6355,7 @@ Role note: stories where the server posts, refuses, locks or pushes on its own u
 ## EP-18-S12: System can push the balance live after a change
 
 - **Story ID:** EP-18-S12
+- **Status:** Not started
 - **Title:** System can push the balance live after a change
 - **As a:** System
 - **I want:** to emit "Metal pool changed" after every committed pool entry, carrying the new balance, the pool version and the entry kind, to owner and staff connections only
@@ -6164,6 +6403,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S1: System can store order copies, jobs and settlements with integer weights
 
 - **Story ID:** EP-19-S1
+- **Status:** Not started
 - **Title:** System can store order copies, jobs and settlements with integer weights
 - **As a:** System
 - **I want:** the `order_copies` and `karigar_jobs` tables from EP-02-S8 extended with the fields this epic needs, and a new `job_settlements` table, with every weight an integer in units of 0.0001 g
@@ -6188,6 +6428,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S2: System can issue gold and create a job in one transaction
 
 - **Story ID:** EP-19-S2
+- **Status:** Not started
 - **Title:** System can issue gold and create a job in one transaction
 - **As a:** System
 - **I want:** one Create Order copy and job operation that, inside a single transaction, checks the inputs, takes the EP-18 pool lock, creates the order copy and a job in `sent`, posts the `issued` pool entry through EP-18-S3 and writes the audit entry
@@ -6212,6 +6453,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S3: Staff can build an order copy without a lead
 
 - **Story ID:** EP-19-S3
+- **Status:** Not started
 - **Title:** Staff can build an order copy without a lead
 - **As a:** Staff
 - **I want:** to open `order-copy` with no lead and fill in reference images, the brief, how many, purity, "Finished piece should weigh", the gold inside after stones, and "Allowed to be off by", then press "Send the order copy"
@@ -6236,6 +6478,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S4: Staff can pick a karigar and due date with suggested gold shown
 
 - **Story ID:** EP-19-S4
+- **Status:** Not started
 - **Title:** Staff can pick a karigar and due date with suggested gold shown
 - **As a:** Staff
 - **I want:** to pick "Who makes it" from active karigars, set the "Due date", and see a suggested gold figure (target plus the karigar's allowance) under "Pure gold issued to …" as a hint, while I type the issued figure myself
@@ -6260,6 +6503,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S5: Karigar can receive the sent job
 
 - **Story ID:** EP-19-S5
+- **Status:** Not started
 - **Title:** Karigar can receive the sent job
 - **As a:** Karigar
 - **I want:** a job sent to me to appear in my job list and be readable with its reference images, brief, quantity, purity, targets, tolerance and due date, with a notice that it has arrived
@@ -6284,6 +6528,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S6: System can enforce the job state order and the stopped guard
 
 - **Story ID:** EP-19-S6
+- **Status:** Not started
 - **Title:** System can enforce the job state order and the stopped guard
 - **As a:** System
 - **I want:** Update Job state operations for accept (with a confirmed date), start, mark ready and hand over that allow only `sent` → `accepted` → `on_bench` → `ready` → `handed_over`, refuse any move on a stopped job, and use a version check
@@ -6308,6 +6553,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S7: System can push job status changes live
 
 - **Story ID:** EP-19-S7
+- **Status:** Not started
 - **Title:** System can push job status changes live
 - **As a:** System
 - **I want:** to emit "Karigar job status changed" after every committed send, transition, cancel or stop flag change, carrying job id, karigar id, new status, stopped flag and version, to owner and staff connections and to the job's own karigar only
@@ -6332,6 +6578,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S8: Staff can see the job tracker with an overdue lane
 
 - **Story ID:** EP-19-S8
+- **Status:** Not started
 - **Title:** Staff can see the job tracker with an overdue lane
 - **As a:** Staff
 - **I want:** a tracker board that lists open jobs in lanes Sent, Accepted, On the bench and Ready, plus an Overdue lane, each card showing job number, title, karigar, quantity, agreed date and days over, with a filter by karigar
@@ -6356,6 +6603,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S9: System can flag overdue jobs and remind the karigar
 
 - **Story ID:** EP-19-S9
+- **Status:** Not started
 - **Title:** System can flag overdue jobs and remind the karigar
 - **As a:** System
 - **I want:** the EP-10-S7 overdue job to run against the real `karigar_jobs` table, every job read to return its agreed date and days over, and each overdue job to hand one reminder per day to the karigar through EP-11-S8
@@ -6380,6 +6628,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S10: Owner can see overdue jobs on Decisions
 
 - **Story ID:** EP-19-S10
+- **Status:** Not started
 - **Title:** Owner can see overdue jobs on Decisions
 - **As a:** Owner
 - **I want:** a Read Overdue jobs summary that returns the count of jobs past their agreed date and, per job, the karigar, days over and whether a reminder was sent, shown on `decisions` under "RUNNING LATE" with "See tracker"
@@ -6404,6 +6653,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S11: Staff can cancel a job and return the gold
 
 - **Story ID:** EP-19-S11
+- **Status:** Not started
 - **Title:** Staff can cancel a job and return the gold
 - **As a:** Staff
 - **I want:** to cancel a job that is not handed over, with a reason, so that it closes and its gold goes back to the pool in one `returned` entry through EP-18
@@ -6428,6 +6678,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S12: System can settle a job when its parcel is released (G23)
 
 - **Story ID:** EP-19-S12
+- **Status:** Not started
 - **Title:** System can settle a job when its parcel is released (G23)
 - **As a:** System
 - **I want:** a Settle Job function that the parcel release of EP-23 calls inside its own transaction, which records gold issued, net returned, the allowance in force, the allowed loss and the loss, sets `settledAt`, and flags a loss above the allowance
@@ -6452,6 +6703,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S13: Staff can start an order copy from a sold-out design (G3)
 
 - **Story ID:** EP-19-S13
+- **Status:** Not started
 - **Title:** Staff can start an order copy from a sold-out design (G3)
 - **As a:** Staff
 - **I want:** "Order another from Vijay" on a sold-out design to open `order-copy` as a draft with the design, its category and style, and the named karigar filled in, and every weight empty
@@ -6476,6 +6728,7 @@ Role note: stories where the server creates, refuses, derives, schedules or push
 ## EP-19-S14: System can audit order copy and job changes
 
 - **Story ID:** EP-19-S14
+- **Status:** Not started
 - **Title:** System can audit order copy and job changes
 - **As a:** System
 - **I want:** every write on order copies and jobs to write one audit entry in its own transaction, with fixed action names `order_copy_sent`, `job_accepted`, `job_started`, `job_ready`, `job_handed_over`, `job_cancelled`, `job_overdue` and `job_settled`, and a test that fails if any job write has none
@@ -6523,6 +6776,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S1: System can limit every karigar read to the signed-in karigar's jobs
 
 - **Story ID:** EP-20-S1
+- **Status:** Not started
 - **Title:** System can limit every karigar read to the signed-in karigar's jobs
 - **As a:** System
 - **I want:** every karigar-callable operation in this epic (List My jobs, Read My job, the state changes, Create Hand-over, Create Job media, Update Job note, Read Gold with me, Create Raised problem) to filter by the karigar record linked to the session user, and to return a fixed allow-list of fields
@@ -6547,6 +6801,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S2: Karigar can sign in on the phone
 
 - **Story ID:** EP-20-S2
+- **Status:** Not started
 - **Title:** Karigar can sign in on the phone
 - **As a:** Karigar
 - **I want:** to sign in on my phone with the method EP-04 provides, land on "My jobs" (`k-jobs`), stay signed in at the bench, and be signed out at once if the owner deactivates me
@@ -6571,6 +6826,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S3: Karigar can see their own jobs
 
 - **Story ID:** EP-20-S3
+- **Status:** Not started
 - **Title:** Karigar can see their own jobs
 - **As a:** Karigar
 - **I want:** the Jobs tab to list my open jobs with title, pieces, purity, style, due label and reference image, and a job sheet with "What it should look like", "Finished piece must weigh", "Gold inside it, after stones", "Allowed to be off by" and "Note from the desk"
@@ -6595,6 +6851,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S4: Karigar can accept a job and confirm a date
 
 - **Story ID:** EP-20-S4
+- **Status:** Not started
 - **Title:** Karigar can accept a job and confirm a date
 - **As a:** Karigar
 - **I want:** on a job in `sent`, a "Will you make this?" box with "I will deliver by" and "Accept this job", which accepts the job and makes my date the agreed date
@@ -6619,6 +6876,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S5: Karigar can mark a job worked on and ready
 
 - **Story ID:** EP-20-S5
+- **Status:** Not started
 - **Title:** Karigar can mark a job worked on and ready
 - **As a:** Karigar
 - **I want:** under "Where is it now?", to tap "Working on it" and later "Ready for checking", one step at a time, with an optional note in "Anything to tell the desk?"
@@ -6643,6 +6901,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S6: Karigar can hand over a ready job and create the parcel
 
 - **Story ID:** EP-20-S6
+- **Status:** Not started
 - **Title:** Karigar can hand over a ready job and create the parcel
 - **As a:** Karigar
 - **I want:** on a `ready` job, to tap "Sent to the showroom", which marks the job handed over and creates the arriving parcel in the same transaction
@@ -6667,6 +6926,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S7: Karigar can hand over again after a send-back
 
 - **Story ID:** EP-20-S7
+- **Status:** Not started
 - **Title:** Karigar can hand over again after a send-back
 - **As a:** Karigar
 - **I want:** when the owner has sent my parcel back and the job is on my bench again, to tap "Sent to the showroom" and have the same parcel reset to weighing, with its weighings, QC ticks and draft tags cleared
@@ -6691,6 +6951,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S8: Karigar can raise a problem on a job
 
 - **Story ID:** EP-20-S8
+- **Status:** Not started
 - **Title:** Karigar can raise a problem on a job
 - **As a:** Karigar
 - **I want:** a "Raise a problem" button on my open job that asks "What is wrong" and stops the job until the owner starts it again
@@ -6715,6 +6976,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 ## EP-20-S9: Karigar can see gold with me
 
 - **Story ID:** EP-20-S9
+- **Status:** Not started
 - **Title:** Karigar can see gold with me
 - **As a:** Karigar
 - **I want:** a "GOLD WITH ME" figure on my phone, with the number of jobs it covers, my wastage allowance and the line "You may be off by 500 mg either way", and a Gold tab that lists the gold per open job
@@ -6741,6 +7003,7 @@ Role note: stories where the server filters, creates, replays or pushes on its o
 Split note: EP-20-S10 was split into S10a and S10b because the photo and typed note use existing EP-09 storage and can ship with the core flow, while the spoken note depends on the open gap G16 and brings its own storage and recognition cost (epic section 16).
 
 - **Story ID:** EP-20-S10a
+- **Status:** Not started
 - **Title:** Karigar can add a photo and a note (part 1: bench photo and typed note)
 - **As a:** Karigar
 - **I want:** "Add a photo (optional)" with "Take a photo of the bench", and a typed note in "Anything to tell the desk?", sent with "Send the update"
@@ -6767,6 +7030,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 Split note: EP-20-S10 was split into S10a and S10b because the photo and typed note use existing EP-09 storage and can ship with the core flow, while the spoken note depends on the open gap G16 and brings its own storage and recognition cost (epic section 16).
 
 - **Story ID:** EP-20-S10b
+- **Status:** Not started
 - **Title:** Karigar can add a photo and a note (part 2: spoken note, G16)
 - **As a:** Karigar
 - **I want:** the "Type or speak" control on "Anything to tell the desk?" to let me record a short spoken note and send it with the update
@@ -6790,6 +7054,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 ## EP-20-S11: Karigar can receive a new job live
 
 - **Story ID:** EP-20-S11
+- **Status:** Not started
 - **Title:** Karigar can receive a new job live
 - **As a:** Karigar
 - **I want:** a job the desk sends me to appear at the top of "My jobs" while the phone is open, and a late job to show as late, without refreshing
@@ -6816,6 +7081,7 @@ Split note: EP-20-S10 was split into S10a and S10b because the photo and typed n
 Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only, so v1 has no offline cache, no service worker and no opening the app with no signal. Owner decision D5 is that the karigar app is a React web app opened in the phone browser. Installing it to the home screen is not decided (epic section 17). The story ID, title and history are kept so the story graph stays valid. What is deferred: the web app manifest and icons, the service worker that cached the app shell and the karigar's own reads, and the cached "last updated" view of jobs. The connection-lost state of EP-08-S11 stays in v1.
 
 - **Story ID:** EP-20-S12a
+- **Status:** Deferred: v1 is online only, no offline cache or queue (D6).
 - **Title:** Karigar can install the app and use it offline with a sync queue (part 1: install and open from cache) (Deferred: v1 is online only, D6)
 - **As a:** Karigar
 - **I want:** Deferred: no home-screen install and no use of cached jobs with no signal in v1; the app is a React web app used online in the phone browser (D5, D6)
@@ -6838,6 +7104,7 @@ Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026
 Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026) is that karigars use the app online only. There is no offline queue, no on-device queue of updates, no "Sync Queued updates" operation and no replay of queued updates. The story ID, title and history are kept so the story graph stays valid, and its dependency on EP-20-S12a is kept (deferred too). What is deferred: the Sync Queued updates operation, the on-device queue (JobUpdate), idempotent replay in client order, and the refusal handling after sync (the old D6 side question). In v1 a karigar update is sent when it is tapped. With no signal the EP-08-S11 state shows and the buttons are disabled with a reason.
 
 - **Story ID:** EP-20-S12b
+- **Status:** Deferred: v1 is online only, no offline cache or queue (D6).
 - **Title:** Karigar can install the app and use it offline with a sync queue (part 2: offline queue and sync) (Deferred: v1 is online only, D6)
 - **As a:** Karigar
 - **I want:** Deferred: no offline queue in v1; each update is sent when I tap it, and with no signal the buttons are disabled with a reason (D6)
@@ -6858,6 +7125,7 @@ Deferred: this story is out of scope for v1. Owner decision D6 (22 November 2026
 ## EP-20-S13: Karigar can hand over several jobs at once (G14)
 
 - **Story ID:** EP-20-S13
+- **Status:** Not started
 - **Title:** Karigar can hand over several jobs at once (G14)
 - **As a:** Karigar
 - **I want:** to pick several of my `ready` jobs and send them to the showroom in one hand-over that creates one arriving parcel
@@ -6903,6 +7171,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S1: System can store parcels, weighings, manifests, pieces and checks as integer weights
 
 - **Story ID:** EP-21-S1
+- **Status:** Not started
 - **Title:** System can store parcels, weighings, manifests, pieces and checks as integer weights
 - **As a:** System
 - **I want:** the intake fields this epic needs on top of the EP-02 tables: a three-part quality check per piece (scale agrees, hallmark, deductions, by, at), the tray weighing a piece was weighed in, the scale and tagger on each piece, and the tag-return fields, with every weight stored as an integer in units of 0.0001 g
@@ -6928,6 +7197,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S2: Staff can record a parcel's arrival with scale and manifest
 
 - **Story ID:** EP-21-S2
+- **Status:** Not started
 - **Title:** Staff can record a parcel's arrival with scale and manifest
 - **As a:** Staff
 - **I want:** on `parcel-arrival`, to pick "Which scale is this on?", type "Everything on the scale together" and "Of that, the stones, pearls, lac — anything not gold", see "SO THE PURE GOLD IN THIS PARCEL IS", list the kinds and counts inside, and press "Open the parcel for tagging"
@@ -6952,6 +7222,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S3: Staff can weigh a parcel in trays
 
 - **Story ID:** EP-21-S3
+- **Status:** Not started
 - **Title:** Staff can weigh a parcel in trays
 - **As a:** Staff
 - **I want:** on `parcel-arrival`, to choose "Weigh it in trays", enter each tray as its own weighing with "Which scale is this tray on?", gross and stones, add or remove trays before tagging, and see the trays summed
@@ -6976,6 +7247,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S4: Staff can receive a parcel with no job
 
 - **Story ID:** EP-21-S4
+- **Status:** Not started
 - **Title:** Staff can receive a parcel with no job
 - **As a:** Staff
 - **I want:** to start `parcel-arrival` without a hand-over, pick the karigar it came from and type a PO reference such as PO-2026-915, then weigh and list it as usual
@@ -7000,6 +7272,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S5: System can enforce the tagging rules on the server
 
 - **Story ID:** EP-21-S5
+- **Status:** Not started
 - **Title:** System can enforce the tagging rules on the server
 - **As a:** System
 - **I want:** every Create Tag and Update Tag to check, inside one transaction, that the parcel is weighed and not stopped or released, the tag number is free, the stones are not above the gross, the scale is registered, and the kind is on the manifest with room left
@@ -7024,6 +7297,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S6: Staff can tag one item with nothing pre-filled
 
 - **Story ID:** EP-21-S6
+- **Status:** Not started
 - **Title:** Staff can tag one item with nothing pre-filled
 - **As a:** Staff
 - **I want:** "Tag item 8 of 12" on `parcel-tag` with "Kind of item" picked from the manifest, a suggested "New tag number" and HUID, name, purity, size, collection, style, stone count, the tray, and the weights "On the scale now" and "Stones, kemp, lac on this piece" typed fresh, then "Save tag · go to item 9" or "Save and stop here"
@@ -7048,6 +7322,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S7: Staff can attach photos to a tag
 
 - **Story ID:** EP-21-S7
+- **Status:** Not started
 - **Title:** Staff can attach photos to a tag
 - **As a:** Staff
 - **I want:** the "Photo" box and "Add more angles" on `parcel-tag` to upload pictures taken at the bench through file storage and keep them on the piece in order
@@ -7072,6 +7347,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S8: Staff can run the three quality checks
 
 - **Story ID:** EP-21-S8
+- **Status:** Not started
 - **Title:** Staff can run the three quality checks
 - **As a:** Staff
 - **I want:** on `parcel-qc`, for each tagged piece, to answer "Does the scale agree?" by typing "You re-weigh", "Is the hallmark on the piece?" and "Do the deductions look honest?", then press "Checked — on to piece 5"
@@ -7096,6 +7372,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S9: Staff can send a tag back for re-tag
 
 - **Story ID:** EP-21-S9
+- **Status:** Not started
 - **Title:** Staff can send a tag back for re-tag
 - **As a:** Staff
 - **I want:** "Send this tag back to Deepak" on `parcel-qc`, with an optional reason, which marks the piece for re-tag by the person who tagged it, clears its check and opens it on `parcel-tag` for whoever picks it up
@@ -7120,6 +7397,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S10: Staff can see the parcels-in list with stage
 
 - **Story ID:** EP-21-S10
+- **Status:** Not started
 - **Title:** Staff can see the parcels-in list with stage
 - **As a:** Staff
 - **I want:** the "Parcels in" screen (`parcels`) to list open and stopped parcels with karigar, job or PO reference, arrival age, stage (weigh, tag, match), "N of M tagged" and the next action "Weigh it", "Keep tagging", "Match and release" or "Open"
@@ -7144,6 +7422,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S11: Staff can see another staff member's saved tag live
 
 - **Story ID:** EP-21-S11
+- **Status:** Not started
 - **Title:** Staff can see another staff member's saved tag live
 - **As a:** Staff
 - **I want:** when another staff member saves a tag on the parcel I am tagging, my progress, "STILL TO TAG" list and suggested next item to update within about a second
@@ -7168,6 +7447,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S12: Staff can see who else has an item open
 
 - **Story ID:** EP-21-S12
+- **Status:** Not started
 - **Title:** Staff can see who else has an item open
 - **As a:** Staff
 - **I want:** the tag form to show the names of other staff who have the same item open, for example "Deepak Rao is also on item 8", and the parcel panel to show who is tagging it
@@ -7192,6 +7472,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S13: System can freeze tagging when a parcel stops
 
 - **Story ID:** EP-21-S13
+- **Status:** Not started
 - **Title:** System can freeze tagging when a parcel stops
 - **As a:** System
 - **I want:** to refuse new tags, re-tags, checks and send-backs on a stopped parcel, except a re-tag of the one piece the owner asked to re-check, and to freeze the open tag and check forms live when the parcel stops
@@ -7216,6 +7497,7 @@ Role note: stories where the server checks, locks, pushes or records on its own 
 ## EP-21-S14: System can audit arrival, tags and checks
 
 - **Story ID:** EP-21-S14
+- **Status:** Not started
 - **Title:** System can audit arrival, tags and checks
 - **As a:** System
 - **I want:** every arrival, added weighing, parcel created without a job, tag save, re-tag, re-check, photo change, quality check and send-back to write one audit entry in the same transaction, with before and after values and weights in integer units
@@ -7263,6 +7545,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S1: System can store pieces with state, version and integer weights
 
 - **Story ID:** EP-22-S1
+- **Status:** Not started
 - **Title:** System can store pieces with state, version and integer weights
 - **As a:** System
 - **I want:** the piece lifecycle fields on top of the EP-02 and EP-21 piece table: `status` limited to the six states, `prevStatus`, `inStockAt`, `soldAt`, `stockOutId`, `version`, gross and stone weights as integers in units of 0.0001 g, the nullable value socket, and a `piece_state_transitions` table, with no held-for or hold-expiry field
@@ -7288,6 +7571,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S2: System can enforce the six-state transition table
 
 - **Story ID:** EP-22-S2
+- **Status:** Not started
 - **Title:** System can enforce the six-state transition table
 - **As a:** System
 - **I want:** one server module, Update Piece state, that holds the transition table, locks or version-checks the piece, refuses any change not in the table, sets the state fields, writes the transition row and publishes events after commit, and that every other epic calls instead of setting `status` itself
@@ -7312,6 +7596,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S3: Staff can see the in-stock list with counts
 
 - **Story ID:** EP-22-S3
+- **Status:** Not started
 - **Title:** Staff can see the in-stock list with counts
 - **As a:** Staff
 - **I want:** the "Showroom stock" screen (`stock`) to load piece cards from the server with name, tag, purity, style, "Pure gold", "Gross · stones" and a state word, the chips "Can sell", "With QC", "Sold out" and "Billed" with counts, and "Newest first" order
@@ -7336,6 +7621,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S4: Staff can search stock by tag, HUID, name or collection
 
 - **Story ID:** EP-22-S4
+- **Status:** Not started
 - **Title:** Staff can search stock by tag, HUID, name or collection
 - **As a:** Staff
 - **I want:** to type in "Search tag, HUID, name or collection" on `stock` and get matching pieces from the server within the selected chip
@@ -7360,6 +7646,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S5: Staff can open a piece and see its facts and history
 
 - **Story ID:** EP-22-S5
+- **Status:** Not started
 - **Title:** Staff can open a piece and see its facts and history
 - **As a:** Staff
 - **I want:** to open a card into the piece drawer and see "PURE GOLD IN THIS PIECE" as the lead figure, the gross and stones line, "THE FACTS" (Tag, BIS hallmark, Made by, Came in with, Days in stock, Reordered before), "Weight breakdown", "Edit history", "Description and photos" and the state history, all read from the server
@@ -7384,6 +7671,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S6: System can refuse a second sale of the same piece with "already taken"
 
 - **Story ID:** EP-22-S6
+- **Status:** Not started
 - **Title:** System can refuse a second sale of the same piece with "already taken"
 - **As a:** System
 - **I want:** the `in_stock` to `billed` transition to lock the piece row or check its version, let exactly one sale win, refuse every other with an "already taken" sentence, and publish "Piece billed by one staff member" after the winner commits
@@ -7408,6 +7696,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S7: Staff can see a piece disappear live when billed elsewhere
 
 - **Story ID:** EP-22-S7
+- **Status:** Not started
 - **Title:** Staff can see a piece disappear live when billed elsewhere
 - **As a:** Staff
 - **I want:** a piece billed or scrapped by someone else to leave my "Can sell" list, search results and counts within about a second, and an open drawer for it to show it is gone
@@ -7432,6 +7721,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S8: System can freeze stopped and billed pieces
 
 - **Story ID:** EP-22-S8
+- **Status:** Not started
 - **Title:** System can freeze stopped and billed pieces
 - **As a:** System
 - **I want:** to refuse any sale of a `stopped` piece, any state or weight change to a `billed` piece, and any weight change to a `stopped` piece, and to show both as frozen on open stock screens when the state changes
@@ -7456,6 +7746,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S9: Staff can see sold-out designs with a reorder pointer (G3)
 
 - **Story ID:** EP-22-S9
+- **Status:** Not started
 - **Title:** Staff can see sold-out designs with a reorder pointer (G3)
 - **As a:** Staff
 - **I want:** the "Sold out" chip on `stock` to list designs with no piece in stock, each card showing the design name, last tag, purity and style, "Asked for N times since <month>" and "Order another from <karigar>"
@@ -7480,6 +7771,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S10: Owner can see pure gold on the floor
 
 - **Story ID:** EP-22-S10
+- **Status:** Not started
 - **Title:** Owner can see pure gold on the floor
 - **As a:** Owner
 - **I want:** a Stock totals read that returns the count of `in_stock` pieces and the sum of their pure gold, shown in the `stock` header as "42 pieces you can sell · 1,847.2000 g pure gold on the floor" and available to the Decisions home
@@ -7504,6 +7796,7 @@ Role note: stories where the server stores, checks, locks or pushes on its own u
 ## EP-22-S11: System can audit every state transition
 
 - **Story ID:** EP-22-S11
+- **Status:** Not started
 - **Title:** System can audit every state transition
 - **As a:** System
 - **I want:** every accepted call to Update Piece state to write one `piece_state_changed` audit entry and one `piece_state_transitions` row in the same transaction, with actor, time, from and to states, reason and the calling operation
@@ -7548,6 +7841,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S1: System can compute the scale ceiling from the registry on the server
 
 - **Story ID:** EP-23-S1
+- **Status:** Not started
 - **Title:** System can compute the scale ceiling from the registry on the server
 - **As a:** System
 - **I want:** to collect every weighing of a parcel (each parcel or tray weighing from EP-21 and each piece weighing on a tag), take the readability of the scale recorded on each one, pass them to the EP-14-S10 ceiling function, and keep the exact ceiling and its plain line on the parcel's verdict snapshot
@@ -7572,6 +7866,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S2: System can compute gaps and a verdict for a parcel
 
 - **Story ID:** EP-23-S2
+- **Status:** Not started
 - **Title:** System can compute gaps and a verdict for a parcel
 - **As a:** System
 - **I want:** one shared function, Evaluate Parcel, that the server runs as the authority after every weighing or tag change, which returns `incomplete` until the parcel is weighed and every listed item is tagged, and otherwise the signed gaps on gross, stones and pure gold (tags minus parcel), the worst gap, the ceiling from EP-23-S1, and the verdict `exact`, `last_digit` or `mismatch`
@@ -7596,6 +7891,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S3: Staff can see the live verdict while tagging
 
 - **Story ID:** EP-23-S3
+- **Status:** Not started
 - **Title:** Staff can see the live verdict while tagging
 - **As a:** Staff
 - **I want:** the "Match and release" step (`parcel-match`) to show "EVERY ITEM ON THE LIST MUST BE TAGGED" with "12 of 12 tagged", the table "THE PARCEL SAID", "THE 12 TAGS SAY" and "GAP" for "On the scale", "Stones, pearls, lac" and "Pure gold", and the gauge "THE GAP ON PURE GOLD, EITHER WAY", all read from the server and updated within about a second whenever anyone saves a tag
@@ -7620,6 +7916,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S4: Staff can release an exact match into stock
 
 - **Story ID:** EP-23-S4
+- **Status:** Not started
 - **Title:** Staff can release an exact match into stock
 - **As a:** Staff
 - **I want:** to press "Release 12 pieces into stock" on `parcel-match` when the verdict is `exact` and every piece has passed its three quality checks, with the note "Releasing also closes Mahesh Soni's job and settles the gold issued against it."
@@ -7644,6 +7941,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S5: Staff can release a last-digit match with an audit entry
 
 - **Story ID:** EP-23-S5
+- **Status:** Not started
 - **Title:** Staff can release a last-digit match with an audit entry
 - **As a:** Staff
 - **I want:** to release a parcel whose verdict is `last_digit` the same way as an exact match, with the screen telling me the gap is within what the scales could cause, and the server writing an audit entry with the gap
@@ -7668,6 +7966,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S6: System can refuse a staff release of a mismatch
 
 - **Story ID:** EP-23-S6
+- **Status:** Not started
 - **Title:** System can refuse a staff release of a mismatch
 - **As a:** System
 - **I want:** Create Parcel release to refuse any parcel whose server verdict is `mismatch` or `incomplete`, whatever the caller sends, with the prototype sentences
@@ -7692,6 +7991,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S7: System can stop a mismatched parcel and notify the owner
 
 - **Story ID:** EP-23-S7
+- **Status:** Not started
 - **Title:** System can stop a mismatched parcel and notify the owner
 - **As a:** System
 - **I want:** when an evaluation inside a tag save or weighing change gives `mismatch`, to set the parcel `status` to `stopped` with `stoppedAt` from the server clock, move its draft pieces to `with_owner`, and publish "Parcel stopped (mismatch or raised problem)" so the owner is notified and parcel screens freeze
@@ -7716,6 +8016,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S8: System can settle the job and record the gap on release
 
 - **Story ID:** EP-23-S8
+- **Status:** Not started
 - **Title:** System can settle the job and record the gap on release
 - **As a:** System
 - **I want:** every release (staff release or owner accept-loss) to move all pieces to `in_stock`, call Settle Job for the parcel's job, and write one karigar gap row with the pure gold gap, all in the release transaction
@@ -7740,6 +8041,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S9: Owner can send a stopped parcel back to the karigar
 
 - **Story ID:** EP-23-S9
+- **Status:** Not started
 - **Title:** Owner can send a stopped parcel back to the karigar
 - **As a:** Owner
 - **I want:** on "Your three ways out" (`parcel-clear`), to press "Send it back" so the parcel is marked sent back, the karigar's job reopens to `on_bench`, and the pieces stay off the floor until he hands it over again
@@ -7764,6 +8066,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S10: Owner can point to one tag to re-check
 
 - **Story ID:** EP-23-S10
+- **Status:** Not started
 - **Title:** Owner can point to one tag to re-check
 - **As a:** Owner
 - **I want:** on `parcel-clear`, to pick one tag in "Tag to redo" and press "Point to a tag to redo", so only that tag reopens for staff while the parcel stays stopped, and the parcel is judged again when the tag is saved
@@ -7788,6 +8091,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S11: Owner can accept the loss with a reason
 
 - **Story ID:** EP-23-S11
+- **Status:** Not started
 - **Title:** Owner can accept the loss with a reason
 - **As a:** Owner
 - **I want:** on `parcel-clear`, to type a reason in "Reason — why this loss is acceptable" and press "Release with the loss booked", so the parcel is released with the loss and my reason kept against my name
@@ -7812,6 +8116,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S12: System can serialise release against late tag saves
 
 - **Story ID:** EP-23-S12
+- **Status:** Not started
 - **Title:** System can serialise release against late tag saves
 - **As a:** System
 - **I want:** release, tag save, re-check, send-back and accept-loss to take the same row lock on the parcel and carry the parcel version, so they run one at a time and each sees the state the previous one left
@@ -7836,6 +8141,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S13: Owner can see the karigar's last six gaps (G4)
 
 - **Story ID:** EP-23-S13
+- **Status:** Not started
 - **Title:** Owner can see the karigar's last six gaps (G4)
 - **As a:** Owner
 - **I want:** the "IS THIS LIKE HIM?" panel on `parcel-clear` to show the karigar's name and code, the gold issued on this job, his last six parcel gold gaps, today's gap against his usual, and a plain line
@@ -7860,6 +8166,7 @@ Role note: stories where the server computes, stops, settles or serialises on it
 ## EP-23-S14: Staff can see a tray stop while the rest release (G15)
 
 - **Story ID:** EP-23-S14
+- **Status:** Not started
 - **Title:** Staff can see a tray stop while the rest release (G15)
 - **As a:** Staff
 - **I want:** for a parcel weighed in trays, the server to judge each tray on its own (tray weighing against the tags linked to that tray, with the tray's own ceiling), stop only a tray that does not match, and let me release the pieces of every matching tray
@@ -7907,6 +8214,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S1: System can store a problem against a parcel, job or piece
 
 - **Story ID:** EP-24-S1
+- **Status:** Not started
 - **Title:** System can store a problem against a parcel, job or piece
 - **As a:** System
 - **I want:** a Problem record with id (`PR-` prefix), target kind `parcel`, `job` or `piece`, target id, text, raised by, raiser role, raised at, status `open` or `cleared`, cleared by and cleared at, plus a shared read "open problems on a target" that every other epic can call
@@ -7931,6 +8239,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S2: System can refuse every transition on a stopped target
 
 - **Story ID:** EP-24-S2
+- **Status:** Not started
 - **Title:** System can refuse every transition on a stopped target
 - **As a:** System
 - **I want:** one shared stopped guard in the server transition layer that every parcel, job and piece operation calls on its locked row, refusing with "This {parcel|job|piece} is stopped. Only the owner can start it again."
@@ -7955,6 +8264,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S3: Staff can raise a problem on a parcel
 
 - **Story ID:** EP-24-S3
+- **Status:** Not started
 - **Title:** Staff can raise a problem on a parcel
 - **As a:** Staff
 - **I want:** a "Stop the line" composer on the parcel screens (`parcel-match`, and `parcel-tag` once designed) that shows the parcel id and piece count, "Nothing moves until the owner clears it", a "What is wrong?" box and the buttons "Tell the owner" and "Cancel"
@@ -7979,6 +8289,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S4: Staff can raise a problem on a piece
 
 - **Story ID:** EP-24-S4
+- **Status:** Not started
 - **Title:** Staff can raise a problem on a piece
 - **As a:** Staff
 - **I want:** a "Stop the line" action in the piece drawer on `stock` that uses the same composer as the parcel, and moves the piece to `stopped` while keeping its previous status
@@ -8003,6 +8314,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S5: Karigar can raise a problem on his own job
 
 - **Story ID:** EP-24-S5
+- **Status:** Not started
 - **Title:** Karigar can raise a problem on his own job
 - **As a:** Karigar
 - **I want:** the "Raise a problem" button on my job sheet (`k-jobs`, built in EP-20-S8) to call the same shared Create Problem operation as staff, so my job stops and the owner hears about it
@@ -8027,6 +8339,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S6: System can refuse a karigar's problem on someone else's job
 
 - **Story ID:** EP-24-S6
+- **Status:** Not started
 - **Title:** System can refuse a karigar's problem on someone else's job
 - **As a:** System
 - **I want:** to refuse any Create Problem from a karigar whose target is a job assigned to another karigar, a parcel or a piece, without saying whether that target exists
@@ -8050,6 +8363,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S7: System can refuse a problem on a billed or scrapped piece
 
 - **Story ID:** EP-24-S7
+- **Status:** Not started
 - **Title:** System can refuse a problem on a billed or scrapped piece
 - **As a:** System
 - **I want:** Create Problem on a piece to refuse a piece whose status is `billed` or `scrapped` with "A closed piece cannot be stopped."
@@ -8073,6 +8387,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S8: Owner can see open problems as blocking cards
 
 - **Story ID:** EP-24-S8
+- **Status:** Not started
 - **Title:** Owner can see open problems as blocking cards
 - **As a:** Owner
 - **I want:** a List Open problems read, oldest first, with raiser, role, target and text, that feeds one blocking card per open problem in "NOTHING MOVES UNTIL YOU ANSWER" on `decisions`, and a Read Problems on a target that feeds the problem banner on `parcel-match`, `parcel-clear`, `stock` and `k-jobs`
@@ -8097,6 +8412,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S9: Owner can clear a problem and restore the previous state
 
 - **Story ID:** EP-24-S9
+- **Status:** Not started
 - **Title:** Owner can clear a problem and restore the previous state
 - **As a:** Owner
 - **I want:** to press "Clear it and start again" on a Decisions card or the clear button on a problem banner, so the problem is marked cleared and, if it was the last open one, the target goes back to where it was
@@ -8121,6 +8437,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S10: System can keep a target stopped while another problem is open
 
 - **Story ID:** EP-24-S10
+- **Status:** Not started
 - **Title:** System can keep a target stopped while another problem is open
 - **As a:** System
 - **I want:** the clear operation to count the open problems left on the target after the clear, and restore the target only when that count is 0
@@ -8144,6 +8461,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S11: System can push a raised stop to the owner and to open screens
 
 - **Story ID:** EP-24-S11
+- **Status:** Not started
 - **Title:** System can push a raised stop to the owner and to open screens
 - **As a:** System
 - **I want:** after each raise commits, to publish "Parcel stopped (mismatch or raised problem)" for a parcel target, or "Problem raised on a job or piece" (proposed, G26) for a job or piece, to the owner, the staff working that target and, for a job, the karigar's phone, and to hand the event to EP-11 for the owner's notice
@@ -8168,6 +8486,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S12: System can push a clearance so the target unfreezes everywhere
 
 - **Story ID:** EP-24-S12
+- **Status:** Not started
 - **Title:** System can push a clearance so the target unfreezes everywhere
 - **As a:** System
 - **I want:** after each clear commits, to publish "Problem cleared" (proposed, G26) with the problem id, target, the target's new state and the number of open problems left, to the same audience that received the raise
@@ -8192,6 +8511,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S13: System can audit every raise and every clear
 
 - **Story ID:** EP-24-S13
+- **Status:** Not started
 - **Title:** System can audit every raise and every clear
 - **As a:** System
 - **I want:** every raise to write a `problem_raised` entry and every clear a `problem_cleared` entry, in the same transaction, with actor, role, target, text, before and after state and time, and a CI test that fails if any raise or clear path writes none
@@ -8216,6 +8536,7 @@ Role note: stories where the server stores, freezes, restores, pushes or seriali
 ## EP-24-S14: System can serialise a raise against a transition in flight
 
 - **Story ID:** EP-24-S14
+- **Status:** Not started
 - **Title:** System can serialise a raise against a transition in flight
 - **As a:** System
 - **I want:** a raise and any other transition on the same target to take the same row lock, so whichever commits first decides and the other sees its result
@@ -8263,6 +8584,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S1: System can store edit proposals with their states
 
 - **Story ID:** EP-25-S1
+- **Status:** Not started
 - **Title:** System can store edit proposals with their states
 - **As a:** System
 - **I want:** the `piece_edits` table from EP-02-S5 to hold one proposal per row with piece id, field (`grossG`, `stoneG`, `stoneCount`, `purity`, `huid`, `name`), from value, to value, reason, proposed by, proposed at, status (`proposed`, `token_sent`, `applied`, `refused`, `void`), decided by, decided at and void reason (`sold` or `scrapped`), with weights as integers in units of 0.0001 g
@@ -8287,6 +8609,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S2: Staff can propose a change to one field of an in-stock piece
 
 - **Story ID:** EP-25-S2
+- **Status:** Not started
 - **Title:** Staff can propose a change to one field of an in-stock piece
 - **As a:** Staff
 - **I want:** an "Edit tag" button in the piece drawer on `stock` that opens `edit-propose` for that piece, where I pick "What should change?", see "From" with the current value, type "To", write "Why? The owner will read this." and press "Send to the owner"
@@ -8311,6 +8634,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S3: System can validate the proposed value for its field
 
 - **Story ID:** EP-25-S3
+- **Status:** Not started
 - **Title:** System can validate the proposed value for its field
 - **As a:** System
 - **I want:** one shared check per editable field that runs on propose and again on apply: `grossG` and `stoneG` are positive integers in units of 0.0001 g, `stoneG` never exceeds `grossG`, `stoneCount` is a whole number of 0 or more, `purity` is an active purity in reference data, `huid` passes the HUID rule and is not on another piece, and `name` is non-empty text
@@ -8335,6 +8659,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S4: Owner can see open proposals with old value, new value and reason
 
 - **Story ID:** EP-25-S4
+- **Status:** Not started
 - **Title:** Owner can see open proposals with old value, new value and reason
 - **As a:** Owner
 - **I want:** a List Open edit proposals read and a Read Edit proposal read that give, for each proposal, the tag number and piece name, the field, old and new values, the change in mg for weights, net gold before and after, the proposer, the reason and the time asked, feeding the "STAFF WANTS A CODE" card on `decisions` and the owner panel on `edit-apply`
@@ -8359,6 +8684,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S5: Owner can agree and receive a token on WhatsApp
 
 - **Story ID:** EP-25-S5
+- **Status:** Not started
 - **Title:** Owner can agree and receive a token on WhatsApp
 - **As a:** Owner
 - **I want:** to press "Yes, send me a token" on `edit-apply` (or "Send the code" on the Decisions card) so the server issues a 6-digit token and sends it as a WhatsApp message to my registered mobile number as "JGD: confirm edit to TAG-8841. Token 480 913"
@@ -8383,6 +8709,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S6: System can store the token hashed with a 10-minute expiry
 
 - **Story ID:** EP-25-S6
+- **Status:** Not started
 - **Title:** System can store the token hashed with a 10-minute expiry
 - **As a:** System
 - **I want:** an `edit_tokens` table with edit id, token hash, issued at, expires at (issued at plus 10 minutes), used at, attempts count and sent message id, and a generator that makes the 6 digits from a secure random source and keeps the plain value only in memory until it is handed to EP-12
@@ -8406,6 +8733,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S7: Owner can apply a change with the token
 
 - **Story ID:** EP-25-S7
+- **Status:** Not started
 - **Title:** Owner can apply a change with the token
 - **As a:** Owner
 - **I want:** to type the 6 digits into "Enter the token sent to your WhatsApp" and press "Apply the change", so the field on the piece changes, the proposal becomes `applied`, and the new net gold is shown
@@ -8430,6 +8758,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S8: System can reject a wrong, expired or reused token
 
 - **Story ID:** EP-25-S8
+- **Status:** Not started
 - **Title:** System can reject a wrong, expired or reused token
 - **As a:** System
 - **I want:** a token check used by apply that compares the hash in constant time and returns `ok`, `wrong`, `expired`, `used` or `none`, and that only accepts the token issued for this proposal
@@ -8454,6 +8783,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S9: System can rate-limit token requests and attempts
 
 - **Story ID:** EP-25-S9
+- **Status:** Not started
 - **Title:** System can rate-limit token requests and attempts
 - **As a:** System
 - **I want:** limits on how many tokens an owner can request per period, how many tokens one proposal can have issued, and how many wrong attempts one token allows before it is burnt, filled into the EP-03-S11 rate-limit hook
@@ -8477,6 +8807,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S10: Owner can refuse a proposal
 
 - **Story ID:** EP-25-S10
+- **Status:** Not started
 - **Title:** Owner can refuse a proposal
 - **As a:** Owner
 - **I want:** to press "Refuse" on `edit-apply` or on the Decisions card, without a token, so the proposal becomes `refused` and the piece keeps its value
@@ -8500,6 +8831,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S11: System can void open proposals when a piece is sold or scrapped
 
 - **Story ID:** EP-25-S11
+- **Status:** Not started
 - **Title:** System can void open proposals when a piece is sold or scrapped
 - **As a:** System
 - **I want:** a shared service function, Void open edits on a piece, that the sale and scrap operations call inside their own transaction to set every `proposed` or `token_sent` proposal on the piece to `void` with void reason `sold` or `scrapped` and burn its token
@@ -8524,6 +8856,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S12: Staff can see the applied change live on stock screens
 
 - **Story ID:** EP-25-S12
+- **Status:** Not started
 - **Title:** Staff can see the applied change live on stock screens
 - **As a:** Staff
 - **I want:** the new value on the stock list, search results, piece drawer and pure-gold total to appear within about 1 second of the owner applying, and my own proposal to show "Applied by Sanjay Seth"
@@ -8548,6 +8881,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S13: Staff can see a piece's edit history
 
 - **Story ID:** EP-25-S13
+- **Status:** Not started
 - **Title:** Staff can see a piece's edit history
 - **As a:** Staff
 - **I want:** an "Edit history · N entries" section in the piece drawer that lists every applied and refused proposal on the piece, newest first, with field, old and new value, proposer, reason, decision, who decided and when
@@ -8572,6 +8906,7 @@ Role note: stories where the server stores, checks, sends, voids or audits on it
 ## EP-25-S14: System can audit every step without the plain token
 
 - **Story ID:** EP-25-S14
+- **Status:** Not started
 - **Title:** System can audit every step without the plain token
 - **As a:** System
 - **I want:** propose, token request, apply, refuse and void to each write one audit entry in the same transaction, with the kinds `edit_proposed`, `edit_token_sent`, `edit_applied`, `edit_refused` and `edit_voided`, and a token reference that is the token record id, never the 6 digits
@@ -8618,6 +8953,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S1: System can store a stock-out with its pieces, seller, reference and invoice number
 
 - **Story ID:** EP-26-S1
+- **Status:** Not started
 - **Title:** System can store a stock-out with its pieces, seller, reference and invoice number
 - **As a:** System
 - **I want:** the `stock_outs` and `stock_out_pieces` tables from EP-02-S10 to hold one record per stock-out with id (`SO-` prefix), seller id, actor id, reference (text), invoice number (text), at (UTC), the shop ID, a nullable customer id and a nullable amount socket, and one child row per piece
@@ -8642,6 +8978,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S2: System can take pieces out of stock in one locked transaction
 
 - **Story ID:** EP-26-S2
+- **Status:** Not started
 - **Title:** System can take pieces out of stock in one locked transaction
 - **As a:** System
 - **I want:** a Create Stock-out operation that, in one transaction, de-duplicates the piece ids, locks every piece row in a fixed order, checks each is `in_stock`, inserts the stock-out and its child rows, and moves each piece to `billed` with sold time and stock-out id through Update Piece state
@@ -8666,6 +9003,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S3: System can refuse the second seller with "already taken"
 
 - **Story ID:** EP-26-S3
+- **Status:** Not started
 - **Title:** System can refuse the second seller with "already taken"
 - **As a:** System
 - **I want:** the stock-out transaction to refuse, as a whole, any sale that reaches a piece row after another stock-out has billed it, with "{tag} is already taken." naming the first such piece
@@ -8690,6 +9028,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S4: Staff can add pieces to a sale by tag
 
 - **Story ID:** EP-26-S4
+- **Status:** Not started
 - **Title:** Staff can add pieces to a sale by tag
 - **As a:** Staff
 - **I want:** to type a tag number or scan it into "Scan another tag" on `stock-out`, or arrive from "Add to a sale" in the piece drawer on `stock`, and see each piece added under "WHAT IS LEAVING THE SHOWCASE" with its name, tag, purity, HUID and pure gold
@@ -8714,6 +9053,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S5: Staff can see the pure gold leaving the floor before confirming
 
 - **Story ID:** EP-26-S5
+- **Status:** Not started
 - **Title:** Staff can see the pure gold leaving the floor before confirming
 - **As a:** Staff
 - **I want:** a "LEAVING THE FLOOR" total under the sale list showing the summed pure gold and the piece count, and the footer line "{n} pieces · {g} pure gold · sold by {seller} · {invoice}", with the value column present but empty while pricing is off
@@ -8738,6 +9078,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S6: Staff can confirm or change the seller
 
 - **Story ID:** EP-26-S6
+- **Status:** Not started
 - **Title:** Staff can confirm or change the seller
 - **As a:** Staff
 - **I want:** "Who sold it" on `stock-out` to show me as the seller by default, with a picker filled from a List Active sellers read so I can pick the staff member who actually made the sale
@@ -8762,6 +9103,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S7: Staff can enter the reference and invoice number and take the pieces out
 
 - **Story ID:** EP-26-S7
+- **Status:** Not started
 - **Title:** Staff can enter the reference and invoice number and take the pieces out
 - **As a:** Staff
 - **I want:** to fill "Reference number" and "Tax invoice number · from your billing book", read "This locks the pieces for good · Once out, their weights freeze. No edit, not even by the owner.", and press "Take them out of stock"
@@ -8786,6 +9128,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S8: System can void open edits on sold pieces
 
 - **Story ID:** EP-26-S8
+- **Status:** Not started
 - **Title:** System can void open edits on sold pieces
 - **As a:** System
 - **I want:** the stock-out transaction to call the EP-25-S11 Void open edits function for each piece, with void reason `sold`, after the piece moves to `billed`
@@ -8809,6 +9152,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S9: System can count the sale to the seller
 
 - **Story ID:** EP-26-S9
+- **Status:** Not started
 - **Title:** System can count the sale to the seller
 - **As a:** System
 - **I want:** the stock-out transaction to add the number of distinct pieces to the seller's sale count on their staff record
@@ -8832,6 +9176,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S10: System can freeze a billed piece's weights against every role
 
 - **Story ID:** EP-26-S10
+- **Status:** Not started
 - **Title:** System can freeze a billed piece's weights against every role
 - **As a:** System
 - **I want:** every write path that touches piece weights, purity, HUID, stone count, name or state (edit propose, edit apply, tag save, problem raise, scrap request) to refuse a `billed` piece, with no override for the owner
@@ -8855,6 +9200,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S11: Staff can see sold pieces disappear from other screens live
 
 - **Story ID:** EP-26-S11
+- **Status:** Not started
 - **Title:** Staff can see sold pieces disappear from other screens live
 - **As a:** Staff
 - **I want:** pieces sold at another counter to leave my stock list, my open drawer and my own draft sale list on `stock-out` within about a second, with a line telling me who sold them
@@ -8878,6 +9224,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S12: System can audit every stock-out
 
 - **Story ID:** EP-26-S12
+- **Status:** Not started
 - **Title:** System can audit every stock-out
 - **As a:** System
 - **I want:** an append-only `stock_out` audit entry written in the stock-out transaction with actor, seller, stock-out id, piece tags, reference, invoice number, and each piece's status before and after
@@ -8902,6 +9249,7 @@ Role note: stories where the server stores, checks, locks, counts or audits on i
 ## EP-26-S13: Staff can see today's stock-outs and gold out today
 
 - **Story ID:** EP-26-S13
+- **Status:** Not started
 - **Title:** Staff can see today's stock-outs and gold out today
 - **As a:** Staff
 - **I want:** List Stock-outs and Read Stock-out reads, and a today summary giving the pieces out today and the pure gold out today, feeding "GOLD OUT TODAY" and "Pieces out today" on `today`, the owner's home, and the recent list on `stock-out`
@@ -8947,6 +9295,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S1: System can store scrap requests with their states
 
 - **Story ID:** EP-27-S1
+- **Status:** Not started
 - **Title:** System can store scrap requests with their states
 - **As a:** System
 - **I want:** the `scrap_requests` table from EP-02-S10 to hold one row per request with id (`SR-` prefix), piece id, reason, requested by (user id), requested at (UTC), status (`pending`, `scrapped`, `declined`), decided by (user id) and decided at, with at most one `pending` request per piece
@@ -8971,6 +9320,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S2: Staff can request scrap for an in-stock piece with a reason
 
 - **Story ID:** EP-27-S2
+- **Status:** Not started
 - **Title:** Staff can request scrap for an in-stock piece with a reason
 - **As a:** Staff
 - **I want:** to press "Ask to scrap" in the piece drawer on `stock`, read that the piece comes off the floor while the owner decides and that its pure gold goes back to the metal pool, type why under "Why scrap it", and press "Send to the owner"
@@ -8995,6 +9345,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S3: System can refuse a scrap request for a non-stock piece
 
 - **Story ID:** EP-27-S3
+- **Status:** Not started
 - **Title:** System can refuse a scrap request for a non-stock piece
 - **As a:** System
 - **I want:** Create Scrap request to lock the piece row and refuse, as a whole, any piece whose state is not `in_stock`, with "{tag} is not in stock."
@@ -9019,6 +9370,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S4: System can park a requested piece with the owner
 
 - **Story ID:** EP-27-S4
+- **Status:** Not started
 - **Title:** System can park a requested piece with the owner
 - **As a:** System
 - **I want:** Create Scrap request to move the piece from `in_stock` to `with_owner` through Update Piece state, keeping `prevStatus` `in_stock`, in the same transaction as the request row
@@ -9043,6 +9395,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S5: Owner can see pending scrap requests with days in stock and pure gold
 
 - **Story ID:** EP-27-S5
+- **Status:** Not started
 - **Title:** Owner can see pending scrap requests with days in stock and pure gold
 - **As a:** Owner
 - **I want:** a List Pending scrap requests read, shown as the card "1 piece to be marked as scrap" on `decisions` and as the list and detail on `scrap-decision`, with piece name, tag, purity, days in stock, gross on the scale, stones, pure gold, requester, how long ago they asked and the reason
@@ -9067,6 +9420,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S6: Owner can mark a piece scrapped and credit its gold to the pool
 
 - **Story ID:** EP-27-S6
+- **Status:** Not started
 - **Title:** Owner can mark a piece scrapped and credit its gold to the pool
 - **As a:** Owner
 - **I want:** to press "Mark it scrapped" on `scrap-decision`, after which the server, in one transaction, locks the request and piece, sets the request to `scrapped`, moves the piece from `with_owner` to `scrapped`, and calls EP-18's Post Recovery to credit the piece's net gold to the pool as a `recovered` entry referencing the piece and the request
@@ -9091,6 +9445,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S7: Owner can decline a scrap request and return the piece to stock
 
 - **Story ID:** EP-27-S7
+- **Status:** Not started
 - **Title:** Owner can decline a scrap request and return the piece to stock
 - **As a:** Owner
 - **I want:** to press "Decline, keep it in stock" on `scrap-decision`, after which the server sets the request to `declined` and moves the piece from `with_owner` back to its `prevStatus` `in_stock`
@@ -9115,6 +9470,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S8: System can void open edits on a scrapped piece
 
 - **Story ID:** EP-27-S8
+- **Status:** Not started
 - **Title:** System can void open edits on a scrapped piece
 - **As a:** System
 - **I want:** the mark-scrapped transaction to call the EP-25-S11 Void open edits function for the piece, with void reason `scrapped`, after the piece moves to `scrapped`
@@ -9139,6 +9495,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S9: Owner can start a scrap from the "Melt and remake" action on the ageing alert
 
 - **Story ID:** EP-27-S9
+- **Status:** Not started
 - **Title:** Owner can start a scrap from the "Melt and remake" action on the ageing alert
 - **As a:** Owner
 - **I want:** "Melt and remake" on the "GOLD SITTING TOO LONG" alert to open a list of the aged `in_stock` pieces, oldest first, where I pick one or more, give one reason, and land on `scrap-decision` for each new request so I can mark it scrapped at once
@@ -9163,6 +9520,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S10: System can push scrap requests and decisions live
 
 - **Story ID:** EP-27-S10
+- **Status:** Not started
 - **Title:** System can push scrap requests and decisions live
 - **As a:** System
 - **I want:** to publish "Scrap requested" after a request commits and "Piece scrapped" (with outcome `scrapped` or `declined`) after a decision commits, each with request id, piece id, tag number, piece version and outcome, to Owner and Staff connections only
@@ -9187,6 +9545,7 @@ Role note: stories where the server stores, checks, locks, credits or audits on 
 ## EP-27-S11: System can audit every request and decision
 
 - **Story ID:** EP-27-S11
+- **Status:** Not started
 - **Title:** System can audit every request and decision
 - **As a:** System
 - **I want:** to write an append-only audit entry in the same transaction as each scrap request (`scrap_requested`, a new kind), each mark-scrapped (`scrap_marked`) and each decline (`scrap_declined`), with actor, role, time, request id, piece tag, reason and pure gold
@@ -9234,6 +9593,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S1: System can store leads, items and their states
 
 - **Story ID:** EP-28-S1
+- **Status:** Not started
 - **Title:** System can store leads, items and their states
 - **As a:** System
 - **I want:** the `leads` and `lead_items` tables from EP-02-S7 extended with customer id (nullable), taken by (user id), taken at, lost reason, SLA limit hours, SLA breached at and shop ID (D7), plus a `lead_attachments` table, with state limited to `needs_glance`, `opened`, `being_worked`, `converted`, `lost`
@@ -9258,6 +9618,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S2: Staff can create a lead by hand at the counter
 
 - **Story ID:** EP-28-S2
+- **Status:** Not started
 - **Title:** Staff can create a lead by hand at the counter
 - **As a:** Staff
 - **I want:** to press "Add a lead by hand" on `leads`, fill "Who is it?", "Phone", "What do they want?", "Needed by (if they said)" and "Anything else they said" on `lead-create`, and press "Create the lead"
@@ -9282,6 +9643,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S3: Staff can add item lines with style, quantity and approximate weight
 
 - **Story ID:** EP-28-S3
+- **Status:** Not started
 - **Title:** Staff can add item lines with style, quantity and approximate weight
 - **As a:** Staff
 - **I want:** to add, edit and remove item lines on `lead-create` with "Item", "Style", "How many" and "About, each (g)"
@@ -9306,6 +9668,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S4: Staff can attach an optional photo to a manual lead
 
 - **Story ID:** EP-28-S4
+- **Status:** Not started
 - **Title:** Staff can attach an optional photo to a manual lead
 - **As a:** Staff
 - **I want:** to press "Add a picture" under "Attach a photo (optional)" on `lead-create`, upload one image, and see it on the lead
@@ -9330,6 +9693,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S5: Staff can see a known customer matched by phone (G7)
 
 - **Story ID:** EP-28-S5
+- **Status:** Not started
 - **Title:** Staff can see a known customer matched by phone (G7)
 - **As a:** Staff
 - **I want:** the form to call Find Customer by phone when I finish typing the phone on `lead-create`, show "known customer" next to the name when it matches, fill an empty "Who is it?" with the customer's name, and link the lead to that customer on save
@@ -9354,6 +9718,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S6: Staff can see every lead in one inbox with source and SLA
 
 - **Story ID:** EP-28-S6
+- **Status:** Not started
 - **Title:** Staff can see every lead in one inbox with source and SLA
 - **As a:** Staff
 - **I want:** a List Leads read shown on `leads` as one list of leads from WhatsApp, email and the counter, oldest first, each row with source, title, arrival age or who took it, state and the SLA label from the server
@@ -9378,6 +9743,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S7: Staff can filter the inbox by Needs a glance, Being worked and All
 
 - **Story ID:** EP-28-S7
+- **Status:** Not started
 - **Title:** Staff can filter the inbox by Needs a glance, Being worked and All
 - **As a:** Staff
 - **I want:** tabs "Needs a glance", "Being worked" and "All" on `leads`, each with a count from the server
@@ -9402,6 +9768,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S8: System can compute the SLA in shop hours on the server
 
 - **Story ID:** EP-28-S8
+- **Status:** Not started
 - **Title:** System can compute the SLA in shop hours on the server
 - **As a:** System
 - **I want:** one shared server function that takes a lead, the current server time, `settings.leadSlaHours` and the shop-hours calendar, and returns the phase (`running`, `late`, `met`), hours elapsed, whole hours left, the due time and the label
@@ -9426,6 +9793,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S9: System can mark a lead late and notify staff then the owner
 
 - **Story ID:** EP-28-S9
+- **Status:** Not started
 - **Title:** System can mark a lead late and notify staff then the owner
 - **As a:** System
 - **I want:** the EP-10-S5 breach job to call a Mark lead late service function that re-checks the lead, sets `slaBreachedAt`, writes the audit entry and emits the passed-SLA event, which EP-11 turns into notices for the audience in `settings.lateLeadAudience`
@@ -9450,6 +9818,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S10: Staff can start working a lead
 
 - **Story ID:** EP-28-S10
+- **Status:** Not started
 - **Title:** Staff can start working a lead
 - **As a:** Staff
 - **I want:** to press "Open" on an `opened` lead in the inbox and start working it, so that the lead moves to `being_worked` with me recorded as the person who took it and the time I took it
@@ -9474,6 +9843,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S11: Staff can mark a lead lost with a reason
 
 - **Story ID:** EP-28-S11
+- **Status:** Not started
 - **Title:** Staff can mark a lead lost with a reason
 - **As a:** Staff
 - **I want:** to mark a lead lost from the lead, type why, and confirm
@@ -9498,6 +9868,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S12: System can expire an unworked lead under the decided rule (G25)
 
 - **Story ID:** EP-28-S12
+- **Status:** Not started
 - **Title:** System can expire an unworked lead under the decided rule (G25)
 - **As a:** System
 - **I want:** a scheduled job that finds leads matching the decided G25 expiry rule and closes each one as lost or expired through the same service as EP-28-S11, with System as the actor and the reason `expired`
@@ -9522,6 +9893,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S13: Staff can see new and late leads arrive live
 
 - **Story ID:** EP-28-S13
+- **Status:** Not started
 - **Title:** Staff can see new and late leads arrive live
 - **As a:** Staff
 - **I want:** every open `leads` inbox, the `leads` rail badge and the late-leads card on `decisions` to update by themselves when a lead is created, marked late, started or closed by anyone
@@ -9546,6 +9918,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S14: System can audit every lead state change
 
 - **Story ID:** EP-28-S14
+- **Status:** Not started
 - **Title:** System can audit every lead state change
 - **As a:** System
 - **I want:** to write an append-only audit entry in the same transaction as each lead create (`lead_created`), start (`lead_started`), lost or expiry (`lead_lost`) and late mark (`lead_late`), with actor, role, time, lead id, before, after and reason
@@ -9593,6 +9966,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S1: System can store inbound messages with channel, sender and attachments
 
 - **Story ID:** EP-29-S1
+- **Status:** Not started
 - **Title:** System can store inbound messages with channel, sender and attachments
 - **As a:** System
 - **I want:** the InboundMessage table from EP-12-S7 widened to hold both channels, with channel (`email`, `whatsapp`), provider message id, thread or conversation id, sender address or phone, received at, raw text, attachment file ids, lead id and duplicate of; plus a `parse_runs` table and the extra columns on `leads` and `lead_fields` that intake needs
@@ -9617,6 +9991,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S2: System can create a lead in needs a glance from an inbound email
 
 - **Story ID:** EP-29-S2
+- **Status:** Not started
 - **Title:** System can create a lead in needs a glance from an inbound email
 - **As a:** System
 - **I want:** an inbound email endpoint for the configured shop inbox that verifies the mail provider's call, stores one InboundMessage with channel `email`, creates a lead with source `email`, state `needs_glance` and `arrivedAt` equal to the receive time, starts its SLA timer, and then queues the parse as a background job
@@ -9641,6 +10016,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S3: System can create a lead in needs a glance from an inbound WhatsApp message
 
 - **Story ID:** EP-29-S3
+- **Status:** Not started
 - **Title:** System can create a lead in needs a glance from an inbound WhatsApp message
 - **As a:** System
 - **I want:** the lead intake interface that EP-12-S7 hands each stored WhatsApp message to, so it creates a lead with source `whatsapp`, state `needs_glance` and `arrivedAt` equal to the message's received at, links the InboundMessage to it, starts the SLA timer and queues the parse
@@ -9665,6 +10041,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S4: System can store message attachments with the lead
 
 - **Story ID:** EP-29-S4
+- **Status:** Not started
 - **Title:** System can store message attachments with the lead
 - **As a:** System
 - **I want:** each email attachment and each WhatsApp media item stored through EP-09 Create Inbound file with role PO, its file id kept on the InboundMessage, and a `lead_attachments` row linking it to the lead
@@ -9689,6 +10066,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S5: System can parse a message into fields with a confidence each
 
 - **Story ID:** EP-29-S5
+- **Status:** Not started
 - **Title:** System can parse a message into fields with a confidence each
 - **As a:** System
 - **I want:** a background parse job that sends the lead's message text and readable attachments to the parser, receives customer, phone, items (name, style, quantity), target weight per item and needed-by date, each with a confidence score, stores them as `lead_fields` and `lead_items`, flags every field below the decided threshold "check this", sets the lead confidence and records a ParseRun
@@ -9713,6 +10091,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S6: System can create a flagged lead when a message cannot be read
 
 - **Story ID:** EP-29-S6
+- **Status:** Not started
 - **Title:** System can create a flagged lead when a message cannot be read
 - **As a:** System
 - **I want:** a parse that finds nothing usable, scores below the unreadable threshold, or cannot run at all to leave the lead in place with confidence `unreadable`, one flagged field "What they want" valued "Could not read", the original text or image attached, and the title "A photo we could not read · <phone>" or "A message we could not read · <sender>"
@@ -9737,6 +10116,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S7: System can link a lead to a known customer by phone (G7)
 
 - **Story ID:** EP-29-S7
+- **Status:** Not started
 - **Title:** System can link a lead to a known customer by phone (G7)
 - **As a:** System
 - **I want:** intake to run EP-17-S10 Find Customer by phone on the WhatsApp sender's phone, or on the phone the parser found in an email, and set `leads.customerId` when it matches; when nothing matches, keep the name and phone on the lead and create no customer
@@ -9761,6 +10141,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S8: Staff can review the original message beside the extracted fields
 
 - **Story ID:** EP-29-S8
+- **Status:** Not started
 - **Title:** Staff can review the original message beside the extracted fields
 - **As a:** Staff
 - **I want:** to press "Check and keep" or "Open and read" on a `needs_glance` lead and open `lead-review` with the original message, its received time, sender and attachments on one side, and each extracted field marked "sure" or "check this" on the other
@@ -9785,6 +10166,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S9: Staff can fix fields and keep the lead
 
 - **Story ID:** EP-29-S9
+- **Status:** Not started
 - **Title:** Staff can fix fields and keep the lead
 - **As a:** Staff
 - **I want:** to change any field on `lead-review` (customer name, phone, items, target weights, needed-by date) and press "Looks right — keep the lead", so the lead moves to `opened`, every flag clears, each changed field keeps my value, and I am recorded as the person who took it
@@ -9809,6 +10191,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S10: Staff can close a lead as "Not an order"
 
 - **Story ID:** EP-29-S10
+- **Status:** Not started
 - **Title:** Staff can close a lead as "Not an order"
 - **As a:** Staff
 - **I want:** to press "Not an order" on `lead-review` for a message that is a greeting, spam or a question with nothing to make or sell, so the lead becomes `lost` with reason "Not an order" and leaves the open tabs of the inbox
@@ -9833,6 +10216,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S11: System can turn a broadcast reply into a lead
 
 - **Story ID:** EP-29-S11
+- **Status:** Not started
 - **Title:** System can turn a broadcast reply into a lead
 - **As a:** System
 - **I want:** an inbound WhatsApp message whose replied-to outbound message id belongs to a broadcast to become a lead in `needs_glance` with source `whatsapp`, `broadcastId` set, `customerId` set to the recipient and title "<customer name> · replied to the broadcast", and then go through the normal parse
@@ -9857,6 +10241,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S12: System can detect a duplicate message and link it to the first lead
 
 - **Story ID:** EP-29-S12
+- **Status:** Not started
 - **Title:** System can detect a duplicate message and link it to the first lead
 - **As a:** System
 - **I want:** intake to check each new InboundMessage, before a lead is created, against messages from the same sender with the same normalised content (text plus attachment hashes) inside the decided window, or with the same provider message id or email Message-ID, and when one matches, set `duplicateOf` to the first message and link it to the first lead instead of creating another
@@ -9881,6 +10266,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S13: System can retry a failed parse and report failures
 
 - **Story ID:** EP-29-S13
+- **Status:** Not started
 - **Title:** System can retry a failed parse and report failures
 - **As a:** System
 - **I want:** a failed parse retried with backoff by the EP-10 job runner, each attempt recorded as a ParseRun, the last failure left as `failed` with its error code, and an owner-only Parse status read that lists recent failures and retries
@@ -9905,6 +10291,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S14: System can audit confirm, corrections and "Not an order"
 
 - **Story ID:** EP-29-S14
+- **Status:** Not started
 - **Title:** System can audit confirm, corrections and "Not an order"
 - **As a:** System
 - **I want:** an append-only audit entry written in the same transaction as each intake lead create (`lead_created`), each keep (`lead_confirmed`) with every corrected field's parsed and new value, and each "Not an order" (`lead_not_an_order`), with actor, role, time, lead id, before, after and reason
@@ -9953,6 +10340,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S1: System can store a route per lead line
 
 - **Story ID:** EP-30-S1
+- **Status:** Not started
 - **Title:** System can store a route per lead line
 - **As a:** System
 - **I want:** `lead_items` to carry a route kind (`stock`, `make` or null), a piece id for a stock route, a job id for a make route, routed at and routed by, with database checks that keep these columns consistent
@@ -9977,6 +10365,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S2: System can derive the lead state from its routed lines
 
 - **Story ID:** EP-30-S2
+- **Status:** Not started
 - **Title:** System can derive the lead state from its routed lines
 - **As a:** System
 - **I want:** one server function, called inside every route, unroute and make transaction, that sets the lead state from its lines: `opened` to `being_worked` on the first routed line, `being_worked` to `converted` when at least one line exists and every line is routed, and `converted` back to `being_worked` when a line is unrouted
@@ -10001,6 +10390,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S3: Staff can see matching in-stock pieces for a line
 
 - **Story ID:** EP-30-S3
+- **Status:** Not started
 - **Title:** Staff can see matching in-stock pieces for a line
 - **As a:** Staff
 - **I want:** to open `lead-convert` for a lead and see, under each unrouted line, the in-stock pieces whose kind matches the line and whose pure gold or gross lies within 20% of the line's approximate weight when one is given
@@ -10025,6 +10415,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S4: Staff can link a line to an in-stock piece without reserving it
 
 - **Story ID:** EP-30-S4
+- **Status:** Not started
 - **Title:** Staff can link a line to an in-stock piece without reserving it
 - **As a:** Staff
 - **I want:** to pick one of the suggested pieces for an unrouted line and press "Link TAG-8841 to this line" (proposed wording, replacing "Hold TAG-8841 for them"), so the line is routed to stock with that piece id while the piece stays in the showcase
@@ -10049,6 +10440,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S5: Staff can send a line to make through an order copy
 
 - **Story ID:** EP-30-S5
+- **Status:** Not started
 - **Title:** Staff can send a line to make through an order copy
 - **As a:** Staff
 - **I want:** to press "Make it — order to karigar" on an unrouted line, land on `order-copy` with `leadId` and `itemId`, see the line's quantity, target weight and the lead's reference images filled in, and when I press "Send the order copy" have the line routed to make with the new job in the same transaction
@@ -10073,6 +10465,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S6: Staff can see the lead convert once every line is routed
 
 - **Story ID:** EP-30-S6
+- **Status:** Not started
 - **Title:** Staff can see the lead convert once every line is routed
 - **As a:** Staff
 - **I want:** the foot of `lead-convert` to show how many lines are routed and the lead state, and to say the lead is converted when the last line is routed, with the inbox row moving the same way
@@ -10097,6 +10490,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S7: Staff can unlink a stock line
 
 - **Story ID:** EP-30-S7
+- **Status:** Not started
 - **Title:** Staff can unlink a stock line
 - **As a:** Staff
 - **I want:** to press "Unlink" (proposed wording, replacing the prototype "Release the hold") on a line routed to stock, so the line is unrouted and I can pick another piece or send it to make
@@ -10121,6 +10515,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S8: Staff can see when a linked piece is sold to someone else
 
 - **Story ID:** EP-30-S8
+- **Status:** Not started
 - **Title:** Staff can see when a linked piece is sold to someone else
 - **As a:** Staff
 - **I want:** a line linked to a piece that is billed or scrapped to show the piece as gone within about a second, with other matches and "Make it — order to karigar" offered beside it
@@ -10145,6 +10540,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S9: System can audit every link, unlink and route
 
 - **Story ID:** EP-30-S9
+- **Status:** Not started
 - **Title:** System can audit every link, unlink and route
 - **As a:** System
 - **I want:** an append-only audit entry in the same transaction as each link (`line_linked_stock`), unlink (`line_unlinked`) and make route (`line_routed_make`), with actor, role, time, lead id, line id, piece or job id and the lead state before and after
@@ -10189,6 +10585,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S1: System can build the "needs you now" cards for a staff member
 
 - **Story ID:** EP-31-S1
+- **Status:** Not started
 - **Title:** System can build the "needs you now" cards for a staff member
 - **As a:** System
 - **I want:** one Read Today cards operation that, for the signed-in user, collects every waiting item from the pipeline tables (stopped parcels, open problems on jobs and pieces, open parcels, leads near or past the SLA) and returns them as cards, each with a stable key, a kind, a tone (`stop`, `wait` or `gold`), a title, a detail line and one action (label, route id and parameters)
@@ -10213,6 +10610,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S2: System can rank the cards by the decided rule
 
 - **Story ID:** EP-31-S2
+- **Status:** Not started
 - **Title:** System can rank the cards by the decided rule
 - **As a:** System
 - **I want:** one server ranking function that orders the cards from EP-31-S1 by an ordered list of card kinds, then by a tie-break within each kind, with the kind order held in one place in the shared package
@@ -10237,6 +10635,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S3: Staff can land on Today after sign-in
 
 - **Story ID:** EP-31-S3
+- **Status:** Not started
 - **Title:** Staff can land on Today after sign-in
 - **As a:** Staff
 - **I want:** to arrive on `today` straight after signing in, with the greeting "Good morning, Rajesh" (or afternoon or evening) and the date in Asia/Kolkata, and with the screen loaded from the EP-08 data layer
@@ -10261,6 +10660,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S4: Staff can see stopped parcels, jobs and pieces as cards
 
 - **Story ID:** EP-31-S4
+- **Status:** Not started
 - **Title:** Staff can see stopped parcels, jobs and pieces as cards
 - **As a:** Staff
 - **I want:** a `stop` card for each parcel stopped by a mismatch or a raised problem, and for each job or piece with an open problem, each saying who or what stopped it and that only the owner can start it again
@@ -10285,6 +10685,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S5: Staff can see parcels waiting to be weighed, tagged or matched
 
 - **Story ID:** EP-31-S5
+- **Status:** Not started
 - **Title:** Staff can see parcels waiting to be weighed, tagged or matched
 - **As a:** Staff
 - **I want:** one card for each `open` parcel, saying whether it has not been weighed, how many pieces are still untagged, or that it is fully tagged and ready to match, with an action that opens the right intake step
@@ -10309,6 +10710,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S6: Staff can see leads near or past the SLA
 
 - **Story ID:** EP-31-S6
+- **Status:** Not started
 - **Title:** Staff can see leads near or past the SLA
 - **As a:** Staff
 - **I want:** a card for each lead that is past its SLA or has 2 hours or less left, most overdue first, at most 3, and one "more leads" card for the rest
@@ -10333,6 +10735,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S7: Staff can start a sale, a parcel or a customer from the tiles
 
 - **Story ID:** EP-31-S7
+- **Status:** Not started
 - **Title:** Staff can start a sale, a parcel or a customer from the tiles
 - **As a:** Staff
 - **I want:** three start tiles under "START SOMETHING": "Sell a piece" opening `stock-out`, "Receive a parcel" opening `parcel-arrival`, and "Add a customer" opening `customer-new`
@@ -10357,6 +10760,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S8: Staff can see the showcase figures in grams and counts
 
 - **Story ID:** EP-31-S8
+- **Status:** Not started
 - **Title:** Staff can see the showcase figures in grams and counts
 - **As a:** Staff
 - **I want:** one Read Showcase figures operation that returns pure gold on the floor, pieces I can sell today, pieces held back from the floor, pieces out today and gold out today, as integer sums and counts, shown under "THE SHOWCASE RIGHT NOW" and in "GOLD OUT TODAY"
@@ -10381,6 +10785,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S9: Staff can see today's birthdays and anniversaries
 
 - **Story ID:** EP-31-S9
+- **Status:** Not started
 - **Title:** Staff can see today's birthdays and anniversaries
 - **As a:** Staff
 - **I want:** a List Wishes due today read that returns customers whose `dob` or `anniversary` day and month fall on today in Asia/Kolkata and who have not been wished today, each with name, group, kind and "last bought" or purchase count, shown under "SAY HAPPY BIRTHDAY" with a "Message" action
@@ -10405,6 +10810,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S10: Staff can search a piece by tag, HUID or name
 
 - **Story ID:** EP-31-S10
+- **Status:** Not started
 - **Title:** Staff can search a piece by tag, HUID or name
 - **As a:** Staff
 - **I want:** to type in "Search tag, HUID or name" on `today` and press "Find it", so the matching piece opens in the piece drawer on `stock`, or the screen says nothing was found
@@ -10429,6 +10835,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S11: Staff can see cards and figures update live
 
 - **Story ID:** EP-31-S11
+- **Status:** Not started
 - **Title:** Staff can see cards and figures update live
 - **As a:** Staff
 - **I want:** the cards and showcase figures on `today` to refetch within about 1 second when a relevant live event arrives, without a reload, and to catch up after a dropped connection
@@ -10453,6 +10860,7 @@ Role note: stories where the server builds, ranks or computes on its own use "Sy
 ## EP-31-S12: Staff can see an empty state when nothing is waiting
 
 - **Story ID:** EP-31-S12
+- **Status:** Not started
 - **Title:** Staff can see an empty state when nothing is waiting
 - **As a:** Staff
 - **I want:** the "NEEDS YOU NOW" section to say plainly that nothing is waiting when Read Today cards returns no card
@@ -10496,6 +10904,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S1: System can build the owner's exception queue on the server
 
 - **Story ID:** EP-32-S1
+- **Status:** Not started
 - **Title:** System can build the owner's exception queue on the server
 - **As a:** System
 - **I want:** one Read Owner exception queue operation that returns, in one call, the "blocking" cards (mismatched parcels, open raised problems, one edits card, one scrap card) and the "running late" cards (one late-leads card, one overdue-jobs card), each with a stable key, a kind, a block, a title, a detail line and one action (label, route id and parameters), plus the counts per block and the total
@@ -10520,6 +10929,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S2: Owner can land on Decisions after sign-in
 
 - **Story ID:** EP-32-S2
+- **Status:** Not started
 - **Title:** Owner can land on Decisions after sign-in
 - **As a:** Owner
 - **I want:** to arrive on `decisions` straight after signing in, with a header that counts what is waiting ("Six things are waiting on you"), the line "Only what nobody else may do. A parcel that matches never appears on this screen." and the date in Asia/Kolkata, loaded from the EP-08 data layer
@@ -10544,6 +10954,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S3: Owner can see mismatched parcels with the karigar's recent average
 
 - **Story ID:** EP-32-S3
+- **Status:** Not started
 - **Title:** Owner can see mismatched parcels with the karigar's recent average
 - **As a:** Owner
 - **I want:** one blocking card per parcel stopped with verdict `mismatch` and no open raised problem, showing the parcel, karigar, gap in mg, pieces held back, measured against expected pure gold, the stop time and the karigar's average gap over his last six parcels, with "Open it" to `parcel-clear`
@@ -10568,6 +10979,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S4: Owner can see raised problems and clear them from the card
 
 - **Story ID:** EP-32-S4
+- **Status:** Not started
 - **Title:** Owner can see raised problems and clear them from the card
 - **As a:** Owner
 - **I want:** one blocking card per open raised problem, oldest first, saying who stopped which parcel, job or piece, with their text quoted and the time raised, and a "Clear it and start again" button that clears it through EP-24
@@ -10592,6 +11004,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S5: Owner can see open edit proposals and scrap requests as one card each
 
 - **Story ID:** EP-32-S5
+- **Status:** Not started
 - **Title:** Owner can see open edit proposals and scrap requests as one card each
 - **As a:** Owner
 - **I want:** one blocking card for all open edit proposals that names up to 3 of them, and one blocking card for all pending scrap requests, with "Read them" opening `edit-apply` and "Decide" opening `scrap-decision`
@@ -10616,6 +11029,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S6: Owner can see late leads and overdue jobs under Running late
 
 - **Story ID:** EP-32-S6
+- **Status:** Not started
 - **Title:** Owner can see late leads and overdue jobs under Running late
 - **As a:** Owner
 - **I want:** a "RUNNING LATE · THE CLOCK TOLD ME, NOT A PERSON" block with one card for leads past their SLA, naming each lead and hours waiting with "See leads", and one card for karigar jobs past their agreed date, naming each karigar and days over with "See tracker"
@@ -10640,6 +11054,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S7: Owner can see what went through without him today
 
 - **Story ID:** EP-32-S7
+- **Status:** Not started
 - **Title:** Owner can see what went through without him today
 - **As a:** Owner
 - **I want:** one Read Went through today operation and a "WENT THROUGH WITHOUT YOU TODAY · NO BUTTONS HERE" block that lists the parcels released today without a loss, their piece count and pure gold, the pieces out today and the wishes sent today, with no actions
@@ -10664,6 +11079,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S8: Owner can change the alert rules from the rules panel
 
 - **Story ID:** EP-32-S8
+- **Status:** Not started
 - **Title:** Owner can change the alert rules from the rules panel
 - **As a:** Owner
 - **I want:** a "THE RULES BEHIND THESE ALERTS" panel on `decisions` that shows and changes the lead SLA hours, who hears about a late lead ("Staff first, then me" or "Only me"), how it reaches me (WhatsApp, In the app, Email) and the "Code before a tag edit" rule, saving through the EP-13 settings operations, plus the fixed line "A parcel comes to me when it does not match exactly · Nothing for you to set"
@@ -10688,6 +11104,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S9: Owner can see where the gold is right now
 
 - **Story ID:** EP-32-S9
+- **Status:** Not started
 - **Title:** Owner can see where the gold is right now
 - **As a:** Owner
 - **I want:** one Read Gold locations operation and a "WHERE THE GOLD IS RIGHT NOW" block showing gold on the floor with its piece count, gold with karigars with open and past-date job counts, the metal pool balance and pieces out today, all as grams from integer sums
@@ -10712,6 +11129,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S10: Owner can see karigars worst first (G4)
 
 - **Story ID:** EP-32-S10
+- **Status:** Not started
 - **Title:** Owner can see karigars worst first (G4)
 - **As a:** Owner
 - **I want:** a "KARIGARS, WORST FIRST" block listing karigars over their wastage allowance first, each with code, specialties, open jobs, metal loss, days late and rating, with "Open ledger", and the karigars inside their allowance summarised in one line
@@ -10736,6 +11154,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S11: Owner can see gold sitting too long and act on it (G5)
 
 - **Story ID:** EP-32-S11
+- **Status:** Not started
 - **Title:** Owner can see gold sitting too long and act on it (G5)
 - **As a:** Owner
 - **I want:** one Read Ageing alert operation and a "GOLD SITTING TOO LONG" card that, when `in_stock` pieces have not moved for `ageingThresholdDays`, shows their total pure gold, piece count, main style and the oldest age, with "Push on WhatsApp" and "Melt and remake"
@@ -10760,6 +11179,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S12: Owner can see the badge and cards update live
 
 - **Story ID:** EP-32-S12
+- **Status:** Not started
 - **Title:** Owner can see the badge and cards update live
 - **As a:** Owner
 - **I want:** the Decisions rail badge to show the queue `total`, and the cards, the "went through" block, the gold locations, the karigars and the ageing card to refetch within about 1 second when a relevant live event arrives, and to catch up after a dropped connection
@@ -10784,6 +11204,7 @@ Role note: stories where the server builds, counts or computes on its own use "S
 ## EP-32-S13: System can refuse the Decisions queue to any role but owner
 
 - **Story ID:** EP-32-S13
+- **Status:** Not started
 - **Title:** System can refuse the Decisions queue to any role but owner
 - **As a:** System
 - **I want:** every Decisions read (Owner exception queue, Went through today, Gold locations, Karigars worst first, Ageing alert, the Decisions badge count and the Decisions updates subscription) to refuse any caller whose role is not Owner, and the `decisions` route not to be offered to them
@@ -10831,6 +11252,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S1: System can store wishes, templates and sender identities
 
 - **Story ID:** EP-33-S1
+- **Status:** Not started
 - **Title:** System can store wishes, templates and sender identities
 - **As a:** System
 - **I want:** the `wishes` table from EP-02-S12 extended to hold one row per customer, occasion and year with sender identity, template version, times, provider message id, delivery status, failure reason and who sent it; a `wish_templates` table with one versioned text per occasion; and the EP-12 SenderIdentity table extended so two identities can be marked as wish senders under the owner
@@ -10855,6 +11277,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S2: System can build today's and tomorrow's wishes queue
 
 - **Story ID:** EP-33-S2
+- **Status:** Not started
 - **Title:** System can build today's and tomorrow's wishes queue
 - **As a:** System
 - **I want:** a List Wishes queue operation that returns every active customer whose `dob` or `anniversary` falls today or tomorrow in Asia/Kolkata, one row per customer and occasion, found through a month-and-day index rather than a scan of every customer
@@ -10879,6 +11302,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S3: Staff can see each customer's occasion and consent state
 
 - **Story ID:** EP-33-S3
+- **Status:** Not started
 - **Title:** Staff can see each customer's occasion and consent state
 - **As a:** Staff
 - **I want:** each row on `wishes` to show the customer's initials, name and occasion with "today" or "tomorrow", their group, their last purchase or piece count, a consent line that matches the auto-send setting, and the one action that fits the row
@@ -10903,6 +11327,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S4: Staff can send a wish now to opted-in customers
 
 - **Story ID:** EP-33-S4
+- **Status:** Not started
 - **Title:** Staff can send a wish now to opted-in customers
 - **As a:** Staff
 - **I want:** to press "Send now" on one row, or select several of today's rows and send them together, so the server creates one wish per customer and occasion and sends it through the approved WhatsApp template from the chosen sender
@@ -10927,6 +11352,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S5: System can refuse a wish to a customer who is not opted in
 
 - **Story ID:** EP-33-S5
+- **Status:** Not started
 - **Title:** System can refuse a wish to a customer who is not opted in
 - **As a:** System
 - **I want:** every wish send, from "Send now" or from the 9 am run, to read the customer's current consent at the moment of sending and skip the customer when it is off, with no wish row and no provider call
@@ -10950,6 +11376,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S6: Staff can see "Call instead" for customers not opted in
 
 - **Story ID:** EP-33-S6
+- **Status:** Not started
 - **Title:** Staff can see "Call instead" for customers not opted in
 - **As a:** Staff
 - **I want:** a customer who is not opted in to stay in the queue with "Call instead" in place of "Send now", opening the phone dialler with their number, and never to be selectable for a WhatsApp send
@@ -10973,6 +11400,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S7: Owner can choose the two sender identities
 
 - **Story ID:** EP-33-S7
+- **Status:** Not started
 - **Title:** Owner can choose the two sender identities
 - **As a:** Owner
 - **I want:** to set which two sender identities wishes come from, give each a display name, mark one as the default for the 9 am run, and see both under "SENT FROM" on `wishes`
@@ -10997,6 +11425,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S8: Owner can edit the wish template once for all
 
 - **Story ID:** EP-33-S8
+- **Status:** Not started
 - **Title:** Owner can edit the wish template once for all
 - **As a:** Owner
 - **I want:** to press "Edit the message", change the birthday or the anniversary text keeping {name}, and save it as a new version that every later wish uses once WhatsApp has approved it
@@ -11021,6 +11450,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S9: System can send wishes automatically at 9 am
 
 - **Story ID:** EP-33-S9
+- **Status:** Not started
 - **Title:** System can send wishes automatically at 9 am
 - **As a:** System
 - **I want:** when the EP-10-S9 job starts at 9 am Asia/Kolkata with `autoSendWishes` on, to send today's wish to every opted-in customer in the queue not already wished this year, from the default sender, as the System actor "Scheduler"
@@ -11045,6 +11475,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S10: System can send at most one wish per customer per occasion per year
 
 - **Story ID:** EP-33-S10
+- **Status:** Not started
 - **Title:** System can send at most one wish per customer per occasion per year
 - **As a:** System
 - **I want:** every wish to claim the unique key (customer id, occasion, occasion year) inside the send transaction, so a second request for the same key, from a person or the 9 am run, sends nothing
@@ -11069,6 +11500,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S11: Staff can preview a wish as it lands
 
 - **Story ID:** EP-33-S11
+- **Status:** Not started
 - **Title:** Staff can preview a wish as it lands
 - **As a:** Staff
 - **I want:** to press "Preview" on any queue row and see a phone frame with the message filled in for that customer, from the selected sender, using the text that would be sent now
@@ -11092,6 +11524,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S12: Staff can see delivery status and failures
 
 - **Story ID:** EP-33-S12
+- **Status:** Not started
 - **Title:** Staff can see delivery status and failures
 - **As a:** Staff
 - **I want:** a List Sent wishes read that shows each wish sent today with its sender, time and delivery status (queued, sent, delivered, failed) and, for a failure, the provider's reason, plus the count of wishes sent today for the homes
@@ -11116,6 +11549,7 @@ Role note: stories where the server stores, builds, checks, sends or audits on i
 ## EP-33-S13: System can audit wishes, template edits and the auto-send switch
 
 - **Story ID:** EP-33-S13
+- **Status:** Not started
 - **Title:** System can audit wishes, template edits and the auto-send switch
 - **As a:** System
 - **I want:** an append-only audit entry for every wish sent, every template edit and every change to the auto-send switch, written in the same transaction as the change, and the `wishes` toggle routed through the EP-13 settings update so it is checked and audited
@@ -11162,6 +11596,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S1: System can store broadcasts, recipients and showcases
 
 - **Story ID:** EP-34-S1
+- **Status:** Not started
 - **Title:** System can store broadcasts, recipients and showcases
 - **As a:** System
 - **I want:** the `broadcasts`, `broadcast_recipients` and `broadcast_pieces` tables from EP-02-S12 extended with status, template, schedule, counts and per-recipient tracking, a `broadcast_templates` table for "Festive preview", "New arrivals" and "Blank", and new `showcases` and `showcase_pieces` tables with a hashed public link token
@@ -11186,6 +11621,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S2: System can resolve an audience to opted-in customers with a skipped count
 
 - **Story ID:** EP-34-S2
+- **Status:** Not started
 - **Title:** System can resolve an audience to opted-in customers with a skipped count
 - **As a:** System
 - **I want:** a Read Audience count operation, and one server function used by it and by every send, that turns a customer group or `All` (plus any agreed filters) into the list of active customers whose current consent is opted in, with the count of those skipped because they are not
@@ -11210,6 +11646,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S3: Staff can choose an audience by group and see the counts
 
 - **Story ID:** EP-34-S3
+- **Status:** Not started
 - **Title:** Staff can choose an audience by group and see the counts
 - **As a:** Staff
 - **I want:** "WHO HEARS IT" on `broadcast` to show one chip per customer group and one for everyone, each with its opted-in count from the server, and a line under them with the reachable and skipped numbers for the chip I pick
@@ -11234,6 +11671,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S4: Staff can start from a template and fill {name} per person
 
 - **Story ID:** EP-34-S4
+- **Status:** Not started
 - **Title:** Staff can start from a template and fill {name} per person
 - **As a:** Staff
 - **I want:** to pick "Festive preview", "New arrivals" or "Blank" under "Start from a template", edit the text in the message box, and have the server replace {name} with each recipient's first name when it sends
@@ -11258,6 +11696,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S5: Staff can attach in-stock pieces to a broadcast
 
 - **Story ID:** EP-34-S5
+- **Status:** Not started
 - **Title:** Staff can attach in-stock pieces to a broadcast
 - **As a:** Staff
 - **I want:** "Attach pieces from the catalogue" to open a picker of in-stock pieces with photo, name, tag, purity and pure gold, and to save my choice on the broadcast draft, with the server refusing any piece not in stock
@@ -11282,6 +11721,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S6: Staff can preview a broadcast as it lands on a phone
 
 - **Story ID:** EP-34-S6
+- **Status:** Not started
 - **Title:** Staff can preview a broadcast as it lands on a phone
 - **As a:** Staff
 - **I want:** "HOW IT LANDS ON THEIR PHONE" to show a phone frame with the shop's business account name, the message filled in for one real recipient from the audience, and a "See the pieces" button when pieces are attached
@@ -11306,6 +11746,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S7: Staff can send a broadcast to opted-in customers
 
 - **Story ID:** EP-34-S7
+- **Status:** Not started
 - **Title:** Staff can send a broadcast to opted-in customers
 - **As a:** Staff
 - **I want:** to press "Send" on a draft so the server checks the message and pieces, resolves the audience to opted-in customers at that moment, writes one recipient row each, and hands one approved template message per recipient to the WhatsApp integration through a job queue
@@ -11330,6 +11771,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S8: System can drop sold pieces from drafts live
 
 - **Story ID:** EP-34-S8
+- **Status:** Not started
 - **Title:** System can drop sold pieces from drafts live
 - **As a:** System
 - **I want:** when a piece is billed or scrapped, to remove it from every unsent broadcast draft, scheduled broadcast and showcase draft, and to tell any open `broadcast` or `catalogue` screen which piece went; and at send time, to refuse any attached piece that is no longer in stock and name it
@@ -11354,6 +11796,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S9: System can turn a broadcast reply into a lead
 
 - **Story ID:** EP-34-S9
+- **Status:** Not started
 - **Title:** System can turn a broadcast reply into a lead
 - **As a:** System
 - **I want:** when EP-29-S11 creates a lead from a reply to a broadcast or a showcase, to set replied at and the lead id on that customer's `broadcast_recipients` row, and to let staff filter the inbox by broadcast
@@ -11378,6 +11821,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S10: Staff can schedule a broadcast for later (G17)
 
 - **Story ID:** EP-34-S10
+- **Status:** Not started
 - **Title:** Staff can schedule a broadcast for later (G17)
 - **As a:** Staff
 - **I want:** "Later" to let me pick a date and time in Asia/Kolkata, store the broadcast as `scheduled`, and have a delayed job send it at that time to the audience as resolved at that moment; and to cancel it before it runs
@@ -11402,6 +11846,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S11: Staff can see delivered, opened and replied counts (G17)
 
 - **Story ID:** EP-34-S11
+- **Status:** Not started
 - **Title:** Staff can see delivered, opened and replied counts (G17)
 - **As a:** Staff
 - **I want:** each sent broadcast to show how many messages were delivered, opened and replied to, from per-recipient times copied from WhatsApp receipts and reply leads, and to open the list of recipients who replied
@@ -11426,6 +11871,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S12: Staff can build a catalogue showcase with no price shown
 
 - **Story ID:** EP-34-S12
+- **Status:** Not started
 - **Title:** Staff can build a catalogue showcase with no price shown
 - **As a:** Staff
 - **I want:** on `catalogue`, to filter in-stock pieces by style, collection, weight and tag, choose some, see "A showcase of N pieces" with their total pure gold and "no price shown", and see each piece card as the customer will, with an empty value socket
@@ -11450,6 +11896,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 ## EP-34-S13: Staff can send a showcase to one person
 
 - **Story ID:** EP-34-S13
+- **Status:** Not started
 - **Title:** Staff can send a showcase to one person
 - **As a:** Staff
 - **I want:** to send a showcase either "To one person", by picking one opted-in customer, or "Send to a broadcast audience" through the same audience picker, so the server sends the chosen in-stock pieces with photos and pure gold through WhatsApp; and to reach "To one person" from the piece drawer's "Share" on `stock`
@@ -11476,6 +11923,7 @@ Role note: stories where the server stores, resolves, sends, tracks or serves on
 Split note: EP-34-S14 was split into S14a and S14b because creating and revoking the link is a signed-in staff action, while serving the page to anyone with the link is a new public surface with its own security, caching and performance checks.
 
 - **Story ID:** EP-34-S14a
+- **Status:** Not started
 - **Title:** Staff can create and revoke a public showcase link (G9)
 - **As a:** Staff
 - **I want:** "Copy a link" to create an unguessable link for the current showcase with an expiry, copy it to the clipboard, and let me revoke it later from the showcase
@@ -11502,6 +11950,7 @@ Split note: EP-34-S14 was split into S14a and S14b because creating and revoking
 Split note: EP-34-S14 was split into S14a and S14b because creating and revoking the link is a signed-in staff action, while serving the page to anyone with the link is a new public surface with its own security, caching and performance checks.
 
 - **Story ID:** EP-34-S14b
+- **Status:** Not started
 - **Title:** Staff can create and revoke a public showcase link (G9)
 - **As a:** System
 - **I want:** a Read Public showcase operation and page that anyone with a valid link can open without signing in, showing only the chosen pieces that are still `in_stock`, with photo, name, purity, style and pure gold, and no price, tag history or customer data
@@ -11526,6 +11975,7 @@ Split note: EP-34-S14 was split into S14a and S14b because creating and revoking
 ## EP-34-S15: Owner can push aged pieces from the ageing alert into a broadcast
 
 - **Story ID:** EP-34-S15
+- **Status:** Not started
 - **Title:** Owner can push aged pieces from the ageing alert into a broadcast
 - **As a:** Owner
 - **I want:** "Push on WhatsApp" on the "GOLD SITTING TOO LONG" card to open `broadcast` with a new draft that already has the aged pieces attached, so I only pick the audience and the message
@@ -11572,6 +12022,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S1: Owner can review and approve the UX design of the report hub and section layout
 
 - **Story ID:** EP-35-S1
+- **Status:** Not started
 - **Title:** Owner can review and approve the UX design of the report hub and section layout
 - **As a:** Owner
 - **I want:** a design for the report hub, one reusable section-report layout, the period picker and export (if decided), with no branch picker (one shop, D7), drawn as mockups in `docs/ux/mockups/` and shown to me for approval before any report is built
@@ -11596,6 +12047,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S2: System can compute period totals from integer weight units
 
 - **Story ID:** EP-35-S2
+- **Status:** Not started
 - **Title:** System can compute period totals from integer weight units
 - **As a:** System
 - **I want:** one set of shared report functions on the server that take a period (start and end dates in Asia/Kolkata), scope every query to the caller's shop, convert the period to UTC bounds, and return sums of integer weights in units of 0.0001 g, counts, and percentages computed from integers, using the same functions the Decisions home and the pool page already use for the same figures
@@ -11620,6 +12072,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S3: System can refuse report requests from anyone but the owner
 
 - **Story ID:** EP-35-S3
+- **Status:** Not started
 - **Title:** System can refuse report requests from anyone but the owner
 - **As a:** System
 - **I want:** every report operation (List Report sections, Read Stock, Karigar, Leads, Intake and Outreach report, Create Report export) to check on the server that the caller holds the owner permission "Read every section's report", and to refuse everyone else
@@ -11644,6 +12097,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S4: Owner can open the report hub with the five sections
 
 - **Story ID:** EP-35-S4
+- **Status:** Not started
 - **Title:** Owner can open the report hub with the five sections
 - **As a:** Owner
 - **I want:** a "Reports" item in the owner rail that opens the report hub, where List Report sections returns the five sections, stock, karigars, leads, intake and outreach, each with one headline figure in grams or counts for the default period
@@ -11668,6 +12122,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S5: Owner can choose a period for a section report
 
 - **Story ID:** EP-35-S5
+- **Status:** Not started
 - **Title:** Owner can choose a period for a section report
 - **As a:** Owner
 - **I want:** a period picker on the hub and on every section report, with the periods and the default agreed in the design, so that every figure on the screen is recomputed for the period I pick and the period stays the same when I move between sections
@@ -11692,6 +12147,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S6: Owner can read the stock report
 
 - **Story ID:** EP-35-S6
+- **Status:** Not started
 - **Title:** Owner can read the stock report
 - **As a:** Owner
 - **I want:** the stock section, through Read Stock report, to show pure gold on the floor and its piece count at the end of the period, pieces held back from the floor (`draft`, `with_owner`, `stopped`) with their pure gold, pieces and pure gold that went out in the period, and pieces scrapped with the gold returned to the pool
@@ -11716,6 +12172,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S7: Owner can read stock ageing by days in stock
 
 - **Story ID:** EP-35-S7
+- **Status:** Not started
 - **Title:** Owner can read stock ageing by days in stock
 - **As a:** Owner
 - **I want:** the stock section to show the pieces on the floor at the end of the period grouped by days in stock, with the piece count and pure gold of each group, and the oldest piece's age
@@ -11740,6 +12197,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S8: Owner can read the karigar report
 
 - **Story ID:** EP-35-S8
+- **Status:** Not started
 - **Title:** Owner can read the karigar report
 - **As a:** Owner
 - **I want:** the karigar section, through Read Karigar report, to show one row per karigar with gold with them now, gold issued and returned in the period, metal loss in grams and as a percentage, open jobs, overdue jobs, days late and parcel gaps, worst first
@@ -11764,6 +12222,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S9: Owner can read the leads report
 
 - **Story ID:** EP-35-S9
+- **Status:** Not started
 - **Title:** Owner can read the leads report
 - **As a:** Owner
 - **I want:** the leads section, through Read Leads report, to show leads that arrived in the period by source (counter, email, WhatsApp) and by current state, how many met the SLA and how many went late, item lines routed to stock and to make, and leads lost with their reasons
@@ -11788,6 +12247,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S10: Owner can read the intake report
 
 - **Story ID:** EP-35-S10
+- **Status:** Not started
 - **Title:** Owner can read the intake report
 - **As a:** Owner
 - **I want:** the intake section, through Read Intake report, to show parcels received in the period, verdict counts (`exact`, `last_digit`, `mismatch`), owner clearances by kind (`sent_back`, `rechecking`, `loss_accepted`), the total grams of accepted loss with each reason, and stop-the-line problems raised and cleared
@@ -11812,6 +12272,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S11: Owner can read the outreach report
 
 - **Story ID:** EP-35-S11
+- **Status:** Not started
 - **Title:** Owner can read the outreach report
 - **As a:** Owner
 - **I want:** the outreach section, through Read Outreach report, to show wishes sent in the period, broadcasts sent with their audience and recipient counts, replies, and leads created from replies
@@ -11836,6 +12297,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S12: Owner can choose one branch or all branches (Deferred: no branches in v1, D7)
 
 - **Story ID:** EP-35-S12
+- **Status:** Deferred: no branches in v1 (D7).
 - **Title:** Owner can choose one branch or all branches (Deferred: no branches in v1, D7)
 - **As a:** Owner
 - **I want:** Deferred: no branches in v1 (D7). Nothing is built for this story in v1. Was: a branch picker on the hub and every section report with each open branch and "All branches"
@@ -11858,6 +12320,7 @@ Role note: stories where the server computes figures or checks access on its own
 ## EP-35-S13: Owner can export a section report (if export is decided)
 
 - **Story ID:** EP-35-S13
+- **Status:** Not started
 - **Title:** Owner can export a section report (if export is decided)
 - **As a:** Owner
 - **I want:** an export action on each section report that, through Create Report export, produces a file of that section for the chosen period in the decided format, which I can download through a signed, expiring link
@@ -11906,6 +12369,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S1: System can store devices and link a balance to a registered scale
 
 - **Story ID:** EP-36-S1
+- **Status:** Not started
 - **Title:** System can store devices and link a balance to a registered scale
 - **As a:** System
 - **I want:** a `devices` table holding each balance, label printer, sheet printer and scanner with its kind, model, counter, active flag and, for a balance, the one registered scale it is linked to, plus a List Devices operation
@@ -11930,6 +12394,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S2: System can record whether each weight was read or typed
 
 - **Story ID:** EP-36-S2
+- **Status:** Not started
 - **Title:** System can record whether each weight was read or typed
 - **As a:** System
 - **I want:** every weighing on a parcel and every gross and stone figure on a piece to store its source (`read` or `typed`) and the device id when it was read, set by the save operations of EP-21
@@ -11954,6 +12419,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S3: Owner can set up the balance and printer for a counter
 
 - **Story ID:** EP-36-S3
+- **Status:** Not started
 - **Title:** Owner can set up the balance and printer for a counter
 - **As a:** Owner
 - **I want:** a device setup panel on `scales` where I add a device, pick its kind and model, set its counter, link a balance to a registered scale, and switch a device off, through Create Device and Update Device
@@ -11978,6 +12444,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S4: Staff can read a stable weight from the balance on parcel arrival
 
 - **Story ID:** EP-36-S4
+- **Status:** Not started
 - **Title:** Staff can read a stable weight from the balance on parcel arrival
 - **As a:** Staff
 - **I want:** a "Read from balance" control beside "Everything on the scale together" and "Of that, the stones, pearls, lac — anything not gold" on `parcel-arrival`, for the whole parcel and for each tray, that fills the field only once the balance reports a stable value
@@ -12002,6 +12469,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S5: Staff can read gross and stone weights from the balance when tagging
 
 - **Story ID:** EP-36-S5
+- **Status:** Not started
 - **Title:** Staff can read gross and stone weights from the balance when tagging
 - **As a:** Staff
 - **I want:** a "Read from balance" control beside "On the scale now" and "Stones, kemp, lac on this piece" on `parcel-tag`, each taking a fresh stable reading for the piece in front of me
@@ -12026,6 +12494,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S6: System can set the scale id from the device that gave the reading
 
 - **Story ID:** EP-36-S6
+- **Status:** Not started
 - **Title:** System can set the scale id from the device that gave the reading
 - **As a:** System
 - **I want:** the server to take the scale id of any `read` figure from the linked scale of the named balance device, ignoring any scale id the client sends for it, and to refuse a reading whose scale is not in the registry
@@ -12049,6 +12518,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S7: Staff can fall back to typing a weight when no device is connected
 
 - **Story ID:** EP-36-S7
+- **Status:** Not started
 - **Title:** Staff can fall back to typing a weight when no device is connected
 - **As a:** Staff
 - **I want:** to type any weight and pick the scale by hand on `parcel-arrival` and `parcel-tag` whenever the balance is missing, switched off or drops mid-form, without losing what I have entered
@@ -12072,6 +12542,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S8: Staff can print a tag label with a barcode
 
 - **Story ID:** EP-36-S8
+- **Status:** Not started
 - **Title:** Staff can print a tag label with a barcode
 - **As a:** Staff
 - **I want:** to print a label for a saved piece on the counter's label printer, showing the tag number as a barcode and as text, with the other agreed fields and no price, through Read Tag label and Create Label print record
@@ -12096,6 +12567,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S9: Staff can reprint a tag label
 
 - **Story ID:** EP-36-S9
+- **Status:** Not started
 - **Title:** Staff can reprint a tag label
 - **As a:** Staff
 - **I want:** to reprint the label of a saved piece from the tag screen or the piece drawer on `stock`, with the same content as the first label
@@ -12119,6 +12591,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S10: Staff can print the parcel sheet from the match screen (G8)
 
 - **Story ID:** EP-36-S10
+- **Status:** Not started
 - **Title:** Staff can print the parcel sheet from the match screen (G8)
 - **As a:** Staff
 - **I want:** "Print parcel sheet" on `parcel-match` to print a sheet with the parcel id, karigar, order, each weighing with its scale name, and every item with its tag number and three weights, through Read Parcel sheet
@@ -12142,6 +12615,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S11: Staff can scan a tag to add a piece to a stock-out
 
 - **Story ID:** EP-36-S11
+- **Status:** Not started
 - **Title:** Staff can scan a tag to add a piece to a stock-out
 - **As a:** Staff
 - **I want:** to scan a tag barcode into "Scan another tag" on `stock-out` and have the piece join "WHAT IS LEAVING THE SHOWCASE" with its photo and name, through Read Piece by scanned tag
@@ -12166,6 +12640,7 @@ Role note: stories where the server checks a reading or records its source, and 
 ## EP-36-S12: System can refuse a scanned tag that is not in stock
 
 - **Story ID:** EP-36-S12
+- **Status:** Not started
 - **Title:** System can refuse a scanned tag that is not in stock
 - **As a:** System
 - **I want:** a scanned tag that is sold, scrapped, stopped, not yet released or unknown to be refused with exactly the same sentence as the same tag typed by hand
@@ -12212,6 +12687,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S1: System can write structured logs with a request id across services
 
 - **Story ID:** EP-37-S1
+- **Status:** Not started
 - **Title:** System can write structured logs with a request id across services
 - **As a:** System
 - **I want:** every API request, background job run, notification delivery, WhatsApp send and live-channel publish to write structured log lines that share one request id
@@ -12236,6 +12712,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S2: System can redact passwords, links, tokens, phones and names from every log line
 
 - **Story ID:** EP-37-S2
+- **Status:** Not started
 - **Title:** System can redact passwords, links, tokens, phones and names from every log line
 - **As a:** System
 - **I want:** the logger itself to remove passwords, activation and reset links, edit tokens, session secrets, phone numbers, email addresses and customer names from every log line, by field name and by pattern, before the line leaves the process
@@ -12260,6 +12737,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S3: System can report web, portal and API errors to error tracking
 
 - **Story ID:** EP-37-S3
+- **Status:** Not started
 - **Title:** System can report web, portal and API errors to error tracking
 - **As a:** System
 - **I want:** every unhandled error in the web app, the karigar portal and the API to be reported to error tracking with time, service, release version, request id, message, stack and user role
@@ -12284,6 +12762,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S4: System can run uptime checks against the health check
 
 - **Story ID:** EP-37-S4
+- **Status:** Not started
 - **Title:** System can run uptime checks against the health check
 - **As a:** System
 - **I want:** an uptime checker outside the main app to call Read Health on staging and production at a set interval and alert the operator after the agreed number of failures in a row
@@ -12308,6 +12787,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S5: Operator can receive an alert when a WhatsApp send fails after retries
 
 - **Story ID:** EP-37-S5
+- **Status:** Not started
 - **Title:** Operator can receive an alert when a WhatsApp send fails after retries
 - **As a:** Developer
 - **I want:** an alert when a WhatsApp send has failed after its last retry, naming the message kind (edit token, wish, broadcast, alert)
@@ -12332,6 +12812,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S6: Operator can receive an alert when a background job fails or does not run
 
 - **Story ID:** EP-37-S6
+- **Status:** Not started
 - **Title:** Operator can receive an alert when a background job fails or does not run
 - **As a:** Developer
 - **I want:** an alert when a background job fails after its last retry, and when a scheduled job does not start by its time plus a grace period
@@ -12356,6 +12837,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S7: System can measure live-event delivery time against the 1-second target
 
 - **Story ID:** EP-37-S7
+- **Status:** Not started
 - **Title:** System can measure live-event delivery time against the 1-second target
 - **As a:** System
 - **I want:** to measure the time from publishing each catalogue event to its arrival in a client, and alert when the median passes 1 second over the agreed window
@@ -12380,6 +12862,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S8: System can measure screen load time against the 2-second target
 
 - **Story ID:** EP-37-S8
+- **Status:** Not started
 - **Title:** System can measure screen load time against the 2-second target
 - **As a:** System
 - **I want:** the web app and karigar portal to report how long each route takes to show its data on real shop devices, and to show it against the 2-second target
@@ -12404,6 +12887,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S9: Operator can see request, error, job and send dashboards
 
 - **Story ID:** EP-37-S9
+- **Status:** Not started
 - **Title:** Operator can see request, error, job and send dashboards
 - **As a:** Developer
 - **I want:** dashboards of request rate, error rate, job runs and send success for the last 24 hours and the last 30 days, for staging and production
@@ -12429,6 +12913,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S10: Operator can acknowledge an alert
 
 - **Story ID:** EP-37-S10
+- **Status:** Not started
 - **Title:** Operator can acknowledge an alert
 - **As a:** Developer
 - **I want:** to list open and recent alerts and acknowledge one, recording who acknowledged it and when
@@ -12453,6 +12938,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-37-S11: System can delete logs after the retention period
 
 - **Story ID:** EP-37-S11
+- **Status:** Not started
 - **Title:** System can delete logs after the retention period
 - **As a:** System
 - **I want:** log lines, error reports, uptime results and client timing data to be deleted once they pass the agreed retention period
@@ -12497,6 +12983,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S1: System can take a daily database backup
 
 - **Story ID:** EP-38-S1
+- **Status:** Partial: the production daily schedule is the RDS backup window, not built (D1a, FU-018).
 - **Title:** System can take a daily database backup
 - **As a:** System
 - **I want:** to take a full backup of the production and staging databases at least once a day on a schedule, and write a backup record for each run
@@ -12521,6 +13008,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S2: System can keep a continuous log for point-in-time restore
 
 - **Story ID:** EP-38-S2
+- **Status:** Not started
 - **Title:** System can keep a continuous log for point-in-time restore
 - **As a:** System
 - **I want:** to ship the database's change log continuously to backup storage between daily backups
@@ -12544,6 +13032,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S3: System can back up file storage
 
 - **Story ID:** EP-38-S3
+- **Status:** Partial: S3 versioning and the copy to another region or account are cloud work (D1a, FU-018).
 - **Title:** System can back up file storage
 - **As a:** System
 - **I want:** to copy object storage (piece photos, order copy reference images, PO attachments and bench photos) to backup storage, keeping earlier versions of each file
@@ -12568,6 +13057,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S4: System can encrypt backups and keep them apart from live data
 
 - **Story ID:** EP-38-S4
+- **Status:** Partial: India region, operator-only IAM access and credentials that cannot delete backups (AC2-4) are cloud work (D1a, FU-018).
 - **Title:** System can encrypt backups and keep them apart from live data
 - **As a:** System
 - **I want:** every database backup, continuous log and file storage copy to be encrypted at rest and stored in a separate location from the live data, in an India region (D10, decided)
@@ -12592,6 +13082,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S5: Operator can receive an alert when a backup fails
 
 - **Story ID:** EP-38-S5
+- **Status:** Partial: the continuous-log alarm (AC3) is cloud, and delivery to a person needs EP-11 and EP-37 (FU-018).
 - **Title:** Operator can receive an alert when a backup fails
 - **As a:** Developer
 - **I want:** an alert through the EP-37 alert route when a daily backup, the continuous log or a file storage backup fails or does not happen
@@ -12616,6 +13107,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S6: Operator can restore staging to a point in time
 
 - **Story ID:** EP-38-S6
+- **Status:** Partial: point-in-time restore and the production approver (AC1, AC5) are cloud; screen refetch (AC3, AC4) waits for live screens (FU-012, FU-018).
 - **Title:** Operator can restore staging to a point in time
 - **As a:** Developer
 - **I want:** to restore the staging database and its files to a chosen point in time, and to use the same procedure for production once the agreed approver has approved
@@ -12640,6 +13132,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S7: Operator can check that the audit log is whole after a restore
 
 - **Story ID:** EP-38-S7
+- **Status:** Done
 - **Title:** Operator can check that the audit log is whole after a restore
 - **As a:** Developer
 - **I want:** a check that compares the restored audit log with the source up to the restore point and reports any missing or changed entry
@@ -12664,6 +13157,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S8: Operator can follow a written restore drill and record its duration
 
 - **Story ID:** EP-38-S8
+- **Status:** Partial: go-live sign-off needs staging (AC4) and the drill reminder is cloud work (AC5) (FU-018).
 - **Title:** Operator can follow a written restore drill and record its duration
 - **As a:** Developer
 - **I want:** a written restore drill that names each step, who does it and how long it takes, run in staging before launch and then on the agreed schedule, with each run recorded
@@ -12688,6 +13182,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S9: Operator can list sends made after a restore point for follow-up
 
 - **Story ID:** EP-38-S9
+- **Status:** Partial: provider message id, template and status need EP-11 and EP-12; no repeat wish needs EP-33 (FU-018).
 - **Title:** Operator can list sends made after a restore point for follow-up
 - **As a:** Developer
 - **I want:** to list the WhatsApp messages (including owner edit codes) and account emails sent between the restore point and the restore, from provider logs and receipts, and the work lost in that window
@@ -12712,6 +13207,7 @@ Role note: this is a layer E operations epic with no shop-facing screen. Stories
 ## EP-38-S10: System can delete backups after the retention period
 
 - **Story ID:** EP-38-S10
+- **Status:** Partial: continuous-log retention (AC3) and S3 noncurrent-version expiry (AC4) are cloud work (FU-018).
 - **Title:** System can delete backups after the retention period
 - **As a:** System
 - **I want:** daily backups, continuous log segments and old file versions to be deleted once they pass the agreed retention period
@@ -12757,6 +13253,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S1: System can store a consent ledger per customer
 
 - **Story ID:** EP-39-S1
+- **Status:** Not started
 - **Title:** System can store a consent ledger per customer
 - **As a:** System
 - **I want:** the `consent_events` table from EP-17-S2 to become the full consent ledger, with a `channel` column (WhatsApp in v1) and an `evidence_ref` column (the inbound message id for a reply), and a List Consent history operation that returns a customer's entries newest first
@@ -12781,6 +13278,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S2: System can rate-limit sign-in, reset-link and edit-token requests and entries
 
 - **Story ID:** EP-39-S2
+- **Status:** Not started
 - **Title:** System can rate-limit sign-in, reset-link and edit-token requests and entries
 - **As a:** System
 - **I want:** one shared rate-limit counter store, keyed by phone, user or address and by operation, that the sign-in and reset-link limits (EP-04-S8, EP-04-S9) and the edit-token limits (EP-25-S9) all use, with the limit values set in configuration, plus an end-to-end review of the D4 password and link rules
@@ -12806,6 +13304,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S3: System can apply a general request limit per user and address
 
 - **Story ID:** EP-39-S3
+- **Status:** Not started
 - **Title:** System can apply a general request limit per user and address
 - **As a:** System
 - **I want:** to fill the rate-limit hook from EP-03-S11 with a general limit on every operation, counted per signed-in user and per address, using the store from EP-39-S2
@@ -12830,6 +13329,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S4: Staff can record a customer's consent or opt-out at the counter
 
 - **Story ID:** EP-39-S4
+- **Status:** Not started
 - **Title:** Staff can record a customer's consent or opt-out at the counter
 - **As a:** Staff
 - **I want:** to record a customer's WhatsApp consent or opt-out at the counter, from the "Send wishes on WhatsApp" control on `customer-new` and from the consent panel on `customers`, each write going into the consent ledger with source `counter` or `form`
@@ -12854,6 +13354,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S5: System can withdraw consent from a WhatsApp opt-out reply
 
 - **Story ID:** EP-39-S5
+- **Status:** Not started
 - **Title:** System can withdraw consent from a WhatsApp opt-out reply
 - **As a:** System
 - **I want:** an inbound WhatsApp message that matches a configured opt-out word to write an `opt_out` ledger entry for the matching customer with source `whatsapp_reply`, recorded by System, and the inbound message id as `evidence_ref`, at the moment it is received
@@ -12878,6 +13379,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S6: System can check consent at send time for wishes and broadcasts
 
 - **Story ID:** EP-39-S6
+- **Status:** Not started
 - **Title:** System can check consent at send time for wishes and broadcasts
 - **As a:** System
 - **I want:** every outbound customer message (a wish, a broadcast message or a one-person showcase) to read the customer's current consent from the ledger just before it is handed to the WhatsApp provider, and to skip the send if consent is withdrawn
@@ -12902,6 +13404,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S7: Staff can record a customer's deletion request
 
 - **Story ID:** EP-39-S7
+- **Status:** Not started
 - **Title:** Staff can record a customer's deletion request
 - **As a:** Staff
 - **I want:** to record a deletion request a customer makes in person, with how it was received and when, so it waits for the owner's decision
@@ -12926,6 +13429,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S8: Owner can approve or refuse a deletion request
 
 - **Story ID:** EP-39-S8
+- **Status:** Not started
 - **Title:** Owner can approve or refuse a deletion request
 - **As a:** Owner
 - **I want:** to see open deletion requests and approve or refuse each one with a reason
@@ -12950,6 +13454,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S9: System can erase a customer's personal data across records and files
 
 - **Story ID:** EP-39-S9
+- **Status:** Not started
 - **Title:** System can erase a customer's personal data across records and files
 - **As a:** System
 - **I want:** an approved deletion request to run a deletion that calls the customer erase from EP-17-S13, clears the customer's name and phone from leads linked to them, deletes their PO attachments and other stored files, records the scope erased and marks the request `done`
@@ -12975,6 +13480,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S10: System can write token references instead of token values in audit
 
 - **Story ID:** EP-39-S10
+- **Status:** Not started
 - **Title:** System can write token references instead of token values in audit
 - **As a:** System
 - **I want:** a check at audit write time that refuses any audit entry whose fields contain an edit-token value, a password or an activation or reset link, plus a test that walks every token and password flow and scans audit entries, logs and stored messages for them
@@ -12998,6 +13504,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S11: System can enforce owner-only settings on the server (G12)
 
 - **Story ID:** EP-39-S11
+- **Status:** Not started
 - **Title:** System can enforce owner-only settings on the server (G12)
 - **As a:** System
 - **I want:** an automated test that calls the settings change operation as Staff and as Karigar for every setting EP-13 names owner-only, including `pricingEnabled` and `autoSendWishes`, and expects a refusal each time, with the guard fixed where it fails
@@ -13022,6 +13529,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S12: Owner can run an access review and deactivate users from it
 
 - **Story ID:** EP-39-S12
+- **Status:** Not started
 - **Title:** Owner can run an access review and deactivate users from it
 - **As a:** Owner
 - **I want:** an access review list of every active user with name, role, last sign-in and created date, a way to deactivate any of them from the list, a "Mark review done" action that records the review, and a reminder when the next review is due
@@ -13047,6 +13555,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S13: Operator can rotate secrets by a written procedure
 
 - **Story ID:** EP-39-S13
+- **Status:** Not started
 - **Title:** Operator can rotate secrets by a written procedure
 - **As a:** Developer
 - **I want:** a written rotation procedure for each secret (WhatsApp provider token, email provider key, LLM key, file storage keys, database credentials and the session signing key) that swaps the secret without downtime, plus a SecretRotation record of each rotation
@@ -13071,6 +13580,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S14: Owner can sign off the public catalogue link review (G9)
 
 - **Story ID:** EP-39-S14
+- **Status:** Not started
 - **Title:** Owner can sign off the public catalogue link review (G9)
 - **As a:** Owner
 - **I want:** a security review of the public showcase link from EP-34 against a fixed checklist, run as automated tests in staging, and to sign off the result or have the link switched off
@@ -13095,6 +13605,7 @@ Role note: stories where the server limits, checks, erases or reminds on its own
 ## EP-39-S15: Owner can accept or close each penetration test finding
 
 - **Story ID:** EP-39-S15
+- **Status:** Not started
 - **Title:** Owner can accept or close each penetration test finding
 - **As a:** Owner
 - **I want:** to approve the scope of an external penetration test on staging, have each finding recorded with severity and summary, and mark each one fixed or accept it in writing
@@ -13146,6 +13657,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S1: Developer can run unit tests for the shared package in one command
 
 - **Story ID:** EP-40-S1
+- **Status:** Not started
 - **Title:** Developer can run unit tests for the shared package in one command
 - **As a:** Developer
 - **I want:** the test runner from EP-01-S8 set up in the shared package and the server service layer, with one command that runs every unit test in one run and exits non-zero on any failure
@@ -13170,6 +13682,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S2: Developer can run weight and ceiling unit tests on integer units
 
 - **Story ID:** EP-40-S2
+- **Status:** Not started
 - **Title:** Developer can run weight and ceiling unit tests on integer units
 - **As a:** Developer
 - **I want:** unit tests for the shared weight helpers (gram text to integer units and back, net, sum) and for the ceiling function, all asserting integer equality
@@ -13195,6 +13708,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S3: Developer can run the rewritten match and gate tests (G11)
 
 - **Story ID:** EP-40-S3
+- **Status:** Not started
 - **Title:** Developer can run the rewritten match and gate tests (G11)
 - **As a:** Developer
 - **I want:** the deleted prototype match assertions rewritten as unit tests on the shared `evaluateParcel` and as service tests on the release and clear rules, using the cases recorded in `.agents/tasks/jgd-redesign/review.md`
@@ -13220,6 +13734,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S4: Developer can run the rewritten edit, scrap, stop and stock-out rule tests (G11)
 
 - **Story ID:** EP-40-S4
+- **Status:** Not started
 - **Title:** Developer can run the rewritten edit, scrap, stop and stock-out rule tests (G11)
 - **As a:** Developer
 - **I want:** the remaining recorded prototype assertions rewritten as unit and service tests: problems and stops, edit tokens, scrap, stock-out, owner-only onboarding and scale changes
@@ -13245,6 +13760,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S5: Developer can run API tests against a fresh seeded database
 
 - **Story ID:** EP-40-S5
+- **Status:** Not started
 - **Title:** Developer can run API tests against a fresh seeded database
 - **As a:** Developer
 - **I want:** an API test suite that creates a fresh test database, runs every migration, loads the fixture seed, signs fixture users in through a test-only session operation, calls each API operation and drops the database afterwards
@@ -13272,6 +13788,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S6: Developer can run permission tests generated from the permission matrix
 
 - **Story ID:** EP-40-S6
+- **Status:** Not started
 - **Title:** Developer can run permission tests generated from the permission matrix
 - **As a:** Developer
 - **I want:** a permission test suite generated from the permission list in the shared package (EP-05-S1), which calls every operation as Owner, Staff and Karigar and checks the result against the matrix, plus a test that an operation missing from the matrix is denied
@@ -13297,6 +13814,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S7: Developer can run concurrency tests for double-sell and double-routing
 
 - **Story ID:** EP-40-S7
+- **Status:** Not started
 - **Title:** Developer can run concurrency tests for double-sell and double-routing
 - **As a:** Developer
 - **I want:** concurrency tests against the real database engine that send two or more stock-outs of one piece, two lead-line routings of one line, and two owner clearances of one parcel at the same moment from different sessions
@@ -13321,6 +13839,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S8: Developer can run a concurrency test for two staff tagging one parcel
 
 - **Story ID:** EP-40-S8
+- **Status:** Not started
 - **Title:** Developer can run a concurrency test for two staff tagging one parcel
 - **As a:** Developer
 - **I want:** a concurrency test where two staff sessions save the same tag on a shared parcel at the same moment, and another where a tag save races a release
@@ -13344,6 +13863,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S9: Developer can run live-event delivery and audience tests
 
 - **Story ID:** EP-40-S9
+- **Status:** Not started
 - **Title:** Developer can run live-event delivery and audience tests
 - **As a:** Developer
 - **I want:** tests that open live connections as Owner, Staff and Karigar, trigger each catalogue event's operation, and check the event arrives only after the commit and only to the allowed audience
@@ -13369,6 +13889,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S10: Developer can run a test that no currency shows while pricing is off
 
 - **Story ID:** EP-40-S10
+- **Status:** Not started
 - **Title:** Developer can run a test that no currency shows while pricing is off
 - **As a:** Developer
 - **I want:** a rendering test that opens every route with each fixture identity and sample parameters, with the pricing flag off, and fails if any rendered screen contains a currency sign or rupee figure
@@ -13392,6 +13913,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S11: Developer can run a test that passwords, links and edit tokens never reach logs or audit
 
 - **Story ID:** EP-40-S11
+- **Status:** Not started
 - **Title:** Developer can run a test that passwords, links and edit tokens never reach logs or audit
 - **As a:** Developer
 - **I want:** a security test that runs an activation, a password sign-in with one wrong password first, a password reset, an edit token request and an edit apply, captures the passwords used, the links from the account-email stub and the issued codes, and searches audit entries, application logs, error reports and stored messages for them
@@ -13416,6 +13938,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S12: Developer can run end-to-end tests of the main flows on staging
 
 - **Story ID:** EP-40-S12
+- **Status:** Not started
 - **Title:** Developer can run end-to-end tests of the main flows on staging
 - **As a:** Developer
 - **I want:** end-to-end tests that drive the web app and the karigar portal in real browsers on staging through each main flow in FR-40-11
@@ -13440,6 +13963,7 @@ Role note: this is a layer E testing epic with no end user. Stories use "Develop
 ## EP-40-S13: System can block a merge or deploy when any test fails
 
 - **Story ID:** EP-40-S13
+- **Status:** Not started
 - **Title:** System can block a merge or deploy when any test fails
 - **As a:** System
 - **I want:** CI to run the unit, API, permission, concurrency, live-event, rendering and security suites on every push, the end-to-end suite before every staging promotion to production, and to block the merge or deploy on any failure
@@ -13485,6 +14009,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S1: System can record import runs with loaded and refused rows
 
 - **Story ID:** EP-41-S1
+- **Status:** Not started
 - **Title:** System can record import runs with loaded and refused rows
 - **As a:** System
 - **I want:** an `import_runs` table and an `import_row_errors` table, and a shared import runner that reads an uploaded list for one kind, checks every row with that kind's own create rules, loads the good rows, and records each refused row with its row number, field and reason
@@ -13510,6 +14035,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S2: Owner can import karigars from a list
 
 - **Story ID:** EP-41-S2
+- **Status:** Not started
 - **Title:** Owner can import karigars from a list
 - **As a:** Owner
 - **I want:** to upload the shop's karigar list with name, phone, email, workshop location, specialties, language and wastage allowance, and have each row created through the same rules as Add a karigar
@@ -13534,6 +14060,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S3: Owner can import customers with their consent status
 
 - **Story ID:** EP-41-S3
+- **Status:** Not started
 - **Title:** Owner can import customers with their consent status
 - **As a:** Owner
 - **I want:** to upload the customer list with name, phone, birthday, anniversary and group, and for each row either a record of WhatsApp consent with the date it was given, or nothing
@@ -13558,6 +14085,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S4: Owner can import existing stock as in-stock pieces with integer weights
 
 - **Story ID:** EP-41-S4
+- **Status:** Not started
 - **Title:** Owner can import existing stock as in-stock pieces with integer weights
 - **As a:** Owner
 - **I want:** to upload the showroom stock list with tag number, HUID, name, kind, purity, gross weight and stone weight, and have each row created as a piece with source "import"
@@ -13583,6 +14111,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S5: Owner can register the real scales with true readabilities
 
 - **Story ID:** EP-41-S5
+- **Status:** Not started
 - **Title:** Owner can register the real scales with true readabilities
 - **As a:** Owner
 - **I want:** to register each real scale in the shop with its name, true readability and capacity from its documentation, and retire the seed scales that do not exist, before the first real parcel is weighed
@@ -13607,6 +14136,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S6: Owner can record the opening pool balance
 
 - **Story ID:** EP-41-S6
+- **Status:** Not started
 - **Title:** Owner can record the opening pool balance
 - **As a:** Owner
 - **I want:** to record the pool's opening balance at launch, once, using the Create Opening entry from EP-18-S2 with the agreed figure and a reason that names the launch
@@ -13630,6 +14160,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S7: Owner can record the gold each karigar holds at launch
 
 - **Story ID:** EP-41-S7
+- **Status:** Not started
 - **Title:** Owner can record the gold each karigar holds at launch
 - **As a:** Owner
 - **I want:** to record, for each karigar, the grams of gold they hold at launch, either as an open job carried over from the register or as an opening holding with no job, through Create Karigar holding
@@ -13655,6 +14186,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S8: Owner can create accounts for every staff member and karigar
 
 - **Story ID:** EP-41-S8
+- **Status:** Not started
 - **Title:** Owner can create accounts for every staff member and karigar
 - **As a:** Owner
 - **I want:** the first-run setup wizard (EP-45) run once on production to create the shop and my owner account, then an account for every staff member and karigar, each with an email for the activation link, each karigar user linked to their karigar record, either one by one on `staff-new` or from a users list
@@ -13679,6 +14211,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S9: Owner can rehearse every import on staging
 
 - **Story ID:** EP-41-S9
+- **Status:** Not started
 - **Title:** Owner can rehearse every import on staging
 - **As a:** Owner
 - **I want:** to run every import (scales, karigars, users, customers, stock, opening pool, karigar holdings) on staging first, in launch order, read the refused rows, fix the lists, and run again, without touching production
@@ -13703,6 +14236,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S10: Staff can follow role-based training for their screens
 
 - **Story ID:** EP-41-S10
+- **Status:** Not started
 - **Title:** Staff can follow role-based training for their screens
 - **As a:** Staff
 - **I want:** short training material and a practice session on staging for the screens Staff use: sign-in, `today`, parcel arrival, tagging and the match, `stock`, `stock-out`, customers, leads and order copies; and the same for the owner on `decisions`, clearing a mismatch, edit tokens, scrap and settings
@@ -13727,6 +14261,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S11: Karigar can sign in and follow training on the phone portal
 
 - **Story ID:** EP-41-S11
+- **Status:** Not started
 - **Title:** Karigar can sign in and follow training on the phone portal
 - **As a:** Karigar
 - **I want:** to be signed in on my own phone during training, open the portal in the phone browser, and practise accepting a job, marking it ready, handing it over and reading "Gold with me"
@@ -13751,6 +14286,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S12: Owner can compare daily app figures with the paper register
 
 - **Story ID:** EP-41-S12
+- **Status:** Not started
 - **Title:** Owner can compare daily app figures with the paper register
 - **As a:** Owner
 - **I want:** for each day of the parallel run, the app's figures (pieces in stock, pure gold on the floor, gold with karigars, pool balance, pieces out) next to the register figures I enter, with the difference and a note
@@ -13775,6 +14311,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S13: Owner can tick and sign the go-live checklist
 
 - **Story ID:** EP-41-S13
+- **Status:** Not started
 - **Title:** Owner can tick and sign the go-live checklist
 - **As a:** Owner
 - **I want:** a go-live checklist where each item has a responsible person and a tick, the operator ticks the technical items, and I sign the whole list before the shop starts using the app for real
@@ -13799,6 +14336,7 @@ Role note: this is a layer E launch epic. Most stories are the Owner's, because 
 ## EP-41-S14: Owner can follow a rollback plan to the paper register
 
 - **Story ID:** EP-41-S14
+- **Status:** Not started
 - **Title:** Owner can follow a rollback plan to the paper register
 - **As a:** Owner
 - **I want:** a written rollback plan that says when go-live counts as failed, who decides, how the shop returns to the paper register, and how work done in the app in the meantime is copied back
@@ -13848,6 +14386,7 @@ Role note: this is a layer F (Later) epic and the only epic with price logic. St
 ## EP-42-S1: System can store money as integers in the decided unit
 
 - **Story ID:** EP-42-S1
+- **Status:** Later
 - **Title:** System can store money as integers in the decided unit
 - **As a:** System
 - **I want:** every money column (`pieces.valueINR`, `customers.budgetINR`, `customers.spentINR`, `stock_outs.amountINR` and the new gold rate per gram) to be an integer column in one decided money unit, with shared helpers that convert to and from the display string and one rounding rule applied once at the end of a computation
@@ -13874,6 +14413,7 @@ Role note: this is a layer F (Later) epic and the only epic with price logic. St
 Cross-reference: the owner-only check on `pricingEnabled` is built in EP-13-S9 and tested in EP-39-S11; this story confirms it holds for the pricing switch and extends the same check to the gold rate operations.
 
 - **Story ID:** EP-42-S2
+- **Status:** Later
 - **Title:** System can refuse a pricing switch change from anyone but the owner (G12)
 - **As a:** System
 - **I want:** Update Pricing switch and Create Gold rate (by hand) to be refused on the server for every caller who is not the owner, and the AppShell `PricingToggle` dev switch to be gone from every build
@@ -13900,6 +14440,7 @@ Cross-reference: the owner-only check on `pricingEnabled` is built in EP-13-S9 a
 Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write the `setting_changed` entry for `pricingEnabled`; this story adds the pricing-specific checks.
 
 - **Story ID:** EP-42-S3
+- **Status:** Later
 - **Title:** System can audit every change of the pricing switch
 - **As a:** System
 - **I want:** every accepted change of `pricingEnabled` to write one `setting_changed` entry with ref `pricingEnabled`, before and after, in the same transaction as the change
@@ -13924,6 +14465,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S4: Owner can enter or confirm the day's gold rate
 
 - **Story ID:** EP-42-S4
+- **Status:** Later
 - **Title:** Owner can enter or confirm the day's gold rate
 - **As a:** Owner
 - **I want:** a gold rate page where I type today's rate per gram (per purity if decided), or confirm a fetched rate, and see past rates with their date, source and who entered them
@@ -13948,6 +14490,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S5: System can fetch the day's gold rate from the chosen source
 
 - **Story ID:** EP-42-S5
+- **Status:** Later
 - **Title:** System can fetch the day's gold rate from the chosen source
 - **As a:** System
 - **I want:** a scheduled job that, if a provider is chosen, fetches the day's rate each morning in Asia/Kolkata, stores it with source `provider`, and retries with backoff when the provider fails
@@ -13972,6 +14515,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S6: Owner can turn pricing on and off
 
 - **Story ID:** EP-42-S6
+- **Status:** Later
 - **Title:** Owner can turn pricing on and off
 - **As a:** Owner
 - **I want:** the Pricing switch on the settings page to reveal every value socket when I turn it on, and hide them all again when I turn it off, keeping every stored amount
@@ -13996,6 +14540,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S7: Staff can see the day's rate chip in the top bar
 
 - **Story ID:** EP-42-S7
+- **Status:** Later
 - **Title:** Staff can see the day's rate chip in the top bar
 - **As a:** Staff
 - **I want:** a rate chip in the top bar, such as "22K today ₹X/g", while Pricing is on, with the rate's date and source when it is not today's
@@ -14020,6 +14565,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S8: System can compute a piece's value at the day's rate by the agreed formula
 
 - **Story ID:** EP-42-S8
+- **Status:** Later
 - **Title:** System can compute a piece's value at the day's rate by the agreed formula
 - **As a:** System
 - **I want:** one shared function that takes a piece's integer weights in units of 0.0001 g, its purity, and the day's rate, and returns the piece value as an integer in the decided unit by the formula the owner signs off, rounding once at the end
@@ -14044,6 +14590,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S9: Staff can see piece value on the stock card and piece drawer
 
 - **Story ID:** EP-42-S9
+- **Status:** Later
 - **Title:** Staff can see piece value on the stock card and piece drawer
 - **As a:** Staff
 - **I want:** the "Value at today's rate" line below pure gold and gross · stones on each stock card, and a "Value" row in the piece drawer, both filled from the server through `ValueSlot` while Pricing is on
@@ -14068,6 +14615,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S10: Staff can see the value column and total on a stock-out
 
 - **Story ID:** EP-42-S10
+- **Status:** Later
 - **Title:** Staff can see the value column and total on a stock-out
 - **As a:** Staff
 - **I want:** the "value · when on" column on `stock-out` to show each piece's value at today's rate, and "total value" under the sale list to show their sum, next to the pure gold total
@@ -14092,6 +14640,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S11: Staff can record the invoice amount on a stock-out
 
 - **Story ID:** EP-42-S11
+- **Status:** Later
 - **Title:** Staff can record the invoice amount on a stock-out
 - **As a:** Staff
 - **I want:** an invoice amount on the stock-out form while Pricing is on, stored in `amountINR` in the same transaction that marks the pieces billed
@@ -14116,6 +14665,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S12: Owner can see the value band on the Decisions home
 
 - **Story ID:** EP-42-S12
+- **Status:** Later
 - **Title:** Owner can see the value band on the Decisions home
 - **As a:** Owner
 - **I want:** "Worth at today's rate" under "Gold on the floor" in the WHERE THE GOLD IS RIGHT NOW block, computed on the server from the in-stock pieces and today's rate
@@ -14140,6 +14690,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S13: Owner can set a customer budget and see spend history
 
 - **Story ID:** EP-42-S13
+- **Status:** Later
 - **Title:** Owner can set a customer budget and see spend history
 - **As a:** Owner
 - **I want:** to set a budget on a customer record and see "Budget · spent" with a spend history built from stock-outs linked to that customer, each by tag, grams, invoice number and amount
@@ -14164,6 +14715,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S14: System can keep all values out of karigar responses
 
 - **Story ID:** EP-42-S14
+- **Status:** Later
 - **Title:** System can keep all values out of karigar responses
 - **As a:** System
 - **I want:** every response and live event sent to a karigar to carry no value, rate, budget, spend or invoice amount field, whatever the Pricing switch says, and an automated test that checks every karigar-readable operation
@@ -14188,6 +14740,7 @@ Cross-reference: implemented together with EP-06-S8 and EP-13-S9, which write th
 ## EP-42-S15: System can refresh open screens when pricing or the rate changes
 
 - **Story ID:** EP-42-S15
+- **Status:** Later
 - **Title:** System can refresh open screens when pricing or the rate changes
 - **As a:** System
 - **I want:** to publish "Gold rate changed" after a new rate for today commits, and to map it and "Setting changed" for `pricingEnabled` to the reads behind the rate chip, stock cards, piece drawer, stock-out values, customer budget and the Decisions value band
@@ -14238,6 +14791,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S1: System can derive attributed sales from stock-out records
 
 - **Story ID:** EP-43-S1
+- **Status:** Later
 - **Title:** System can derive attributed sales from stock-out records
 - **As a:** System
 - **I want:** one server query that reads stock-out records and returns, per seller, each attributed sale with stock-out id, seller id, pieces, pure gold per piece and time, and per period the totals of pieces, stock-outs and pure gold
@@ -14262,6 +14816,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S2: System can leave scrapped pieces out of sales unless scrap is decided to count
 
 - **Story ID:** EP-43-S2
+- **Status:** Later
 - **Title:** System can leave scrapped pieces out of sales unless scrap is decided to count
 - **As a:** System
 - **I want:** the attributed sales query to exclude scrapped pieces by default, with one switch point that includes them, credited to the decided person, once the owner decides scrap counts
@@ -14285,6 +14840,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S3: Owner can see pieces, stock-outs and pure gold per staff member for a period
 
 - **Story ID:** EP-43-S3
+- **Status:** Later
 - **Title:** Owner can see pieces, stock-outs and pure gold per staff member for a period
 - **As a:** Owner
 - **I want:** a read-only staff performance view listing each staff member with pieces sold, stock-outs recorded and pure gold sold, for a period I pick (today, week, month or custom, as decided)
@@ -14309,6 +14865,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S4: Owner can open one staff member's sales history
 
 - **Story ID:** EP-43-S4
+- **Status:** Later
 - **Title:** Owner can open one staff member's sales history
 - **As a:** Owner
 - **I want:** to open one staff member from the performance view and see each attributed sale with piece, tag, pure gold, reference and time, newest first, with the recorder shown when it differs from the seller
@@ -14333,6 +14890,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S5: System can keep the staff directory count equal to the derived count
 
 - **Story ID:** EP-43-S5
+- **Status:** Later
 - **Title:** System can keep the staff directory count equal to the derived count
 - **As a:** System
 - **I want:** the "{n} sales" figure on `staff-directory` to come from the same derived query as the performance view, and the stored `salesCount` column to stop being the source of any figure
@@ -14357,6 +14915,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S6: Owner can define a versioned scoring rule
 
 - **Story ID:** EP-43-S6
+- **Status:** Later
 - **Title:** Owner can define a versioned scoring rule
 - **As a:** Owner
 - **I want:** to save a scoring rule with a description, its parameters (for example points per piece and points per gram of pure gold, as decided) and an effective-from date, as a new version, and see the current and past versions
@@ -14381,6 +14940,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S7: System can compute a score per staff member for a period
 
 - **Story ID:** EP-43-S7
+- **Status:** Later
 - **Title:** System can compute a score per staff member for a period
 - **As a:** System
 - **I want:** one shared function that takes a staff member's derived figures for each day of a period and the scoring rule version in force on that day, and returns the score with the rule version or versions used
@@ -14405,6 +14965,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S8: Owner can see the leaderboard
 
 - **Story ID:** EP-43-S8
+- **Status:** Later
 - **Title:** Owner can see the leaderboard
 - **As a:** Owner
 - **I want:** a leaderboard for a chosen period that ranks staff by score, with pieces and pure gold shown beside each score
@@ -14429,6 +14990,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S9: Owner can choose whether staff see the leaderboard
 
 - **Story ID:** EP-43-S9
+- **Status:** Later
 - **Title:** Owner can choose whether staff see the leaderboard
 - **As a:** Owner
 - **I want:** a leaderboard visibility setting with two values, "Owner only" and "Staff too", defaulting to "Owner only"
@@ -14453,6 +15015,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S10: Staff can see their own figures and the leaderboard when allowed
 
 - **Story ID:** EP-43-S10
+- **Status:** Later
 - **Title:** Staff can see their own figures and the leaderboard when allowed
 - **As a:** Staff
 - **I want:** to see my own pieces, stock-outs, pure gold and sales history for a period, and the leaderboard, when the owner allows it
@@ -14477,6 +15040,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S11: System can refresh the leaderboard live after a stock-out
 
 - **Story ID:** EP-43-S11
+- **Status:** Later
 - **Title:** System can refresh the leaderboard live after a stock-out
 - **As a:** System
 - **I want:** open performance views, sales histories, own-figure screens and leaderboards to refetch when "Piece billed by one staff member" arrives for a period they show
@@ -14501,6 +15065,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S12: System can credit a split sale by share (if Q10 allows it)
 
 - **Story ID:** EP-43-S12
+- **Status:** Later
 - **Title:** System can credit a split sale by share (if Q10 allows it)
 - **As a:** System
 - **I want:** when a stock-out names two sellers with shares, each seller to be credited their share of pieces and pure gold, with shares stored per stock-out
@@ -14547,6 +15112,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S1: System can store languages, message catalogues and per-user language preferences
 
 - **Story ID:** EP-44-S1
+- **Status:** Later
 - **Title:** System can store languages, message catalogues and per-user language preferences
 - **As a:** System
 - **I want:** tables for languages (code, display name in its own script, enabled flag), message catalogue entries (language, key, text with parameters, updated at, translated by), per-user language preference (user id, language code, default English) and locale format rules per language, with the karigar's stored language from EP-16 moved into the user preference
@@ -14571,6 +15137,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S2: Developer can extract every string of a screen into the English catalogue
 
 - **Story ID:** EP-44-S2
+- **Status:** Later
 - **Title:** Developer can extract every string of a screen into the English catalogue
 - **As a:** Developer
 - **I want:** a documented way to replace each inline English string of one screen with a catalogue key, add the English text to the catalogue, and render it through one translation helper, starting with `k-jobs` (`KarigarPhone.tsx`)
@@ -14595,6 +15162,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S3: System can fall back to English and report missing translations
 
 - **Story ID:** EP-44-S3
+- **Status:** Later
 - **Title:** System can fall back to English and report missing translations
 - **As a:** System
 - **I want:** the translation helper to show the English text when a key has no text in the user's language, report each missing key once to error tracking, and a build check that lists every key missing for each enabled language on each in-scope screen
@@ -14619,6 +15187,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S4: System can return refusal sentences as message keys with parameters
 
 - **Story ID:** EP-44-S4
+- **Status:** Later
 - **Title:** System can return refusal sentences as message keys with parameters
 - **As a:** System
 - **I want:** every rule refusal and error from the server to carry a message key and its parameters next to the English sentence, so the screen shows the sentence from the catalogue in the user's language
@@ -14643,6 +15212,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S5: System can format dates and numbers per locale with weights in grams to four decimals
 
 - **Story ID:** EP-44-S5
+- **Status:** Later
 - **Title:** System can format dates and numbers per locale with weights in grams to four decimals
 - **As a:** System
 - **I want:** one set of formatting helpers in the shared package that format counts, percentages, dates, month names and weekday names per the user's locale in Asia/Kolkata time, and format weights from integer units of 0.0001 g as grams to 4 decimals in every language
@@ -14667,6 +15237,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S6: Owner can set a karigar's language on the onboarding and edit forms
 
 - **Story ID:** EP-44-S6
+- **Status:** Later
 - **Title:** Owner can set a karigar's language on the onboarding and edit forms
 - **As a:** Owner
 - **I want:** the "Language for their phone" chips on `karigar-new` and on the karigar edit form, listing the enabled languages in their own script, with my choice saved as the karigar's language preference
@@ -14691,6 +15262,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S7: Karigar can see the phone app in their language
 
 - **Story ID:** EP-44-S7
+- **Status:** Later
 - **Title:** Karigar can see the phone app in their language
 - **As a:** Karigar
 - **I want:** the phone app to open in the language stored on my record, with every label, status, button and refusal in that language and my weights in grams to 4 decimals
@@ -14715,6 +15287,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S8: Karigar can switch the app language with the toggle
 
 - **Story ID:** EP-44-S8
+- **Status:** Later
 - **Title:** Karigar can switch the app language with the toggle
 - **As a:** Karigar
 - **I want:** to tap the language chip in the phone header (the हिन्दी chip on mockup 09), pick one of the enabled languages, and see the app switch at once and stay switched
@@ -14739,6 +15312,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S9: Staff can choose their own language for staff screens
 
 - **Story ID:** EP-44-S9
+- **Status:** Later
 - **Title:** Staff can choose their own language for staff screens
 - **As a:** Staff
 - **I want:** a language choice in the account menu that saves my own preference, so the shell and every in-scope staff screen open in that language after sign-in
@@ -14763,6 +15337,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S10: Owner can register a WhatsApp template in another language
 
 - **Story ID:** EP-44-S10
+- **Status:** Later
 - **Title:** Owner can register a WhatsApp template in another language
 - **As a:** Owner
 - **I want:** to add a translation of an existing WhatsApp template (owner edit code, job alert, wish, broadcast or catalogue share) in an enabled language, have it registered with the provider through EP-12, and see its approval status per language
@@ -14787,6 +15362,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S11: System can send each WhatsApp message in the recipient's language
 
 - **Story ID:** EP-44-S11
+- **Status:** Later
 - **Title:** System can send each WhatsApp message in the recipient's language
 - **As a:** System
 - **I want:** every WhatsApp send through EP-12-S3 to pick the approved template in the recipient's language, and to use the approved English template when none exists in that language
@@ -14811,6 +15387,7 @@ Role note: this is a layer F (Later) epic and nothing in it is part of v1, which
 ## EP-44-S12: System can audit language changes and translation loads
 
 - **Story ID:** EP-44-S12
+- **Status:** Later
 - **Title:** System can audit language changes and translation loads
 - **As a:** System
 - **I want:** an audit entry for every change of a user's language and every load or correction of catalogue rows, written in the same transaction, with the owner able to filter the log by these kinds
@@ -14858,6 +15435,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S1: System can show the setup wizard only until setup is complete
 
 - **Story ID:** EP-45-S1
+- **Status:** Not started
 - **Title:** System can show the setup wizard only until setup is complete
 - **As a:** System
 - **I want:** a Read Setup status operation, a server-side setup gate that sends every route to the wizard while the shop's `setup completed at` is empty, and a Check Setup key operation that opens steps 1 and 2 only for a caller holding the one-time setup key from environment configuration
@@ -14882,6 +15460,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S2: Owner can enter the shop details: name, address, GSTIN and logo
 
 - **Story ID:** EP-45-S2
+- **Status:** Not started
 - **Title:** Owner can enter the shop details: name, address, GSTIN and logo
 - **As a:** Owner
 - **I want:** step 1 of the wizard, where I enter the shop name, the address, the GSTIN if the shop has one, and upload the shop logo
@@ -14907,6 +15486,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S3: Owner can create the owner account and get the activation email
 
 - **Story ID:** EP-45-S3
+- **Status:** Not started
 - **Title:** Owner can create the owner account and get the activation email
 - **As a:** Owner
 - **I want:** step 2 of the wizard, where I enter my name, phone and email, and then get an activation email that lets me set my own password
@@ -14931,6 +15511,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S4: Owner can resume setup after activating his account and signing in
 
 - **Story ID:** EP-45-S4
+- **Status:** Not started
 - **Title:** Owner can resume setup after activating his account and signing in
 - **As a:** Owner
 - **I want:** after I set my password from the activation email and sign in with my phone and password, to land back in the wizard at the first unfinished step
@@ -14954,6 +15535,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S5: Owner can register the shop's scales and their readability
 
 - **Story ID:** EP-45-S5
+- **Status:** Not started
 - **Title:** Owner can register the shop's scales and their readability
 - **As a:** Owner
 - **I want:** step 3 of the wizard, where I add each balance in the shop with its name, its smallest step (readability) and its heaviest load
@@ -14978,6 +15560,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S6: Owner can set the lead response time and opening hours
 
 - **Story ID:** EP-45-S6
+- **Status:** Not started
 - **Title:** Owner can set the lead response time and opening hours
 - **As a:** Owner
 - **I want:** step 4 of the wizard, where I confirm or change the lead response time (8 hours unless I change it) and enter the shop's opening and closing times for each weekday
@@ -15002,6 +15585,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S7: Owner can invite the first staff and karigars
 
 - **Story ID:** EP-45-S7
+- **Status:** Not started
 - **Title:** Owner can invite the first staff and karigars
 - **As a:** Owner
 - **I want:** step 5 of the wizard, where I add my first staff and karigars with name, phone, email and role, and each gets an activation email; or skip the step and add people later
@@ -15026,6 +15610,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S8: Owner can finish setup so the wizard is never shown again
 
 - **Story ID:** EP-45-S8
+- **Status:** Not started
 - **Title:** Owner can finish setup so the wizard is never shown again
 - **As a:** Owner
 - **I want:** a "Finish setup" button on the last step that checks every required step is done, closes the wizard and takes me to my home
@@ -15050,6 +15635,7 @@ Numbering note: this epic is EP-45 so that nothing else is renumbered. It belong
 ## EP-45-S9: System can audit every setup step
 
 - **Story ID:** EP-45-S9
+- **Status:** Not started
 - **Title:** System can audit every setup step
 - **As a:** System
 - **I want:** each setup step (shop created, first owner created, each step done or skipped, setup completed, setup session opened, setup key refused) to write an audit entry in the same transaction, with actor "setup" or the owner, time and the values stored

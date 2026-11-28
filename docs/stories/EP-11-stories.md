@@ -9,6 +9,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S1: System can store a notification per recipient and channel with a dedupe key
 
 - **Story ID:** EP-11-S1
+- **Status:** Not started
 - **Title:** System can store a notification per recipient and channel with a dedupe key
 - **As a:** System
 - **I want:** one Notification row per recipient per channel, with kind, group, source event name, entity type and id, template id, variables, channel, status, attempts and a dedupe key built from the source event, the recipient and the channel
@@ -33,6 +34,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S2: System can render a notification from a template with variables
 
 - **Story ID:** EP-11-S2
+- **Status:** Not started
 - **Title:** System can render a notification from a template with variables
 - **As a:** System
 - **I want:** a Template per notification kind, with text holding named variables (for example batch id, grams, karigar name), filled from the notification's variables, with the same content used for app, WhatsApp and email
@@ -57,6 +59,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S3: System can pick recipients for each consumed event by role and setting
 
 - **Story ID:** EP-11-S3
+- **Status:** Not started
 - **Title:** System can pick recipients for each consumed event by role and setting
 - **As a:** System
 - **I want:** one recipient rule per consumed event kind that picks active users by role (EP-05) and reads `settings.lateLeadAudience`, then passes each recipient to channel routing
@@ -81,6 +84,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S4: Owner can get notified when a parcel is stopped
 
 - **Story ID:** EP-11-S4
+- **Status:** Not started
 - **Title:** Owner can get notified when a parcel is stopped
 - **As a:** Owner
 - **I want:** a notice in the "your signature" group whenever a parcel is stopped on a mismatch or because someone raised a problem
@@ -105,6 +109,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S5: Owner can get notified when an edit is proposed
 
 - **Story ID:** EP-11-S5
+- **Status:** Not started
 - **Title:** Owner can get notified when an edit is proposed
 - **As a:** Owner
 - **I want:** a notice in the "your signature" group when staff propose an edit to a tag in stock, naming the piece, the field and the proposer
@@ -129,6 +134,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S6: Staff can get notified first about a late lead
 
 - **Story ID:** EP-11-S6
+- **Status:** Not started
 - **Title:** Staff can get notified first about a late lead
 - **As a:** Staff
 - **I want:** a notice when a lead passes its SLA while `lateLeadAudience` is `staff_then_owner`, before the owner hears about it
@@ -153,6 +159,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S7: System can escalate a late-lead notice to the owner after a wait
 
 - **Story ID:** EP-11-S7
+- **Status:** Not started
 - **Title:** System can escalate a late-lead notice to the owner after a wait
 - **As a:** System
 - **I want:** an EscalationTimer per late lead that, after the escalation wait, checks the lead's state and notifies the owner only if nobody has acted
@@ -177,6 +184,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S8: Karigar can get notified about changes and reminders on their own jobs
 
 - **Story ID:** EP-11-S8
+- **Status:** Not started
 - **Title:** Karigar can get notified about changes and reminders on their own jobs
 - **As a:** Karigar
 - **I want:** a notice when the status of one of my jobs changes from the desk side, and a reminder when my job passes its agreed date
@@ -201,6 +209,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S9: System can route owner notifications to the channels he enabled
 
 - **Story ID:** EP-11-S9
+- **Status:** Not started
 - **Title:** System can route owner notifications to the channels he enabled
 - **As a:** System
 - **I want:** each owner recipient to get one Notification row per channel switched on in `settings.notifyChannels` (whatsapp, app, email), read when the event is processed
@@ -225,6 +234,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S10: User can see an in-app notification list and mark items read
 
 - **Story ID:** EP-11-S10
+- **Status:** Not started
 - **Title:** User can see an in-app notification list and mark items read
 - **As a:** Staff (also Owner and Karigar, each seeing only their own)
 - **I want:** a list of my in-app notifications, newest first, with an unread count, that updates live and lets me mark an item read
@@ -249,6 +259,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S11: Owner can see notifications grouped by the kind of answer needed
 
 - **Story ID:** EP-11-S11
+- **Status:** Not started
 - **Title:** Owner can see notifications grouped by the kind of answer needed
 - **As a:** Owner
 - **I want:** my notification list split into four groups: your signature, someone stopped the line, running late, and for information
@@ -273,6 +284,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S12: System can send notifications by email
 
 - **Story ID:** EP-11-S12
+- **Status:** Not started
 - **Title:** System can send notifications by email
 - **As a:** System
 - **I want:** an email sender that takes each queued email Notification, renders it from its template, sends it to the recipient's email address and records sent or failed with the time, and that also sends the EP-04 account emails (activation link and password-reset link) to the address on the user record, whatever `notifyChannels` says
@@ -299,6 +311,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S13: System can hand WhatsApp notifications to the WhatsApp integration and record status
 
 - **Story ID:** EP-11-S13
+- **Status:** Not started
 - **Title:** System can hand WhatsApp notifications to the WhatsApp integration and record status
 - **As a:** System
 - **I want:** queued whatsapp Notification rows handed to a WhatsApp send interface with the recipient's phone, template reference and variables, and Update Delivery status called from its receipts
@@ -323,6 +336,7 @@ Role note: this is a layer A platform epic. Stories where the service turns even
 ## EP-11-S14: System can retry failed deliveries and report final failures
 
 - **Story ID:** EP-11-S14
+- **Status:** Not started
 - **Title:** System can retry failed deliveries and report final failures
 - **As a:** System
 - **I want:** a failed WhatsApp or email send to be retried with backoff, and after the last attempt marked failed and passed to the alerting hook that EP-37 fills in

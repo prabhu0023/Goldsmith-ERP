@@ -9,6 +9,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S1: Developer can call every API operation through one typed client built from the contract
 
 - **Story ID:** EP-08-S1
+- **Status:** Not started
 - **Title:** Developer can call every API operation through one typed client built from the contract
 - **As a:** Developer
 - **I want:** one API client in `web`, typed from the EP-03 shared contract, that attaches the session, adds an idempotency key to every action, and turns the EP-03 error format into a code and a sentence a person can read
@@ -33,6 +34,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S2: System can cache server reads and share them between screens
 
 - **Story ID:** EP-08-S2
+- **Status:** Not started
 - **Title:** System can cache server reads and share them between screens
 - **As a:** System
 - **I want:** a query cache keyed by operation and parameters, so each screen declares the reads it needs (for example "in-stock pieces", "parcel BATCH-2026-044", "Today cards") and screens that need the same read share one request and one result
@@ -57,6 +59,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S3: User can see a loading state while a screen's data arrives
 
 - **Story ID:** EP-08-S3
+- **Status:** Not started
 - **Title:** User can see a loading state while a screen's data arrives
 - **As a:** Staff
 - **I want:** a screen, card or list that is waiting for its first data to show a loading state in place of its content
@@ -81,6 +84,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S4: User can see a read error with "Try again" when data cannot be loaded
 
 - **Story ID:** EP-08-S4
+- **Status:** Not started
 - **Title:** User can see a read error with "Try again" when data cannot be loaded
 - **As a:** Owner
 - **I want:** an area whose read failed to say what could not be loaded and offer "Try again", while the rest of the screen keeps working
@@ -105,6 +109,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S5: User can see the server's sentence when an action is refused
 
 - **Story ID:** EP-08-S5
+- **Status:** Not started
 - **Title:** User can see the server's sentence when an action is refused
 - **As a:** Staff
 - **I want:** a refused action to show the server's sentence at the place I took the action, and keep what I typed
@@ -129,6 +134,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S6: User can retry an action after a network failure without applying it twice
 
 - **Story ID:** EP-08-S6
+- **Status:** Not started
 - **Title:** User can retry an action after a network failure without applying it twice
 - **As a:** Staff
 - **I want:** an action that fails on the network to say it may not have been saved and offer a retry that reuses the same idempotency key
@@ -153,6 +159,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S7: System can refetch the affected reads after the user's own action
 
 - **Story ID:** EP-08-S7
+- **Status:** Not started
 - **Title:** System can refetch the affected reads after the user's own action
 - **As a:** System
 - **I want:** each action to declare the query keys it affects, and those reads to be refetched after the action succeeds, before the screen shows new values
@@ -177,6 +184,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S8: System can keep one live connection per signed-in client and map every catalogue event to reads
 
 - **Story ID:** EP-08-S8
+- **Status:** Not started
 - **Title:** System can keep one live connection per signed-in client and map every catalogue event to reads
 - **As a:** System
 - **I want:** the shell to open one EP-07 live connection after sign-in, and one event-to-query map, kept next to the catalogue, that names the query keys each event invalidates
@@ -201,6 +209,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S9: User can see a screen update by itself when someone else changes something
 
 - **Story ID:** EP-08-S9
+- **Status:** Not started
 - **Title:** User can see a screen update by itself when someone else changes something
 - **As a:** Staff
 - **I want:** my open screen to change within about a second when another person changes data it shows, without me reloading
@@ -225,6 +234,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S10: User can see "Reconnecting…" when the connection drops and catch up when it returns
 
 - **Story ID:** EP-08-S10
+- **Status:** Not started
 - **Title:** User can see "Reconnecting…" when the connection drops and catch up when it returns
 - **As a:** Staff
 - **I want:** every open screen to show "Reconnecting…" and mark its data as possibly out of date when the live connection or the network drops, and to catch up and clear the banner when it returns
@@ -249,6 +259,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S11: User can see an offline state with server actions disabled
 
 - **Story ID:** EP-08-S11
+- **Status:** Not started
 - **Title:** User can see an offline state with server actions disabled
 - **As a:** Staff
 - **I want:** the web app to say it is offline when there is no network, and disable every action that needs the server with a reason
@@ -273,6 +284,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S12: User can open the app to sign-in and land on their role's home in a signed-in shell
 
 - **Story ID:** EP-08-S12
+- **Status:** Not started
 - **Title:** User can open the app to sign-in and land on their role's home in a signed-in shell
 - **As a:** Owner
 - **I want:** the app to open on sign-in when I have no session, and after sign-in to open my home inside the signed-in shell with my name, role and server time available to every screen
@@ -297,6 +309,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S13: User can see only the routes their role may open
 
 - **Story ID:** EP-08-S13
+- **Status:** Not started
 - **Title:** User can see only the routes their role may open
 - **As a:** Staff
 - **I want:** the rail and the shell to show only the routes my role may open, and to send me to my landing route if I reach one I may not open
@@ -321,6 +334,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S14: User can use the account menu in place of the role switcher
 
 - **Story ID:** EP-08-S14
+- **Status:** Not started
 - **Title:** User can use the account menu in place of the role switcher
 - **As a:** Staff
 - **I want:** the rail foot and the karigar shell to show the EP-05 account menu with my name, role and "Sign out", where `RoleChip` is today, and no identity switch or pricing dev switch anywhere
@@ -345,6 +359,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S15: User can be returned to sign-in when the session ends or is ended
 
 - **Story ID:** EP-08-S15
+- **Status:** Not started
 - **Title:** User can be returned to sign-in when the session ends or is ended
 - **As a:** Staff
 - **I want:** the shell to clear every cached read and return me to sign-in when my session expires, or when "User deactivated or role changed" arrives for me
@@ -369,6 +384,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S16: User can see rail badge counts from the server update live
 
 - **Story ID:** EP-08-S16
+- **Status:** Not started
 - **Title:** User can see rail badge counts from the server update live
 - **As a:** Owner
 - **I want:** the rail to read its badge counts from the EP-07 badge-count read instead of the `railBadges` selector, and refresh them through the event-to-query map
@@ -393,6 +409,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S17: Developer can move a screen from `useStore()` onto the data layer by a documented pattern
 
 - **Story ID:** EP-08-S17
+- **Status:** Not started
 - **Title:** Developer can move a screen from `useStore()` onto the data layer by a documented pattern
 - **As a:** Developer
 - **I want:** one written pattern, with a worked example, for replacing a screen's `useStore()` reads and actions with queries, actions, loading, error and live updates
@@ -416,6 +433,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S18: Developer can move the sign-in, staff and security log screens onto the data layer
 
 - **Story ID:** EP-08-S18
+- **Status:** Not started
 - **Title:** Developer can move the sign-in, staff and security log screens onto the data layer
 - **As a:** Developer
 - **I want:** the sign-in screen (EP-04), `staff-directory` and `staff-new` (EP-05), and `security` (EP-06) to use the data layer by the EP-08-S17 pattern
@@ -440,6 +458,7 @@ Role note: stories about what a person sees use Owner, Staff or Karigar; where t
 ## EP-08-S19: Developer can ship production builds without the in-memory store, seed, demo clock and identity switch
 
 - **Story ID:** EP-08-S19
+- **Status:** Not started
 - **Title:** Developer can ship production builds without the in-memory store, seed, demo clock and identity switch
 - **As a:** Developer
 - **I want:** production builds of `web` to leave out the `StoreProvider` state, `src/data/seed.ts`, `demoNow()` and its 30-second interval, `switchIdentity` and `RoleChip`

@@ -9,6 +9,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S1: System can store inbound messages with channel, sender and attachments
 
 - **Story ID:** EP-29-S1
+- **Status:** Not started
 - **Title:** System can store inbound messages with channel, sender and attachments
 - **As a:** System
 - **I want:** the InboundMessage table from EP-12-S7 widened to hold both channels, with channel (`email`, `whatsapp`), provider message id, thread or conversation id, sender address or phone, received at, raw text, attachment file ids, lead id and duplicate of; plus a `parse_runs` table and the extra columns on `leads` and `lead_fields` that intake needs
@@ -33,6 +34,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S2: System can create a lead in needs a glance from an inbound email
 
 - **Story ID:** EP-29-S2
+- **Status:** Not started
 - **Title:** System can create a lead in needs a glance from an inbound email
 - **As a:** System
 - **I want:** an inbound email endpoint for the configured shop inbox that verifies the mail provider's call, stores one InboundMessage with channel `email`, creates a lead with source `email`, state `needs_glance` and `arrivedAt` equal to the receive time, starts its SLA timer, and then queues the parse as a background job
@@ -57,6 +59,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S3: System can create a lead in needs a glance from an inbound WhatsApp message
 
 - **Story ID:** EP-29-S3
+- **Status:** Not started
 - **Title:** System can create a lead in needs a glance from an inbound WhatsApp message
 - **As a:** System
 - **I want:** the lead intake interface that EP-12-S7 hands each stored WhatsApp message to, so it creates a lead with source `whatsapp`, state `needs_glance` and `arrivedAt` equal to the message's received at, links the InboundMessage to it, starts the SLA timer and queues the parse
@@ -81,6 +84,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S4: System can store message attachments with the lead
 
 - **Story ID:** EP-29-S4
+- **Status:** Not started
 - **Title:** System can store message attachments with the lead
 - **As a:** System
 - **I want:** each email attachment and each WhatsApp media item stored through EP-09 Create Inbound file with role PO, its file id kept on the InboundMessage, and a `lead_attachments` row linking it to the lead
@@ -105,6 +109,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S5: System can parse a message into fields with a confidence each
 
 - **Story ID:** EP-29-S5
+- **Status:** Not started
 - **Title:** System can parse a message into fields with a confidence each
 - **As a:** System
 - **I want:** a background parse job that sends the lead's message text and readable attachments to the parser, receives customer, phone, items (name, style, quantity), target weight per item and needed-by date, each with a confidence score, stores them as `lead_fields` and `lead_items`, flags every field below the decided threshold "check this", sets the lead confidence and records a ParseRun
@@ -129,6 +134,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S6: System can create a flagged lead when a message cannot be read
 
 - **Story ID:** EP-29-S6
+- **Status:** Not started
 - **Title:** System can create a flagged lead when a message cannot be read
 - **As a:** System
 - **I want:** a parse that finds nothing usable, scores below the unreadable threshold, or cannot run at all to leave the lead in place with confidence `unreadable`, one flagged field "What they want" valued "Could not read", the original text or image attached, and the title "A photo we could not read · <phone>" or "A message we could not read · <sender>"
@@ -153,6 +159,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S7: System can link a lead to a known customer by phone (G7)
 
 - **Story ID:** EP-29-S7
+- **Status:** Not started
 - **Title:** System can link a lead to a known customer by phone (G7)
 - **As a:** System
 - **I want:** intake to run EP-17-S10 Find Customer by phone on the WhatsApp sender's phone, or on the phone the parser found in an email, and set `leads.customerId` when it matches; when nothing matches, keep the name and phone on the lead and create no customer
@@ -177,6 +184,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S8: Staff can review the original message beside the extracted fields
 
 - **Story ID:** EP-29-S8
+- **Status:** Not started
 - **Title:** Staff can review the original message beside the extracted fields
 - **As a:** Staff
 - **I want:** to press "Check and keep" or "Open and read" on a `needs_glance` lead and open `lead-review` with the original message, its received time, sender and attachments on one side, and each extracted field marked "sure" or "check this" on the other
@@ -201,6 +209,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S9: Staff can fix fields and keep the lead
 
 - **Story ID:** EP-29-S9
+- **Status:** Not started
 - **Title:** Staff can fix fields and keep the lead
 - **As a:** Staff
 - **I want:** to change any field on `lead-review` (customer name, phone, items, target weights, needed-by date) and press "Looks right — keep the lead", so the lead moves to `opened`, every flag clears, each changed field keeps my value, and I am recorded as the person who took it
@@ -225,6 +234,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S10: Staff can close a lead as "Not an order"
 
 - **Story ID:** EP-29-S10
+- **Status:** Not started
 - **Title:** Staff can close a lead as "Not an order"
 - **As a:** Staff
 - **I want:** to press "Not an order" on `lead-review` for a message that is a greeting, spam or a question with nothing to make or sell, so the lead becomes `lost` with reason "Not an order" and leaves the open tabs of the inbox
@@ -249,6 +259,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S11: System can turn a broadcast reply into a lead
 
 - **Story ID:** EP-29-S11
+- **Status:** Not started
 - **Title:** System can turn a broadcast reply into a lead
 - **As a:** System
 - **I want:** an inbound WhatsApp message whose replied-to outbound message id belongs to a broadcast to become a lead in `needs_glance` with source `whatsapp`, `broadcastId` set, `customerId` set to the recipient and title "<customer name> · replied to the broadcast", and then go through the normal parse
@@ -273,6 +284,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S12: System can detect a duplicate message and link it to the first lead
 
 - **Story ID:** EP-29-S12
+- **Status:** Not started
 - **Title:** System can detect a duplicate message and link it to the first lead
 - **As a:** System
 - **I want:** intake to check each new InboundMessage, before a lead is created, against messages from the same sender with the same normalised content (text plus attachment hashes) inside the decided window, or with the same provider message id or email Message-ID, and when one matches, set `duplicateOf` to the first message and link it to the first lead instead of creating another
@@ -297,6 +309,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S13: System can retry a failed parse and report failures
 
 - **Story ID:** EP-29-S13
+- **Status:** Not started
 - **Title:** System can retry a failed parse and report failures
 - **As a:** System
 - **I want:** a failed parse retried with backoff by the EP-10 job runner, each attempt recorded as a ParseRun, the last failure left as `failed` with its error code, and an owner-only Parse status read that lists recent failures and retries
@@ -321,6 +334,7 @@ Role note: stories where the server receives, parses, matches, checks or audits 
 ## EP-29-S14: System can audit confirm, corrections and "Not an order"
 
 - **Story ID:** EP-29-S14
+- **Status:** Not started
 - **Title:** System can audit confirm, corrections and "Not an order"
 - **As a:** System
 - **I want:** an append-only audit entry written in the same transaction as each intake lead create (`lead_created`), each keep (`lead_confirmed`) with every corrected field's parsed and new value, and each "Not an order" (`lead_not_an_order`), with actor, role, time, lead id, before, after and reason

@@ -9,6 +9,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S1: System can connect to the WhatsApp provider with credentials from environment configuration
 
 - **Story ID:** EP-12-S1
+- **Status:** Not started
 - **Title:** System can connect to the WhatsApp provider with credentials from environment configuration
 - **As a:** System
 - **I want:** one internal WhatsApp provider interface with a real provider client that reads its account id, access token, webhook secret, verify token and sender numbers from environment variables only, chosen by the delivery mode variable in place of a development stub that shows messages in the simulated WhatsApp bubble
@@ -33,6 +34,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S2: Owner can register a message template and see its approval status
 
 - **Story ID:** EP-12-S2
+- **Status:** Not started
 - **Title:** Owner can register a message template and see its approval status
 - **As a:** Owner
 - **I want:** to register a WhatsApp template with a name, purpose, English body with numbered variables, and then see whether the provider has it as pending, approved or rejected
@@ -57,6 +59,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S3: System can send an approved template message with variables
 
 - **Story ID:** EP-12-S3
+- **Status:** Not started
 - **Title:** System can send an approved template message with variables
 - **As a:** System
 - **I want:** an internal Send Template message operation that takes a template name, a recipient (user or customer, with phone), a sender identity and variables, sends it through the provider and stores an OutboundMessage with the provider message id
@@ -82,6 +85,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S4: System can send a session message inside an open conversation window
 
 - **Story ID:** EP-12-S4
+- **Status:** Not started
 - **Title:** System can send a session message inside an open conversation window
 - **As a:** System
 - **I want:** an internal Send Session message operation that sends free text, without a template, to a phone whose conversation window is still open according to the latest InboundMessage's "conversation window ends at"
@@ -105,6 +109,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S5: System can refuse a customer message when consent is off
 
 - **Story ID:** EP-12-S5
+- **Status:** Not started
 - **Title:** System can refuse a customer message when consent is off
 - **As a:** System
 - **I want:** every template or session send to a recipient of type customer to read that customer's `optedIn` at the moment of sending and refuse the send when it is false
@@ -128,6 +133,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S6: System can verify and accept inbound webhook calls
 
 - **Story ID:** EP-12-S6
+- **Status:** Not started
 - **Title:** System can verify and accept inbound webhook calls
 - **As a:** System
 - **I want:** one inbound webhook endpoint that checks the provider signature on every call against the webhook secret, answers the provider's subscription check only with the configured verify token, and hands each verified message or receipt to processing
@@ -152,6 +158,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S7: System can store an inbound message once and hand it to lead intake
 
 - **Story ID:** EP-12-S7
+- **Status:** Not started
 - **Title:** System can store an inbound message once and hand it to lead intake
 - **As a:** System
 - **I want:** each verified inbound message stored as one InboundMessage keyed by its provider message id, with sender phone, text, received at and conversation window ends at, and then handed to the EP-29 intake interface with sender phone, text and media file ids
@@ -177,6 +184,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S8: System can store inbound media through file storage
 
 - **Story ID:** EP-12-S8
+- **Status:** Not started
 - **Title:** System can store inbound media through file storage
 - **As a:** System
 - **I want:** each media item on an inbound message downloaded from the provider and handed to EP-09 Create Inbound file, with the returned file id added to the InboundMessage media file ids before the handoff to lead intake
@@ -201,6 +209,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S9: System can record delivery, read and failure receipts
 
 - **Story ID:** EP-12-S9
+- **Status:** Not started
 - **Title:** System can record delivery, read and failure receipts
 - **As a:** System
 - **I want:** each verified receipt matched to its OutboundMessage by provider message id, moving its status forward to delivered, read or failed with the time and any failure reason, passed on to EP-11 Update Delivery status for notification messages, and readable through Read Message status
@@ -226,6 +235,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S10: System can switch off a customer's consent on an opt-out keyword
 
 - **Story ID:** EP-12-S10
+- **Status:** Not started
 - **Title:** System can switch off a customer's consent on an opt-out keyword
 - **As a:** System
 - **I want:** an inbound message whose whole text, trimmed and in any letter case, is a configured opt-out keyword to set the matching customer's `optedIn` to false with changed at and changed by System, and to write an audit entry
@@ -250,6 +260,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S11: System can keep owner edit codes and other secret values out of logs and stored messages
 
 - **Story ID:** EP-12-S11
+- **Status:** Not started
 - **Title:** System can keep owner edit codes and other secret values out of logs and stored messages
 - **As a:** System
 - **I want:** template variables marked secret (the owner edit code, also called the edit token) to be stored on OutboundMessage only as a reference to the token record, and redacted from request logs, provider client logs and error reports
@@ -273,6 +284,7 @@ Role note: this is a layer A platform epic. Stories where the integration connec
 ## EP-12-S12: System can report failed sends for retry and alerting
 
 - **Story ID:** EP-12-S12
+- **Status:** Not started
 - **Title:** System can report failed sends for retry and alerting
 - **As a:** System
 - **I want:** a send that the provider refuses, times out on, or later reports as failed to be marked failed with its reason, reported to EP-11 so it can retry, and after the last attempt passed to the alerting hook that EP-37 fills in

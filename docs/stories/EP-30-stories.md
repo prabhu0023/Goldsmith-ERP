@@ -9,6 +9,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S1: System can store a route per lead line
 
 - **Story ID:** EP-30-S1
+- **Status:** Not started
 - **Title:** System can store a route per lead line
 - **As a:** System
 - **I want:** `lead_items` to carry a route kind (`stock`, `make` or null), a piece id for a stock route, a job id for a make route, routed at and routed by, with database checks that keep these columns consistent
@@ -33,6 +34,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S2: System can derive the lead state from its routed lines
 
 - **Story ID:** EP-30-S2
+- **Status:** Not started
 - **Title:** System can derive the lead state from its routed lines
 - **As a:** System
 - **I want:** one server function, called inside every route, unroute and make transaction, that sets the lead state from its lines: `opened` to `being_worked` on the first routed line, `being_worked` to `converted` when at least one line exists and every line is routed, and `converted` back to `being_worked` when a line is unrouted
@@ -57,6 +59,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S3: Staff can see matching in-stock pieces for a line
 
 - **Story ID:** EP-30-S3
+- **Status:** Not started
 - **Title:** Staff can see matching in-stock pieces for a line
 - **As a:** Staff
 - **I want:** to open `lead-convert` for a lead and see, under each unrouted line, the in-stock pieces whose kind matches the line and whose pure gold or gross lies within 20% of the line's approximate weight when one is given
@@ -81,6 +84,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S4: Staff can link a line to an in-stock piece without reserving it
 
 - **Story ID:** EP-30-S4
+- **Status:** Not started
 - **Title:** Staff can link a line to an in-stock piece without reserving it
 - **As a:** Staff
 - **I want:** to pick one of the suggested pieces for an unrouted line and press "Link TAG-8841 to this line" (proposed wording, replacing "Hold TAG-8841 for them"), so the line is routed to stock with that piece id while the piece stays in the showcase
@@ -105,6 +109,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S5: Staff can send a line to make through an order copy
 
 - **Story ID:** EP-30-S5
+- **Status:** Not started
 - **Title:** Staff can send a line to make through an order copy
 - **As a:** Staff
 - **I want:** to press "Make it — order to karigar" on an unrouted line, land on `order-copy` with `leadId` and `itemId`, see the line's quantity, target weight and the lead's reference images filled in, and when I press "Send the order copy" have the line routed to make with the new job in the same transaction
@@ -129,6 +134,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S6: Staff can see the lead convert once every line is routed
 
 - **Story ID:** EP-30-S6
+- **Status:** Not started
 - **Title:** Staff can see the lead convert once every line is routed
 - **As a:** Staff
 - **I want:** the foot of `lead-convert` to show how many lines are routed and the lead state, and to say the lead is converted when the last line is routed, with the inbox row moving the same way
@@ -153,6 +159,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S7: Staff can unlink a stock line
 
 - **Story ID:** EP-30-S7
+- **Status:** Not started
 - **Title:** Staff can unlink a stock line
 - **As a:** Staff
 - **I want:** to press "Unlink" (proposed wording, replacing the prototype "Release the hold") on a line routed to stock, so the line is unrouted and I can pick another piece or send it to make
@@ -177,6 +184,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S8: Staff can see when a linked piece is sold to someone else
 
 - **Story ID:** EP-30-S8
+- **Status:** Not started
 - **Title:** Staff can see when a linked piece is sold to someone else
 - **As a:** Staff
 - **I want:** a line linked to a piece that is billed or scrapped to show the piece as gone within about a second, with other matches and "Make it — order to karigar" offered beside it
@@ -201,6 +209,7 @@ Role note: stories where the server stores, derives, refreshes or audits on its 
 ## EP-30-S9: System can audit every link, unlink and route
 
 - **Story ID:** EP-30-S9
+- **Status:** Not started
 - **Title:** System can audit every link, unlink and route
 - **As a:** System
 - **I want:** an append-only audit entry in the same transaction as each link (`line_linked_stock`), unlink (`line_unlinked`) and make route (`line_routed_make`), with actor, role, time, lead id, line id, piece or job id and the lead state before and after

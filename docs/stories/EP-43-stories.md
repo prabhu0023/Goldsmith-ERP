@@ -9,6 +9,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S1: System can derive attributed sales from stock-out records
 
 - **Story ID:** EP-43-S1
+- **Status:** Later
 - **Title:** System can derive attributed sales from stock-out records
 - **As a:** System
 - **I want:** one server query that reads stock-out records and returns, per seller, each attributed sale with stock-out id, seller id, pieces, pure gold per piece and time, and per period the totals of pieces, stock-outs and pure gold
@@ -33,6 +34,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S2: System can leave scrapped pieces out of sales unless scrap is decided to count
 
 - **Story ID:** EP-43-S2
+- **Status:** Later
 - **Title:** System can leave scrapped pieces out of sales unless scrap is decided to count
 - **As a:** System
 - **I want:** the attributed sales query to exclude scrapped pieces by default, with one switch point that includes them, credited to the decided person, once the owner decides scrap counts
@@ -56,6 +58,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S3: Owner can see pieces, stock-outs and pure gold per staff member for a period
 
 - **Story ID:** EP-43-S3
+- **Status:** Later
 - **Title:** Owner can see pieces, stock-outs and pure gold per staff member for a period
 - **As a:** Owner
 - **I want:** a read-only staff performance view listing each staff member with pieces sold, stock-outs recorded and pure gold sold, for a period I pick (today, week, month or custom, as decided)
@@ -80,6 +83,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S4: Owner can open one staff member's sales history
 
 - **Story ID:** EP-43-S4
+- **Status:** Later
 - **Title:** Owner can open one staff member's sales history
 - **As a:** Owner
 - **I want:** to open one staff member from the performance view and see each attributed sale with piece, tag, pure gold, reference and time, newest first, with the recorder shown when it differs from the seller
@@ -104,6 +108,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S5: System can keep the staff directory count equal to the derived count
 
 - **Story ID:** EP-43-S5
+- **Status:** Later
 - **Title:** System can keep the staff directory count equal to the derived count
 - **As a:** System
 - **I want:** the "{n} sales" figure on `staff-directory` to come from the same derived query as the performance view, and the stored `salesCount` column to stop being the source of any figure
@@ -128,6 +133,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S6: Owner can define a versioned scoring rule
 
 - **Story ID:** EP-43-S6
+- **Status:** Later
 - **Title:** Owner can define a versioned scoring rule
 - **As a:** Owner
 - **I want:** to save a scoring rule with a description, its parameters (for example points per piece and points per gram of pure gold, as decided) and an effective-from date, as a new version, and see the current and past versions
@@ -152,6 +158,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S7: System can compute a score per staff member for a period
 
 - **Story ID:** EP-43-S7
+- **Status:** Later
 - **Title:** System can compute a score per staff member for a period
 - **As a:** System
 - **I want:** one shared function that takes a staff member's derived figures for each day of a period and the scoring rule version in force on that day, and returns the score with the rule version or versions used
@@ -176,6 +183,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S8: Owner can see the leaderboard
 
 - **Story ID:** EP-43-S8
+- **Status:** Later
 - **Title:** Owner can see the leaderboard
 - **As a:** Owner
 - **I want:** a leaderboard for a chosen period that ranks staff by score, with pieces and pure gold shown beside each score
@@ -200,6 +208,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S9: Owner can choose whether staff see the leaderboard
 
 - **Story ID:** EP-43-S9
+- **Status:** Later
 - **Title:** Owner can choose whether staff see the leaderboard
 - **As a:** Owner
 - **I want:** a leaderboard visibility setting with two values, "Owner only" and "Staff too", defaulting to "Owner only"
@@ -224,6 +233,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S10: Staff can see their own figures and the leaderboard when allowed
 
 - **Story ID:** EP-43-S10
+- **Status:** Later
 - **Title:** Staff can see their own figures and the leaderboard when allowed
 - **As a:** Staff
 - **I want:** to see my own pieces, stock-outs, pure gold and sales history for a period, and the leaderboard, when the owner allows it
@@ -248,6 +258,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S11: System can refresh the leaderboard live after a stock-out
 
 - **Story ID:** EP-43-S11
+- **Status:** Later
 - **Title:** System can refresh the leaderboard live after a stock-out
 - **As a:** System
 - **I want:** open performance views, sales histories, own-figure screens and leaderboards to refetch when "Piece billed by one staff member" arrives for a period they show
@@ -272,6 +283,7 @@ Role note: this is a layer F (Later) epic. Stories where the server derives sale
 ## EP-43-S12: System can credit a split sale by share (if Q10 allows it)
 
 - **Story ID:** EP-43-S12
+- **Status:** Later
 - **Title:** System can credit a split sale by share (if Q10 allows it)
 - **As a:** System
 - **I want:** when a stock-out names two sellers with shares, each seller to be credited their share of pieces and pure gold, with shares stored per stock-out

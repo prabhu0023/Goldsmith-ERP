@@ -9,6 +9,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S1: System can store leads, items and their states
 
 - **Story ID:** EP-28-S1
+- **Status:** Not started
 - **Title:** System can store leads, items and their states
 - **As a:** System
 - **I want:** the `leads` and `lead_items` tables from EP-02-S7 extended with customer id (nullable), taken by (user id), taken at, lost reason, SLA limit hours, SLA breached at and shop ID (D7), plus a `lead_attachments` table, with state limited to `needs_glance`, `opened`, `being_worked`, `converted`, `lost`
@@ -33,6 +34,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S2: Staff can create a lead by hand at the counter
 
 - **Story ID:** EP-28-S2
+- **Status:** Not started
 - **Title:** Staff can create a lead by hand at the counter
 - **As a:** Staff
 - **I want:** to press "Add a lead by hand" on `leads`, fill "Who is it?", "Phone", "What do they want?", "Needed by (if they said)" and "Anything else they said" on `lead-create`, and press "Create the lead"
@@ -57,6 +59,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S3: Staff can add item lines with style, quantity and approximate weight
 
 - **Story ID:** EP-28-S3
+- **Status:** Not started
 - **Title:** Staff can add item lines with style, quantity and approximate weight
 - **As a:** Staff
 - **I want:** to add, edit and remove item lines on `lead-create` with "Item", "Style", "How many" and "About, each (g)"
@@ -81,6 +84,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S4: Staff can attach an optional photo to a manual lead
 
 - **Story ID:** EP-28-S4
+- **Status:** Not started
 - **Title:** Staff can attach an optional photo to a manual lead
 - **As a:** Staff
 - **I want:** to press "Add a picture" under "Attach a photo (optional)" on `lead-create`, upload one image, and see it on the lead
@@ -105,6 +109,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S5: Staff can see a known customer matched by phone (G7)
 
 - **Story ID:** EP-28-S5
+- **Status:** Not started
 - **Title:** Staff can see a known customer matched by phone (G7)
 - **As a:** Staff
 - **I want:** the form to call Find Customer by phone when I finish typing the phone on `lead-create`, show "known customer" next to the name when it matches, fill an empty "Who is it?" with the customer's name, and link the lead to that customer on save
@@ -129,6 +134,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S6: Staff can see every lead in one inbox with source and SLA
 
 - **Story ID:** EP-28-S6
+- **Status:** Not started
 - **Title:** Staff can see every lead in one inbox with source and SLA
 - **As a:** Staff
 - **I want:** a List Leads read shown on `leads` as one list of leads from WhatsApp, email and the counter, oldest first, each row with source, title, arrival age or who took it, state and the SLA label from the server
@@ -153,6 +159,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S7: Staff can filter the inbox by Needs a glance, Being worked and All
 
 - **Story ID:** EP-28-S7
+- **Status:** Not started
 - **Title:** Staff can filter the inbox by Needs a glance, Being worked and All
 - **As a:** Staff
 - **I want:** tabs "Needs a glance", "Being worked" and "All" on `leads`, each with a count from the server
@@ -177,6 +184,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S8: System can compute the SLA in shop hours on the server
 
 - **Story ID:** EP-28-S8
+- **Status:** Not started
 - **Title:** System can compute the SLA in shop hours on the server
 - **As a:** System
 - **I want:** one shared server function that takes a lead, the current server time, `settings.leadSlaHours` and the shop-hours calendar, and returns the phase (`running`, `late`, `met`), hours elapsed, whole hours left, the due time and the label
@@ -201,6 +209,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S9: System can mark a lead late and notify staff then the owner
 
 - **Story ID:** EP-28-S9
+- **Status:** Not started
 - **Title:** System can mark a lead late and notify staff then the owner
 - **As a:** System
 - **I want:** the EP-10-S5 breach job to call a Mark lead late service function that re-checks the lead, sets `slaBreachedAt`, writes the audit entry and emits the passed-SLA event, which EP-11 turns into notices for the audience in `settings.lateLeadAudience`
@@ -225,6 +234,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S10: Staff can start working a lead
 
 - **Story ID:** EP-28-S10
+- **Status:** Not started
 - **Title:** Staff can start working a lead
 - **As a:** Staff
 - **I want:** to press "Open" on an `opened` lead in the inbox and start working it, so that the lead moves to `being_worked` with me recorded as the person who took it and the time I took it
@@ -249,6 +259,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S11: Staff can mark a lead lost with a reason
 
 - **Story ID:** EP-28-S11
+- **Status:** Not started
 - **Title:** Staff can mark a lead lost with a reason
 - **As a:** Staff
 - **I want:** to mark a lead lost from the lead, type why, and confirm
@@ -273,6 +284,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S12: System can expire an unworked lead under the decided rule (G25)
 
 - **Story ID:** EP-28-S12
+- **Status:** Not started
 - **Title:** System can expire an unworked lead under the decided rule (G25)
 - **As a:** System
 - **I want:** a scheduled job that finds leads matching the decided G25 expiry rule and closes each one as lost or expired through the same service as EP-28-S11, with System as the actor and the reason `expired`
@@ -297,6 +309,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S13: Staff can see new and late leads arrive live
 
 - **Story ID:** EP-28-S13
+- **Status:** Not started
 - **Title:** Staff can see new and late leads arrive live
 - **As a:** Staff
 - **I want:** every open `leads` inbox, the `leads` rail badge and the late-leads card on `decisions` to update by themselves when a lead is created, marked late, started or closed by anyone
@@ -321,6 +334,7 @@ Role note: stories where the server stores, times, checks, notifies or audits on
 ## EP-28-S14: System can audit every lead state change
 
 - **Story ID:** EP-28-S14
+- **Status:** Not started
 - **Title:** System can audit every lead state change
 - **As a:** System
 - **I want:** to write an append-only audit entry in the same transaction as each lead create (`lead_created`), start (`lead_started`), lost or expiry (`lead_lost`) and late mark (`lead_late`), with actor, role, time, lead id, before, after and reason

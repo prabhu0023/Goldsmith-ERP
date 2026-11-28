@@ -9,6 +9,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S1: System can store customers with normalised phones and nullable value sockets
 
 - **Story ID:** EP-17-S1
+- **Status:** Not started
 - **Title:** System can store customers with normalised phones and nullable value sockets
 - **As a:** System
 - **I want:** the `customers` table from EP-02-S4 extended with a normalised phone, optional address, status (`active` or `erased`), created at, created by and version, a shared phone normaliser that turns any typed phone into digits with the country code, and the budget and spend columns kept nullable with no default
@@ -34,6 +35,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S2: System can store consent as events with time, source and recorder
 
 - **Story ID:** EP-17-S2
+- **Status:** Not started
 - **Title:** System can store consent as events with time, source and recorder
 - **As a:** System
 - **I want:** a `consent_events` table where each row is one opt-in or opt-out with its source, the user who recorded it and the server time, the customer's current consent derived from the latest event, and the existing `optedIn` column kept as a copy of that latest event, written in the same transaction
@@ -58,6 +60,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S3: Staff can add a customer at the counter
 
 - **Story ID:** EP-17-S3
+- **Status:** Not started
 - **Title:** Staff can add a customer at the counter
 - **As a:** Staff
 - **I want:** to add a customer on `customer-new` with name, phone, city, optional address, group, birthday, anniversary and notes, through a Create Customer operation that returns the new `CU-NNN` id
@@ -83,6 +86,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S4: System can warn about a duplicate phone on add and edit
 
 - **Story ID:** EP-17-S4
+- **Status:** Not started
 - **Title:** System can warn about a duplicate phone on add and edit
 - **As a:** System
 - **I want:** Create Customer and Update Customer to compare the normalised phone with every active customer, and when it matches, to return a `duplicate_phone` warning naming the existing customer instead of writing, unless the decided duplicate rule allows the save
@@ -108,6 +112,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S5: Staff can edit a customer's details
 
 - **Story ID:** EP-17-S5
+- **Status:** Not started
 - **Title:** Staff can edit a customer's details
 - **As a:** Staff
 - **I want:** to change a customer's name, phone, city, address, group, birthday, anniversary and notes through Update Customer, saving with the version I last read
@@ -133,6 +138,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S6: Staff can record a customer's WhatsApp consent
 
 - **Story ID:** EP-17-S6
+- **Status:** Not started
 - **Title:** Staff can record a customer's WhatsApp consent
 - **As a:** Staff
 - **I want:** ticking "Send wishes on WhatsApp" when adding a customer, or choosing to record consent on an existing customer, to write an `opt_in` consent event with source, my user and the server time, through Create Consent event
@@ -157,6 +163,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S7: Staff can record a customer's opt-out
 
 - **Story ID:** EP-17-S7
+- **Status:** Not started
 - **Title:** Staff can record a customer's opt-out
 - **As a:** Staff
 - **I want:** to record that a customer withdrew consent, through Create Consent event with kind `opt_out`, effective at once, and the WhatsApp opt-out keyword path from EP-12-S10 to write the same event with source `whatsapp_reply` and recorder System
@@ -181,6 +188,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S8: Staff can search and filter the customer directory
 
 - **Story ID:** EP-17-S8
+- **Status:** Not started
 - **Title:** Staff can search and filter the customer directory
 - **As a:** Staff
 - **I want:** the `customers` screen to load customers from the server through List Customers, search by name, phone (spaces ignored) or city, filter by group, and page through long results
@@ -206,6 +214,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S9: Staff can see a customer's piece history by tag and grams
 
 - **Story ID:** EP-17-S9
+- **Status:** Not started
 - **Title:** Staff can see a customer's piece history by tag and grams
 - **As a:** Staff
 - **I want:** to open a customer from `customers` and see, through Read Customer, their details, current consent and the pieces they have taken home, each with piece name, tag, pure gold grams and date, newest first, with the count and total grams taken home
@@ -230,6 +239,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S10: System can match a phone to a known customer for leads and POs (G7)
 
 - **Story ID:** EP-17-S10
+- **Status:** Not started
 - **Title:** System can match a phone to a known customer for leads and POs (G7)
 - **As a:** System
 - **I want:** a Find Customer by phone operation that normalises a given phone and returns the one active customer who holds it (id, name, city, group), or none, callable from the lead form, the PO intake and server code
@@ -255,6 +265,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S11: System can keep budget and spend dark behind the pricing switch
 
 - **Story ID:** EP-17-S11
+- **Status:** Not started
 - **Title:** System can keep budget and spend dark behind the pricing switch
 - **As a:** System
 - **I want:** the customer service to refuse any write to `budgetINR` or `spentINR`, the customer responses to carry them only as null, and every screen to render them only through `ValueSlot`, which draws nothing while the pricing flag is off
@@ -279,6 +290,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S12: System can refuse every customer operation from a karigar
 
 - **Story ID:** EP-17-S12
+- **Status:** Not started
 - **Title:** System can refuse every customer operation from a karigar
 - **As a:** System
 - **I want:** Create Customer, Update Customer, List Customers, Read Customer, Find Customer by phone, Create Consent event and Erase Customer personal data to refuse a karigar caller with `forbidden` before any read or validation
@@ -303,6 +315,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S13: Owner can carry out an approved deletion request on a customer
 
 - **Story ID:** EP-17-S13
+- **Status:** Not started
 - **Title:** Owner can carry out an approved deletion request on a customer
 - **As a:** Owner
 - **I want:** an Erase Customer personal data operation that, for an approved deletion request, clears the customer's name, phone, address, birthday and anniversary, sets status `erased`, and keeps their piece history by tag, grams and date without the personal fields
@@ -328,6 +341,7 @@ Role note: stories where the server stores, checks, matches, hides or audits on 
 ## EP-17-S14: System can audit customer changes without copying erased values
 
 - **Story ID:** EP-17-S14
+- **Status:** Not started
 - **Title:** System can audit customer changes without copying erased values
 - **As a:** System
 - **I want:** every add, edit, consent change and erase of a customer to write one append-only audit entry in the same transaction, with before and after for changed fields, and the erase entry to name the erased fields without their values
